@@ -1,1 +1,66 @@
-<mxfile host="app.diagrams.net" modified="2022-12-14T09:30:23.356Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" version="20.6.2" etag="qxUERhq8866POG97UarO" type="github"><diagram id="8xKHaG1y_F05sV59R5NK">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2022-12-14T10:29:00.284Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" version="20.6.2" etag="an84zv0Nqqc89MEIGRtu" type="github">
+  <diagram id="jqVrEx7MVm18_atH5R_M" name="user_reg_tiket">
+    <mxGraphModel dx="1160" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-1" target="KYI5-yolxLMHM4EQRNFs-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-1" value="Start&lt;br&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="380" y="10" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-2" value="Finish&lt;br&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="380" y="630" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-4" target="KYI5-yolxLMHM4EQRNFs-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-4" value="Register Tiket" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="90" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-6" target="KYI5-yolxLMHM4EQRNFs-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-6" value="Request type,&lt;br&gt;Problem type,&lt;br&gt;Subject, Detail Subject" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="335" y="190" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-8" target="KYI5-yolxLMHM4EQRNFs-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-12" value="Request For Project" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="KYI5-yolxLMHM4EQRNFs-11">
+          <mxGeometry x="-0.0367" y="1" relative="1" as="geometry">
+            <mxPoint x="19" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-8" target="KYI5-yolxLMHM4EQRNFs-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-16" value="Request For Maintenance" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="KYI5-yolxLMHM4EQRNFs-15">
+          <mxGeometry x="-0.2155" y="-4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-8" value="Request type" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="300" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-10" target="KYI5-yolxLMHM4EQRNFs-13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-10" value="Module" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="170" y="410" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="KYI5-yolxLMHM4EQRNFs-13" target="KYI5-yolxLMHM4EQRNFs-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KYI5-yolxLMHM4EQRNFs-13" value="Save" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="520" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
