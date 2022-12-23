@@ -16,6 +16,78 @@
     $('#submenus_save').on('click', function(){
         save_submenus()
     })
+    $('#btn_menus_update').on('click', function(){
+        update_menus()
+    })
+    $('#menus_table').on('click', '.editMenus', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{route('getDetailMenus')}}",
+                type: "get",
+                dataType: 'json',
+                async: true,
+                data:{
+                    'id':id
+                },
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success: function(response) {
+                    swal.close();
+                    var output = response.detail;
+                    $('#status_menus_update').val(output.status)
+                    $('#id_menus_update').val(output.id)
+                    $('#menus_name_update').val(output.name)
+                    $('#menus_icon_update').val(output.icon)
+                    $('#menus_link_update').val(output.link)
+                    $('#menus_description_update').val(output.description)
+                  if(output.status == 1){
+                    document.getElementById("menus_status_update").checked = true;
+                    $('#label_menus_status').html('Active')
+                }else{
+                    document.getElementById("menus_status_update").checked = false;
+                      $('#label_menus_status').html('inactive')
+                }
+                    
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+    
+        });
+    $('#menus_table').on('click', '.deleteMenus', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('deleteMenus')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                'id':id
+            },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                toastr['success'](response.message);
+                window.location = "{{route('menus')}}";
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+
+    });
     function clear_menus(){
         $('.message_error').html('')
         $('#menus_name').val('')
@@ -62,10 +134,10 @@
                                 <td style="text-align: center;">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
                                 <td style="width:25%;text-align:center">
                                        
-                                        <button title="Detail" class="editBobot btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMenusModal">
+                                        <button title="Detail" class="editMenus btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMenusModal">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
-                                        <button title="Delete" class="deleteBobot btn btn-danger"data-id="${response.data[i]['id']}">
+                                        <button title="Delete" class="deleteMenus btn btn-danger"data-id="${response.data[i]['id']}">
                                         <i class="fas fa-solid fa-trash"></i>
                                         </button>   
                                         
@@ -243,6 +315,54 @@
             }
         });
     }
+
+    function update_menus(){
+        var is_active = '';
+            var status = document.getElementById("menus_status_update");
+            status.checked==true?is_active='1':is_active='0'
+        var data ={
+            'status':is_active,
+            'id_menus_update':$('#id_menus_update').val(),
+            'menus_name_update':$('#menus_name_update').val(),
+            'menus_icon_update':$('#menus_icon_update').val(),
+            'menus_description_update':$('#menus_description_update').val(),
+        }
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('update_menus')}}",
+            type: "post",
+            dataType: 'json',
+            async: true,
+            data: data,
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                $('.message_error').html('')
+                if(response.status==422)
+                {
+                    $.each(response.message, (key, val) => 
+                    {
+                    $('span.'+key+'_error').text(val[0])
+                    });
+                    $('#save').prop('disabled', false);
+                    return false;
+                }else{
+                    toastr['success'](response.message);
+                    $('#addSubmenusModal').hide()
+                    window.location = "{{route('menus')}}";
+                }
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
+    
     // End Function
 
 </script>

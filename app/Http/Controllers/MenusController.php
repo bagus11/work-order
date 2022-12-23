@@ -131,5 +131,72 @@ class MenusController extends Controller
         'data'=>$data
     ]);
    }
+   public function getDetailMenus(Request $request)
+   {
+        $detail = Menus::find($request->id);
+        return response()->json([
+            'detail'=>$detail
+        ]);
+   }
+   public function update_menus(Request $request)
+   {
+    $menus_name_update = $request->menus_name_update;
+    $menus_icon_update = $request->menus_icon_update;
+    $menus_description_update = $request->menus_description_update;
+    $status =500;
+    $message='';
+    $validator = Validator::make($request->all(),[
+        'menus_name_update'=>'required',
+        'menus_icon_update'=>'required',
+        'menus_description_update'=>'required',
+    ],[
+        'menus_name_update.required'=>'Nama Menu tidak boleh kosong',
+        'menus_icon_update.required'=>'Icon Menu tidak boleh kosong',
+        'menus_description_update.required'=>'Deskripsi Menu tidak boleh kosong',
+    ]);
+    if($validator->fails()){
+        return response()->json([
+            'message'=>$validator->errors(), 
+            'status'=>422,
+          
+        ]);
+    }else{
+        $status_menus = $request->status;
+        $post=[
+            'name'=>$menus_name_update,
+            'description'=>$menus_description_update,
+            'status'=>$status_menus,
+            'icon'=>$menus_icon_update,
+            'updated_at'=>date('Y-m-d H:i:s')
+        ];
+        
+        $update = Menus::where('id', $request->id_menus_update)->update($post);
+        if($update){
+            $status =200;
+            $message='Data telah tersimpan';
+        }else{
+            $message='Gagal disimpan';
+        }
+    }
+    return response()->json([
+        'status'=>$status,
+        'message'=>$message
+    ]);
+   }
+   public function deleteMenus(Request $request)
+   {
+        $status =500;
+        $message ='Data gagal dihapus';
+        $delete = Menus::find($request->id);
+        $delete->delete();
+        if($delete){
+            $status=200;
+            $message='Data berhasil dihapus';
+        }
+        return response()->json([
+            'message'=>$message,
+            'status'=>$status
+        ]);
+   }
    
 }

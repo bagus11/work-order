@@ -27,3 +27,6 @@ Route::get('get_menus', [MenusController::class, 'get_menus'])->name('get_menus'
 Route::get('get_menus_name', [MenusController::class, 'get_menus_name'])->name('get_menus_name');
 Route::post('save_submenus', [MenusController::class, 'save_submenus'])->name('save_submenus');
 Route::get('get_submenus', [MenusController::class, 'get_submenus'])->name('get_submenus');
+Route::get('getDetailMenus', [MenusController::class, 'getDetailMenus'])->name('getDetailMenus');
+Route::post('update_menus', [MenusController::class, 'update_menus'])->name('update_menus');
+Route::get('deleteMenus', [MenusController::class, 'deleteMenus'])->name('deleteMenus');

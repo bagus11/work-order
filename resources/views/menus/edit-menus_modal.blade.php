@@ -15,8 +15,9 @@
                             <label for="">Name</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="menus_name">
-                            <span  style="color:red;" class="message_error text-red block menus_name_error"></span>
+                            <input type="hidden" class="form-control" id="id_menus_update">
+                            <input type="text" class="form-control" id="menus_name_update">
+                            <span  style="color:red;" class="message_error text-red block menus_name_update_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -24,21 +25,20 @@
                             <label for="">Icon</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="menus_icon">
-                            <span  style="color:red;" class="message_error text-red block menus_icon_error"></span>
+                            <input type="text" class="form-control" id="menus_icon_update">
+                            <span  style="color:red;" class="message_error text-red block menus_icon_update_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Tipe</label>
+                            <label for="">Status</label>
                         </div>
                         <div class="col-md-8">
-                            <select name="" id="select_menus_type" class="form-control">
-                                <option value="">Pilih Tipe</option>
-                                <option value="1">Menus</option>
-                                <option value="2">Submenus</option>
-                            </select>
-                            <input type="hidden" class="form-control" id="menus_type">
+                            <input type="checkbox" style="border-radius: 5px !important;" class="menus_status_update" id="menus_status_update" name="menus_status_update">
+                                        <label for="cc" id="label_menus_status" style="margin-top:10px">
+                                            Active                  
+                                        </label>
+                            <input type="hidden" class="form-control" id="status_menus_update">
                             <span  style="color:red;" class="message_error text-red block menus_type_error"></span>
                         </div>
                     </div>
@@ -47,8 +47,8 @@
                             <label for="">Link</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="menus_link">
-                            <span  style="color:red;" class="message_error text-red block menus_link_error"></span>
+                            <input type="text" class="form-control" id="menus_link_update">
+                            <span  style="color:red;" class="message_error text-red block menus_link_update_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -56,14 +56,14 @@
                             <label for="">Description</label>
                         </div>
                         <div class="col-md-8">
-                            <textarea class="form-control" id="menus_description" rows="3"></textarea>
-                            <span  style="color:red;" class="message_error text-red block menus_description_error"></span>
+                            <textarea class="form-control" id="menus_description_update" rows="3"></textarea>
+                            <span  style="color:red;" class="message_error text-red block menus_description_update_error"></span>
                         </div>
                     </div>
                </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btn_save_menus" type="button" class="btn btn-success">Save changes</button>
+                <button id="btn_menus_update" type="button" class="btn btn-success">Save changes</button>
             </div>
         </div>
     </div>
