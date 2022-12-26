@@ -19,7 +19,15 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 @php
-                    $menus = DB::table('menus')->select('*')->where('status', 1)->get();
+                    $menus = DB::table('menus')
+                        ->join('permissions', 'permissions.name','=','menus.permission_name')
+                        ->join('role_has_permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
+                        ->join('roles', 'roles.id','role_has_permissions.role_id')
+                        ->join('model_has_roles', 'model_has_roles.role_id', 'roles.id')
+                        ->select('menus.*')
+                        ->where('status',1)
+                        ->where('model_has_roles.model_id', auth()->user()->id)
+                        ->get();
                  
                 @endphp
                 @foreach ($menus as $item)
@@ -33,7 +41,15 @@
                     @else
                         <li class="nav-item">
                             @php
-                                $submenus = DB::table('submenus')->where('status', 1)->where('id_menus', $item->id)->get();
+                                $submenus = DB::table('submenus')->select('submenus.*')
+                                        ->join('permissions','permissions.name','=','submenus.permission_name')
+                                        ->join('role_has_permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
+                                        ->join('roles', 'roles.id','role_has_permissions.role_id')
+                                        ->join('model_has_roles', 'model_has_roles.role_id', 'roles.id')
+                                        ->where('submenus.id_menus', $item->id)
+                                        ->where('submenus.status', 1)
+                                        ->where('model_has_roles.model_id', auth()->user()->id)
+                                        ->get();
                                 // dd($submenus);
                             @endphp
                              <a href="#" class="nav-link">

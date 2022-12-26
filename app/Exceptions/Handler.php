@@ -34,8 +34,8 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->reportable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            return abort('403','ANDA TIDAK PUNYA AKSES KESINI');
         });
     }
 }

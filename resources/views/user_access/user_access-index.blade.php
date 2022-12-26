@@ -1,28 +1,25 @@
 @extends('layouts.master')
-@section('title', 'Menus')
+@section('title', 'User Access')
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
           <div class="col-md-6">
                 <div class="card card-dark">
                     <div class="card-header">
-                        <div class="card-title">List Menus</div>
+                        <div class="card-title">Role User</div>
                         <div class="card-tools">
-                            @can('create-menus')
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-danger" style="float:right" onclick="clear_menus()">
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addRoleUserModal" style="float:right" onclick="get_username()">
                                 <i class="fas fa-plus"></i>
                             </button>
-                            @endcan
                             
                         </div>
                     </div>
                     <div class="card-body">                     
-                          <table class="datatable-bordered" id="menus_table">
+                          <table class="datatable-bordered" id="role_user_table">
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Link</th>
-                                    <th>Status</th>
+                                    <th>Role</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -34,24 +31,18 @@
           <div class="col-md-6">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List Submenus</div>
+                    <div class="card-title">Role Permission</div>
                     <div class="card-tools">
-                        {{-- <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
-                        </button> --}}
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addSubmenusModal" style="float:right" onclick="clear_submenus()">
-                            <i class="fas fa-plus"></i>
                         </button>
-                        
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="datatable-bordered" id="submenus_table">
+                    <table class="datatable-bordered" id="role_permission_table">
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Link</th>
-                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -61,11 +52,11 @@
       </div>
     </div>
 </div>
-@include('menus.add-menus_modal')
-@include('menus.edit-menus_modal')
-@include('menus.add-submenus_modal')
-@include('menus.edit-submenus_modal')
+@include('user_access.add-role_user_modal')
+@include('user_access.edit-role_user_modal')
+@include('user_access.add-permission_modal')
+@include('user_access.edit-permission_modal')
 @endsection
 @push('custom-js')
-@include('menus.menus-js')
+@include('user_access.user_access-js')
 @endpush

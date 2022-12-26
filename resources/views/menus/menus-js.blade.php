@@ -88,6 +88,87 @@
         });
 
     });
+    $('#submenus_table').on('click', '.deleteSubmenus', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('deleteSubmenus')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                'id':id
+            },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                toastr['success'](response.message);
+                window.location = "{{route('menus')}}";
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+
+    });
+    $('#select_submenus').on('change', function(){
+        var select_submenus = $('#select_submenus').val()
+        $('#derivative_update').val(select_submenus)
+    })
+    $('#submenus_table').on('click', '.editeSubmenus', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('getDetailSubmenus')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                'id':id
+            },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                var output = response.detail;
+                $('#status_submenus_update').val(output.status)
+                $('#id_submenus_update').val(output.id)
+                $('#submenus_name_update').val(output.name)
+                $('#submenus_link_update').val(output.link)
+                $('#derivative_update').val(output.id_menus)
+                $('#select_submenus').empty();
+                $('#select_submenus').append('<option>'+output.menus_name+'</option>')
+                $.each(response.menus,function(i,data){
+                        $('#select_submenus').append('<option value="'+data.id+'">' + data.name +'</option>');
+                    });
+                $('#submenus_description_update').val(output.description)
+                if(output.status == 1){
+                document.getElementById("submenus_status_update").checked = true;
+                $('#label_submenus_status').html('Active')
+            }else{
+                document.getElementById("submenus_status_update").checked = false;
+                    $('#label_submenus_status').html('inactive')
+            }
+                
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+
+    });
+    $('#btn_submenus_update').on('click', function(){
+        update_submenus()
+    })
     function clear_menus(){
         $('.message_error').html('')
         $('#menus_name').val('')
@@ -294,11 +375,11 @@
                                 <td style="text-align: left;">${response.data[i]['link']==null?'':response.data[i]['link']}</td>
                                 <td style="text-align: center;">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
                                 <td style="width:25%;text-align:center">
-                                       
-                                        <button title="Detail" class="editBobot btn btn-primary rounded"data-id="${response.data[i]['id']}">
+                                    
+                                        <button title="Detail" class="editeSubmenus btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editSubmenusModal">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
-                                        <button title="Delete" class="deleteBobot btn btn-danger"data-id="${response.data[i]['id']}">
+                                        <button title="Delete" class="deleteSubmenus btn btn-danger"data-id="${response.data[i]['id']}">
                                         <i class="fas fa-solid fa-trash"></i>
                                         </button>   
                                         
@@ -353,6 +434,52 @@
                 }else{
                     toastr['success'](response.message);
                     $('#addSubmenusModal').hide()
+                    window.location = "{{route('menus')}}";
+                }
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
+    function update_submenus(){
+        var is_active = '';
+            var status = document.getElementById("submenus_status_update");
+            status.checked==true?is_active='1':is_active='0'
+        var data = {
+            'status_submenus_update':$('#status_submenus_update').val(),
+            'id_submenus_update': $('#id_submenus_update').val(),
+            'submenus_name_update': $('#submenus_name_update').val(),
+            'derivative_update': $('#derivative_update').val(),
+            'submenus_description_update': $('#submenus_description_update').val(),
+            'status':is_active
+        }
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('update_submenus')}}",
+            type: "post",
+            dataType: 'json',
+            async: true,
+            data: data,
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                $('.message_error').html('')
+                if(response.status==422)
+                {
+                    $.each(response.message, (key, val) => 
+                    {
+                    $('span.'+key+'_error').text(val[0])
+                    });
+                    $('#save').prop('disabled', false);
+                    return false;
+                }else{
+                    toastr['success'](response.message);
                     window.location = "{{route('menus')}}";
                 }
             },

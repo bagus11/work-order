@@ -8,6 +8,9 @@ use CreateSubmenusTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
+
 class MenusController extends Controller
 {
    public function index()
@@ -62,6 +65,11 @@ class MenusController extends Controller
             ];
             $insert = Menus::create($post);
             if($insert){
+                $post_permission =[
+                    'name'=>'view-'.$menus_link,
+                    'guard_name'=>'web'
+                ];
+                Permission::create($post_permission);
                 $status =200;
                 $message ='Data berhasil disimpan';
             }
@@ -115,6 +123,11 @@ class MenusController extends Controller
             ];
             $insert = Submenu::create($post);
             if($insert){
+                $post_permission =[
+                    'name'=>'view-'.$submenus_link,
+                    'guard_name'=>'web'
+                ];
+                Permission::create($post_permission);
                 $status =200;
                 $message ='Data berhasil disimpan';
             }
@@ -198,5 +211,76 @@ class MenusController extends Controller
             'status'=>$status
         ]);
    }
-   
+   public function deleteSubmenus(Request $request)
+   {
+        $status =500;
+        $message ='Data gagal dihapus';
+        $delete = Submenu::find($request->id);
+        $delete->delete();
+        if($delete){
+            $status=200;
+            $message='Data berhasil dihapus';
+        }
+        return response()->json([
+            'message'=>$message,
+            'status'=>$status
+        ]);
+   }
+   public function getDetailSubmenus(Request $request)
+   {
+        $detail =   $detail = DB::table('submenus')->select('submenus.*', 'menus.name as menus_name')->join('menus','menus.id','=','submenus.id_menus')->where('submenus.id', $request->id)->first();
+        $menus = Menus::where('type', 2)->where('status',1)->get();
+        return response()->json([
+            'detail'=>$detail,
+            'menus'=>$menus
+        ]);
+   }
+   public function update_submenus(Request $request)
+   {
+        $submenus_name_update = $request->submenus_name_update;
+        $status_submenus_update = $request->status_submenus_update;
+        $id = $request->id_submenus_update;
+        $id_menus = $request->derivative_update;
+        $submenus_description_update = $request->submenus_description_update;
+        $status_submenus = $request->status;
+        $status = 200;
+        $message ="Data gagal disimpan, harap hubungi IT Developer";
+        $validator = Validator::make($request->all(),[
+            'submenus_name_update'=>'required',
+            'derivative_update'=>'required',
+            'submenus_description_update'=>'required',
+        ],[
+            'submenus_name_update.required'=>'Nama Subenu tidak boleh kosong',
+            'derivative_update.required'=>'Menu tidak boleh kosong',
+            'submenus_description_update.required'=>'Deskripsi Menu tidak boleh kosong',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'message'=>$validator->errors(), 
+                'status'=>422,
+              
+            ]);
+        }else{
+            $post=[
+                'name'=>$submenus_name_update,
+                'description'=>$submenus_description_update,
+                'status'=>$status_submenus,
+                'id_menus'=>$id_menus,
+                'updated_at'=>date('Y-m-d H:i:s')
+            ];
+            
+            $update = Submenu::where('id', $id)->update($post);
+            if($update){
+                $status =200;
+                $message='Data telah tersimpan';
+            }else{
+                $status =500;
+                $message='Gagal disimpan';
+            }
+        }
+        return response()->json([
+            'status'=>$status,
+            'message'=>$message
+        ]);
+   }
 }
