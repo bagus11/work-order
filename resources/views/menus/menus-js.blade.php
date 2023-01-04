@@ -1,5 +1,5 @@
 <script>
-    $('.select2').select2()
+    
     get_menus()
     get_submenus()
     $('#select_menus_type').on('change', function(){
@@ -206,13 +206,14 @@
             },
             success: function(response) {
                 swal.close();
+             
                 var data=''
                 for(i = 0; i < response.data.length; i++ )
                 {
                     data += `<tr style="text-align: center;">
-                                <td style="text-align: left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
-                                <td style="text-align: left;">${response.data[i]['link']==null?'':response.data[i]['link']}</td>
-                                <td style="text-align: center;">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
+                                <td style="width:25%;text-align:left">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
+                                <td style="width:25%;text-align:left">${response.data[i]['link']==null?'':response.data[i]['link']}</td>
+                                <td style="width:25%;text-align:center">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
                                 <td style="width:25%;text-align:center">
                                        
                                         <button title="Detail" class="editMenus btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMenusModal">
@@ -227,7 +228,10 @@
                             `;
                 }
                     $('#menus_table > tbody:first').html(data);
-                    $('#menus_table').DataTable();
+                    $('#menus_table').DataTable({
+                        scrollX  : true,
+                        scrollY  :220
+                    }).columns.adjust()
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -346,7 +350,6 @@
                 }
             });
     }
-    
     function get_submenus(){
         $('#submenus_table').DataTable().clear();
         $('#submenus_table').DataTable().destroy();
@@ -367,13 +370,16 @@
             },
             success: function(response) {
                 swal.close();
+                var data_array =[]
+                data_array.push(response)
+
                 var data=''
                 for(i = 0; i < response.data.length; i++ )
                 {
                     data += `<tr style="text-align: center;">
-                                <td style="text-align: left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
-                                <td style="text-align: left;">${response.data[i]['link']==null?'':response.data[i]['link']}</td>
-                                <td style="text-align: center;">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
+                                <td style="width:25%;text-align:left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
+                                <td style="width:25%;text-align:left;">${response.data[i]['link']==null?'':response.data[i]['link']}</td>
+                                <td style="width:25%;text-align:center;">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
                                 <td style="width:25%;text-align:center">
                                     
                                         <button title="Detail" class="editeSubmenus btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editSubmenusModal">
@@ -388,7 +394,11 @@
                             `;
                 }
                     $('#submenus_table > tbody:first').html(data);
-                    $('#submenus_table').DataTable();
+                    $('#submenus_table').DataTable({
+                        scrollX  : true,
+                        scrollY  :220
+                    }).columns.adjust()    
+                    
             },
             error: function(xhr, status, error) {
                 swal.close();

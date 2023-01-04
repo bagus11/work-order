@@ -17,13 +17,13 @@
                         </div>
                     </div>
                     <div class="card-body">                     
-                          <table class="datatable-bordered" id="menus_table">
+                          <table class="datatable-bordered nowrap display" id="menus_table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Link</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th  style="text-align: center">Name</th>
+                                    <th  style="text-align: center">Link</th>
+                                    <th  style="text-align: center">Status</th>
+                                    <th  style="text-align: center">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -46,13 +46,13 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="datatable-bordered" id="submenus_table">
+                    <table class="datatable-bordered nowrap display" id="submenus_table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Link</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th style="text-align: center">Name</th>
+                                <th style="text-align: center">Link</th>
+                                <th style="text-align: center">Status</th>
+                                <th style="text-align: center">Action</th>
                             </tr>
                         </thead>
                     </table>

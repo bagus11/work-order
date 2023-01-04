@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="datatable-bordered" id="permission_table">
+                    <table class="datatable-bordered nowrap display" id="permission_table">
                         <thead>
                             <tr>
                                 <th>Name</th>

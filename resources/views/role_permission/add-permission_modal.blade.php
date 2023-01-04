@@ -17,6 +17,8 @@
                         <div class="col-md-8">
                             <select name="option" class="select2" style="width:100%"  id="option">
                                 <option value="view">View</option>
+                                <option value="get-all">Get All</option>
+                                <option value="activation">Activation</option>
                                 <option value="create">Create</option>
                                 <option value="update">Update</option>
                                 <option value="delete">Delete</option>

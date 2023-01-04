@@ -1,5 +1,5 @@
 <script>
-    $('.select2').select2()
+    
     get_role();
     get_permission();
     // Operation
@@ -161,7 +161,10 @@
                             `;
                 }
                     $('#roles_table > tbody:first').html(data);
-                    $('#roles_table').DataTable();
+                    $('#roles_table').DataTable({
+                        scrollX  : true,
+                        scrollY  :220
+                    }).columns.adjust()
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -204,7 +207,10 @@
                             `;
                 }
                     $('#permission_table > tbody:first').html(data);
-                    $('#permission_table').DataTable();
+                    $('#permission_table').DataTable({
+                        scrollX  : true,
+                        scrollY  :220
+                    }).columns.adjust()
             },
             error: function(xhr, status, error) {
                 swal.close();

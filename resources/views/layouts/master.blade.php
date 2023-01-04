@@ -9,8 +9,9 @@
         <title>@yield('title', 'Work Order')</title>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-        <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+        <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.2/css/bootstrap.css" rel="stylesheet">
+        {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     </head>
     <body class="hold-transition sidebar-mini">
@@ -35,11 +36,15 @@
 
         <script src="{{asset('js/app.js')}}"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+        {{-- <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script> --}}
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         <script>
+            $(document).ready(function(){
+                $(".select2").select2();
+            });
             var url = window.location;
            // for sidebar menu entirely but not cover treeview
            $('ul.nav-sidebar a').filter(function() {
@@ -64,6 +69,7 @@
                   }
               });
           }
+       
           $(".select2").select2({ width: '300px', dropdownCssClass: "bigdrop" });
        </script>
         @stack('custom-js')
@@ -74,10 +80,10 @@
 .datatable-bordered{
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
-  width: 100%;
+  width: 100% !important;
   font-size: 12px;
+  
   }
-
   .datatable-bordered td, .datatable-bordered th {
   padding: 8px;
   }
@@ -93,6 +99,7 @@
   text-align: center;
   background-color: white;
   color: black;
+  
   }
 
 .select2-selection__rendered {
@@ -104,4 +111,8 @@
 .select2-selection__arrow {
     height: 44px !important;
 }
+.dataTables_scrollHeadInner, .table{
+     width:100%!important; 
+}
+
 </style>

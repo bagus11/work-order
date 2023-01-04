@@ -19,7 +19,7 @@ class MenusController extends Controller
    }
    public function get_menus(Request $request)
    {
-        $data = Menus::all();
+        $data = Menus::select('*')->orderBy('id','desc')->get();
         return response()->json([
             'data'=>$data
         ]);
@@ -139,7 +139,7 @@ class MenusController extends Controller
    }
    public function get_submenus()
    {
-    $data = Submenu::all();
+    $data = Submenu::select('*')->orderBy('id','desc')->get();
     return response()->json([
         'data'=>$data
     ]);

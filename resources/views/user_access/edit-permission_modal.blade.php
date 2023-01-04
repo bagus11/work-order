@@ -13,7 +13,7 @@
                 <table class="datatable-bordered" id="edit_permission_table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="check_all_delete_permission" name="check_all_delete_permission" class="check_all_delete_permission" style="border-radius: 5px !important;"></th>
+                            <th style="text-align: center"><input type="checkbox" id="check_all_delete_permission" name="check_all_delete_permission" class="check_all_delete_permission" style="border-radius: 5px !important;"></th>
                             <th>Permission</th>
                         </tr>
                     </thead>

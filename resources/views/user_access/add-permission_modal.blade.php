@@ -13,7 +13,7 @@
                 <table class="datatable-bordered" id="permission_table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="check_all_add_permission" name="check_all_add_permission" class="check_all_add_permission" style="border-radius: 5px !important;"></th>
+                            <th style="text-align: center"><input type="checkbox" id="check_all_add_permission" name="check_all_add_permission" class="check_all_add_permission" style="border-radius: 5px !important;"></th>
                             <th>Permission</th>
                         </tr>
                     </thead>
