@@ -21,7 +21,7 @@
                </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btn_delete_permission" type="button" class="btn btn-success">Save changes</button>
+                <button id="btn_delete_permission" type="button" class="btn btn-danger">Delete Permission</button>
             </div>
         </div>
     </div>

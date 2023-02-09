@@ -11,5 +11,7 @@ class MasterCategory extends Model
     protected $table = 'master_categories';
 
     protected $guarded = [];
-
+    public function departement(){
+        return $this->hasOne(MasterDepartement::class,'id','departement_id');
+    }
 }

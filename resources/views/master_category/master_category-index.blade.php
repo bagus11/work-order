@@ -9,7 +9,7 @@
                     <div class="card-title">List Kategori</div>
                     <div class="card-tools">
                         @can('create-master_category')
-                        <button id="add_kantor" type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategories" style="float:right">
+                        <button id="add_categories" type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategories" style="float:right">
                             <i class="fas fa-plus"></i>
                         </button>
                         @endcan
@@ -22,6 +22,7 @@
                                 <th style="text-align:center"></th>
                                 <th style="text-align:center">Status</th>
                                 <th style="text-align:center">Nama</th>
+                                <th style="text-align:center">Departement</th>
                                 <th style="text-align:center">Action</th>
                             </tr>
                         </thead>

@@ -117,4 +117,11 @@ class MasterJabatanController extends Controller
             'message'=>$message
         ]);
     }
+    public function get_jabatan_name(Request $request)
+    {
+        $data = MasterJabatan::where('flg_aktif',1)->where('departement_id','like','%'.$request->id.'%')->get();
+        return response()->json([
+            'data'=>$data
+        ]);
+    }
 }

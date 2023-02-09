@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ManualWOController;
 use App\Http\Controllers\MasterCategoryController;
 use App\Http\Controllers\MasterDepartementController;
 use App\Http\Controllers\MasterJabatanController;
@@ -66,6 +68,9 @@ Route::group(['middleware' => ['permission:view-master_departement']], function 
 Route::group(['middleware' => ['permission:view-master_jabatan']], function () {
     Route::get('master_jabatan', [MasterJabatanController::class, 'index'])->name('master_jabatan');
 });
+Route::group(['middleware' => ['permission:view-work_order_assignment']], function () {
+    Route::get('work_order_assignment', [AssignmentController::class, 'index'])->name('work_order_assignment');
+});
 // Menus
 Route::post('save_menus', [MenusController::class, 'save_menus'])->name('save_menus');
 Route::get('get_menus', [MenusController::class, 'get_menus'])->name('get_menus');
@@ -100,6 +105,8 @@ Route::get('delete_role_permission', [UserAccessController::class, 'delete_role_
 
 // Setting User
 Route::post('update_status_user', [UserController::class, 'update_status_user'])->name('update_status_user');
+Route::get('detail_user', [UserController::class, 'detail_user'])->name('detail_user');
+Route::post('update_user_setting', [UserController::class, 'update_user_setting'])->name('update_user_setting');
 
 
 // Setting
@@ -117,6 +124,7 @@ Route::post('save_kantor', [MasterKantorController::class, 'save_kantor'])->name
 Route::post('update_status_kantor', [MasterKantorController::class, 'update_status_kantor'])->name('update_status_kantor');
 Route::get('detail_kantor', [MasterKantorController::class, 'detail_kantor'])->name('detail_kantor');
 Route::post('update_kantor', [MasterKantorController::class, 'update_kantor'])->name('update_kantor');
+Route::get('get_kantor_name', [MasterKantorController::class, 'get_kantor_name'])->name('get_kantor_name');
 
 // Master Category
 Route::post('save_categories', [MasterCategoryController::class, 'save_categories'])->name('save_categories');
@@ -124,6 +132,7 @@ Route::get('get_categories', [MasterCategoryController::class, 'get_categories']
 Route::post('update_status_categories', [MasterCategoryController::class, 'update_status_categories'])->name('update_status_categories');
 Route::get('detail_categories', [MasterCategoryController::class, 'detail_categories'])->name('detail_categories');
 Route::post('update_categories', [MasterCategoryController::class, 'update_categories'])->name('update_categories');
+Route::get('get_categories_id', [MasterCategoryController::class, 'get_categories_id'])->name('get_categories_id');
 
 // Master Problem Type
 Route::get('get_problem_type', [ProblemTypeController::class, 'get_problem_type'])->name('get_problem_type');
@@ -139,10 +148,12 @@ Route::post('save_departement', [MasterDepartementController::class, 'save_depar
 Route::post('update_status_departement', [MasterDepartementController::class, 'update_status_departement'])->name('update_status_departement');
 Route::get('detail_departement', [MasterDepartementController::class, 'detail_departement'])->name('detail_departement');
 Route::get('get_departement_name', [MasterDepartementController::class, 'get_departement_name'])->name('get_departement_name');
+Route::post('update_departement', [MasterDepartementController::class, 'update_departement'])->name('update_departement');
 
 //Master jabatan
 
 Route::get('get_jabatan', [MasterJabatanController::class, 'get_jabatan'])->name('get_jabatan');
+Route::get('get_jabatan_name', [MasterJabatanController::class, 'get_jabatan_name'])->name('get_jabatan_name');
 Route::get('detail_jabatan', [MasterJabatanController::class, 'detail_jabatan'])->name('detail_jabatan');
 Route::post('save_jabatan', [MasterJabatanController::class, 'save_jabatan'])->name('save_jabatan');
 Route::post('update_status_jabatan', [MasterJabatanController::class, 'update_status_jabatan'])->name('update_status_jabatan');
@@ -151,6 +162,24 @@ Route::post('update_jabatan', [MasterJabatanController::class, 'update_jabatan']
 // WO List
 Route::get('get_work_order_list', [WorkOrderController::class, 'get_work_order_list'])->name('get_work_order_list');
 Route::get('get_categories_name', [WorkOrderController::class, 'get_categories_name'])->name('get_categories_name');
-Route::get('save_wo', [WorkOrderController::class, 'save_wo'])->name('save_wo');
+Route::post('save_wo', [WorkOrderController::class, 'save_wo'])->name('save_wo');
+Route::get('get_wo_log', [WorkOrderController::class, 'get_wo_log'])->name('get_wo_log');
+Route::post('approve_assignment_pic', [WorkOrderController::class, 'approve_assignment_pic'])->name('approve_assignment_pic');
+Route::post('manual_approve', [WorkOrderController::class, 'manual_approve'])->name('manual_approve');
+Route::post('rating_pic', [WorkOrderController::class, 'rating_pic'])->name('rating_pic');
+
+
+Route::post('manual_wo', [WorkOrderController::class, 'manual_wo'])->name('manual_wo');
+
+Route::get('get_assignment', [AssignmentController::class, 'get_assignment'])->name('get_assignment');
+Route::get('detail_wo', [AssignmentController::class, 'detail_wo'])->name('detail_wo');
+Route::post('approve_assignment', [AssignmentController::class, 'approve_assignment'])->name('approve_assignment');
+
+// ICT Ticket
+Route::get('ict_wo', [ManualWOController::class, 'index'])->name('ict_wo');
+Route::post('manual_wo', [ManualWOController::class, 'manual_wo'])->name('manual_wo');
+// Home 
+Route::get('get_wo_summary', [HomeController::class, 'get_wo_summary'])->name('get_wo_summary');
+
 });
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1115ff386b4088151d4e82985dad14e6",
+    "content-hash": "e230d1fc21c163c6264b95689615171b",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -960,6 +960,123 @@
                 }
             ],
             "time": "2022-10-26T14:07:24+00:00"
+        },
+        {
+            "name": "hnhdigital-os/laravel-number-converter",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hnhdigital-os/laravel-number-converter.git",
+                "reference": "488ffdac3136ab813790ec3042b42bc9de725b2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hnhdigital-os/laravel-number-converter/zipball/488ffdac3136ab813790ec3042b42bc9de725b2e",
+                "reference": "488ffdac3136ab813790ec3042b42bc9de725b2e",
+                "shasum": ""
+            },
+            "require": {
+                "hnhdigital-os/php-number-converter": "1.*",
+                "illuminate/support": "^5.8|^6.0|^7.0|^8.0|^9.0",
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "~2.0",
+                "squizlabs/php_codesniffer": "~3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "HnhDigital\\LaravelNumberConverter\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "HnhDigital\\LaravelNumberConverter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rocco Howard",
+                    "email": "rocco@bluora.com.au"
+                }
+            ],
+            "description": "Number to word, roman, ordinal converter",
+            "keywords": [
+                "converter",
+                "laravel",
+                "number",
+                "ordinal",
+                "roman",
+                "word"
+            ],
+            "support": {
+                "issues": "https://github.com/hnhdigital-os/laravel-number-converter/issues",
+                "source": "https://github.com/hnhdigital-os/laravel-number-converter/tree/1.5.0"
+            },
+            "time": "2022-04-12T00:02:37+00:00"
+        },
+        {
+            "name": "hnhdigital-os/php-number-converter",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hnhdigital-os/php-number-converter.git",
+                "reference": "1e1828056da7a10775ffe26a7e818fcf0f5a3e14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hnhdigital-os/php-number-converter/zipball/1e1828056da7a10775ffe26a7e818fcf0f5a3e14",
+                "reference": "1e1828056da7a10775ffe26a7e818fcf0f5a3e14",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "~2.0",
+                "phpunit/phpunit": "^7.0",
+                "squizlabs/php_codesniffer": "~3.0",
+                "symfony/thanks": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HnhDigital\\PhpNumberConverter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Riasad Tasha",
+                    "email": "saintkabyo@gmail.com"
+                },
+                {
+                    "name": "Rocco Howard",
+                    "email": "rocco@hnh.digital"
+                }
+            ],
+            "description": "Number to word, roman, ordinal converter",
+            "keywords": [
+                "converter",
+                "number",
+                "ordinal",
+                "roman",
+                "word"
+            ],
+            "support": {
+                "source": "https://github.com/hnhdigital-os/php-number-converter/tree/1.2.0"
+            },
+            "time": "2021-02-27T03:13:12+00:00"
         },
         {
             "name": "laravel/framework",

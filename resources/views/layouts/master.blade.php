@@ -11,6 +11,7 @@
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.2/css/bootstrap.css" rel="stylesheet">
+        <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
         {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     </head>
@@ -24,7 +25,7 @@
         </div>
 
 
-        <aside class="control-sidebar control-sidebar-dark">
+        <aside class="control-sidebar control-sidebar-dark overflow-auto">
 
             <div class="p-3">
             <h5>Title</h5>
@@ -39,6 +40,8 @@
         <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
         {{-- <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script> --}}
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> 
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         <script>
@@ -71,7 +74,9 @@
           }
        
           $(".select2").select2({ width: '300px', dropdownCssClass: "bigdrop" });
+
        </script>
+        @include('RepositoryPattern.repo-js')
         @stack('custom-js')
     </body>
 </html>
@@ -83,6 +88,9 @@
   width: 100% !important;
   font-size: 12px;
   
+  }
+  .nav-sidebar{
+    overflow-y: scroll;
   }
   .datatable-bordered td, .datatable-bordered th {
   padding: 8px;
@@ -101,9 +109,17 @@
   color: black;
   
   }
-
+  ion-icon
+    {
+     zoom: 1.5;
+     margin:auto
+    }
+.select2{
+    width: 100% !important;
+}
 .select2-selection__rendered {
     line-height: 35px !important;
+  
 }
 .select2-container .select2-selection--single {
     height: 45px !important;
@@ -114,5 +130,75 @@
 .dataTables_scrollHeadInner, .table{
      width:100%!important; 
 }
+.open\:bg-green-200[open] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(187 247 208 / var(--tw-bg-opacity));
+}
+.open\:bg-red-600[open] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
+}
+.open\:bg-red-200[open] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 202 202 / var(--tw-bg-opacity));
 
+}
+.open\:bg-amber-200[open] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 230 138 / var(--tw-bg-opacity));
+}
+th.details-control {
+  background-color: #04AA6D;
+  color: white;
+}
+td.details-control {
+background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+cursor: alias;
+}
+tr.shown td.details-control {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+
+td.details-click {
+    background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: alias;
+}
+tr.shown td.details-click {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+.rating {
+   position: relative;
+   width: 180px;
+   background: transparent;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: .3em;
+   padding: 5px;
+   overflow: hidden;
+   border-radius: 20px;
+   box-shadow: 0 0 2px #b3acac;
+}
+
+.rating__result {
+   position: absolute;
+   top: 0;
+   left: 0;
+   transform: translateY(-10px) translateX(-5px);
+   z-index: -9;
+   font: 3em Arial, Helvetica, sans-serif;
+   color: #ebebeb8e;
+   pointer-events: none;
+}
+
+.rating__star {
+   font-size: 1.3em;
+   cursor: pointer;
+   color: #dabd18b2;
+   transition: filter linear .3s;
+}
+
+.rating__star:hover {
+   filter: drop-shadow(1px 1px 4px gold);
+}
 </style>

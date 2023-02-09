@@ -19,6 +19,7 @@
                                 <option value="view">View</option>
                                 <option value="get-all">Get All</option>
                                 <option value="activation">Activation</option>
+                                <option value="rating">Rating</option>
                                 <option value="create">Create</option>
                                 <option value="update">Update</option>
                                 <option value="delete">Delete</option>

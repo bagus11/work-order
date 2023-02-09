@@ -10,6 +10,17 @@
             </div>
             <div class="modal-body">
                <div class="container">
+                <div class="form-group row">
+                    <div class="col-md-4 mt-2">
+                        <label for="">Kategori</label>
+                    </div>
+                    <div class="col-md-8">
+                        <select name="select_categories_update" class="select2" style="width: 100%" id="select_categories_update"></select>
+                        <input type="hidden" class="form-control" id="categories_id_update">
+                        <span  style="color:red;" class="message_error text-red block categories_id_update_error"></span>
+                    </div>
+                </div>
+               
                     <div class="form-group row">
                         <div class="col-md-4 mt-2">
                             <label for="">Problem Type</label>

@@ -216,4 +216,11 @@ class MasterKantorController extends Controller
             'message'=>$message
         ]);
     }
+    public function get_kantor_name(Request $request)
+    {
+        $data =MasterKantor::where('flg_aktif', 1)->get();
+        return response()->json([
+            'data'=>$data
+        ]);
+    }
 }

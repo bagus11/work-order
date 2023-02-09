@@ -10,6 +10,18 @@
             </div>
             <div class="modal-body">
                <div class="container">
+                <div class="form-group row">
+                    <div class="col-md-3 mt-2">
+                        <label for="">Departement</label>
+                    </div>
+                    <div class="col-md-8">
+                        <select name="" id="select_departement" class="select2">
+
+                        </select>
+                        <input type="hidden" class="form-control" id="departement_id">
+                        <span  style="color:red;" class="message_error text-red block departement_id_error"></span>
+                    </div>
+                </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
                             <label for="">Name</label>

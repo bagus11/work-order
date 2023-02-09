@@ -122,7 +122,9 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-
+    'timezone' => 'Asia/Jakarta',
+    'locale' => 'id',
+    'faker_locale' => 'id_ID',
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -229,6 +231,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'NumConvert' => 'HnhDigital\LaravelNumberConverter\Facade',
 
     ],
 

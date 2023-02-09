@@ -66,7 +66,6 @@
                     'id': id
                 },
                 success: function(response) {                   
-                    console.log(response)
                     $('#office_id').val(id)
                     $('#office_name_update').val(response.detail.name)
                     $('#select_office_type_update').empty()

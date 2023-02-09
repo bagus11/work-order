@@ -38,7 +38,14 @@
           
            
     });
-    
+    $('#btn_update_departement').on('click', function(){
+        var data ={
+            'id':$('#departement_id').val(),
+            'departement_name_update':$('#departement_name_update').val(),
+            'initial_name_update':$('#initial_name_update').val()
+        }
+        store('update_departement',data,'master_departement' )
+    })
     $('#departement_table').on('click', '.editDepartement', function() {
             var id = $(this).data('id');
             $.ajax({

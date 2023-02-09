@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
+use App\Http\Requests\UpdateMasterDepartementRequest;
 use App\Models\MasterDepartement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -87,6 +89,26 @@ class MasterDepartementController extends Controller
         return response()->json([
             'data'=>$data
         ]);
+    }
+    public function update_departement(Request $request, UpdateMasterDepartementRequest $updateMasterDepartementRequest){
+        try {
+            $updateMasterDepartementRequest->validated();
+            $post =[
+                'initial'=>$request->initial_name_update,
+                'name'=>$request->departement_name_update,
+            ];
+            MasterDepartement::find($request->id)->update($post);
+            return ResponseFormatter::success(
+                $post,
+                'Category successfully added'
+            );            
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Category failed to add',
+                500
+            );
+        }
     }
 
 }

@@ -10,11 +10,21 @@
             </div>
             <div class="modal-body">
                <div class="container">
+                <div class="form-group row">
+                    <div class="col-md-3 mt-2">
+                        <label for="">Departement</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select name="" id="select_departement_update" class="select2"></select>
+                        <input type="hidden" class="form-control" id="departement_id_update">
+                        <span  style="color:red;" class="message_error text-red block departement_id_update_error"></span>
+                    </div>
+                </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
                             <label for="">Name</label>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <input type="hidden" class="form-control" id="categories_id">
                             <input type="text" class="form-control" id="categories_name_update">
                             <span  style="color:red;" class="message_error text-red block categories_name_update_error"></span>

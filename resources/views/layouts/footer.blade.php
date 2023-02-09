@@ -1,3 +1,3 @@
 <footer class="main-footer">
-    <strong>Copyright <a href="https://pralon.co.id">pralon.co.id</a>.</strong> All rights reserved.
+    <strong>Copyright <a href="https://pralon.co.id">pralon</a>.</strong> All rights reserved.
 </footer>

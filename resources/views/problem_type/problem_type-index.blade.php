@@ -8,7 +8,7 @@
                 <div class="card-header">
                     <div class="card-title">List Problem</div>
                     <div class="card-tools">
-                        @can('create-master_category')
+                        @can('create-problem_type')
                         <button id="add_problem" type="button" class="btn btn-success" data-toggle="modal" data-target="#addProblem" style="float:right">
                             <i class="fas fa-plus"></i>
                         </button>
@@ -22,6 +22,7 @@
                                 <th style="text-align:center"></th>
                                 <th style="text-align:center">Status</th>
                                 <th style="text-align:center">Nama</th>
+                                <th style="text-align:center">Kategori</th>
                                 <th style="text-align:center">Action</th>
                             </tr>
                         </thead>

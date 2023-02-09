@@ -6,12 +6,8 @@
           <div class="col-md-6">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">Profile</div>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
+                  <label for="">Profile</label>
+                  
                 </div>
                 <div class="card-body">
                    <div class="form-group row">

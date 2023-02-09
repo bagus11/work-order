@@ -17,9 +17,18 @@
                         <div class="col-md-4">
                             <select name="select_request_type" class="select2" style="width: 100%" id="select_request_type">
                                 <option value="">Choose Request type</option>
-                                <option value="RFM">Request For Maintainance</option>
+                                <option value="RFM">Request For Maintenance</option>
                                 <option value="RFP">Request For Project</option>
                             </select>
+                            <input type="hidden" id="request_type" class="form-controll">
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <label for="">Request For</label>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="select_departement" id="select_departement" class="select2" style="width: 100%"></select>
+                            <input type="hidden" id="departement_for">
+                            <span  style="color:red;" class="message_error text-red block departement_for_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -28,6 +37,7 @@
                         </div>
                         <div class="col-md-4">
                             <select name="select_categories" class="select2" style="width: 100%" id="select_categories">
+                                <option value="">Choose Departement First</option>
                             </select>
                             <input type="hidden" class="form-control" id="categories">
                             <span  style="color:red;" class="message_error text-red block categories_error"></span>
@@ -37,6 +47,7 @@
                         </div>
                         <div class="col-md-4">
                             <select name="select_problem_type" class="select2" style="width: 100%" id="select_problem_type">
+                                <option value="">Choose Categories First</option>
                             </select>
                             <input type="hidden" class="form-control" id="problem_type">
                             <span  style="color:red;" class="message_error text-red block problem_type_error"></span>
@@ -75,7 +86,7 @@
                </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btn_save_office" type="button" class="btn btn-success">Save changes</button>
+                <button id="btn_save_wo" type="button" class="btn btn-success">Save</button>
             </div>
         </div>
     </div>

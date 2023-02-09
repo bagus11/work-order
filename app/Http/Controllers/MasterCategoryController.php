@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
+use App\Http\Requests\StoreCategoriesRequest;
+use App\Http\Requests\UpdateCategoriesRequest;
 use App\Models\MasterCategory;
+use App\Models\MasterDepartement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 class MasterCategoryController extends Controller
@@ -13,43 +17,40 @@ class MasterCategoryController extends Controller
     }
     public function get_categories()
     {
-        $data = MasterCategory::all();
+        $data = MasterCategory::with('departement')->get();
         return response()->json([
             'data'=>$data
         ]);
     }
-    public function save_categories(Request $request)
-    {
-        $categories_name = $request->categories_name;
-        $status=500;
-        $message="Data Gagal disimpan";
-        $validator = Validator::make($request->all(),[
-            'categories_name'=>'required|unique:master_categories,name',
-        ],[
-            'categories_name.required'=>'Nama Role tidak boleh kosong',
-            'categories_name.unique'=>'Nama Role sudah ada',
-        
-        ]);
-        if($validator->fails()){
-            return response()->json([
-                'message'=>$validator->errors(), 
-                'status'=>422
-            ]);
-        }else{
-            $post=[
-                'name'=>$categories_name,
-                'flg_aktif'=>1
-            ];
-            $insert = MasterCategory::create($post);
-            if($insert){
-                $status=200;
-                $message="Data berhasil disimpan";
-            }
-        }
+   public function get_categories_id(Request $request)
+   {
+        $id = MasterDepartement::where('initial', $request->initial)->first();
+        $data = MasterCategory::with('departement')->where('departement_id', $id->id)->get();
         return response()->json([
-            'status'=>$status,
-            'message'=>$message
+            'data'=>$data
         ]);
+   }
+    public function save_categories(Request $request, StoreCategoriesRequest $storeCategoriesRequest)
+    {
+        try {
+            $storeCategoriesRequest->validated();
+            $post =[
+                'flg_aktif'=>1,
+                'departement_id'=>$request->departement_id,
+                'name'=>$request->categories_name,
+            ];
+            MasterCategory::create($post);
+            return ResponseFormatter::success(
+                $post,
+                'Category successfully added'
+            );            
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Category failed to add',
+                500
+            );
+        }
     }
     public function update_status_categories(Request $request)
     {
@@ -70,41 +71,32 @@ class MasterCategoryController extends Controller
     }
     public function detail_categories(Request $request)
     {
-        $detail = MasterCategory::find($request->id);
+        $detail = MasterCategory::with('departement')->find($request->id);
+        $data = MasterDepartement::where('flg_aktif',1)->get();
         return response()->json([
             'detail'=>$detail,
+            'data'=>$data
         ]);
     }
-    public function update_categories(Request $request)
+    public function update_categories(Request $request, UpdateCategoriesRequest $updateCategoriesRequest)
     {
-        $categories_name_update = $request->categories_name_update;
-        $status=500;
-        $message="Data Gagal disimpan";
-        $validator = Validator::make($request->all(),[
-            'categories_name_update'=>'required',
-        ],[
-            'categories_name_update.required'=>'Nama Role tidak boleh kosong',
-            'categories_name_update.unique'=>'Nama Role sudah ada',
-        
-        ]);
-        if($validator->fails()){
-            return response()->json([
-                'message'=>$validator->errors(), 
-                'status'=>422
-            ]);
-        }else{
-            $post=[
-                'name'=>$categories_name_update,
+        try {
+            $updateCategoriesRequest->validated();
+            $post =[
+                'departement_id'=>$request->departement_id_update,
+                'name'=>$request->categories_name_update,
             ];
-            $insert = MasterCategory::find($request->id)->update($post);
-            if($insert){
-                $status=200;
-                $message="Data berhasil disimpan";
-            }
+            MasterCategory::find($request->id)->update($post);
+            return ResponseFormatter::success(
+                $post,
+                'Category successfully updated'
+            );            
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Category failed to update',
+                500
+            );
         }
-        return response()->json([
-            'status'=>$status,
-            'message'=>$message
-        ]);
     }
 }
