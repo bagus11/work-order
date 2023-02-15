@@ -34,7 +34,7 @@ get_work_order_list()
     $('#btn_edit_wo').on('click', function(){
         var data ={
             'status_wo':$('#status_wo').val(),
-            'note':$('#note_pic').val(),
+            'note_pic':$('#note_pic').val(),
             'id':$('#wo_id').val()
         }
         approve_assignment(data)
@@ -353,9 +353,11 @@ get_work_order_list()
                                 }
                             }
                             if((response.data[i].status_wo == 4 && response.data[i].status_approval == 0) || (response.data[i].status_approval == 2 && response.data[i].status_wo == 4)){
-                                make_sure_done =`<button title="Approvement" class="ratingPIC btn btn-sm btn-success rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#ratingPIC">
-                                                 <ion-icon name="star"></ion-icon>
-                                            </button> `;
+                                if(auth_id == response.data[i].user_id){
+                                    make_sure_done =`<button title="Approvement" class="ratingPIC btn btn-sm btn-success rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#ratingPIC">
+                                                     <ion-icon name="star"></ion-icon>
+                                                </button> `;
+                                }
                             }
                             var detailWO = `<button title="Detail" class="detailWO btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#detailWO">
                                                  <ion-icon name="eye"></ion-icon>        
@@ -393,7 +395,7 @@ get_work_order_list()
                     $('#wo_table > tbody:first').html(data);
                         var table = $('#wo_table').DataTable({
                             scrollX  : true,
-                            scrollY  :280
+                            scrollY  :215
                         }).columns.adjust()    
                         $('#wo_table tbody').off().on('click', 'td.details-control', function (e) {
                         var tr = $(this).closest("tr");
@@ -471,10 +473,14 @@ get_work_order_list()
                             }else  if(response.log_data[i].status_wo==3){
                                 status_wo ="REVISI"
                                 status_color ='red'
-                            }else  if(response.log_data[i].status_wo==4){
+                            }else  if(response.log_data[i].status_wo==4  && response.log_data.status_approval == 1){
                                 status_wo ="DONE"
                                 status_color ='green'
-                            }else  if(response.log_data[i].status_wo==5){
+                            }else if(response.log_data[i].status_wo == 4 && (response.log_data[i].status_approval ==0 || response.log_data[i].status_approval == 2)){
+                                status_wo ="ON PROGRESS"
+                                status_color ='#5BC0F8'
+                            }
+                            else  if(response.log_data[i].status_wo==5){
                                 status_wo ="Complete"
                                 status_color ='black'
                             }else{
@@ -656,7 +662,6 @@ get_work_order_list()
                     {
                     $('span.'+key+'_error').text(val[0])
                     });
-                    $('#save').prop('disabled', false);
                     return false;
                 }else if(response.status == 200){
                     toastr['success'](response.message);
@@ -733,7 +738,10 @@ get_work_order_list()
                            $('span.'+key+'_error').text(val[0])
                         });
                         return false;
-                    }else{
+                    }else if(response.status==500){
+                        toastr['warning'](response.message);
+                    }
+                    else{
                         toastr['success'](response.message);
                         window.location = "{{route('work_order_list')}}";
                     }

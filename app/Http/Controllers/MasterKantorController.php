@@ -68,7 +68,7 @@ class MasterKantorController extends Controller
         $postal_code = $request->postal_code;
       
         $status =500;
-        $message ='Data gagal disimpan';
+        $message ='Data failed to save';
         $validator = Validator::make($request->all(),[
             'office_name'=>'required|unique:master_kantor,name',
             'office_type'=>'required',
@@ -112,7 +112,7 @@ class MasterKantorController extends Controller
             $insert = MasterKantor::create($post);
             if($insert){
                 $status=200;
-                $message='Data berhasil disimpan';
+                $message='Data successfully inserted';
             }
          
         }
@@ -165,7 +165,7 @@ class MasterKantorController extends Controller
         $postal_code_update = $request->postal_code_update;
       
         $status =500;
-        $message ='Data gagal disimpan';
+        $message ='Data failed to save';
         $validator = Validator::make($request->all(),[
             'office_name_update'=>'required',
             'office_type_update'=>'required',
@@ -207,7 +207,7 @@ class MasterKantorController extends Controller
             $insert = MasterKantor::find($request->office_id)->update($post);
             if($insert){
                 $status=200;
-                $message='Data berhasil disimpan';
+                $message='Data successfully inserted';
             }
          
         }

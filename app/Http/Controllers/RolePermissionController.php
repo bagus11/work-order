@@ -32,7 +32,7 @@ class RolePermissionController extends Controller
     {
         $roles_name = $request->roles_name;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'roles_name'=>'required|unique:roles,name',
         ],[
@@ -53,7 +53,7 @@ class RolePermissionController extends Controller
             $insert = Role::create($post);
             if($insert){
                 $status=200;
-                $message="Data berhasil disimpan";
+                $message="Data successfully inserted";
             }
         }
         return response()->json([
@@ -94,7 +94,7 @@ class RolePermissionController extends Controller
             $update =Role::where('id', $id)->update($post);
             if($update){
                 $status=200;
-                $message="Data berhasil disimpan";
+                $message="Data successfully inserted";
             }
         }
         return response()->json([
@@ -129,7 +129,7 @@ class RolePermissionController extends Controller
     {
         $permission_name = $request->permission_name;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'permission_name'=>'required|unique:permissions,name',
         ],[
@@ -151,7 +151,7 @@ class RolePermissionController extends Controller
             $insert = Permission::create($post);
             if($insert){
                 $status=200;
-                $message="Data berhasil disimpan";
+                $message="Data successfully inserted";
             }
         }
         return response()->json([

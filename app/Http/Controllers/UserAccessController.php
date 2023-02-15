@@ -49,7 +49,7 @@ class UserAccessController extends Controller
            $user->assignRole($role_name[0]->name);
 
                 $status =200;
-                $message ='Data berhasil disimpan';
+                $message ='Data successfully inserted';
         }
         return response()->json([
             'status'=>$status,
@@ -77,7 +77,7 @@ class UserAccessController extends Controller
             $user = User::find($user_id);
             $user->assignRole($role_name[0]->name);
             $status =200;
-            $message ='Data berhasil disimpan';
+            $message ='Data successfully inserted';
         }
         
         return response()->json([
@@ -113,7 +113,7 @@ class UserAccessController extends Controller
         if($role)
         {
             $status=200;
-            $message='Data berhasil disimpan';
+            $message='Data successfully inserted';
         }
         return response()->json([
             'status'=>$status,

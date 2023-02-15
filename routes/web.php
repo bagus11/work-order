@@ -180,6 +180,9 @@ Route::get('ict_wo', [ManualWOController::class, 'index'])->name('ict_wo');
 Route::post('manual_wo', [ManualWOController::class, 'manual_wo'])->name('manual_wo');
 // Home 
 Route::get('get_wo_summary', [HomeController::class, 'get_wo_summary'])->name('get_wo_summary');
+Route::get('logRating', [HomeController::class, 'logRating'])->name('logRating');
+Route::get('getNotification', [HomeController::class, 'getNotification'])->name('getNotification');
+Route::post('updateNotif', [HomeController::class, 'updateNotif'])->name('updateNotif');
 
 });
 

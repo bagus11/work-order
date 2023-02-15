@@ -74,7 +74,7 @@
           }
        
           $(".select2").select2({ width: '300px', dropdownCssClass: "bigdrop" });
-
+         
        </script>
         @include('RepositoryPattern.repo-js')
         @stack('custom-js')
@@ -95,7 +95,7 @@
   .datatable-bordered td, .datatable-bordered th {
   padding: 8px;
   }
-
+  .dataTables_filter input { width: 300px }
   .datatable-bordered tr:nth-child(even){background-color: #f2f2f2;}
 
   .datatable-bordered tr:hover {background-color: #ddd;}

@@ -160,7 +160,10 @@ get_assignment()
                     });
                     $('#save').prop('disabled', false);
                     return false;
-                }else{
+                }else if(response.status = 500){
+                    toastr['warning'](response.message);
+                }
+                else{
                     toastr['success'](response.message);
                     window.location = "{{route('work_order_assignment')}}";
                 }

@@ -26,7 +26,7 @@ class MasterDepartementController extends Controller
         $departement_name = $request->departement_name;
         $initial_name = $request->initial_name;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'departement_name'=>'required|unique:master_departements,name',
             'initial_name'=>'required|unique:master_departements,initial',
@@ -51,7 +51,7 @@ class MasterDepartementController extends Controller
             $insert = MasterDepartement::create($post);
             if($insert){
                 $status=200;
-                $message="Data berhasil disimpan";
+                $message="Data successfully inserted";
             }
         }
         return response()->json([

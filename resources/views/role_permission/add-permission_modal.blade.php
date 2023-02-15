@@ -18,6 +18,7 @@
                             <select name="option" class="select2" style="width:100%"  id="option">
                                 <option value="view">View</option>
                                 <option value="get-all">Get All</option>
+                                <option value="rating-pic">Rating PIC</option>
                                 <option value="activation">Activation</option>
                                 <option value="rating">Rating</option>
                                 <option value="create">Create</option>

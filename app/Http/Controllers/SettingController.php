@@ -17,7 +17,7 @@ class SettingController extends Controller
         $user_name = $request->user_name;
       
         $status =500;
-        $message ='Data gagal disimpan';
+        $message ='Data failed to save';
         $validator = Validator::make($request->all(),[
             'user_name'=>['required'],
           
@@ -34,7 +34,7 @@ class SettingController extends Controller
             $user->update(['name'=> $user_name]);
             if($user){
                 $status =200;
-                $message='Data berhasil disimpan';
+                $message='Data successfully inserted';
             }
         }
         return response()->json([
@@ -49,7 +49,7 @@ class SettingController extends Controller
         $new_password = $request->new_password;
         $confirm_passowrd = $request->confirm_passowrd;
         $status =500;
-        $message ='Data gagal disimpan';
+        $message ='Data failed to save';
         $validator = Validator::make($request->all(),[
             'current_password'=>['required', new MatchOldPassword],
             'new_password' =>'required|min:8',
@@ -71,7 +71,7 @@ class SettingController extends Controller
             $user->update(['password'=> Hash::make($new_password)]);
             if($user){
                 $status =200;
-                $message='Data berhasil disimpan';
+                $message='Data successfully inserted';
             }
         }
         return response()->json([

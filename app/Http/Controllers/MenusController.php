@@ -32,7 +32,7 @@ class MenusController extends Controller
         $menus_type = $request->menus_type;
         $menus_description = $request->menus_description;
         $status =500;
-        $message ='Data gagal disimpan';
+        $message ='Data failed to save';
         $validator = Validator::make($request->all(),[
             'menus_name'=>'required|unique:menus,name',
             'menus_link'=>'required|unique:menus,link',
@@ -71,7 +71,7 @@ class MenusController extends Controller
                 ];
                 Permission::create($post_permission);
                 $status =200;
-                $message ='Data berhasil disimpan';
+                $message ='Data successfully inserted';
             }
         }
         return response()->json([
@@ -93,7 +93,7 @@ class MenusController extends Controller
         $menus_id = $request->menus_id;
         $submenus_description = $request->submenus_description;
         $status =500;
-        $message ='Data gagal disimpan';
+        $message ='Data failed to save';
         $validator = Validator::make($request->all(),[
             'submenus_name'=>'required|unique:menus,name',
             'submenus_link'=>'required|unique:menus,link',
@@ -129,7 +129,7 @@ class MenusController extends Controller
                 ];
                 Permission::create($post_permission);
                 $status =200;
-                $message ='Data berhasil disimpan';
+                $message ='Data successfully inserted';
             }
         }
         return response()->json([
@@ -244,7 +244,7 @@ class MenusController extends Controller
         $submenus_description_update = $request->submenus_description_update;
         $status_submenus = $request->status;
         $status = 200;
-        $message ="Data gagal disimpan, harap hubungi IT Developer";
+        $message ="Data failed to save, harap hubungi IT Developer";
         $validator = Validator::make($request->all(),[
             'submenus_name_update'=>'required',
             'derivative_update'=>'required',

@@ -54,7 +54,7 @@ class UserController extends Controller
         $jabatan_id = $request->jabatan_id;
         $kode_kantor = $request->kode_kantor;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'user_name'=>'required',
             'departement_id'=>'required',

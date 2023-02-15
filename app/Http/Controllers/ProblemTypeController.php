@@ -34,7 +34,7 @@ class ProblemTypeController extends Controller
         $problem_name = $request->problem_name;
         $categories_id = $request->categories_id;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'problem_name'=>'required|unique:problem_types,name',
             'categories_id'=>'required',
@@ -57,7 +57,7 @@ class ProblemTypeController extends Controller
             $insert = ProblemType::create($post);
             if($insert){
                 $status=200;
-                $message="Data berhasil disimpan";
+                $message="Data successfully inserted";
             }
         }
         return response()->json([
@@ -99,7 +99,7 @@ class ProblemTypeController extends Controller
         $problem_name_update = $request->problem_name_update;
         $categories_id_update = $request->categories_id_update;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'problem_name_update'=>'required',
             'categories_id_update'=>'required',
@@ -120,7 +120,7 @@ class ProblemTypeController extends Controller
             $insert = ProblemType::find($request->id)->update($post);
             if($insert){
                 $status=200;
-                $message="Data berhasil disimpan";
+                $message="Data successfully inserted";
             }
         }
         return response()->json([

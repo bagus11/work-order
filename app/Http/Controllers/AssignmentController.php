@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\WONotification;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderLog;
 use Illuminate\Http\Request;
@@ -59,7 +60,7 @@ class AssignmentController extends Controller
           $user_pic = $request->user_pic;
           $approve = $request->approve;
           $status = 500;
-          $message="Data gagal disimpan";
+          $message="Data failed to save";
           $validator = Validator::make($request->all(),[
                'user_pic'=>'required',
            
@@ -72,41 +73,66 @@ class AssignmentController extends Controller
                    'message'=>$validator->errors(), 
                    'status'=>422
                ]);
-           }else{
-                $post=[
-                     'user_id_support'=>$user_pic,
-                     'status_wo'=>$approve == 1?1:5,
-                     'assignment'=>$approve,
-                ];
+          }else{
                 $log_wo = WorkOrder::find($request->id);
-                $post_log = [
-                     'request_code'=>$log_wo->request_code,
-                     'request_type'=>$log_wo->request_type,
-                     'departement_id'=>$log_wo->departement_id,
-                     'problem_type'=>$log_wo->problem_type,
-                     'add_info'=>$log_wo->add_info,
-                     'user_id'=>$log_wo->user_id,
-                     'assignment'=>$approve,
-                     'status_wo'=>$approve == 1?1:5,
-                     'category'=>$log_wo->category,
-                     'follow_up'=>$log_wo->follow_up,
-                     'status_approval'=>$log_wo->status_approval,
-                     'user_id_support'=>$user_pic,
-                     'subject'=>$log_wo->subject,
-                     'comment'=>$request->note,
-                     'creator'=>auth()->user()->id
-                ];
-            
-                DB::transaction(function() use($post,$request, $post_log) {
-                     WorkOrder::find($request->id)->update($post);
-                     WorkOrderLog::create($post_log);
-      
-                });
-                $validasi = WorkOrderLog::where('request_code',$log_wo->request_code)->count();
-                if($validasi == 2){
-                     $status = 200;
-                     $message = "Data berhasil disimpan";
+                $username = User::find($log_wo->user_id_support);
+                if($log_wo->status_wo == 0){
+                    $post=[
+                         'user_id_support'=>$user_pic,
+                         'status_wo'=>$approve == 1?1:5,
+                         'assignment'=>$approve,
+                    ];
+                    $post_log = [
+                         'request_code'=>$log_wo->request_code,
+                         'request_type'=>$log_wo->request_type,
+                         'departement_id'=>$log_wo->departement_id,
+                         'problem_type'=>$log_wo->problem_type,
+                         'add_info'=>$log_wo->add_info,
+                         'user_id'=>$log_wo->user_id,
+                         'assignment'=>$approve,
+                         'status_wo'=>$approve == 1?1:5,
+                         'category'=>$log_wo->category,
+                         'follow_up'=>$log_wo->follow_up,
+                         'status_approval'=>$log_wo->status_approval,
+                         'user_id_support'=>$user_pic,
+                         'subject'=>$log_wo->subject,
+                         'comment'=>$request->note,
+                         'creator'=>auth()->user()->id
+                    ];
+                    $picName = User::find($user_pic);
+                    $userPost =[
+                         'message'=>$picName->name.' has assign work order transaction with request code :'.$log_wo->request_code,
+                         'subject'=>'Assignment WO',
+                         'status'=>0,
+                         'link'=>'work_order_list',
+                         'userId'=>$log_wo->user_id,
+                         'created_at'=>date('Y-m-d H:i:s')
+                     ];
+                     $picPost =[
+                         'message'=>auth()->user()->name.' has assign work order transaction with request code :'.$log_wo->request_code.' to you',
+                         'subject'=>'Assignment WO',
+                         'status'=>0,
+                         'link'=>'work_order_list',
+                         'userId'=>$user_pic,
+                         'created_at'=>date('Y-m-d H:i:s')
+                     ];
+                    DB::transaction(function() use($post,$request, $post_log,$userPost,$picPost) {
+                         WorkOrder::find($request->id)->update($post);
+                         WorkOrderLog::create($post_log);
+                         WONotification::create($userPost);
+                         WONotification::create($picPost);
+          
+                    });
+                    $validasi = WorkOrder::where('request_code',$log_wo->request_code)->first();
+                    if($validasi->status_wo == $approve){
+                         $status = 200;
+                         $message = "Data successfully inserted";
+                    }
+                }else{
+                    $status = 500;
+                    $message="Data telah diassign oleh $username->name, silahkan refresh kembali"; 
                 }
+               
            }
           return response()->json([
                'status'=>$status,

@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <p>
+    <p style="font-size:12px">
         Dear Head {{$post['request_for']}} Departement, <br>
         Here we attach the new work order as follows
     </p>

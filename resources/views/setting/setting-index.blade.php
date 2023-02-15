@@ -19,15 +19,16 @@
                         </button>
                    </div>
                    <div class="container mt-2 justify-content-center ">
-                        <div class="form-groyup row">
+                        <div class="form-group row">
                             <div class="col-md-2 mt-2">
-                                <label for="">Name</label>
+                                <label for="">NIK</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" id="user_name" value="{{auth()->user()->name}}" class="form-control">
+                                <input type="text" id="nik" value="{{auth()->user()->nik}}" class="form-control" readonly>
                             </div>
                         </div>
-                        <div class="form-groyup row mt-2">
+
+                        <div class="form-group row ">
                             <div class="col-md-2 mt-2">
                                 <label for="">Email</label>
                             </div>
@@ -35,6 +36,17 @@
                                 <input type="text" id="email_user" value="{{auth()->user()->email}}" class="form-control" readonly>
                             </div>
                         </div>
+                        
+                        <div class="form-group row">
+                            <div class="col-md-2 mt-2">
+                                <label for="">Name</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" id="user_name" value="{{auth()->user()->name}}" class="form-control">
+                            </div>
+                        </div>
+                      
+                       
                    </div>
 
                 </div>

@@ -88,8 +88,10 @@
                    $('#permission_table > tbody:first').html(data);
                        $(document).ready(function() 
                     {
-                        $('#permission_table').DataTable();
-                        
+                        $('#permission_table').DataTable({
+                            scrollX  : true,
+                            scrollY  :190
+                      }).columns.adjust()
                     });
                
            },
@@ -147,7 +149,10 @@
                    $('#edit_permission_table > tbody:first').html(data);
                        $(document).ready(function() 
                     {
-                        $('#edit_permission_table').DataTable();
+                        $('#edit_permission_table').DataTable({
+                            scrollX  : true,
+                            scrollY  :190
+                      }).columns.adjust()
                         
                     });
                
@@ -246,7 +251,7 @@
                     $('#role_user_table > tbody:first').html(data);
                     $('#role_user_table').DataTable({
                         scrollX  : true,
-                        scrollY  :220
+                        scrollY  :190
                     }).columns.adjust()
             },
             error: function(xhr, status, error) {
@@ -357,7 +362,7 @@
                     $('#role_permission_table > tbody:first').html(data);
                     $('#role_permission_table').DataTable({
                         scrollX  : true,
-                        scrollY  :220
+                        scrollY  :190,
                     }).columns.adjust()
             },
             error: function(xhr, status, error) {

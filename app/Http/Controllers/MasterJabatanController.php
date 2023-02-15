@@ -25,7 +25,7 @@ class MasterJabatanController extends Controller
         $jabatan_name = $request->jabatan_name;
         $departement_id = $request->departement_id;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'jabatan_name'=>'required',
             'departement_id'=>'required',
@@ -51,7 +51,7 @@ class MasterJabatanController extends Controller
                 $insert = MasterJabatan::create($post);
                 if($insert){
                     $status=200;
-                    $message="Data berhasil disimpan";
+                    $message="Data successfully inserted";
                 }
             }
         }
@@ -90,7 +90,7 @@ class MasterJabatanController extends Controller
     {
         $jabatan_name_update = $request->jabatan_name_update;
         $status=500;
-        $message="Data Gagal disimpan";
+        $message="Data failed to save";
         $validator = Validator::make($request->all(),[
             'jabatan_name_update'=>'required',
         ],[
@@ -109,7 +109,7 @@ class MasterJabatanController extends Controller
                 $update = MasterJabatan::find($request->id)->update($post);
                 if($update){
                     $status=200;
-                    $message="Data berhasil disimpan";
+                    $message="Data successfully inserted";
                 }
         }
         return response()->json([

@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container" style="margin-top:-15px">
-    <div class="row justify-content-start">
+    <div class="row">
         <div class="col-12 col-sm-6 col-md-2">
          <input type="date" id="from_date" class="form-control" value="{{date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )}}">
         </div>
@@ -12,7 +12,7 @@
      </div>
 </div>
 <div class="container mt-2">
-    <div class="row justify-content-center">
+    <div class="row">
             <div class="col-12 col-sm-6 col-md-2">
                     <div class="info-box">
                         <span class="info-box-icon bg-white elevation-1"><i class="fas fa-chart-bar"></i></span>
@@ -76,8 +76,77 @@
     </div>
 </div>
 <div class="container">
-    <div class="row justify-content-start">
-        <div class="col-12 col-sm-12 col-md-6">
+    <div class="row">
+        @can('rating-pic-dashboard')
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card">
+                <div class="card-header bg-dark">
+                    <label for=""> Rating User</label>
+                  <div class="card-tools">
+                    <div class="btn-group" style="float:right">
+                        <button type="button" class="btn btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
+                         <i class="fas fa-history"></i>
+                        </button>
+                   
+                        <div class="dropdown-menu dropdown-menu-left" id="filter" role="menu" style="width:350px !important;">
+                            <div class="container">
+                               
+                               
+                                    <table class="datatable-bordered nowrap display" id="ratingLog">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:center;width:33%">No</th>
+                                                <th style="text-align:center;width:33%">Date</th>
+                                                <th style="text-align:center;width:33%">RFM</th>
+                                                <th style="text-align:center;width:33%">Rating</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px">
+                        <img style="display:block;width:60%;margin:auto" src="{{URL::asset('profile.png')}}" alt="">
+                      <br>
+                            <b for="" style="text-align:center">{{auth()->user()->name}}</b> <br>
+                            {{-- <b for="" id="jabatanUser" style="text-align:center">Jabatan</b> <br> --}}
+                            {{-- <p style="text-align: left;font-size:12px" class="mt-2"> --}}
+                                {{-- <strong for="" id="totalTask">Total Task </strong> <br> --}}
+                                <strong for="" style="margin-top:10px" id="ratingUser"> Rating</strong>
+                            {{-- </p> --}}
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+        @endcan
+        @can('get-all-dashboard')
+            
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card">
+                <div class="card-header bg-dark">
+                    <label for=""> Rating User</label>
+                  <div class="card-tools">
+                  
+                  </div>
+                </div>
+                <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px">
+                    <table class="datatable-bordered nowrap display" id="classementTable">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;width:33%">No</th>
+                                <th style="text-align:center;width:33%">PIC</th>
+                                <th style="text-align:center;width:33%">Rating</th>
+                            </tr>
+                        </thead>
+                    </table> 
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+        @endcan
+        <div class="col-12 col-sm-12 col-md-8">
             <div class="card">
                 <div class="card-header bg-dark">
                     <h3 class="card-title">Tracking History</h3>
@@ -97,6 +166,7 @@
                 </div>
             </div>
         </div>
+      
         {{-- <div class="col-12 col-sm-12 col-md-4">
             <div class="card collapsed-card">
                 <div class="card-header bg-dark">

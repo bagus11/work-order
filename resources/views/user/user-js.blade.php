@@ -81,8 +81,9 @@
             }
                 $('#user_table > tbody:first').html(data);
                 $('#user_table').DataTable({
-                    autoWidth:true
-                });
+                            scrollX  : true,
+                            scrollY  :220
+                      }).columns.adjust()
         },
         error: function(xhr, status, error) {
             swal.close();

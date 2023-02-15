@@ -1,23 +1,8 @@
 @extends('layouts.master')
 @section('title', 'Work Order')
 @section('content')
-{{-- <div class="container">
-    <div class="card collapsed-card">
-        <div class="card-header bg-dark">
-            <h3 class="card-title">Filter</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                <i class="fas fa-plus"></i>
-                </button>
-            </div>
-        </div>
-        <div class="card-body">
-        
-        </div>
-        
-    </div>
-</div> --}}
-<div class="container">
+
+
     <div class="justify-content-center">
           <div class="col-md-12">
             <div class="card card-dark">
@@ -35,7 +20,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mt-2">
                                             <label for="">From</label>
-                                            <input type="date" id="from" class="form-control" value="{{date('Y-m-d')}}">
+                                            <input type="date" id="from" class="form-control" value="{{date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )}}">
                                         </div>
                                         <div class="col-md-6 mt-2">
                                             <label for="">To</label>
@@ -98,7 +83,7 @@
             </div>
       </div>
     </div>
-</div>
+
 @include('work-order.add-work_order')
 @include('work-order.edit-work_order')
 @include('work-order.manual_assign-work_order')
