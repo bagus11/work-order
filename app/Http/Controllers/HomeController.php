@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterDepartement;
 use App\Models\MasterJabatan;
 use App\Models\WONotification;
 use App\Models\WorkOrder;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,59 +20,96 @@ class HomeController extends Controller
     {
         $from_date = $request->from_date;
         $end_date = $request->end_date;
+        $userDepartement = MasterDepartement::find(auth()->user()->departement);
         if(auth()->user()->hasPermissionTo('get-all-dashboard'))
         {
-            $status_new = WorkOrder::select(DB::raw('COUNT(id) as status_new'))->where('status_wo', 0)->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])->first();
-            $status_on_progress = WorkOrder::select(DB::raw('COUNT(id) as status_on_progress'))->whereIn('status_wo', [1,4])->where('status_approval',0)->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])->first();
-            $status_pending = WorkOrder::select(DB::raw('COUNT(id) as status_pending'))->where('status_wo', 2)->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])->first();
-            $status_revision = WorkOrder::select(DB::raw('COUNT(id) as status_revision'))->where('status_wo', 3)->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])->first();
-            $status_done = WorkOrder::select(DB::raw('COUNT(id) as status_done'))->where('status_wo', 4)->where('status_approval', 1)->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])->first();
-            $status_reject = WorkOrder::select(DB::raw('COUNT(id) as status_reject'))->where('status_wo', 5)->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])->first();
-            $ratingUser = WorkOrder::select(DB::raw('AVG(rating) as rating'), DB::raw('COUNT(rating) as total'))->where('status_wo', 4)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where(function($query){
-                $query->where('user_id_support', auth()->user()->id)
-                ->where('status_approval', 1); 
-            })->first();
-            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name')
-            ->join('users','users.id','=','work_orders.user_id_support')
-            ->groupBy('work_orders.user_id_support')
-            ->where('status_approval',1)
-            ->orderBy('classement','desc')
-            ->get();
+            $status_new = WorkOrder::select(DB::raw('COUNT(id) as status_new'))
+                                        ->where('status_wo', 0)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->first();
+            $status_on_progress = WorkOrder::select(DB::raw('COUNT(id) as status_on_progress'))
+                                        ->whereIn('status_wo', [1,4])->where('status_approval',0)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->first();
+            $status_pending = WorkOrder::select(DB::raw('COUNT(id) as status_pending'))
+                                        ->where('status_wo', 2)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->first();
+            $status_revision = WorkOrder::select(DB::raw('COUNT(id) as status_revision'))
+                                        ->where('status_wo', 3)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->first();
+            $status_done = WorkOrder::select(DB::raw('COUNT(id) as status_done'))
+                                        ->where('status_wo', 4)->where('status_approval', 1)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->first();
+            $status_reject = WorkOrder::select(DB::raw('COUNT(id) as status_reject'))
+                                        ->where('status_wo', 5)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->first();
+            $ratingUser = WorkOrder::select(DB::raw('AVG(rating) as rating'), DB::raw('COUNT(rating) as total'))
+                                        ->where('status_wo', 4)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        ->where(function($query){
+                                            $query->where('user_id_support', auth()->user()->id)
+                                            ->where('status_approval', 1); 
+                                        })->first();
+
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+                                        ->join('users','users.id','=','work_orders.user_id_support')
+                                        ->groupBy('work_orders.user_id_support')
+                                        ->where('status_approval',1)
+                                        ->where('request_for',$userDepartement->initial)
+                                        ->orderBy('classement','desc')
+                                        ->orderBy('count','desc')
+                                        ->get();
             $jabatanUser= MasterJabatan::find(auth()->user()->jabatan);
         }else{
+            $requestFor = MasterDepartement::find(auth()->user()->departement);
             $status_new = WorkOrder::select(DB::raw('COUNT(id) as status_new'))->where('status_wo', 0)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })->first();
-            $status_on_progress = WorkOrder::select(DB::raw('COUNT(id) as status_on_progress'))->whereIn('status_wo', [1,4])->where('status_approval',0)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })->first();
-            $status_pending = WorkOrder::select(DB::raw('COUNT(id) as status_pending'))->where('status_wo', 2)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })->first();
-            $status_revision = WorkOrder::select(DB::raw('COUNT(id) as status_revision'))->where('status_wo', 3)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })->first();
-            $status_done = WorkOrder::select(DB::raw('COUNT(id) as status_done'))->where('status_wo', 4)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where('status_approval', 1)
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })->first();
-            $status_reject = WorkOrder::select(DB::raw('COUNT(id) as status_reject'))->where('status_wo', 5)
-            ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })->first();
+                                    ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                    ->where(function($query) use($requestFor){
+                                        $query->where('user_id', auth()->user()->id)
+                                        ->orWhere('request_for', $requestFor->initial); 
+                                    })->first();
+            $status_on_progress = WorkOrder::select(DB::raw('COUNT(id) as status_on_progress'))
+                                    ->whereIn('status_wo', [1,4])->where('status_approval',0)
+                                    ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })->first();
+            $status_pending = WorkOrder::select(DB::raw('COUNT(id) as status_pending'))
+                                    ->where('status_wo', 2)
+                                    ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })->first();
+            $status_revision = WorkOrder::select(DB::raw('COUNT(id) as status_revision'))
+                                    ->where('status_wo', 3)
+                                    ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })->first();
+            $status_done = WorkOrder::select(DB::raw('COUNT(id) as status_done'))
+                                    ->where('status_wo', 4)
+                                    ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                    ->where('status_approval', 1)
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })->first();
+            $status_reject = WorkOrder::select(DB::raw('COUNT(id) as status_reject'))
+                                    ->where('status_wo', 5)
+                                    ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })->first();
             $classementPIC="";
 
             // Trackijng History
@@ -100,14 +139,57 @@ class HomeController extends Controller
     }
     public function logRating(Request $request)
     {
-        $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
-                            ->where('status_wo',4)
-                            ->where('user_id_support', auth()->user()->id)
-                            ->where('status_approval',1)
-                            ->orderBy('created_at','desc')
-                            ->get();
+     
+        if($request->selectFilter == 2){
+            $date = Carbon::createFromFormat('Y-m-d', $request->filter.'-01')
+            ->endOfMonth()
+            ->format('Y-m-d');
+            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
+            ->where('status_wo',4)
+            ->where('user_id_support', auth()->user()->id)
+            ->where('status_approval',1)
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->filter.'-01', $date])
+            ->orderBy('created_at','desc')
+            ->get();
+
+            $ratingUser = WorkOrder::select(DB::raw('AVG(rating) as rating'), DB::raw('COUNT(rating) as total'))
+            ->where('status_wo', 4)
+            ->where('status_approval',1)
+            ->where('user_id_support', auth()->user()->id)
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->filter.'-01', $date])
+            ->first();
+        }else if($request->selectFilter == 3){
+            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
+            ->where('status_wo',4)
+            ->where('user_id_support', auth()->user()->id)
+            ->where('status_approval',1)
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->filter.'-01-01', $request->filter.'-12-31'])
+            ->orderBy('created_at','desc')
+            ->get();
+            $ratingUser = WorkOrder::select(DB::raw('AVG(rating) as rating'), DB::raw('COUNT(rating) as total'))
+            ->where('status_wo', 4)
+            ->where('status_approval',1)
+            ->where('user_id_support', auth()->user()->id)
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->filter.'-01-01', $request->filter.'-12-31'])
+            ->first();
+        }
+        else{
+            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
+            ->where('status_wo',4)
+            ->where('user_id_support', auth()->user()->id)
+            ->where('status_approval',1)
+            ->orderBy('created_at','desc')
+            ->get();
+            $ratingUser = WorkOrder::select(DB::raw('AVG(rating) as rating'), DB::raw('COUNT(rating) as total'))
+            ->where('status_wo', 4)
+            ->where('status_approval',1)
+            ->where('user_id_support', auth()->user()->id)
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->filter.'-01-01', $request->filter.'-12-31'])
+            ->first();
+        }
         return response()->json([
-            'data'=>$data
+            'data'=>$data,
+            'ratingUser'=>$ratingUser,
         ]);
     }
     public function getNotification(){
@@ -134,4 +216,121 @@ class HomeController extends Controller
             'data'=>$data,
         ]);
     }
+    public function getRankingFilter(Request $request)
+    {
+        $userDepartement = MasterDepartement::find(auth()->user()->departement);
+        if($request->selectFilter == 2){
+            $date = Carbon::createFromFormat('Y-m-d', $request->filter.'-01')
+                            ->endOfMonth()
+                            ->format('Y-m-d');
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+                                    ->join('users','users.id','=','work_orders.user_id_support')
+                                    ->groupBy('work_orders.user_id_support')
+                                    ->where('status_approval',1)
+                                    ->where('request_for',$userDepartement->initial)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->filter.'-01', $date])
+                                    ->orderBy('classement','desc')
+                                    ->orderBy('count','desc')
+                                    ->get();
+        }
+        else if($request->selectFilter == 3){
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+                                    ->join('users','users.id','=','work_orders.user_id_support')
+                                    ->groupBy('work_orders.user_id_support')
+                                    ->where('status_approval',1)
+                                    ->where('request_for',$userDepartement->initial)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->filter.'-01-01', $request->filter.'-12-31'])
+                                    ->orderBy('classement','desc')
+                                    ->orderBy('count','desc')
+                                    ->get();
+        }else{
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+                                    ->join('users','users.id','=','work_orders.user_id_support')
+                                    ->groupBy('work_orders.user_id_support')
+                                    ->where('status_approval',1)
+                                    ->where('request_for',$userDepartement->initial)
+                                    ->orderBy('classement','desc')
+                                    ->orderBy('count','desc')
+                                    ->get();
+        }
+        return response()->json([
+            'classementPIC'=>$classementPIC,
+        ]);
+    }
+    
+    public function percentageType(Request $request){
+    
+        if($request->selectFilter == 2){
+            $date = Carbon::createFromFormat('Y-m-d', $request->filter.'-01')
+                            ->endOfMonth()
+                            ->format('Y-m-d');
+            $data = DB::table('work_orders')->select(DB::raw('COUNT(work_orders.category) as count'),'work_orders.problem_type','master_categories.name as problemName')
+                                    
+                                    ->join('master_categories','master_categories.id','=','work_orders.category')
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })
+                                    ->where('work_orders.status_wo','!=',5)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->filter.'-01', $date])
+                                    ->groupBy('work_orders.category')
+                                    ->get();
+        }
+        else if($request->selectFilter == 3){
+            $data = DB::table('work_orders')->select(DB::raw('COUNT(work_orders.category) as count'),'work_orders.problem_type','master_categories.name as problemName')
+                                    
+                                    ->join('master_categories','master_categories.id','=','work_orders.category')
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })
+                                    ->where('work_orders.status_wo','!=',5)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->filter.'-01-01', $request->filter.'-12-31'])
+                                    ->groupBy('work_orders.category')
+                                    
+                                    ->get();
+        }else{
+            $data = DB::table('work_orders')->select(DB::raw('COUNT(work_orders.category) as count'),'work_orders.problem_type','master_categories.name as problemName')
+                                    
+                                    ->join('master_categories','master_categories.id','=','work_orders.category')
+                                    ->where(function($query){
+                                        $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                                    })
+                                    ->where('work_orders.status_wo','!=',5)
+                                    ->groupBy('work_orders.category')
+                                    
+                                    ->get();
+        }
+
+        return response()->json([
+            'data'=>$data,
+        ]);
+    }
+    public function getWorkOrderByStatus(Request $request)
+    {
+        if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
+        {
+            $data = DB::table('work_orders')
+            ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+            ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+            ->where('work_orders.status_wo',$request->status)
+            ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+            ->orderBy('id','desc')
+            ->get();
+        }else{
+            
+            $data = DB::table('work_orders')
+            ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+            ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+            ->where('work_orders.status_wo',$request->status)
+            ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+            ->where(function($query){
+                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+            })
+            ->orderBy('id','desc')
+            ->get();
+        }
+       return response()->json([
+        'data'=>$data
+        ]);
+    }
+
 }

@@ -1,9 +1,232 @@
 <script>
+    getRatingLog()
+    get_wo_summary()
+    problemType()
     $(document).on('click', '#filter', function (e) {
         e.stopPropagation();
     });
-    getRatingLog()
-    get_wo_summary()
+    $(document).on('click', '.dropdown-menu', function (e) {
+        e.stopPropagation();
+    });
+    $('#selectFilter').on('change', function(){
+        var selectFilter = $('#selectFilter').val()
+        if(selectFilter == 2){
+            $('#paramterFilter').empty()
+            $('#paramterFilter').append(`
+                <input type="month" class="form-control" id="filter" value="{{date('Y-m')}}">
+            `);
+        }else if(selectFilter == 3){
+            $('#paramterFilter').empty()
+            $('#paramterFilter').append(`
+                <input type="number" style="text-align:center" class="form-control" id="filter" value="{{date('Y')}}">
+            `);
+        }else{
+            $('#paramterFilter').empty()
+            $('#paramterFilter').append(
+                `
+                    <label class="mt-2">All Periode</label>
+                `
+            )
+        }
+    })
+    $('#selectPercentageFilter').on('change', function(){
+        var selectPercentageFilter = $('#selectPercentageFilter').val()
+        if(selectPercentageFilter == 2){
+            $('#paramterPercentageFilter').empty()
+            $('#paramterPercentageFilter').append(`
+                <input type="month" class="form-control" id="filterPercentage" value="{{date('Y-m')}}">
+            `);
+        }else if(selectPercentageFilter == 3){
+            $('#paramterPercentageFilter').empty()
+            $('#paramterPercentageFilter').append(`
+                <input type="number" style="text-align:center" class="form-control" id="filterPercentage" value="{{date('Y')}}">
+            `);
+        }else{
+            $('#paramterPercentageFilter').empty()
+            $('#paramterPercentageFilter').append(
+                `
+                    <label class="mt-2">All Periode</label>
+                `
+            )
+        }
+    })
+    $('#selectRatingFilter').on('change', function(){
+        var selectRatingFilter = $('#selectRatingFilter').val()
+        if(selectRatingFilter == 2){
+            $('#paramterRatingFilter').empty()
+            $('#paramterRatingFilter').append(`
+                <input type="month" class="form-control" id="filterRating" value="{{date('Y-m')}}">
+            `);
+        }else if(selectRatingFilter == 3){
+            $('#paramterRatingFilter').empty()
+            $('#paramterRatingFilter').append(`
+                <input type="number" style="text-align:center" class="form-control" id="filterRating" value="{{date('Y')}}">
+            `);
+        }else{
+            $('#paramterRatingFilter').empty()
+            $('#paramterRatingFilter').append(
+                `
+                    <label class="mt-2">All Periode</label>
+                `
+            )
+        }
+    })
+    $('#btnRankingFilter').on('click', function(){
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('getRankingFilter')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                    'selectFilter':$('#selectFilter').val(),
+                    'filter':$('#filter').val(),
+                },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                getClassement(response)
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    })
+    $('#btnRatingFilter').on('click', function(){
+        $('#ratingUser').html('')
+
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('logRating')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                    'selectFilter':$('#selectRatingFilter').val(),
+                    'filter':$('#filterRating').val(),
+                },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                mapping_ratingLog(response)
+                var rating =0;
+                    if(response.ratingUser.rating != null){
+                        rating = parseFloat(response.ratingUser.rating).toFixed(2)
+                    }
+                $('#ratingUser').html('Rating : ' + rating +' / 5.0')
+               
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    })
+    $('#btnPercentageFilter').on('click', function(){
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('percentageType')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                    'selectFilter':$('#selectPercentageFilter').val(),
+                    'filter':$('#filterPercentage').val(),
+                },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+              
+                $('canvas#percentageChart').remove()
+                $('canvas#percentageChart_container').remove();
+                if(response.data.length > 0){
+                    $('#percentageLabel').html('')
+                    var data = []
+                    var label =[]
+                    var masterColor =['#F7464A','#46BFBD','#FDB45C','#293462']
+                    var color = []
+                    for(i=0; i < response.data.length ; i++){
+                        data.push(response.data[i].count)
+                        label.push(response.data[i].problemName)
+                        color.push(masterColor[i])
+                    }
+                 
+                    $('#percentageChart_container').append('<canvas id="percentageChart" width="`250" height="250" ></canvas>')
+                    var canvas = document.getElementById("percentageChart");
+                    var chart = canvas.getContext('2d')
+                    pieChart('Percentage',label,data,color,'pie',chart)
+                }else{
+                   $('#percentageLabel').html('Data is Null')
+                }
+               
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    })
+    $('#btnNewLog').on('click', function(){
+        var data ={
+            'from_date':$('#from_date').val(),
+            'end_date':$('#end_date').val(),
+            'status':0
+        }
+        datatableHelper(data,'logNewTable')
+    })
+    $('#btnProgressLog').on('click', function(){
+        var data ={
+            'from_date':$('#from_date').val(),
+            'end_date':$('#end_date').val(),
+            'status':1
+        }
+        datatableHelper(data,'logProgressTable')
+    })
+    $('#btnPendingLog').on('click', function(){
+        var data ={
+            'from_date':$('#from_date').val(),
+            'end_date':$('#end_date').val(),
+            'status':2
+        }
+        datatableHelper(data,'logPendingTable')
+    })
+    $('#btnRevisionLog').on('click', function(){
+        var data ={
+            'from_date':$('#from_date').val(),
+            'end_date':$('#end_date').val(),
+            'status':3
+        }
+        datatableHelper(data,'logRevisionTable')
+    })
+    $('#btnDoneLog').on('click', function(){
+        var data ={
+            'from_date':$('#from_date').val(),
+            'end_date':$('#end_date').val(),
+            'status':4
+        }
+        datatableHelper(data,'logDoneTable')
+    })
+    $('#btnRejectLog').on('click', function(){
+        var data ={
+            'from_date':$('#from_date').val(),
+            'end_date':$('#end_date').val(),
+            'status':5
+        }
+        datatableHelper(data,'logRejectTable')
+    })
     $('#from_date').on('change', function(){
         get_wo_summary()
     })
@@ -11,8 +234,6 @@
         get_wo_summary()
     })
     function getRatingLog(){
-        $('#ratingLog').DataTable().clear();
-        $('#ratingLog').DataTable().destroy();
         $.ajax({
             headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -30,13 +251,23 @@
             },
             success: function(response) {
                 swal.close();
-                var data=''
+                mapping_ratingLog(response)
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
+    function mapping_ratingLog(response){
+        $('#ratingLog').DataTable().clear();
+        $('#ratingLog').DataTable().destroy();
+        var data=''
                 var avg =0;
                 for(i = 0; i < response.data.length; i++ )
                 {
                     avg += response.data[i]['rating'] == null ? 0 :response.data[i]['rating']
                     data += `<tr style="text-align: center;">
-
                                 <td style="width:25%;text-align:center;">${i + 1}</td>
                                 <td style="width:25%;text-align:left;">${response.data[i]['date']==null?'':response.data[i]['date']}</td>
                                 <td style="width:25%;text-align:left;">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
@@ -44,7 +275,7 @@
                             </tr>
                             `;
                 }
-            
+                if( response.data.length > 1){
                     data +=`
                             <tr>
                                 <td></td>
@@ -53,6 +284,7 @@
                                 <td style="width:25%;text-align:center;;font-weight:bold"> ${parseFloat(avg /response.data.length).toFixed(2) }</td>
                             </tr>
                     `;
+                }
                     $('#ratingLog > tbody:first').html(data);
                     $('#ratingLog').DataTable({
                         "destroy": true,
@@ -65,12 +297,6 @@
                         'scrollY':150,
                        "bInfo" : false
                     }).columns.adjust()
-            },
-            error: function(xhr, status, error) {
-                swal.close();
-                toastr['error']('Failed to get data, please contact ICT Developer');
-            }
-        });
     }
     function getClassement(response){
         $('#classementTable').DataTable().clear();
@@ -83,7 +309,8 @@
                     data += `<tr style="text-align: center;">
                                 <td style="width:25%;text-align:center;">${i + 1}</td>
                                 <td style="width:25%;text-align:left;">${response.classementPIC[i]['name']==null?'':response.classementPIC[i]['name']}</td>
-                                <td style="width:25%;text-align:center;">${response.classementPIC[i]['classement']==null?'':response.classementPIC[i]['classement']}</td>
+                                <td style="width:25%;text-align:center;">${response.classementPIC[i]['count']==null?'':response.classementPIC[i]['count']}</td>
+                                <td style="width:25%;text-align:center;">${response.classementPIC[i]['classement']==null?'': parseFloat(response.classementPIC[i].classement).toFixed(2)}</td>
                             </tr>
                             `;
                 }
@@ -119,7 +346,7 @@
                 },
                 success: function(response) {
                     swal.close();
-                    console.log()
+                   
                     var rating =0;
                     if(response.ratingUser.rating != null){
                         rating = parseFloat(response.ratingUser.rating).toFixed(2)
@@ -134,7 +361,6 @@
                     $('#ratingUser').html('Rating : ' + rating +' / 5.0')
                     $('#totalTask').html('Total Task : '+response.ratingUser.total)
                     // master_chart('Supplier',bulan,type,chart,data)
-                    console.log(response)
                     response.classementPIC == null ? '': getClassement(response)
                 },
                 error: function(xhr, status, error) {
@@ -143,25 +369,103 @@
                 }
             });
     }
-    function master_chart(title,labels,type,id,data_a){
-        const data = {
-            labels: labels,
-            datasets: [{
-            label: title,
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: data_a,
-            }]
-        }
-        const config = {
-            type:type,
-            data: data,
-            options: {}
-        };
-       
-        var myChart = new Chart(
-            id,
-            config
-        );
+    function problemType(){
+        $('#percentageLabel').hide()
+            $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('percentageType')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                    'selectFilter':$('#selectPercentageFilter').val(),
+                    'filter':$('#filterPercentage').val(),
+                },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+               if(response.data.length > 0 ){
+                    var data = []
+                    var label =[]
+                    var masterColor =['#F7464A','#46BFBD','#FDB45C','#293462']
+                    var color = []
+                    for(i=0; i < response.data.length ; i++){
+                        data.push(response.data[i].count)
+                        label.push(response.data[i].problemName)
+                        color.push(masterColor[i])
+                    }
+                    $('canvas#percentageChart').remove()
+                    $('canvas#percentageChart_container').remove();
+                    $('#percentageChart_container').append('<canvas id="percentageChart" width="100" height="100" ></canvas>')
+                    var canvas = document.getElementById("percentageChart");
+                    var chart = canvas.getContext('2d')
+                    pieChart('Percentage',label,data,color,'pie',chart)
+               }
+               else{
+                $('#percentageLabel').show();
+                $('#percentageLabel').html('Data is Null')
+               }
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
+    function datatableHelper(data,idTable){
+        $.ajax({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{route('getWorkOrderByStatus')}}",
+                type: "get",
+                dataType: 'json',
+                async: true,
+                data:data,
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success: function(response) {
+                    swal.close();
+                    mappingDatatableHelper(response,idTable)
+                 
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+    }
+    function mappingDatatableHelper(response,id){
+        $('#'+id).DataTable().clear();
+        $('#'+id).DataTable().destroy();
+        var data=''
+              
+                for(i = 0; i < response.data.length; i++ )
+                {
+                    data += `<tr style="text-align: center;">
+                                <td style="width:25%;text-align:center;">${i + 1}</td>
+                                <td style="width:25%;text-align:left;">${response.data[i]['date']==null?'':response.data[i]['date']}</td>
+                                <td style="width:25%;text-align:left;">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
+                                <td style="width:25%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
+                            </tr>
+                            `;
+                }
+                    $('#'+id+' > tbody:first').html(data);
+                    $('#'+id).DataTable({
+                        "destroy": true,
+                        "autoWidth" : false,
+                        "searching": false,
+                        "aaSorting" : true,
+                        "ordering":false,
+                        "paging":   false,
+                        "scrollX":true,
+                        'scrollY':150,
+                       "bInfo" : false
+                    }).columns.adjust()
     }
 </script>

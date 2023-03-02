@@ -21,25 +21,25 @@ get_assignment()
                 },
                 success: function(response) {
                 swal.close();
-                $('#select_request_type').empty()
-                $('#select_request_type').append('<option value ="'+response.detail.request_type+'">'+response.detail.request_type+'</option>')
-                $('#select_categories').empty()
-                $('#select_categories').append('<option value ="'+response.detail.categories+'">'+response.detail.categories_name+'</option>')
-                $('#select_problem_type').empty()
-                $('#select_problem_type').append('<option value ="'+response.detail.problem_type+'">'+response.detail.problem_type_name+'</option>')
-                $('#request_type').val(response.detail.request_type)
-                $('#categories').val(response.detail.categories)
-                $('#problem_type').val(response.detail.problem_type)
-                $('#subject').val(response.detail.subject)
-                $('#add_info').val(response.detail.add_info)
-                $('#request_code').val(response.detail.request_code)
-                $('#username').val(response.detail.username)
+                $('#select_request_type').html(': '+response.detail.request_type)
+                $('#select_categories').html(': '+response.detail.categories_name)
+                $('#select_problem_type').html(': '+response.detail.problem_type_name)
+                $('#request_type').html(': '+response.detail.request_type)
+                $('#subject').html(': '+response.detail.subject)
+                $('#add_info').html(': '+response.detail.add_info)
+                $('#request_code').html(': '+response.detail.request_code)
+                $('#username').html(': '+response.detail.username)
                 $('#wo_id').val(id)
                 $('#select_user').empty()
                 $('#select_user').append('<option value="">Choose PIC</option>')
+                $('#selectPriority').append('<option value="">Choose Level</option>')
                 $.each(response.data,function(i,data){
                     $('#select_user').append('<option value="'+data.id+'">' + data.name +'</option>');
                 });
+                $.each(response.priority,function(i,data){
+                    $('#selectPriority').append('<option value="'+data.id+'">' + data.name +'</option>');
+                });
+                
                  
                 },
                 error: function(xhr, status, error) {
@@ -52,6 +52,7 @@ get_assignment()
     $('#btn_approve_assign').on('click', function(){
         var data ={
         'user_pic': $('#user_pic').val(),
+        'priority': $('#priority').val(),
         'note': $('#note').val(),
         'id':$('#wo_id').val(),
         'approve':1
@@ -65,6 +66,7 @@ get_assignment()
     $('#btn_reject_assign').on('click', function(){
         var data ={
         'user_pic': $('#user_pic').val(),
+        'priority': $('#priority').val(),
         'note': $('#note').val(),
         'id':$('#wo_id').val(),
         'approve':2
@@ -74,6 +76,10 @@ get_assignment()
     $('#select_user').on('change', function(){
         var select_user = $('#select_user').val()
         $('#user_pic').val(select_user)
+    })
+    $('#selectPriority').on('change', function(){
+        var selectPriority = $('#selectPriority').val()
+        $('#priority').val(selectPriority)
     })
     function get_assignment(){
             $('#assignment_table').DataTable().clear();
@@ -97,28 +103,49 @@ get_assignment()
                         var satatus_wo = '';
                         var status_color = ''
                         if(response.data[i].status_wo==0){
-                            status_wo ='NEW'
-                            status_color ='black'
-                        }else  if(response.data[i].status_wo==1){
-                            status_wo ="ON PROGRESS"
-                            status_color ='blue'
-                        }else  if(response.data[i].status_wo==2){
-                            status_wo ="DONE"
-                            status_color ='green'
-                        }else  if(response.data[i].status_wo==3){
-                            status_wo ="REVISI"
-                            status_color ='red'
-                        }
+                                status_wo ='NEW'
+                                status_color ='black'
+                            }else  if(response.data[i].status_wo==1){
+                                status_wo ="ON PROGRESS"
+                                status_color ='#5BC0F8'
+                            }else  if(response.data[i].status_wo==2){
+                                status_wo ="PENDING"
+                                status_color ='#FFC93C'
+                            }else  if(response.data[i].status_wo==3){
+                                status_wo ="REVISION"
+                                status_color ='red'
+                            }else if(response.data[i].status_wo==4){
+                                if(response.data[i].status_approval == '1'){
+                                    status_wo ="DONE"
+                                    status_color ='green'
+                                }else{
+                                    status_wo ="CHECKING"
+                                    status_color ='#F0A04B'
+                                }
+                            }else{
+                                status_wo ="REJECT"
+                                status_color ='red'
+                            }
+                            var assignPIC =''
+                            var priority =''
+                            if(response.data[i].status_wo ==0){
+                                assignPIC =` <button title="Assign PIC" class="editAssignment btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editAssignment">
+                                                <i class="fas fa-solid fa-user"></i>
+                                            </button> `;
+                            }
+                            if(response.data[i].status_wo != 0 && response.data[i].priority == null){
+                                priority =` <button title="Assign Priority" class="editAssignment btn btn-warning rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editAssignment">
+                                                <i class="fas fa-solid fa-city"></i>
+                                            </button> `;
+                            }
                         data += `<tr style="text-align: center;">
                                     <td style="width:25%;text-align:left;">${response.data[i]['username']==null?'':response.data[i]['username']}</td>
                                     <td style="width:25%;text-align:center;" class="request_code">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
                                     <td style="width:25%;text-align:center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
                                     <td style="width:25%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
-                                    <td style="width:25%;text-align:center;"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
+                                    <td style="width:25%;text-align:center;color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
                                     <td style="width:25%;text-align:center">
-                                            <button title="Detail" class="editAssignment btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editAssignment">
-                                                <i class="fas fa-solid fa-eye"></i>
-                                            </button> 
+                                          ${assignPIC} ${priority}
                                     </td>
                                 </tr>
                                 `;
@@ -160,7 +187,7 @@ get_assignment()
                     });
                     $('#save').prop('disabled', false);
                     return false;
-                }else if(response.status = 500){
+                }else if(response.status == 500){
                     toastr['warning'](response.message);
                 }
                 else{

@@ -11,90 +11,79 @@
             <div class="modal-body">
                <div class="container">
                 <div class="form-group row">
-                    <div class="col-md-2 mt-2">
-                        <label for="">Request By</label>
+                    <div class="col-4 col-sm-4 col-md-2 mt-2">
+                        <label for="">Request Type</label>
                     </div>
-                    <div class="col-md-4">
-                        <input type="hidden" class="form-control" id="wo_id" readonly>
-                        <input type="text" class="form-control" id="username" readonly>
-                        <span  style="color:red;" class="message_error text-red block add_info_error"></span>
-                    </div>
-                    <div class="col-md-2 mt-2">
-                        <label for="">Request Code</label>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="request_code" readonly>
-                        <span  style="color:red;" class="message_error text-red block add_info_error"></span>
+                    <div class="col-8 col-sm-8 col-md-4  mt-2">
+                        <span id="select_request_type"></span>
                     </div>
                 </div>
-                    <div class="form-group row">
-                        <div class="col-md-2 mt-2">
-                            <label for="">Request Type</label>
+                    <div class="form-group row" style="margin-top:-20px">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
+                            <label for="">Request By</label>
                         </div>
-                        <div class="col-md-4">
-                            <select name="select_request_type" class="select2" style="width: 100%" id="select_request_type">
-                                <option value="">Choose Request type</option>
-                                <option value="RFM">Request For Maintainance</option>
-                                <option value="RFP">Request For Project</option>
-                            </select>
-                            <input type="hidden" id="request_type" class="form-controll">
+                        <div class="col-8 col-sm-8 col-md-4  mt-2">
+                            <input type="hidden" class="form-control" id="wo_id" readonly>
+                            <span id="username"></span>
+                        
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
+                            <label for="">Request Code</label>
+                        </div>
+                        <div class="col-8 col-sm-8 col-md-4  mt-2">
+                            <span id="request_code"></span>
+                        </div>
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Categories</label>
                         </div>
-                        <div class="col-md-4">
-                            <select name="select_categories" class="select2" style="width: 100%" id="select_categories">
-                            </select>
-                            <input type="hidden" class="form-control" id="categories">
-                            <span  style="color:red;" class="message_error text-red block categories_error"></span>
+                        <div class="col-8 col-sm-8 col-md-4  mt-2">
+                          <span id="select_categories"></span>
                         </div>
-                        <div class="col-md-2 mt-2">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Problem Type</label>
                         </div>
-                        <div class="col-md-4">
-                            <select name="select_problem_type" class="select2" style="width: 100%" id="select_problem_type">
-                                <option value="">Choose Categories First</option>
-                            </select>
-                            <input type="hidden" class="form-control" id="problem_type">
-                            <span  style="color:red;" class="message_error text-red block problem_type_error"></span>
+                        <div class="col-8 col-sm-8 col-md-4  mt-2">
+                          <span id="select_problem_type"></span>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Subject</label>
                         </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" id="subject" readonly>
-                            <span  style="color:red;" class="message_error text-red block add_info_error"></span>
+                        <div class="col-8 col-sm-8 col-md-4  mt-2">
+                           <span id="subject"></span>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Additional Info</label>
                         </div>
-                        <div class="col-md-10">
-                            <textarea class="form-control" id="add_info" rows="3" readonly></textarea>
-                            <span  style="color:red;" class="message_error text-red block add_info_error"></span>
+                        <div class="col-8 col-sm-8 col-md-4 mt-2">
+                           <span id="add_info"></span>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
+                            <label for="">Level</label>
+                        </div>
+                        <div class="col-8 col-sm-8 col-md-4 ">
+                            <select name="selectPriority" class="select2" style="width: 100%" id="selectPriority">
+                            </select>
+                            <input type="hidden" id="priority" class="form-control">
+                            <span  style="color:red;" class="message_error text-red block priority_error"></span>
+                        </div>
+                        <div class="col-4 col-sm-4 col-md-2 mt-2 mt-2">
                             <label for="">PIC</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-8 col-sm-8 col-md-4 ">
                             <select name="select_user" class="select2" style="width: 100%" id="select_user">
                             </select>
                             <input type="hidden" id="user_pic" class="form-control">
                             <span  style="color:red;" class="message_error text-red block user_pic_error"></span>
                         </div>
                     </div>
+                
                     <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Note</label>
                         </div>
-                        <div class="col-md-10">
+                        <div class="col-8 col-sm-8 col-md-10">
                             <textarea class="form-control" id="note" rows="3"></textarea>
                             <span  style="color:red;" class="message_error text-red block note_error"></span>
                         </div>

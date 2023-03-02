@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterDepartement;
+use App\Models\MasterPriority;
 use App\Models\User;
 use App\Models\WONotification;
 use App\Models\WorkOrder;
@@ -23,7 +25,8 @@ class AssignmentController extends Controller
         ->join('users','users.id','=','work_orders.user_id')
         ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
         ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
-        ->where('status_wo',0)
+        ->whereNull('work_orders.priority')
+        ->orderBy('work_orders.status_wo','asc')
         ->get();
         return response()->json([
             'data'=>$data,
@@ -32,26 +35,33 @@ class AssignmentController extends Controller
    }
    public function detail_wo(Request $request)
    {
-        $detail = DB::table('work_orders')
-        ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','problem_types.name as problem_type_name')
-        ->join('users','users.id','=','work_orders.user_id')
-        ->join('master_categories','master_categories.id','=','work_orders.category')
-        ->join('problem_types','problem_types.id','=','work_orders.problem_type')
-        ->join('master_departements','master_departements.id','=','work_orders.departement_id')
-        ->where('work_orders.id',$request->id)
-        ->first();
+          $detail = DB::table('work_orders')
+                              ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','problem_types.name as problem_type_name')
+                              ->join('users','users.id','=','work_orders.user_id')
+                              ->join('master_categories','master_categories.id','=','work_orders.category')
+                              ->join('problem_types','problem_types.id','=','work_orders.problem_type')
+                              ->join('master_departements','master_departements.id','=','work_orders.departement_id')
+                              ->where('work_orders.id',$request->id)
+                              ->first();
       
-        $data_log = DB::table('work_order_logs')
-                         ->select('work_order_logs.*','users.name as username')
-                         ->leftJoin('users', 'users.id','=', 'work_order_logs.creator')
-                         ->where('work_order_logs.request_code',$detail->request_code)
-                         ->orderBy('work_order_logs.id','desc')
-                         ->first();
-        $data = User::where('departement',1)->get();
+          $data_log = DB::table('work_order_logs')
+                              ->select('work_order_logs.*','users.name as username')
+                              ->leftJoin('users', 'users.id','=', 'work_order_logs.creator')
+                              ->where('work_order_logs.request_code',$detail->request_code)
+                              ->orderBy('work_order_logs.id','desc')
+                              ->first();
+        $pic = WorkOrder::select('users.name as username')->join('users','users.id','work_orders.user_id_support')->where('work_orders.id',$request->id)->first();
+        $data = User::where('departement',auth()->user()->departement)
+                    ->where('id','!=',auth()->user()->id)
+                    ->where('id','!=',$detail->user_id)
+                    ->get();
+        $priority = MasterPriority::all();
         return response()->json([
             'detail'=>$detail,
             'data_log'=>$data_log,
+            'priority'=>$priority,
             'data'=>$data,
+            'pic'=>$pic,
 
         ]);
    }
@@ -59,14 +69,13 @@ class AssignmentController extends Controller
    {
           $user_pic = $request->user_pic;
           $approve = $request->approve;
+          $priority = $request->priority;
           $status = 500;
           $message="Data failed to save";
           $validator = Validator::make($request->all(),[
                'user_pic'=>'required',
+               'priority'=>'required',
            
-           ],[
-               'user_pic.required'=>'User PIC tidak boleh kosong',
-             
            ]);
            if($validator->fails()){
                return response()->json([
@@ -79,6 +88,7 @@ class AssignmentController extends Controller
                 if($log_wo->status_wo == 0){
                     $post=[
                          'user_id_support'=>$user_pic,
+                         'priority'=>$priority,
                          'status_wo'=>$approve == 1?1:5,
                          'assignment'=>$approve,
                     ];
@@ -97,6 +107,7 @@ class AssignmentController extends Controller
                          'user_id_support'=>$user_pic,
                          'subject'=>$log_wo->subject,
                          'comment'=>$request->note,
+                         'priority'=>$request->priority,
                          'creator'=>auth()->user()->id
                     ];
                     $picName = User::find($user_pic);
@@ -109,7 +120,7 @@ class AssignmentController extends Controller
                          'created_at'=>date('Y-m-d H:i:s')
                      ];
                      $picPost =[
-                         'message'=>auth()->user()->name.' has assign work order transaction with request code :'.$log_wo->request_code.' to you',
+                         'message'=>auth()->user()->name.' has assigned work order transaction with request code :'.$log_wo->request_code.' to you',
                          'subject'=>'Assignment WO',
                          'status'=>0,
                          'link'=>'work_order_list',
@@ -124,7 +135,7 @@ class AssignmentController extends Controller
           
                     });
                     $validasi = WorkOrder::where('request_code',$log_wo->request_code)->first();
-                    if($validasi->status_wo == $approve){
+                    if($validasi->assignment == $approve){
                          $status = 200;
                          $message = "Data successfully inserted";
                     }

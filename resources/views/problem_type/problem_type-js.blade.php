@@ -67,7 +67,7 @@
                 },
                 success: function(response) {
                     swal.close();
-                    console.log(response.detail)
+                  
                   $('#problem_id').val(id)
                   $('#problem_name_update').val(response.detail.name)
                   $('#categories_id_update').val(response.detail.categories_id)

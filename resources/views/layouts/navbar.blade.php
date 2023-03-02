@@ -22,7 +22,7 @@
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">  
              
                 <div class="dropdown-divider"></div>
-                    <a href="{{route('setting')}}" class="dropdown-item">
+                    <a href="{{route('setting_password')}}" class="dropdown-item">
                     <i class="fas fa-tools mr-2"></i>Setting<span class="float-right text-muted text-sm"></span>
                     </a>
 

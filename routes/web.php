@@ -7,6 +7,7 @@ use App\Http\Controllers\MasterCategoryController;
 use App\Http\Controllers\MasterDepartementController;
 use App\Http\Controllers\MasterJabatanController;
 use App\Http\Controllers\MasterKantorController;
+use App\Http\Controllers\MasterPriorityController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\RolePermissionController;
@@ -47,8 +48,11 @@ Route::group(['middleware' => ['permission:view-user_setting']], function () {
 Route::group(['middleware' => ['permission:view-user_access']], function () {
     Route::get('user_access', [UserAccessController::class, 'index'])->name('user_access');
 });
-Route::group(['middleware' => ['permission:view-setting']], function () {
-    Route::get('setting', [SettingController::class, 'index'])->name('setting');
+Route::group(['middleware' => ['permission:view-master_priority']], function () {
+    Route::get('master_priority', [MasterPriorityController::class, 'index'])->name('master_priority');
+});
+Route::group(['middleware' => ['permission:view-setting_password']], function () {
+    Route::get('setting_password', [SettingController::class, 'index'])->name('setting_password');
 });
 Route::group(['middleware' => ['permission:view-master_kantor']], function () {
     Route::get('master_kantor', [MasterKantorController::class, 'index'])->name('master_kantor');
@@ -167,6 +171,7 @@ Route::get('get_wo_log', [WorkOrderController::class, 'get_wo_log'])->name('get_
 Route::post('approve_assignment_pic', [WorkOrderController::class, 'approve_assignment_pic'])->name('approve_assignment_pic');
 Route::post('manual_approve', [WorkOrderController::class, 'manual_approve'])->name('manual_approve');
 Route::post('rating_pic', [WorkOrderController::class, 'rating_pic'])->name('rating_pic');
+Route::get('getStepper', [WorkOrderController::class, 'getStepper'])->name('getStepper');
 
 
 Route::post('manual_wo', [WorkOrderController::class, 'manual_wo'])->name('manual_wo');
@@ -183,6 +188,17 @@ Route::get('get_wo_summary', [HomeController::class, 'get_wo_summary'])->name('g
 Route::get('logRating', [HomeController::class, 'logRating'])->name('logRating');
 Route::get('getNotification', [HomeController::class, 'getNotification'])->name('getNotification');
 Route::post('updateNotif', [HomeController::class, 'updateNotif'])->name('updateNotif');
+Route::get('getRankingFilter', [HomeController::class, 'getRankingFilter'])->name('getRankingFilter');
+Route::get('percentageType', [HomeController::class, 'percentageType'])->name('percentageType');
+Route::get('getWorkOrderByStatus', [HomeController::class, 'getWorkOrderByStatus'])->name('getWorkOrderByStatus');
+
+// Master Priority
+Route::get('getPriority', [MasterPriorityController::class, 'getPriority'])->name('getPriority');
+Route::post('addPriority', [MasterPriorityController::class, 'addPriority'])->name('addPriority');
+Route::get('getPriorityDetail', [MasterPriorityController::class, 'getPriorityDetail'])->name('getPriorityDetail');
+Route::post('updatePriority', [MasterPriorityController::class, 'updatePriority'])->name('updatePriority');
+
+
 
 });
 

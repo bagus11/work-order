@@ -8,8 +8,8 @@
 </head>
 <body>
     <p style="font-size:12px">
-        Dear {{$postEmail['request_by']}}, <br>
-        {{$postEmail['pic']}} has pending your work order transaction as follows ,
+        Dear Head {{$postEmail['headDepartement']}}, <br>
+        Work order transaction with request code {{$post['request_code']}} has undergone revision,
     </p>
     <p style="font-size:12px;margin-left:10px;margin-top:10px">
         Request By   : {{$postEmail['request_by']}} <br>
@@ -18,9 +18,8 @@
         Request Type : {{$post['request_type']}} <br>
         Categories : {{$postEmail['categories']}} <br>
         Problem Type : {{$postEmail['problem_type']}} <br>
-        WO Status : <b style="font-size:12px;margin-left:10px;margin-top:10px"> Pending </b> <br>
+        WO Status : <b style="font-size:12px;margin-left:10px;margin-top:10px"> Doesn't Match </b> <br>
         <br>
-        Reason : <b>{{$postEmail['comment']}}</b>
     </p>
     <p style="font-size:12px">
         For details of the work order transaction, please click  <a href="{{ url('work_order_list')}}">here</a> <br> 

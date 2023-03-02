@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use NumConvert;
 use App\Mail\SendMail;
+use App\Models\MasterJabatan;
 use App\Models\ProblemType;
 use App\Models\User;
 use App\Models\WONotification;
@@ -26,24 +27,32 @@ class WorkOrderController extends Controller
     {
         if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
         {
+            $requestFor  = MasterDepartement::find(auth()->user()->departement);
+            
             $data = DB::table('work_orders')
             ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
             ->join('users','users.id','=','work_orders.user_id')
             ->join('master_categories','master_categories.id','=','work_orders.category')
             ->join('master_departements','master_departements.id','=','work_orders.departement_id')
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
+            ->join('master_priorities','master_priorities.id','work_orders.priority')
+            ->where('work_orders.request_for',$requestFor->initial)
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
             ->where('work_orders.status_wo','like','%'.$request->statusFilter.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->orderBy('status_wo', 'asc')
+            ->orderBy('status_approval','asc')
+            ->orderBy('work_orders.priority','desc')
+            ->orderBy('id','desc')
             ->get();
         }else{
             $data = DB::table('work_orders')
-            ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
+            ->select('work_orders.*','master_priorities.name as priorityName' ,'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
             ->join('users','users.id','=','work_orders.user_id')
             ->join('master_categories','master_categories.id','=','work_orders.category')
             ->join('master_departements','master_departements.id','=','work_orders.departement_id')
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
+            ->join('master_priorities','master_priorities.id','work_orders.priority')
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
             ->where('work_orders.status_wo','like','%'.$request->statusFilter.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
@@ -51,6 +60,8 @@ class WorkOrderController extends Controller
                 $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
             })
             ->orderBy('status_wo', 'asc')
+            ->orderBy('status_approval','asc')
+            ->orderBy('id','desc')
             ->get();
         }
        return response()->json([
@@ -59,7 +70,7 @@ class WorkOrderController extends Controller
     }
     public function get_categories_name(Request $request){
       
-        $data = MasterCategory::with('departement')->where('departement_id',$request->departement_id)->where('flg_aktif',1)->get();
+        $data = MasterCategory::with('departement')->where('departement_id','like','%'.$request->departement_id.'%')->where('flg_aktif',1)->get();
         return response()->json([
             'data'=>$data
         ]);
@@ -95,106 +106,115 @@ class WorkOrderController extends Controller
                 'status'=>422
             ]);
         }else{
-            $increment_code= WorkOrder::orderBy('id','desc')->first();
-            $date_month =strtotime(date('Y-m-d'));
-            $month =idate('m', $date_month);
-            $year = idate('y', $date_month);
-            $month_convert =  NumConvert::roman($month);
-            if($increment_code ==null){
-                $ticket_code = '1/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
-            }else{
-                $month_before = explode('/',$increment_code->request_code,-1);
-                if($month_convert != $month_before[3]){
+            // Validasi, jika user belum memberi rating maka tidak akan bisa membuat transaksi
+            // $validasiRating = WorkOrder::where('user_id', auth()->user()->id)->orderBy('id', 'desc')->first();
+            // if($validasiRating->status_approval == 0 || $validasiRating->status_approval == 2){
+            //     $status = 500;
+            //     $message = "you can't create transaction, because your pervious transaction has not been completed ";
+            // }else{
+
+                $increment_code= WorkOrder::orderBy('id','desc')->first();
+                $date_month =strtotime(date('Y-m-d'));
+                $month =idate('m', $date_month);
+                $year = idate('y', $date_month);
+                $month_convert =  NumConvert::roman($month);
+                if($increment_code ==null){
                     $ticket_code = '1/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
                 }else{
-                    $ticket_code = $month_before[0] + 1 .'/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
-                }   
-            }
-            $post =[
-                'request_code'=>$ticket_code,
-                'request_type'=>$request_type,
-                'request_for'=>$departement_for,
-                'departement_id'=>auth()->user()->departement,
-                'problem_type'=>$problem_type,
-                'subject'=>strtoupper($subject),
-                'add_info'=>$add_info,
-                'user_id'=>auth()->user()->id,
-                'assignment'=>0,
-                'status_wo'=>0,
-                'category'=>$categories,
-                'follow_up'=>0,
-                'status_approval'=>0,
-                'user_id_support'=>'',
-                'rating'=>0,
-                'created_at'=>date('Y-m-d H:i:s')
-            ];
-            $post_log =[
-                'request_code'=>$ticket_code,
-                'request_type'=>$request_type,
-                'departement_id'=>auth()->user()->departement,
-                'problem_type'=>$problem_type,
-                'subject'=>strtoupper($subject),
-                'add_info'=>$add_info,
-                'user_id'=>auth()->user()->id,
-                'assignment'=>0,
-                'status_wo'=>0,
-                'category'=>$categories,
-                'follow_up'=>0,
-                'status_approval'=>0,
-                'user_id_support'=>'',
-                'created_at'=>date('Y-m-d H:i:s'),
-                'creator'=>auth()->user()->id,
-                'comment'=>''
-            ];
-            $problemType = ProblemType::find($problem_type);
-            $categoriesName = MasterCategory::find($categories);
-            $userName = User::find($request->username);
-            
-            $postEmail = [
-                'request_code'=>$ticket_code,
-                'request_type'=>$request_type,
-                'problem_type'=>$problemType->name,
-                'comment'=>$post_log['comment'],
-                'categories'=>$categoriesName->name,
-                'PIC'=> auth()->user()->name,
-
-            ];
-
-            // User Request For 
-            $departementId = MasterDepartement::where('initial',$departement_for)->first();
-            $userDept = User::where('departement',$departementId->id)->get();
-            $userArray = [];
-            foreach($userDept as $row){
-                $userPost =[
-                    'message'=>auth()->user()->name.' has created new work order transaction',
-                    'subject'=>'New Work Order',
-                    'status'=>0,
-                    'link'=>'work_order_list',
-                    'userId'=>$row->id,
+                    $month_before = explode('/',$increment_code->request_code,-1);
+                    if($month_convert != $month_before[3]){
+                        $ticket_code = '1/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
+                    }else{
+                        $ticket_code = $month_before[0] + 1 .'/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
+                    }   
+                }
+                $post =[
+                    'request_code'=>$ticket_code,
+                    'request_type'=>$request_type,
+                    'request_for'=>$departement_for,
+                    'departement_id'=>auth()->user()->departement,
+                    'problem_type'=>$problem_type,
+                    'subject'=>strtoupper($subject),
+                    'add_info'=>$add_info,
+                    'user_id'=>auth()->user()->id,
+                    'assignment'=>0,
+                    'status_wo'=>0,
+                    'category'=>$categories,
+                    'follow_up'=>0,
+                    'status_approval'=>0,
+                    'user_id_support'=>'',
+                    'rating'=>0,
                     'created_at'=>date('Y-m-d H:i:s')
                 ];
-                array_push($userArray, $userPost);
-            }
-        //    dd($userArray);
-            DB::transaction(function() use($post,$post_log,$postEmail,$userArray) {
-                WorkOrder::create($post);
-                WorkOrderLog::create($post_log);
-                WONotification::insert($userArray);
-                // $title = "Support Ticket";
-                // $subject = 'NEW - '.$post['subject'];
-                // $to ="kutukan3@gmail.com";
-                // $data=[
-                //     'post'=>$post,
-                //     'postEmail'=>$postEmail,
-                // ];
-                // $message = view('email.newWo',$data);
-                // $this->sendMail($title,$to,$message,$subject);
-            });
-            $validasi = WorkOrderLog::where('request_code', $ticket_code)->where('status_wo',0)->count();
-            if($validasi==1){
-                $status =200;
-                $message="Data successfully inserted";
-            }
+                $post_log =[
+                    'request_code'=>$ticket_code,
+                    'request_type'=>$request_type,
+                    'departement_id'=>auth()->user()->departement,
+                    'problem_type'=>$problem_type,
+                    'subject'=>strtoupper($subject),
+                    'add_info'=>$add_info,
+                    'user_id'=>auth()->user()->id,
+                    'assignment'=>0,
+                    'status_wo'=>0,
+                    'category'=>$categories,
+                    'follow_up'=>0,
+                    'status_approval'=>0,
+                    'user_id_support'=>'',
+                    'created_at'=>date('Y-m-d H:i:s'),
+                    'creator'=>auth()->user()->id,
+                    'comment'=>''
+                ];
+                $problemType = ProblemType::find($problem_type);
+                $categoriesName = MasterCategory::find($categories);
+                $userName = User::find($request->username);
+                
+                $postEmail = [
+                    'request_code'=>$ticket_code,
+                    'request_type'=>$request_type,
+                    'problem_type'=>$problemType->name,
+                    'comment'=>$post_log['comment'],
+                    'categories'=>$categoriesName->name,
+                    'PIC'=> auth()->user()->name,
+    
+                ];
+    
+                // User Request For 
+                $departementId = MasterDepartement::where('initial',$departement_for)->first();
+                $userDept = User::where('departement',$departementId->id)->get();
+                $userArray = [];
+                foreach($userDept as $row){
+                    $userPost =[
+                        'message'=>auth()->user()->name.' has created new work order transaction',
+                        'subject'=>'New Work Order',
+                        'status'=>0,
+                        'link'=>'work_order_list',
+                        'userId'=>$row->id,
+                        'created_at'=>date('Y-m-d H:i:s')
+                    ];
+                    array_push($userArray, $userPost);
+                }
+            //    dd($userArray);
+                DB::transaction(function() use($post,$post_log,$postEmail,$userArray) {
+                    WorkOrder::create($post);
+                    WorkOrderLog::create($post_log);
+                    WONotification::insert($userArray);
+                    // $title = "Support Ticket";
+                    // $subject = 'NEW - '.$post['subject'];
+                    // $to ="kutukan3@gmail.com";
+                    // $data=[
+                    //     'post'=>$post,
+                    //     'postEmail'=>$postEmail,
+                    // ];
+                    // $message = view('email.newWo',$data);
+                    // $this->sendMail($title,$to,$message,$subject);
+                });
+                $validasi = WorkOrderLog::where('request_code', $ticket_code)->where('status_wo',0)->count();
+                if($validasi==1){
+                    $status =200;
+                    $message="Data successfully inserted";
+                }
+            // }
+
            
           
         }
@@ -226,7 +246,7 @@ class WorkOrderController extends Controller
         //                 ->select('work_order_logs.*','users.name as username')
         //                 ->where('work_order_logs.request_code', $request->request_code)->orderBy('work_order_logs.created_at', 'asc')
         //                 ->get();
-        $log_data = WorkOrderLog::with(['userPIC','userPICSupport'])->where('request_code', $request->request_code)->orderBy('created_at','asc')->get();
+        $log_data = WorkOrderLog::with(['userPIC','userPICSupport','priority'])->where('request_code', $request->request_code)->orderBy('created_at','asc')->get();
         return response()->json([
             'log_data'=>$log_data,
         ]);
@@ -398,11 +418,23 @@ class WorkOrderController extends Controller
                         'userId'=>$log_wo->user_id,
                         'created_at'=>date('Y-m-d H:i:s')
                     ];
+
                 // penambahan unutk setiap head departement
-               DB::transaction(function() use($post,$request, $post_log,$userPost) {
+                $userIdDepartement = MasterJabatan::where('departement_id',auth()->user()->departement)->orderBy('id','asc')->first();
+                $userJabatan  = User::where('jabatan',$userIdDepartement->id)->first();
+                $PICHead =[
+                    'message'=>$userMessage,
+                    'subject'=>'Manual Assign',
+                    'status'=>0,
+                    'link'=>'work_order_list',
+                    'userId'=>$userJabatan->id,
+                    'created_at'=>date('Y-m-d H:i:s')
+                ];
+               DB::transaction(function() use($post,$request, $post_log,$userPost,$PICHead) {
                     WorkOrder::find($request->id)->update($post);
                     WorkOrderLog::create($post_log);
                     WONotification::create($userPost);
+                    WONotification::create($PICHead);
      
                });
                $validasi = WorkOrderLog::where('request_code',$log_wo->request_code)->count();
@@ -477,6 +509,7 @@ class WorkOrderController extends Controller
             ];
             $categoriesName = MasterCategory::find($log_wo->category);
             $userName = User::find($log_wo->user_id);
+            $headDepartement = MasterDepartement::find($log_wo->departement_id);
             $problemType = ProblemType::find($log_wo->problem_type);
             $postEmail = [
                 'request_code'=>$log_wo->request_code,
@@ -485,7 +518,8 @@ class WorkOrderController extends Controller
                  'comment'=>$request->note_pic,
                 'categories'=>$categoriesName->name,
                 'pic'=> auth()->user()->name,
-                'request_by'=>$userName->name
+                'request_by'=>$userName->name,
+                'headDepartement'=>$headDepartement->name
 
             ];
            
@@ -496,25 +530,19 @@ class WorkOrderController extends Controller
              
                   if($validasi == 1){
                            $title = "Support Ticket";
-                           $subject = 'NEW - '.$post_log['subject'];
+                           $subject = 'Revision 2 - '.$post_log['request_code'];
                            $to = $userName->email;
                            $data=[
                                'post'=>$post_log,
                                'postEmail'=>$postEmail,
                            ];
-                           if($post_log['status_wo']==2){
-                               $message = view('email.revisiWO',$data);
-
-                           }else{
-                               $message = view('email.doneWO',$data);
-                           }
+                           $message = view('email.revisiWO',$data);
+                         
                            $this->sendMail($title,$to,$message,$subject);
                         
                         DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
                             WorkOrder::find($request->id)->update($post);
-                            if($approve != 1 ){
-                                WorkOrderLog::create($post_log);
-                            }
+                            WorkOrderLog::create($post_log);
                             WONotification::create($userPost); 
              
                        });
@@ -524,7 +552,6 @@ class WorkOrderController extends Controller
                                 'status_approval'=>$approve,
                                 //  'rating'=>$approve == 1 ? $rating: 0
                         ];
-                        
                         $log_wo = WorkOrder::find($request->id);
                         $post_log = [
                                 'request_code'=>$log_wo->request_code,
@@ -544,24 +571,18 @@ class WorkOrderController extends Controller
                                 'creator'=>auth()->user()->id
                         ];
                         $title = "Support Ticket";
-                        $subject = 'NEW - '.$post_log['subject'];
+                        $subject = 'Revision 3 - '.$post_log['request_code'];
                         $to = $userName->email;
                         $data=[
                             'post'=>$post_log,
                             'postEmail'=>$postEmail,
                         ];
-                        if($post_log['status_wo']==2){
-                            $message = view('email.revisiWO',$data);
-
-                        }else{
-                            $message = view('email.doneWO',$data);
-                        }
+                        $message = view('email.revisiWO',$data);
+                     
                         $this->sendMail($title,$to,$message,$subject);
                         DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
                             WorkOrder::find($request->id)->update($post);
-                            if($approve != 1 ){
-                                WorkOrderLog::create($post_log);
-                            }
+                            WorkOrderLog::create($post_log);
                             WONotification::create($userPost); 
             
                     });
@@ -579,9 +600,7 @@ class WorkOrderController extends Controller
             }else{
                 DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
                     WorkOrder::find($request->id)->update($post);
-                    if($approve != 1 ){
-                        WorkOrderLog::create($post_log);
-                    }
+                    WorkOrderLog::create($post_log);
                     WONotification::create($userPost); 
      
                });
@@ -599,6 +618,24 @@ class WorkOrderController extends Controller
              'message'=>$message,
  
          ]);
+    }
+    public function getStepper(Request $request)
+    {
+        $createdBy = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',0)->get();
+        $responded = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',1)->orderBy('id','asc')->limit(1)->get();
+        $fixed = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',4)
+        ->where(function($query){
+            $query->where('status_approval',0)->orWhere('status_approval', 2); 
+        })->orderBy('created_at','desc')->limit(1)->get();
+        $closed = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',4)->where('status_approval',1)->orderBy('created_at','desc')->limit(1)->get();
+        $statusWo = WorkOrder::where('request_code',$request->request_code)->first();
+        return response()->json([   
+            'createdBy'=>$createdBy,
+            'responded'=>$responded,
+            'fixed'=>$fixed,
+            'closed'=>$closed,
+            'statusWo'=>$statusWo,
+        ]);
     }
 
 }

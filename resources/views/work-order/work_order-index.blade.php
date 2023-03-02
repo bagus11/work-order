@@ -42,6 +42,7 @@
                                         <option value="2">PENDING</option>
                                         <option value="3">REVISION</option>
                                         <option value="4">DONE</option>
+                                        <option value="5">REJECT</option>
                                         </select>
                                     </div>
                                     <div class="mt-2 mb-2">
@@ -57,7 +58,7 @@
                                 <ion-icon name="add-sharp"></ion-icon>
                             </button>
                         @endcan
-                    <button id="refresh" onclick="get_work_order_list()" title="Refresh" style="float:right" class="btn btn-sm btn-info mr-2">
+                    <button id="refresh" title="Refresh" style="float:right" class="btn btn-sm btn-info mr-2">
                         <ion-icon name="refresh-sharp"></ion-icon>
                     </button>
                       

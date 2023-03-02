@@ -238,6 +238,75 @@ getNotification()
                 }
             }); 
         }
-
+        function master_chart(title,labels,type,id,data_a){
+            const data = {
+                labels: labels,
+                datasets: [{
+                label: title,
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: data_a,
+                }]
+            }
+            const config = {
+                type:type,
+                data: data,
+                options: {}
+            };
+       
+            var myChart = new Chart(
+                id,
+                config
+            );
+        }
+        function pieChart(title,label,data,color,type,id){
+        
+            const x = {
+            labels:label,
+            datasets:[{
+                    data: data,
+                    backgroundColor:color,
+                    borderColor: "#fff"
+                }], 
+            };
+            const config = {
+                type: type,
+            
+            }
+            const option={
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        enabled: true
+                    },
+                
+                    plugins: {
+                        legend:{
+                            display: false
+                        },
+                        datalabels: {
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            for( i =0; i< ctx.dataset.data.length ; i++){
+                                sum +=ctx.dataset.data[i]
+                            }
+                            let percentage = (value * 100 / sum).toFixed(2) + "%";
+                            return percentage;
+                        },
+                        color: '#fff',
+                    }
+                    
+                    },
+                
+            }
+            var chart = new Chart(id, {
+                type: type,
+                data: x,
+                options:option
+            
+            
+            });
+        }
  // End Repository Pattern
 </script>

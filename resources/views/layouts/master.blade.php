@@ -10,8 +10,8 @@
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.2/css/bootstrap.css" rel="stylesheet">
-        <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+        {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.2/css/bootstrap.css" rel="stylesheet"> --}}
+        {{-- <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css"> --}}
         {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     </head>
@@ -44,6 +44,14 @@
         <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> 
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+        {{-- <script src="{{asset('js/chartjs-plugin-labels.js')}}"></script> --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc.1/chartjs-plugin-datalabels.min.js" 
+        integrity="sha512-+UYTD5L/bU1sgAfWA0ELK5RlQ811q8wZIocqI7+K0Lhh8yVdIoAMEs96wJAIbgFvzynPm36ZCXtkydxu1cs27w==" crossorigin="anonymous" 
+        referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+
         <script>
             $(document).ready(function(){
                 $(".select2").select2();
@@ -87,15 +95,16 @@
   border-collapse: collapse;
   width: 100% !important;
   font-size: 12px;
+  overflow-x:auto !important;
   
   }
   .nav-sidebar{
-    overflow-y: scroll;
+    overflow-y: auto;
   }
+  .dataTables_filter input { width: 300px }
   .datatable-bordered td, .datatable-bordered th {
   padding: 8px;
   }
-  .dataTables_filter input { width: 300px }
   .datatable-bordered tr:nth-child(even){background-color: #f2f2f2;}
 
   .datatable-bordered tr:hover {background-color: #ddd;}
@@ -107,8 +116,9 @@
   text-align: center;
   background-color: white;
   color: black;
-  
+  overflow-x:auto !important;
   }
+
   ion-icon
     {
      zoom: 1.5;
@@ -201,4 +211,33 @@ tr.shown td.details-click {
 .rating__star:hover {
    filter: drop-shadow(1px 1px 4px gold);
 }
+.datatable-stepper{
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100% !important;
+  font-size: 12px;
+  overflow-x:auto !important;
+  
+  }
+.datatable-stepper td, .datatable-stepper th {
+  padding: 8px;
+  }
+  .datatable-stepper tr:nth-child(even){background-color: #f2f2f2;}
+
+  .datatable-stepper tr:hover {background-color: #ddd;}
+
+  .datatable-stepper th {
+  border: 1px solid #ddd;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: white;
+  color: black;
+  overflow-x:auto !important;
+  }
+  .datatable-stepper td, .datatable-stepper th {
+        border: 1px solid #ddd;
+        padding: 8px;
+       
+        }
 </style>

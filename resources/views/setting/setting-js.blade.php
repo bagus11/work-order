@@ -42,7 +42,7 @@
                             return false;
                         }else{
                             toastr['success'](response.message);
-                            window.location = "{{route('setting')}}";
+                            window.location = "{{route('setting_password')}}";
                           
                         }
                 },
@@ -80,7 +80,7 @@
                             return false;
                         }else{
                             toastr['success'](response.message);
-                            window.location = "{{route('setting')}}";
+                            window.location = "{{route('setting_password')}}";
                           
                         }
                 },

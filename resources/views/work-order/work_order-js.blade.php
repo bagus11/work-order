@@ -5,6 +5,10 @@ getOfficeName('officeFilter')
 $(document).on('click', '.dropdown-menu', function (e) {
   e.stopPropagation();
 });
+$('#refresh').on('click', function(){
+    get_work_order_list();
+    getNotification()
+})
 get_work_order_list()
     $('#add_wo').on('click', function(){
         getDepartementName('get_departement_name','select_departement','Departement')
@@ -88,19 +92,17 @@ get_work_order_list()
                 success: function(response) {
                 swal.close();
               
-                $('#select_request_type_rating').empty()
-                $('#select_request_type_rating').append('<option value ="'+response.detail.request_type+'">'+response.detail.request_type+'</option>')
-                $('#select_categories_rating').empty()
-                $('#select_categories_rating').append('<option value ="'+response.detail.categories+'">'+response.detail.categories_name+'</option>')
-                $('#select_problem_type_rating').empty()
-                $('#select_problem_type_rating').append('<option value ="'+response.detail.problem_type+'">'+response.detail.problem_type_name+'</option>')
-                $('#request_type_rating').val(response.detail.request_type)
-                $('#categories_rating').val(response.detail.categories)
-                $('#problem_type_rating').val(response.detail.problem_type)
-                $('#subject_rating').val(response.detail.subject)
-                $('#add_info_rating').val(response.detail.add_info)
-                $('#request_code_rating').val(response.detail.request_code)
-                $('#username_rating').val(response.detail.username)
+               
+                $('#select_request_type_rating').html(': '+response.detail.request_type)
+                $('#select_categories_rating').html(': '+response.detail.categories_name)
+                $('#select_problem_type_rating').html(': '+response.detail.problem_type_name)
+                $('#request_type_rating').html(': '+response.detail.request_type)
+                $('#categories_rating').html(': '+response.detail.categories)
+                $('#problem_type_rating').html(': '+response.detail.problem_type)
+                $('#subject_rating').html(': '+response.detail.subject)
+                $('#add_info_rating').html(': '+response.detail.add_info)
+                $('#request_code_rating').html(': '+response.detail.request_code)
+                $('#username_rating').html(': '+response.detail.username)
                 $('#wo_id_rating').val(id)
                 $('#note_rating').val(response.data_log.comment)
                 $('#creator_rating').html(response.data_log.username)  
@@ -139,6 +141,8 @@ get_work_order_list()
     })
     $('#wo_table').on('click', '.detailWO', function() {
             var id = $(this).data('id');
+            var request =  $(this).data('request');
+          
             $.ajax({
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -162,35 +166,38 @@ get_work_order_list()
                             }else  if(response.detail.status_wo==2){
                                 status_wo ="PENDING"
                             }else  if(response.detail.status_wo==3){
-                                status_wo ="REVISI"
+                                status_wo ="REVISION"
                             }else  if(response.detail.status_wo==4){
                                 status_wo ="DONE"
                             }else{
                                 status_wo ="REJECT"
                             }
-                    if(response.detail.status_wo == 0)
+                
+                            if(response.detail.status_wo == 0)
                     {
                         $('#note_status').hide()
                     }else{
                         $('#note_status').show()
                     }
-                $('#select_request_type_detail').empty()
-                $('#select_request_type_detail').append('<option value ="'+response.detail.request_type+'">'+response.detail.request_type+'</option>')
-                $('#select_categories_detail').empty()
-                $('#select_categories_detail').append('<option value ="'+response.detail.categories+'">'+response.detail.categories_name+'</option>')
-                $('#select_problem_type_detail').empty()
-                $('#select_problem_type_detail').append('<option value ="'+response.detail.problem_type+'">'+response.detail.problem_type_name+'</option>')
+              
+                $('#select_request_type_detail').html(': '+response.detail.request_type)
+                $('#select_categories_detail').html(': '+response.detail.categories_name)
+                $('#select_problem_type_detail').html(': '+response.detail.problem_type_name)
                 $('#request_type_detail').val(response.detail.request_type)
                 $('#categories_detail').val(response.detail.categories)
                 $('#problem_type_detail').val(response.detail.problem_type)
-                $('#subject_detail').val(response.detail.subject)
-                $('#add_info_detail').val(response.detail.add_info)
-                $('#request_code_detail').val(response.detail.request_code)
-                $('#username_detail').val(response.detail.username)
+                $('#subject_detail').html(': ' + response.detail.subject)
+                $('#add_info_detail').html(': ' + response.detail.add_info)
+                $('#request_code_detail').html(': '+ response.detail.request_code)
+                $('#username_detail').html(': '+response.detail.username)
                 $('#wo_id_detail').val(id)
-                $('#status_wo_detail').val(status_wo)
+                $('#status_wo_detail').html(': ' + status_wo)
                 $('#note_detail').val(response.data_log.comment)
-                $('#creator_detail').html(response.data_log.username)  
+                $('#requestCodeWo').val(response.data_log.request_code)
+
+                $('#creator_detail').html(response.data_log.username) 
+                $('#pic_wo_detail').html( response.pic == null ? ': -' : ': '+ response.pic.username)  
+                getStepper(request)
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -218,22 +225,20 @@ get_work_order_list()
                 },
                 success: function(response) {
                 swal.close();
-                $('#select_request_type_update').empty()
-                $('#select_request_type_update').append('<option value ="'+response.detail.request_type+'">'+response.detail.request_type+'</option>')
-                $('#select_categories_update').empty()
-                $('#select_categories_update').append('<option value ="'+response.detail.categories+'">'+response.detail.categories_name+'</option>')
-                $('#select_problem_type_update').empty()
-                $('#select_problem_type_update').append('<option value ="'+response.detail.problem_type+'">'+response.detail.problem_type_name+'</option>')
-                $('#request_type_update').val(response.detail.request_type)
-                $('#categories_update').val(response.detail.categories)
-                $('#problem_type_update').val(response.detail.problem_type)
-                $('#subject_update').val(response.detail.subject)
-                $('#add_info_update').val(response.detail.add_info)
-                $('#request_code_update').val(response.detail.request_code)
-                $('#username_update').val(response.detail.username)
+                $('#select_request_type_update').html(': '+response.detail.request_type)
+                $('#select_categories_update').html(': '+response.detail.categories_name)
+                $('#select_problem_type_update').html(': '+response.detail.problem_type_name)
+                $('#request_type_update').html(': '+response.detail.request_type)
+                $('#categories_update').html(': '+response.detail.categories)
+                $('#problem_type_update').html(': '+response.detail.problem_type)
+                $('#subject_update').html(': '+response.detail.subject)
+                $('#add_info_update').html(': '+response.detail.add_info)
+                $('#request_code_update').html(': '+response.detail.request_code)
+                $('#username_update').html(': '+response.detail.username)
                 $('#wo_id').val(id)
                 $('#note').val(response.data_log.comment)
                 $('#creator').html(response.data_log.username)  
+              
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -247,8 +252,123 @@ get_work_order_list()
         var id = $(this).data('id');
         $('#manual_assign_id_wo').val(id)
     });
- 
+    $('#custom-tabs-one-profile-tab').on('click', function(){
+        var requestCodeWo = $('#requestCodeWo').val();
+        getLogHistory(requestCodeWo)
+    })
+    const progressSteps = document.querySelectorAll('.progress-step');
+    let formSetpsNum =0
+    function updateProgressBar()
+   {
+       progressSteps.forEach((progressStep, idx)=>{
+           if(idx < formSetpsNum +1)
+           {
+               progressStep.classList.add('progress-step-active')
+           }else{
+               progressStep.classList.remove('progress-step-active')
+           }
+       });
+       const progressActive = document.querySelectorAll('.progress-step-active');
+       progress.style.width =((progressActive.length - 1) / (progressSteps.length -1) *100 +'%')
+   }
+    function getStepper(request_code){
+        $('#stepperTable').DataTable().clear();
+        $('#stepperTable').DataTable().destroy();
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('getStepper')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                'request_code':request_code,
+            },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                var data=''
+                var statusWo = response.statusWo.status_wo
+                var statusApproval = response.statusWo.status_approval
+                console.log(statusWo + ' - '+statusApproval)
+                if(statusWo == 0 && statusApproval == 0){
+                    formSetpsNum = 0
+                }else if(statusWo == 1 && statusApproval == 0){
+                    formSetpsNum = 1
+                }else if((statusWo == 2 || statusWo == 3 || statusWo == 4) && (statusApproval == 0 || statusApproval ==2)){
+                    formSetpsNum =2
+                }else if( statusWo == 4 && statusApproval == 1){
+                    formSetpsNum =3 
+                }else{
+                    formSetpsNum =0
+                }
+                for(i = 0; i < response.createdBy.length; i++ )
+                {
+                            const d = new Date(response.createdBy[i].created_at)
+                            const date = d.toISOString().split('T')[0];
+                            const time = d.toTimeString().split(' ')[0];
+                           
+                            var e ='';
+                            var respondedDate ='';
+                            var respondedTime ='';
+                            var f = '';
+                            var fixedDate ='';
+                            var fixedTime ='';
+                            var g = '';
+                            var closedDate ='';
+                            var closedTime ='';
 
+                            if(response.responded.length > 0){
+                                 e = new Date(response.responded[i].created_at)
+                                 respondedDate = e.toISOString().split('T')[0];
+                                 respondedTime = e.toTimeString().split(' ')[0];
+                            }
+                            if(response.fixed.length > 0){
+                                 f = new Date(response.fixed[i].created_at)
+                                 fixedDate = f.toISOString().split('T')[0];
+                                 fixedTime = f.toTimeString().split(' ')[0];
+                            }
+                            if(response.closed.length > 0){
+                                 g = new Date(response.closed[i].created_at)
+                                 closedDate = g.toISOString().split('T')[0];
+                                 closedTime = g.toTimeString().split(' ')[0];
+                            }
+
+
+
+                    data += `<tr style="text-align: center;">
+                                <td style="width:12%;text-align:center;">${response.createdBy[i]['created_at']==null?'':date+' '+time}</td>
+                                <td style="width:13%;text-align:center;">${response.createdBy[i].user_p_i_c==null?'':response.createdBy[i].user_p_i_c.name}</td>
+                                <td style="width:12%;text-align:center;">${respondedDate+' '+respondedTime}</td>
+                                <td style="width:13%;text-align:center;">${response.responded[i]==null?'':response.responded[i].user_p_i_c.name}</td>
+                                <td style="width:12%;text-align:center;">${fixedDate+' '+fixedTime}</td>
+                                <td style="width:13%;text-align:center;">${response.fixed[i]==null?'':response.fixed[i].user_p_i_c.name}</td>
+                                <td style="width:12%;text-align:center;">${closedDate+' '+closedTime}</td>
+                                <td style="width:13%;text-align:center;">${response.closed[i]==null?'':response.closed[i].user_p_i_c.name}</td>
+                            </tr>
+                            `;
+                }
+                    $('#stepperTable> tbody:first').html(data);
+                    $('#stepperTable').DataTable({
+                        scrollX  : true,
+                        scrollY  :70,
+                        searching:false,
+                        aaSorting:false,
+                        bInfo:false,
+                        paging:false
+                    }).columns.adjust().draw()    
+                    updateProgressBar()
+                    
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
     printRatingResult(ratingResult);
     function executeRating(stars, result) {
     const starClassActive = "rating__star fas fa-star";
@@ -300,6 +420,7 @@ get_work_order_list()
             success: function(response) {
                 swal.close();
                 var data=''
+            
                 for(i = 0; i < response.data.length; i++ )
                 {
                             const d = new Date(response.data[i].created_at)
@@ -323,11 +444,17 @@ get_work_order_list()
                                 status_wo ="PENDING"
                                 status_color ='#FFC93C'
                             }else  if(response.data[i].status_wo==3){
-                                status_wo ="REVISI"
+                                status_wo ="REVISION"
                                 status_color ='red'
-                            }else  if(response.data[i].status_wo==4){
-                                status_wo ="DONE"
-                                status_color ='green'
+                            }else if(response.data[i].status_wo==4){
+                                if(response.data[i].status_approval == '1'){
+                                    status_wo ="DONE"
+                                    status_color ='green'
+                                }else{
+                                    status_wo ="CHECKING"
+                                    status_color ='#F0A04B'
+                                }
+                            
                             }else{
                                 status_wo ="REJECT"
                                 status_color ='red'
@@ -343,13 +470,20 @@ get_work_order_list()
                                             <i class="fas fa-pen"></i>
                                         </button> `;
                             }
-                            if(date < date_format || date == date_format){
-                           
+                            if( date == date_format){
+                                console.log(d3 +' - '+ time_now+ ' = ' +response.data[i].request_code)
+                                console.log(d3 < time_now)
                                 if(d3 < time_now && response.data[i].status_wo == 0 )
                                 {
                                     approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
                                                 <ion-icon name="checkmark-circle"></ion-icon>
                                             </button> `;
+                                }
+                            }else if(date < date_format){
+                                if(response.data[i].status_wo == 0){
+                                    approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
+                                                    <ion-icon name="checkmark-circle"></ion-icon>
+                                                </button> `;
                                 }
                             }
                             if((response.data[i].status_wo == 4 && response.data[i].status_approval == 0) || (response.data[i].status_approval == 2 && response.data[i].status_wo == 4)){
@@ -359,7 +493,7 @@ get_work_order_list()
                                                 </button> `;
                                 }
                             }
-                            var detailWO = `<button title="Detail" class="detailWO btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#detailWO">
+                            var detailWO = `<button title="Detail" class="detailWO btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#detailWO">
                                                  <ion-icon name="eye"></ion-icon>        
                                             </button> `;
                     data += `<tr style="text-align: center;">
@@ -419,7 +553,7 @@ get_work_order_list()
         });
     }
     function detail_log( callback, request_code){
-        console.log('test')
+       
             $.ajax({
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -438,6 +572,7 @@ get_work_order_list()
                     $('#loading').hide();
                     if(response){
                         let row = '';
+                        var revision =0;
                         for(let i = 0; i < response.log_data.length; i++){
                         var isi_survey =``;
                         var report_survey =``;
@@ -471,14 +606,17 @@ get_work_order_list()
                                 status_wo ="PENDING"
                                 status_color ='#FFC93C'
                             }else  if(response.log_data[i].status_wo==3){
-                                status_wo ="REVISI"
+                                revision ++
+                                status_wo ="REVISION " + revision
                                 status_color ='red'
-                            }else  if(response.log_data[i].status_wo==4  && response.log_data.status_approval == 1){
-                                status_wo ="DONE"
-                                status_color ='green'
-                            }else if(response.log_data[i].status_wo == 4 && (response.log_data[i].status_approval ==0 || response.log_data[i].status_approval == 2)){
-                                status_wo ="ON PROGRESS"
-                                status_color ='#5BC0F8'
+                            }else if(response.log_data[i].status_wo == 4){
+                                if(response.log_data[i].status_approval == 1){
+                                    status_wo ="DONE"
+                                    status_color ='green'
+                                }else{
+                                    status_wo ="CHECKING"
+                                    status_color ='#F0A04B'
+                                }
                             }
                             else  if(response.log_data[i].status_wo==5){
                                 status_wo ="Complete"
@@ -499,15 +637,14 @@ get_work_order_list()
                                 assignment ="REJECT"
                                 color_assignment ='red'
                             }
-                            // console.log(i + ' - '+response.log_data[i].user_p_i_c_support)
                                 row+= `<tr class="table-light">
                                             <td style="text-align:center">${i + 1}</td>
                                             <td style="text-align:center">${date} ${time}</td>
-                                            <td style="text-align:center">${response.log_data[i].subject}</td>
+                                            <td style="text-align:center;font-weight:bold">${response.log_data[i].priority == null ?'-': response.log_data[i].priority.name}</td>
                                             <td style="text-align:center;color:${color_assignment}"><b>${assignment}<b/></td>
                                                 <td style="text-align:center;color:${status_color}"><b>${status_wo}<b/></td>
                                                     <td style="text-align:center">${response.log_data[i].user_p_i_c_support==null?'-':response.log_data[i].user_p_i_c_support.name}</td>
-                                                    <td style="text-align:center">${response.log_data[i].user_p_i_c.name}</td>
+                                                    <td style="text-align:left">${response.log_data[i].user_p_i_c.name}</td>
                                         </tr>`;
     
                         }
@@ -517,7 +654,7 @@ get_work_order_list()
                                 <tr>
                                     <th style="text-align:center">No</th>
                                     <th style="text-align:center">Created at</th>
-                                    <th style="text-align:center">Subject</th>
+                                    <th style="text-align:center">Level</th>
                                     <th style="text-align:center">Assign Status</th>
                                     <th style="text-align:center">Status WO</th>
                                     <th style="text-align:center">PIC</th>
@@ -533,7 +670,6 @@ get_work_order_list()
                     }
                 },
                 error : function(response) {
-                    console.log('failed :' + response);
                     alert('Gagal Get Data, Tidak Ada Data / Mohon Coba Kembali Beberapa Saat Lagi');
                     $('#loading').hide();
                 }
@@ -627,6 +763,9 @@ get_work_order_list()
                         {
                            $('span.'+key+'_error').text(val[0])
                         });
+                        return false;
+                    }else if (response.status == 500){
+                        toastr['warning'](response.message);
                         return false;
                     }else{
                         toastr['success'](response.message);
@@ -771,6 +910,32 @@ get_work_order_list()
                 $.each(response.data,function(i,data){
                     $('#select_departement').append('<option value="'+data.initial+'">' + data.name +'</option>');
                 });
+                
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
+    function getLogHistory(request_code){
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('get_wo_log')}}",
+            type: "get",
+            data:{
+                'request_code':request_code
+            },
+            dataType: 'json',
+            async: true,
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+               console.log(response)
                 
             },
             error: function(xhr, status, error) {
