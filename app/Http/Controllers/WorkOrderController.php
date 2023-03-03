@@ -35,13 +35,13 @@ class WorkOrderController extends Controller
             ->join('master_categories','master_categories.id','=','work_orders.category')
             ->join('master_departements','master_departements.id','=','work_orders.departement_id')
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
-            ->join('master_priorities','master_priorities.id','work_orders.priority')
+            ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('work_orders.request_for',$requestFor->initial)
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
             ->where('work_orders.status_wo','like','%'.$request->statusFilter.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->orderBy('status_wo', 'asc')
-            ->orderBy('status_approval','asc')
+            ->orderBy('work_orders.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
             ->orderBy('id','desc')
             ->get();
@@ -52,7 +52,7 @@ class WorkOrderController extends Controller
             ->join('master_categories','master_categories.id','=','work_orders.category')
             ->join('master_departements','master_departements.id','=','work_orders.departement_id')
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
-            ->join('master_priorities','master_priorities.id','work_orders.priority')
+            ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
             ->where('work_orders.status_wo','like','%'.$request->statusFilter.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
@@ -60,8 +60,9 @@ class WorkOrderController extends Controller
                 $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
             })
             ->orderBy('status_wo', 'asc')
-            ->orderBy('status_approval','asc')
-            ->orderBy('id','desc')
+            ->orderBy('work_orders.status_approval','desc')
+            ->orderBy('work_orders.priority','desc')
+            ->orderBy('work_orders.created_at','desc')
             ->get();
         }
        return response()->json([

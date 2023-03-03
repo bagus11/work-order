@@ -179,6 +179,7 @@ Route::post('manual_wo', [WorkOrderController::class, 'manual_wo'])->name('manua
 Route::get('get_assignment', [AssignmentController::class, 'get_assignment'])->name('get_assignment');
 Route::get('detail_wo', [AssignmentController::class, 'detail_wo'])->name('detail_wo');
 Route::post('approve_assignment', [AssignmentController::class, 'approve_assignment'])->name('approve_assignment');
+Route::post('updateLevel', [AssignmentController::class, 'updateLevel'])->name('updateLevel');
 
 // ICT Ticket
 Route::get('ict_wo', [ManualWOController::class, 'index'])->name('ict_wo');

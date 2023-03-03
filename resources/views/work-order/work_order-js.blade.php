@@ -459,9 +459,29 @@ get_work_order_list()
                                 status_wo ="REJECT"
                                 status_color ='red'
                             }
+                          var priorityLabel =''
+                          var priorityColor =''
                           var update_progress ='';
                           var approve_manual ='';
                           var make_sure_done ='';
+                          switch(response.data[i].priority){
+                            case 1:
+                                priorityLabel ='Low'
+                                priorityColor ='color:grey'
+                                break
+                            case 2:
+                                    priorityLabel ='Medium'
+                                    priorityColor ='color:grey'
+                                break
+                            case 3:
+                                    priorityLabel ='High'
+                                    priorityColor ='color:red;font-weight:bold'
+                                break
+                            case '' :
+                                priorityLabel ='High'
+                                priorityColor ='color:red;font-weight:bold'
+                            break
+                          }
                           var auth_id = $('#auth_id').val()
                         
                             if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
@@ -471,8 +491,6 @@ get_work_order_list()
                                         </button> `;
                             }
                             if( date == date_format){
-                                console.log(d3 +' - '+ time_now+ ' = ' +response.data[i].request_code)
-                                console.log(d3 < time_now)
                                 if(d3 < time_now && response.data[i].status_wo == 0 )
                                 {
                                     approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
@@ -498,13 +516,14 @@ get_work_order_list()
                                             </button> `;
                     data += `<tr style="text-align: center;">
                                 <td class='details-control'></td>
-                                <td style="width:25%;text-align:left;">${response.data[i]['username']==null?'':response.data[i]['username']}</td>
-                                <td style="width:25%;text-align:left;">${response.data[i]['kantor_name']==null?'':response.data[i]['kantor_name']}</td>
-                                <td style="width:25%;text-align:left;" class="request_code">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
-                                <td style="width:25%;text-align:center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
-                                <td style="width:25%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
-                                <td style="width:25%;text-align:center; color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
-                                <td style="width:25%;text-align:center">
+                                <td style="width:11%;text-align:left;">${response.data[i]['username']==null?'':response.data[i]['username']}</td>
+                                <td style="width:11%;text-align:left;">${response.data[i]['kantor_name']==null?'':response.data[i]['kantor_name']}</td>
+                                <td style="width:11%;text-align:left;" class="request_code">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
+                                <td style="width:11%;text-align:center;${priorityColor}">${priorityLabel}</td>
+                                <td style="width:11%;text-align:center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
+                                <td style="width:11%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
+                                <td style="width:11%;text-align:center; color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
+                                <td style="width:11%;text-align:center">
                                     ${detailWO}
                                     @can('update-work_order_list')
                                       ${update_progress}
@@ -529,7 +548,8 @@ get_work_order_list()
                     $('#wo_table > tbody:first').html(data);
                         var table = $('#wo_table').DataTable({
                             scrollX  : true,
-                            scrollY  :215
+                            scrollY  :215,
+                            autoWidth:true
                         }).columns.adjust()    
                         $('#wo_table tbody').off().on('click', 'td.details-control', function (e) {
                         var tr = $(this).closest("tr");

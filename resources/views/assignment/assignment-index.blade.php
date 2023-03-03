@@ -32,6 +32,7 @@
     </div>
 </div>
 @include('assignment.edit-assignment')
+@include('assignment.priority-assignment')
 @endsection
 @push('custom-js')
 @include('assignment.assignment-js')

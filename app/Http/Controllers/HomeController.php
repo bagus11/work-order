@@ -306,27 +306,82 @@ class HomeController extends Controller
     }
     public function getWorkOrderByStatus(Request $request)
     {
+        $userDepartement = MasterDepartement::find(auth()->user()->departement);
         if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
         {
-            $data = DB::table('work_orders')
-            ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
-            ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
-            ->where('work_orders.status_wo',$request->status)
-            ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
-            ->orderBy('id','desc')
-            ->get();
+            if($request->status == 4){
+                $data = DB::table('work_orders')
+                ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                ->where('work_orders.status_wo',$request->status)
+                ->where('work_orders.status_approval',1)
+                ->where(function($query) use($userDepartement){
+                    $query->where('request_for',$userDepartement->initial)->orWhere('work_orders.departement_id',auth()->user()->departement);
+    
+                })
+                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+                ->orderBy('id','desc')
+                ->get();
+            }else{
+                $data = DB::table('work_orders')
+                ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                ->where('work_orders.status_wo',$request->status)
+                ->where(function($query) use($userDepartement){
+                    $query->where('request_for',$userDepartement->initial)->orWhere('work_orders.departement_id',auth()->user()->departement);
+    
+                })
+                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+                ->orderBy('id','desc')
+                ->get();
+            }
         }else{
-            
-            $data = DB::table('work_orders')
-            ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
-            ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
-            ->where('work_orders.status_wo',$request->status)
-            ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
-            ->where(function($query){
-                $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
-            })
-            ->orderBy('id','desc')
-            ->get();
+            if($request->status == 0){
+                $data = DB::table('work_orders')
+                ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                ->where('work_orders.status_wo',$request->status)
+                ->where(function($query) use($userDepartement){
+                    $query->where('request_for',$userDepartement->initial)->orWhere('work_orders.departement_id',auth()->user()->departement);
+
+                })
+                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+                ->orderBy('id','desc')
+                ->get();
+            }else if($request->status == 4){
+                $data = DB::table('work_orders')
+                ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                ->where('work_orders.status_wo',$request->status)
+                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+                ->where(function($query) use($userDepartement){
+                    $query->where('work_orders.request_for',$userDepartement->initial)->orWhere('work_orders.departement_id',auth()->user()->departement);
+
+                })
+                ->where(function($query){
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                })
+                ->where('status_approval',1)
+                ->orderBy('id','desc')
+                ->get();
+            }
+            else{
+                $data = DB::table('work_orders')
+                ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
+                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                ->where('work_orders.status_wo',$request->status)
+                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
+                ->where(function($query) use($userDepartement){
+                    $query->where('work_orders.request_for',$userDepartement->initial)->orWhere('work_orders.departement_id',auth()->user()->departement);
+
+                })
+                ->where(function($query){
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
+                })
+                ->orderBy('id','desc')
+                ->get();
+
+            }
         }
        return response()->json([
         'data'=>$data

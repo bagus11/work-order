@@ -1,6 +1,6 @@
 
 <div class="modal fade" id="addMasterKantor">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title">Form Add Ticket</h4>
@@ -11,10 +11,10 @@
             <div class="modal-body">
                <div class="container">
                     <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Request Type</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12 col-sm-7 col-md-4">
                             <select name="select_request_type" class="select2" style="width: 100%" id="select_request_type">
                                 <option value="">Choose Request type</option>
                                 <option value="RFM">Request For Maintenance</option>
@@ -22,30 +22,30 @@
                             </select>
                             <input type="hidden" id="request_type" class="form-controll">
                         </div>
-                        <div class="col-md-2 mt-2">
+                        <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Request For</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12 col-sm-7 col-md-4 ">
                             <select name="select_departement" id="select_departement" class="select2" style="width: 100%"></select>
                             <input type="hidden" id="departement_for">
                             <span  style="color:red;" class="message_error text-red block departement_for_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Categories</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12 col-sm-7 col-md-4">
                             <select name="select_categories" class="select2" style="width: 100%" id="select_categories">
                                 <option value="">Choose Departement First</option>
                             </select>
                             <input type="hidden" class="form-control" id="categories">
                             <span  style="color:red;" class="message_error text-red block categories_error"></span>
                         </div>
-                        <div class="col-md-2 mt-2">
+                        <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Problem Type</label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12 col-sm-7 col-md-4">
                             <select name="select_problem_type" class="select2" style="width: 100%" id="select_problem_type">
                                 <option value="">Choose Categories First</option>
                             </select>
@@ -54,19 +54,19 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Subject</label>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-12 col-sm-7 col-md-6">
                             <input type="text" class="form-control" id="subject">
                             <span  style="color:red;" class="message_error text-red block add_info_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-2 mt-2">
+                        <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Additional Info</label>
                         </div>
-                        <div class="col-md-10">
+                        <div class="col-12 col-sm-7 col-md-10">
                             <textarea class="form-control" id="add_info" rows="3"></textarea>
                             <span  style="color:red;" class="message_error text-red block add_info_error"></span>
                         </div>

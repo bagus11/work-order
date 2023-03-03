@@ -32,15 +32,51 @@ get_assignment()
                 $('#wo_id').val(id)
                 $('#select_user').empty()
                 $('#select_user').append('<option value="">Choose PIC</option>')
-                $('#selectPriority').append('<option value="">Choose Level</option>')
+                // $('#selectPriority').append('<option value="">Choose Level</option>')
                 $.each(response.data,function(i,data){
                     $('#select_user').append('<option value="'+data.id+'">' + data.name +'</option>');
                 });
-                $.each(response.priority,function(i,data){
-                    $('#selectPriority').append('<option value="'+data.id+'">' + data.name +'</option>');
-                });
+                // $.each(response.priority,function(i,data){
+                //     $('#selectPriority').append('<option value="'+data.id+'">' + data.name +'</option>');
+                // });
                 
                  
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+    
+    });
+    $('#assignment_table').on('click', '.edit_priority', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{route('detail_wo')}}",
+                type: "get",
+                dataType: 'json',
+                async: true,
+                data:{
+                    'id':id
+                },
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success: function(response) {
+                swal.close();
+                $('#select_request_type_priority').html(': '+response.detail.request_type)
+                $('#select_categories_priority').html(': '+response.detail.categories_name)
+                $('#select_problem_type_priority').html(': '+response.detail.problem_type_name)
+                $('#request_type_priority').html(': '+response.detail.request_type)
+                $('#subject_priority').html(': '+response.detail.subject)
+                $('#add_info_priority').html(': '+response.detail.add_info)
+                $('#request_code_priority').html(': '+response.detail.request_code)
+                $('#username_priority').html(': '+response.detail.username)
+                $('#pic_priority').html(': '+response.pic.username)
+                $('#wo_id_priority').val(response.detail.request_code)   
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -72,6 +108,19 @@ get_assignment()
         'approve':2
        }
        approve_assignment(data)
+    })
+    $('#btnAssignPriority').on('click', function(){
+        var data ={
+            'request_code':$('#wo_id_priority').val(),
+            'select_level_priority':$('#select_level_priority').val()
+        }
+        if($('#select_level_priority').val() == '')
+        {
+            toastr['error']('Choose priority level first');
+            return false
+        }else{   
+            store('updateLevel',data,'work_order_assignment')
+        }
     })
     $('#select_user').on('change', function(){
         var select_user = $('#select_user').val()
@@ -134,7 +183,7 @@ get_assignment()
                                             </button> `;
                             }
                             if(response.data[i].status_wo != 0 && response.data[i].priority == null){
-                                priority =` <button title="Assign Priority" class="editAssignment btn btn-warning rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editAssignment">
+                                priority =` <button title="Assign Priority" class="edit_priority btn btn-warning rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editPriority">
                                                 <i class="fas fa-solid fa-city"></i>
                                             </button> `;
                             }

@@ -79,7 +79,7 @@
     }
 </style>
 <div class="modal fade" id="detailWO">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title">Detail Work Order</h4>
@@ -106,7 +106,7 @@
                                     <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">  
                                         <div class="containerpx-8">
                                             <div class="row" style="margin-top:-30px">
-                                                <div class="container" style="width: 40%; min-width:340px;margin:0 auto">
+                                                <div class="container" style="width: 40%; min-width:300px;margin:0 auto">
                                                     <div class="progressbar mt-6">
                                                         <div class="progress" id="progress">
                                         

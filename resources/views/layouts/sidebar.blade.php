@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-dark-purple elevation-4">
+<aside class="main-sidebar sidebar-dark-warning elevation-4">
     <a href="{{route('dashboard')}}" class="brand-link">
         <span class="brand-text font-weight-light" >Work Order</span>
     </a>

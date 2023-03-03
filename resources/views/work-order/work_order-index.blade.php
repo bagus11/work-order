@@ -69,14 +69,15 @@
                     <table class="datatable-bordered nowrap display" id="wo_table">
                         <thead>
                             <tr>
-                                <th style="text-align:center"></th>
-                                <th style="text-align:center">Request By</th>
-                                <th style="text-align:center">Office</th>
-                                <th style="text-align:center">Request Code</th>
-                                <th style="text-align:center">Departement</th>
-                                <th style="text-align:center">Category</th>
-                                <th style="text-align:center">Status</th>
-                                <th style="text-align:center">Action</th>
+                                <th style="text-align:center;width:11%"></th>
+                                <th style="text-align:center;width:11%">Request By</th>
+                                <th style="text-align:center;width:11%">Office</th>
+                                <th style="text-align:center;width:11%">Request Code</th>
+                                <th style="text-align:center;width:11%">Level</th>
+                                <th style="text-align:center;width:11%">Departement</th>
+                                <th style="text-align:center;width:11%">Category</th>
+                                <th style="text-align:center;width:11%">Status</th>
+                                <th style="text-align:center;width:11%">Action</th>
                             </tr>
                         </thead>
                     </table>

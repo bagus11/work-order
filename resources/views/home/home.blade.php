@@ -3,10 +3,10 @@
 @section('content')
 <div class="container" style="margin-top:-15px">
     <div class="row">
-        <div class="col-12 col-sm-6 col-md-2">
+        <div class="col-6 col-sm-6 col-md-2">
          <input type="date" id="from_date" class="form-control" value="{{date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )}}">
         </div>
-        <div class="col-12 col-sm-6 col-md-2">
+        <div class="col-6 col-sm-6 col-md-2">
          <input type="date" id="end_date" class="form-control" value="{{date('Y-m-d')}}">
         </div>
      </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
 use App\Models\MasterDepartement;
 use App\Models\MasterPriority;
 use App\Models\User;
@@ -151,4 +152,27 @@ class AssignmentController extends Controller
    
            ]);
    }
+   public function updateLevel(Request $request)
+   {
+     $status =500;
+     $message = "Data failed to update";
+     $priority = $request->select_level_priority;
+     $request_code = $request->request_code;
+          try {
+          
+               $update = WorkOrder::where('request_code',$request_code)->update([
+                    'priority'=>$priority
+               ]);
+               return ResponseFormatter::success(
+               $update,
+               'Category successfully added'
+               );            
+          } catch (\Throwable $th) {
+               return ResponseFormatter::error(
+               $th,
+               'Category failed to add',
+               500
+               );
+          }
+  }
 }
