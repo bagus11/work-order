@@ -79,7 +79,7 @@
     }
 </style>
 <div class="modal fade" id="detailWO">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title">Detail Work Order</h4>
@@ -95,7 +95,7 @@
                                         <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Detail</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Log History</a>
+                                        <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Comment</a>
                                     </li>
                                 
                                 </ul>
@@ -157,12 +157,7 @@
                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
                                                   <span id="subject_detail"></span>
                                                 </div>
-                                                <div class="col-5 col-sm-5 col-md-2  mt-2">
-                                                    <label for="">Additional Info</label>
-                                                </div>
-                                                <div class="col-7 col-sm-7 col-md-4  mt-2">
-                                                  <span for="" id="add_info_detail"></span>
-                                                </div>
+                                           
                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                     <label for="">Status</label>
                                                 </div>
@@ -175,6 +170,21 @@
                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
                                                    <label for="" id="pic_wo_detail"></label>
                                                 </div>
+                                                <div class="col-5 col-sm-5 col-md-2  mt-2">
+                                                    <label for="">Additional Info</label>
+                                                </div>
+                                                <div class="col-7 col-sm-7 col-md-10  mt-2">
+                                                  <span for="" id="add_info_detail"></span>
+                                                </div>
+                                                <div class="col-5 col-sm-5 col-md-2  mt-2">
+                                                    <label for="">Attachment User</label>
+                                                </div>
+                                                <div class="col-7 col-sm-7 col-md-10  mt-2">
+                                                   
+                                                        <div id="attachment_user_detail"></div>
+                                                    
+                                                </div>
+
                                             </div>
                                         </div>
                                         
@@ -188,14 +198,14 @@
                                                         <th style="text-align:center" colspan="2">Closed By</th>
                                                     </tr>
                                                     <tr>
-                                                        <th style="text-align:center">Created At</th>
-                                                        <th style="text-align:center">Name</th>
-                                                        <th style="text-align:center">Created At</th>
-                                                        <th style="text-align:center">Name</th>
-                                                        <th style="text-align:center">Created At</th>
-                                                        <th style="text-align:center">Name</th>
-                                                        <th style="text-align:center">Created At</th>
-                                                        <th style="text-align:center">Name</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Date</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Name</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Date</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Name</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Date</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Name</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Date</th>
+                                                        <th style="text-align:center;width:12%;padding: 10px 40px 10px 40px">Name</th>
                                                     </tr>
                                                 </thead>
                                             </table>  
@@ -204,38 +214,13 @@
                                     {{-- End Status Steper --}}
                                     {{-- Detail --}}
                                     <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
-                                       <div class="container">
-                                            <div class="direct-chat-messages">
-                                            
-                                                <div class="direct-chat-msg">
-                                                    <div class="direct-chat-infos clearfix">
-                                                        <span class="direct-chat-name float-left">Bagus Slamet Oetomo</span>
-                                                        <span class="direct-chat-timestamp float-right">23 Jan 2:00 pm</span>
-                                                    </div>
-                                                    
-                                                     <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
-                                               
-                                                    <div class="direct-chat-text">
-                                                        Is this template really for free? That's unbelievable!
-                                                    </div>
-                                               
+                                            <div class="row">
+                                                <div class="col-12 col-sm-12 col-md-12">
+                                                    <div class="direct-chat-messages" id="logMessage">
+    
+                                                    </div>   
                                                 </div>
-                                             
-                                                <div class="direct-chat-msg right">
-                                                    <div class="direct-chat-infos clearfix">
-                                                        <span class="direct-chat-name float-right">Jessica Intan Kumala Sari</span>
-                                                        <span class="direct-chat-timestamp float-left">23 Jan 2:05 pm</span>
-                                                    </div>
-                                               
-                                                    <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
-                                                
-                                                    <div class="direct-chat-text">
-                                                        You better believe it!
-                                                    </div>
-                                               
-                                                </div>
-                                            </div>   
-                                       </div>
+                                            </div>
                                     </div>
                                     {{-- End Detail --}}
                                 </div>

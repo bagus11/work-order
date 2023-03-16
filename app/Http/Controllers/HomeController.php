@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MasterDepartement;
 use App\Models\MasterJabatan;
+use App\Models\User;
+use App\Models\WOCounting;
 use App\Models\WONotification;
 use App\Models\WorkOrder;
 use Carbon\Carbon;
@@ -62,7 +64,7 @@ class HomeController extends Controller
                                             ->where('status_approval', 1); 
                                         })->first();
 
-            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'),DB::raw('AVG(work_orders.duration) as duration'))
                                         ->join('users','users.id','=','work_orders.user_id_support')
                                         ->groupBy('work_orders.user_id_support')
                                         ->where('status_approval',1)
@@ -123,8 +125,7 @@ class HomeController extends Controller
             ->first();
             $jabatanUser= MasterJabatan::find(auth()->user()->jabatan);
 
-        }
-   
+        }  
         return response()->json([
             'status_new'=>$status_new,
             'status_on_progress'=>$status_on_progress,
@@ -144,7 +145,7 @@ class HomeController extends Controller
             $date = Carbon::createFromFormat('Y-m-d', $request->filter.'-01')
             ->endOfMonth()
             ->format('Y-m-d');
-            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
+            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating','duration')
             ->where('status_wo',4)
             ->where('user_id_support', auth()->user()->id)
             ->where('status_approval',1)
@@ -159,7 +160,7 @@ class HomeController extends Controller
             ->whereBetween(DB::raw('DATE(created_at)'), [$request->filter.'-01', $date])
             ->first();
         }else if($request->selectFilter == 3){
-            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
+            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating','duration')
             ->where('status_wo',4)
             ->where('user_id_support', auth()->user()->id)
             ->where('status_approval',1)
@@ -174,7 +175,7 @@ class HomeController extends Controller
             ->first();
         }
         else{
-            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating')
+            $data = WorkOrder::select( DB::raw('DATE(created_at) as date'),'request_code','rating','duration')
             ->where('status_wo',4)
             ->where('user_id_support', auth()->user()->id)
             ->where('status_approval',1)
@@ -223,7 +224,7 @@ class HomeController extends Controller
             $date = Carbon::createFromFormat('Y-m-d', $request->filter.'-01')
                             ->endOfMonth()
                             ->format('Y-m-d');
-            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'),DB::raw('AVG(work_orders.duration) as duration'))
                                     ->join('users','users.id','=','work_orders.user_id_support')
                                     ->groupBy('work_orders.user_id_support')
                                     ->where('status_approval',1)
@@ -234,7 +235,7 @@ class HomeController extends Controller
                                     ->get();
         }
         else if($request->selectFilter == 3){
-            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'),DB::raw('AVG(work_orders.duration) as duration'))
                                     ->join('users','users.id','=','work_orders.user_id_support')
                                     ->groupBy('work_orders.user_id_support')
                                     ->where('status_approval',1)
@@ -244,7 +245,7 @@ class HomeController extends Controller
                                     ->orderBy('count','desc')
                                     ->get();
         }else{
-            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'))
+            $classementPIC = DB::table('work_orders')->select(DB::raw('AVG(work_orders.rating) as classement'),'users.name',DB::raw('COUNT(work_orders.rating) as count'),DB::raw('AVG(work_orders.duration) as duration'))
                                     ->join('users','users.id','=','work_orders.user_id_support')
                                     ->groupBy('work_orders.user_id_support')
                                     ->where('status_approval',1)

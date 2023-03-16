@@ -54,13 +54,13 @@
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Subject</label>
                         </div>
-                        <div class="col-8 col-sm-8 col-md-4  mt-2">
+                        <div class="col-8 col-sm-8 col-md-10  mt-2">
                            <span id="subject_priority"></span>
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
                             <label for="">Additional Info</label>
                         </div>
-                        <div class="col-8 col-sm-8 col-md-4 mt-2">
+                        <div class="col-8 col-sm-8 col-md-10 mt-2">
                            <span id="add_info_priority"></span>
                         </div>
                     </div>

@@ -8,8 +8,10 @@
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+        <form class="form" id="form_serialize" enctype="multipart/form-data">
             <div class="modal-body">
                <div class="container">
+      
                     <div class="form-group row">
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <label for="">Request Type</label>
@@ -18,7 +20,7 @@
                             <select name="select_request_type" class="select2" style="width: 100%" id="select_request_type">
                                 <option value="">Choose Request type</option>
                                 <option value="RFM">Request For Maintenance</option>
-                                <option value="RFP">Request For Project</option>
+                                {{-- <option value="RFP">Request For Project</option> --}}
                             </select>
                             <input type="hidden" id="request_type" class="form-controll">
                         </div>
@@ -71,23 +73,23 @@
                             <span  style="color:red;" class="message_error text-red block add_info_error"></span>
                         </div>
                     </div>
-                    {{-- <div class="form-group row">
+                    <div class="form-group row">
                         <div class="col-md-2 mt-2">
                             <label for="">Attachment</label>
                         </div>
                         <div class="col-md-10">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="attachment" required>
-                                <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-                              </div>
+                            <input type="file" class="form-control" id="attachment" required>
+                           
                             <span  style="color:red;" class="message_error text-red block attachment_error"></span>
                         </div>
-                    </div> --}}
+                    </div>
                </div>
+           
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btn_save_wo" type="button" class="btn btn-success">Save</button>
+                <button id="btn_save_wo" type="submit" class="btn btn-success">Save</button>
             </div>
+        </form>
         </div>
     </div>
 </div>

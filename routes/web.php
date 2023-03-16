@@ -10,6 +10,7 @@ use App\Http\Controllers\MasterKantorController;
 use App\Http\Controllers\MasterPriorityController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\ProblemTypeController;
+use App\Http\Controllers\ReportKPIController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserAccessController;
@@ -74,6 +75,9 @@ Route::group(['middleware' => ['permission:view-master_jabatan']], function () {
 });
 Route::group(['middleware' => ['permission:view-work_order_assignment']], function () {
     Route::get('work_order_assignment', [AssignmentController::class, 'index'])->name('work_order_assignment');
+});
+Route::group(['middleware' => ['permission:view-report_kpi']], function () {
+    Route::get('report_kpi', [ReportKPIController::class, 'index'])->name('report_kpi');
 });
 // Menus
 Route::post('save_menus', [MenusController::class, 'save_menus'])->name('save_menus');
@@ -199,6 +203,9 @@ Route::post('addPriority', [MasterPriorityController::class, 'addPriority'])->na
 Route::get('getPriorityDetail', [MasterPriorityController::class, 'getPriorityDetail'])->name('getPriorityDetail');
 Route::post('updatePriority', [MasterPriorityController::class, 'updatePriority'])->name('updatePriority');
 
+// KPIUSer
+Route::get('getKPIUser', [ReportKPIController::class, 'getKPIUser'])->name('getKPIUser');
+Route::get('getKPIUserDetail', [ReportKPIController::class, 'getKPIUserDetail'])->name('getKPIUserDetail');
 
 
 });

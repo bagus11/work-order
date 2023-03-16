@@ -30,10 +30,10 @@
                                         <table class="datatable-bordered nowrap display" id="logNewTable">
                                             <thead>
                                                 <tr>
-                                                    <th style="text-align:center;width:33%">No</th>
-                                                    <th style="text-align:center;width:33%">Created At</th>
-                                                    <th style="text-align:center;width:33%">Request Code</th>
-                                                    <th style="text-align:center;width:33%">Category</th>
+                                                    <th style="text-align:center;width:5%">No</th>
+                                                    <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Created At</th>
+                                                    <th style="text-align:center;width:35%;padding: 0 60px 0 60px">Request Code</th>
+                                                    <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Category</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -61,10 +61,10 @@
                                         <table class="datatable-bordered nowrap display" id="logProgressTable">
                                             <thead>
                                                 <tr>
-                                                    <th style="text-align:center;width:33%">No</th>
-                                                    <th style="text-align:center;width:33%">Created At</th>
-                                                    <th style="text-align:center;width:33%">Request Code</th>
-                                                    <th style="text-align:center;width:33%">Category</th>
+                                                    <th style="text-align:center;width:5%">No</th>
+                                                    <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Created At</th>
+                                                    <th style="text-align:center;width:35%;padding: 0 60px 0 60px">Request Code</th>
+                                                    <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Category</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -92,10 +92,10 @@
                                         <table class="datatable-bordered nowrap display" id="logPendingTable">
                                             <thead>
                                                 <tr>
-                                                    <th style="text-align:center;width:33%">No</th>
-                                                    <th style="text-align:center;width:33%">Created At</th>
-                                                    <th style="text-align:center;width:33%">Request Code</th>
-                                                    <th style="text-align:center;width:33%">Category</th>
+                                                    <th style="text-align:center;width:5%">No</th>
+                                                    <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Created At</th>
+                                                    <th style="text-align:center;width:35%;padding: 0 60px 0 60px">Request Code</th>
+                                                    <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Category</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -122,10 +122,10 @@
                                       <table class="datatable-bordered nowrap display" id="logRevisionTable">
                                           <thead>
                                               <tr>
-                                                  <th style="text-align:center;width:33%">No</th>
-                                                  <th style="text-align:center;width:33%">Created At</th>
-                                                  <th style="text-align:center;width:33%">Request Code</th>
-                                                  <th style="text-align:center;width:33%">Category</th>
+                                                <th style="text-align:center;width:5%">No</th>
+                                                <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Created At</th>
+                                                <th style="text-align:center;width:35%;padding: 0 60px 0 60px">Request Code</th>
+                                                <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Category</th>
                                               </tr>
                                           </thead>
                                       </table>
@@ -150,10 +150,10 @@
                                       <table class="datatable-bordered nowrap display" id="logDoneTable">
                                           <thead>
                                               <tr>
-                                                  <th style="text-align:center;width:33%">No</th>
-                                                  <th style="text-align:center;width:33%">Created At</th>
-                                                  <th style="text-align:center;width:33%">Request Code</th>
-                                                  <th style="text-align:center;width:33%">Category</th>
+                                                <th style="text-align:center;width:5%">No</th>
+                                                <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Created At</th>
+                                                <th style="text-align:center;width:35%;padding: 0 60px 0 60px">Request Code</th>
+                                                <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Category</th>
                                               </tr>
                                           </thead>
                                       </table>
@@ -178,10 +178,10 @@
                                       <table class="datatable-bordered nowrap display" id="logRejectTable">
                                           <thead>
                                               <tr>
-                                                  <th style="text-align:center;width:33%">No</th>
-                                                  <th style="text-align:center;width:33%">Created At</th>
-                                                  <th style="text-align:center;width:33%">Request Code</th>
-                                                  <th style="text-align:center;width:33%">Category</th>
+                                                <th style="text-align:center;width:5%">No</th>
+                                                <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Created At</th>
+                                                <th style="text-align:center;width:35%;padding: 0 60px 0 60px">Request Code</th>
+                                                <th style="text-align:center;width:30%;padding: 0 60px 0 60px">Category</th>
                                               </tr>
                                           </thead>
                                       </table>
@@ -196,7 +196,7 @@
 <div class="container">
     <div class="row">
         @can('rating-pic-dashboard')
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header bg-white">
                     <label class="mt-2"> Rating</label>
@@ -213,10 +213,11 @@
                                             <table class="datatable-bordered nowrap display" id="ratingLog">
                                                 <thead>
                                                     <tr>
-                                                        <th style="text-align:center;width:33%">No</th>
-                                                        <th style="text-align:center;width:33%">Date</th>
-                                                        <th style="text-align:center;width:33%">Request Code</th>
-                                                        <th style="text-align:center;width:33%">Rating</th>
+                                                        <th style="text-align:center;width:2%">No</th>
+                                                        <th style="text-align:center;width:19%;padding: 0 30px 0 30px">Date</th>
+                                                        <th style="text-align:center;width:23%;padding: 0 30px 0 30px">Request Code</th>
+                                                        <th style="text-align:center;width:15%;padding: 0 30px 0 30px">Rating</th>
+                                                        <th style="text-align:center;width:19%;padding: 0 30px 0 30px">Duration</th>
                                                     </tr>
                                                 </thead>
                                             </table>
@@ -258,12 +259,14 @@
                             </div>
                     </div>
                 </div>
-                <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px">
+                <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px;min-height:283px">
                         <img style="display:block;width:60%;margin:auto" src="{{URL::asset('profile.png')}}" alt="">
                       <br>
                             <b for="" style="text-align:center">{{auth()->user()->name}}</b> <br>
                             <strong for="" style="margin-top:10px" id="ratingUser"> Rating</strong>
+                           
                 </div>
+                
                 <div class="card-footer"></div>
             </div>
         </div>
@@ -312,23 +315,26 @@
                     </div>
                 </div>
                 <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px">
-                    <table class="datatable-bordered nowrap display" id="classementTable">
-                        <thead>
-                            <tr>
-                                <th style="text-align:center;width:25%">No</th>
-                                <th style="text-align:center;width:25%">PIC</th>
-                                <th style="text-align:center;width:25%">Total WO</th>
-                                <th style="text-align:center;width:25%">Rating</th>
-                            </tr>
-                        </thead>
-                    </table> 
+                  
+                        <table class="datatable-bordered nowrap display table-wrapper" id="classementTable" >
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;width:5%">No</th>
+                                    <th style="text-align:center;width:59%;padding:0 90px 0 90px">PIC</th>
+                                    <th style="text-align:center;width:12%">Total WO</th>
+                                    <th style="text-align:center;width:12%">Rating</th>
+                                    <th style="text-align:center;width:12%;padding: 0 30px 0 30px">Duration</th>
+                                </tr>
+                            </thead>
+                        </table> 
+                   
                 </div>
                 <div class="card-footer"></div>
             </div>
         </div>
         @endcan
         @can('get-problem_type-dashboard')
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header bg-white">
                     <label class="mt-2">Percentage</label>
@@ -368,7 +374,7 @@
                             </div>
                         </div>
                     </div>
-                <div class="card-body">
+                    <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px;min-height:283px">
                     <div class="container" id="percentageChart_container">
                         <h4 id="percentageLabel" style="text-align:center"></h4>
                         <canvas id="percentageChart"></canvas>

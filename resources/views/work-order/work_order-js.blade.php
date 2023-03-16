@@ -28,8 +28,61 @@ get_work_order_list()
    $('#select_categories').on('change', function(){
     getSelect('get_problem_type_name',{'id': $('#select_categories').val()},'select_problem_type', 'Problem Type')
    })
-    $('#btn_save_wo').on('click', function(){
-        save_wo()
+    $('#btn_save_wo').on('click', function(e){
+        e.preventDefault();
+        var formData        = new FormData();    
+        var request_type    = $('#request_type').val()
+        var categories      = $('#categories').val()
+        var problem_type    = $('#problem_type').val()
+        var subject         = $('#subject').val()
+        var add_info        = $('#add_info').val()
+        var departement_for = $('#departement_for').val()
+        var attachment      = $('#attachment')[0].files[0];
+        formData.append('attachment',attachment)
+        formData.append('request_type',request_type)
+        formData.append('categories',categories)
+        formData.append('problem_type',problem_type)
+        formData.append('subject',subject)
+        formData.append('add_info',add_info)
+        formData.append('departement_for',departement_for)
+        $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: 'save_wo',
+                type: "post",
+                dataType: 'json',
+                async: true,
+                processData: false,
+                contentType: false,
+                data: formData,
+                beforeSend: function() {
+                    SwalLoading('Inserting progress, please wait .');
+                },
+                success: function(response) {
+                    swal.close();
+                    $('.message_error').html('')
+                    if(response.status==422)
+                    {
+                        $.each(response.message, (key, val) => 
+                        {
+                           $('span.'+key+'_error').text(val[0])
+                        });
+                        return false;
+                    }else if(response.status==500){
+                        toastr['warning'](response.message);
+                    }
+                    else{
+                        toastr['success'](response.message);
+                        window.location = "{{route('work_order_list')}}";
+                    }
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+        // uploadFile('save_wo',formData,'work_order_list')
     })
     $('#select_status_wo').on('change', function(){
         var select_status_wo = $('#select_status_wo').val()
@@ -105,7 +158,8 @@ get_work_order_list()
                 $('#username_rating').html(': '+response.detail.username)
                 $('#wo_id_rating').val(id)
                 $('#note_rating').val(response.data_log.comment)
-                $('#creator_rating').html(response.data_log.username)  
+                $('#creator_rating').html(response.data_log.username)
+                  
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -142,7 +196,7 @@ get_work_order_list()
     $('#wo_table').on('click', '.detailWO', function() {
             var id = $(this).data('id');
             var request =  $(this).data('request');
-          
+           
             $.ajax({
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -194,10 +248,22 @@ get_work_order_list()
                 $('#status_wo_detail').html(': ' + status_wo)
                 $('#note_detail').val(response.data_log.comment)
                 $('#requestCodeWo').val(response.data_log.request_code)
+                if(response.detail.attachment_user){
+                    $('#attachment_user_detail').empty()
+                    $('#attachment_user_detail').append(`
+                    <p>:
+                        <a target="_blank" href="{{URL::asset('${response.detail.attachment_user}')}}" class="ml-3" style="color:blue">
+                            <i class="far fa-file-pdf" style="color: red;font-size: 20px;"></i>
+                            Klik untuk lihat file</a>
+                    </p>
+                            
+                            `)
+                }
 
                 $('#creator_detail').html(response.data_log.username) 
                 $('#pic_wo_detail').html( response.pic == null ? ': -' : ': '+ response.pic.username)  
                 getStepper(request)
+                getLogHistory(response.data_log.request_code)
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -293,7 +359,7 @@ get_work_order_list()
                 var data=''
                 var statusWo = response.statusWo.status_wo
                 var statusApproval = response.statusWo.status_approval
-                console.log(statusWo + ' - '+statusApproval)
+               
                 if(statusWo == 0 && statusApproval == 0){
                     formSetpsNum = 0
                 }else if(statusWo == 1 && statusApproval == 0){
@@ -339,15 +405,15 @@ get_work_order_list()
 
 
 
-                    data += `<tr style="text-align: center;">
-                                <td style="width:12%;text-align:center;">${response.createdBy[i]['created_at']==null?'':date+' '+time}</td>
-                                <td style="width:13%;text-align:center;">${response.createdBy[i].user_p_i_c==null?'':response.createdBy[i].user_p_i_c.name}</td>
-                                <td style="width:12%;text-align:center;">${respondedDate+' '+respondedTime}</td>
-                                <td style="width:13%;text-align:center;">${response.responded[i]==null?'':response.responded[i].user_p_i_c.name}</td>
-                                <td style="width:12%;text-align:center;">${fixedDate+' '+fixedTime}</td>
-                                <td style="width:13%;text-align:center;">${response.fixed[i]==null?'':response.fixed[i].user_p_i_c.name}</td>
-                                <td style="width:12%;text-align:center;">${closedDate+' '+closedTime}</td>
-                                <td style="width:13%;text-align:center;">${response.closed[i]==null?'':response.closed[i].user_p_i_c.name}</td>
+                    data += `<tr>
+                                <td style="text-align:center;width:12% !important;">${response.createdBy[i]['created_at']==null?'':date+' '+time} </td>
+                                <td style="text-align:center;width:12% !important;">${response.createdBy[i].user_p_i_c==null?'':response.createdBy[i].user_p_i_c.name}</td>
+                                <td style="text-align:center;width:12% !important;">${respondedDate+' '+respondedTime}</td>
+                                <td style="text-align:center;width:12% !important;">${response.responded[i]==null?'':response.responded[i].user_p_i_c.name}</td>
+                                <td style="text-align:center;width:12% !important;">${fixedDate+' '+fixedTime}</td>
+                                <td style="text-align:center;width:12% !important;">${response.fixed[i]==null?'':response.fixed[i].user_p_i_c.name}</td>
+                                <td style="text-align:center;width:12% !important;">${closedDate+' '+closedTime}</td>
+                                <td style="text-align:center;width:12% !important;">${response.closed[i]==null?'':response.closed[i].user_p_i_c.name}</td>
                             </tr>
                             `;
                 }
@@ -355,6 +421,7 @@ get_work_order_list()
                     $('#stepperTable').DataTable({
                         scrollX  : true,
                         scrollY  :70,
+                        autoWidth:false,
                         searching:false,
                         aaSorting:false,
                         bInfo:false,
@@ -427,7 +494,7 @@ get_work_order_list()
                             const date = d.toISOString().split('T')[0];
                             const time = d.toTimeString().split(' ')[0];
                             d2 = new Date (response.data[i].created_at );
-                            d2.setMinutes ( d.getMinutes() + 1 );
+                            d2.setMinutes ( d.getMinutes() + 5 );
                             var d3 =  d2.toTimeString().split(' ')[0];
                             var date_now = new Date();
                             var date_format = date_now.toISOString().split('T')[0];
@@ -459,7 +526,7 @@ get_work_order_list()
                                 status_wo ="REJECT"
                                 status_color ='red'
                             }
-                          var priorityLabel =''
+                          var priorityLabel ='-'
                           var priorityColor =''
                           var update_progress ='';
                           var approve_manual ='';
@@ -515,11 +582,15 @@ get_work_order_list()
                                                  <ion-icon name="eye"></ion-icon>        
                                             </button> `;
                     data += `<tr style="text-align: center;">
+                                @can('priority-work_order_list')
                                 <td class='details-control'></td>
+                                @endcan
                                 <td style="width:11%;text-align:left;">${response.data[i]['username']==null?'':response.data[i]['username']}</td>
                                 <td style="width:11%;text-align:left;">${response.data[i]['kantor_name']==null?'':response.data[i]['kantor_name']}</td>
                                 <td style="width:11%;text-align:left;" class="request_code">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
+                                @can('priority-work_order_list')
                                 <td style="width:11%;text-align:center;${priorityColor}">${priorityLabel}</td>
+                                @endcan
                                 <td style="width:11%;text-align:center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
                                 <td style="width:11%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
                                 <td style="width:11%;text-align:center; color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
@@ -539,16 +610,10 @@ get_work_order_list()
                             </tr>
                             `;
                 }
-                    // $('#wo_table > tbody:first').html(data);
-                    // $('#wo_table').DataTable({
-                    //     scrollX  : true,
-                    //     scrollY:220
-                    // }).columns.adjust()
-
                     $('#wo_table > tbody:first').html(data);
                         var table = $('#wo_table').DataTable({
                             scrollX  : true,
-                            scrollY  :215,
+                            scrollY  :305,
                             autoWidth:true
                         }).columns.adjust()    
                         $('#wo_table tbody').off().on('click', 'td.details-control', function (e) {
@@ -588,11 +653,11 @@ get_work_order_list()
                   $('#loading').show();
                 },
                 success : function(response) {
-                    // alert(response.length);
+
                     $('#loading').hide();
                     if(response){
                         let row = '';
-                        var revision =0;
+                        var revision = 0;
                         for(let i = 0; i < response.log_data.length; i++){
                         var isi_survey =``;
                         var report_survey =``;
@@ -657,14 +722,19 @@ get_work_order_list()
                                 assignment ="REJECT"
                                 color_assignment ='red'
                             }
+                            var picDuration = '-'
+                            if(status_wo =='CHECKING' || status_wo =='PENDING'){
+
+                                picDuration= response.log_data[i].duration == 0 ? timeConvert(response.log_data[i].duration) : timeConvert(response.log_data[i].duration)
+                            }
                                 row+= `<tr class="table-light">
                                             <td style="text-align:center">${i + 1}</td>
                                             <td style="text-align:center">${date} ${time}</td>
-                                            <td style="text-align:center;font-weight:bold">${response.log_data[i].priority == null ?'-': response.log_data[i].priority.name}</td>
                                             <td style="text-align:center;color:${color_assignment}"><b>${assignment}<b/></td>
-                                                <td style="text-align:center;color:${status_color}"><b>${status_wo}<b/></td>
-                                                    <td style="text-align:center">${response.log_data[i].user_p_i_c_support==null?'-':response.log_data[i].user_p_i_c_support.name}</td>
-                                                    <td style="text-align:left">${response.log_data[i].user_p_i_c.name}</td>
+                                            <td style="text-align:center;color:${status_color}"><b>${status_wo}<b/></td>
+                                            <td style="text-align:center">${response.log_data[i].user_p_i_c_support==null?'-':response.log_data[i].user_p_i_c_support.name}</td>
+                                            <td style="text-align:center">${picDuration}</td>
+                                            <td style="text-align:left">${response.log_data[i].user_p_i_c.name}</td>
                                         </tr>`;
     
                         }
@@ -674,10 +744,10 @@ get_work_order_list()
                                 <tr>
                                     <th style="text-align:center">No</th>
                                     <th style="text-align:center">Created at</th>
-                                    <th style="text-align:center">Level</th>
                                     <th style="text-align:center">Assign Status</th>
                                     <th style="text-align:center">Status WO</th>
                                     <th style="text-align:center">PIC</th>
+                                    <th style="text-align:center">Duration</th>
                                     <th style="text-align:center">Created By</th>
                                 </tr>
                             </thead>
@@ -753,51 +823,7 @@ get_work_order_list()
             }
         });
     }
-    function save_wo(){
-        data ={
-            'request_type':$('#request_type').val(),
-            'categories':$('#categories').val(),
-            'problem_type':$('#problem_type').val(),
-            'subject':$('#subject').val(),
-            'add_info':$('#add_info').val(),
-            'departement_for':$('#departement_for').val(),
-        }
-        $.ajax({
-                headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{route('save_wo')}}",
-                type: "post",
-                dataType: 'json',
-                async: true,
-                data: data,
-                beforeSend: function() {
-                    SwalLoading('Please wait ...');
-                },
-                success: function(response) {
-                    swal.close();
-                    $('.message_error').html('')
-                    if(response.status==422)
-                    {
-                        $.each(response.message, (key, val) => 
-                        {
-                           $('span.'+key+'_error').text(val[0])
-                        });
-                        return false;
-                    }else if (response.status == 500){
-                        toastr['warning'](response.message);
-                        return false;
-                    }else{
-                        toastr['success'](response.message);
-                        window.location = "{{route('work_order_list')}}";
-                    }
-                },
-                error: function(xhr, status, error) {
-                    swal.close();
-                    toastr['error']('Failed to get data, please contact ICT Developer');
-                }
-            });
-    }
+   
     function approve_assignment(data)
     {
         $.ajax({
@@ -939,6 +965,7 @@ get_work_order_list()
         });
     }
     function getLogHistory(request_code){
+        $('#logMessage').empty()
         $.ajax({
             headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -955,7 +982,28 @@ get_work_order_list()
             },
             success: function(response) {
                 swal.close();
-               console.log(response)
+              
+               var data =''
+               for(i = 0; i < response.log_data.length; i++){
+              
+                data +=`
+                        <div class="direct-chat-msg ${response.log_data[i].creator.id == $('#auth_id').val() ?'right':''}">
+                            <div class="direct-chat-infos clearfix">
+                                <span class="direct-chat-name ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator == null ?'':response.log_data[i].creator.name}</span>
+                                <span class="direct-chat-timestamp ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-left':'float-right'}">${response.log_data[i].date}</span>
+                            </div>
+                            
+                                <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
+                        
+                            <div class="direct-chat-text">
+                                ${response.log_data[i].comment}
+                            </div>
+                        
+                        </div>
+                `;
+            }
+          
+               $('#logMessage').append(data)
                 
             },
             error: function(xhr, status, error) {

@@ -6,8 +6,10 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Requests\StoreManualWORequest;
 use App\Mail\SendMail;
 use App\Models\MasterCategory;
+use App\Models\MasterJabatan;
 use App\Models\ProblemType;
 use App\Models\User;
+use App\Models\WONotification;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderLog;
 use Illuminate\Http\Request;
@@ -53,7 +55,7 @@ class ManualWOController extends Controller
                 'subject'=>strtoupper($subject),
                 'add_info'=>$add_info,
                 'user_id'=>$request->username,
-                'assignment'=>0,
+                'assignment'=>1,
                 'status_wo'=>1,
                 'category'=>$categories,
                 'follow_up'=>0,
@@ -63,6 +65,24 @@ class ManualWOController extends Controller
                 'created_at'=>date('Y-m-d H:i:s')
             ];
             $post_log =[
+                'request_code'=>$ticket_code,
+                'request_type'=>$request_type,
+                'departement_id'=>$departement_id->departement,
+                'problem_type'=>$problem_type,
+                'subject'=>strtoupper($subject),
+                'add_info'=>$add_info,
+                'user_id'=>$request->username,
+                'assignment'=>0,
+                'status_wo'=>0,
+                'category'=>$categories,
+                'follow_up'=>0,
+                'status_approval'=>0,
+                'user_id_support'=>auth()->user()->id,
+                'created_at'=>date('Y-m-d H:i:s'),
+                'creator'=>auth()->user()->id,
+                'comment'=>'Create Manual Ticket'
+            ];
+            $post_log2 =[
                 'request_code'=>$ticket_code,
                 'request_type'=>$request_type,
                 'departement_id'=>$departement_id->departement,
@@ -93,16 +113,33 @@ class ManualWOController extends Controller
                 'PIC'=>$userName->name
 
             ];
-            DB::transaction(function() use($post,$post_log, $postEmail) {
-                $insert = WorkOrder::create($post);
-                if($insert){
-                    WorkOrderLog::create($post_log);
-
-                }
+            $userPost =[
+                'message'=>auth()->user()->name.' has create your ticket transaction with request code : '.$ticket_code,
+                'subject'=>'Manual Ticket',
+                'status'=>0,
+                'link'=>'work_order_list',
+                'userId'=>$request->username,
+                'created_at'=>date('Y-m-d H:i:s')
+            ];
+            $masterJabatan = MasterJabatan::where('departement_id',auth()->user()->departement)->first();
+            $headUser = User::where('jabatan',$masterJabatan->id)->first();
+            $headPost =[
+                'message'=>auth()->user()->name.' has create manual ticket transaction with request code : '.$ticket_code,
+                'subject'=>'Manual Ticket',
+                'status'=>0,
+                'link'=>'work_order_list',
+                'userId'=>$headUser->id,
+                'created_at'=>date('Y-m-d H:i:s')
+            ];
+            DB::transaction(function() use($post,$post_log,$post_log2, $postEmail,$userPost,$headPost) {
+                WorkOrder::create($post);
+                WorkOrderLog::create($post_log);
+                WorkOrderLog::create($post_log2);
+                WONotification::create($userPost);
+                WONotification::create($headPost);
                 $title = "Manual Support Ticket";
                 $subject = 'ON PROGRESS - '.$post['subject'];
                 $to ="kutukan3@gmail.com";
-             
                 $this->sendMail($title,$to,$post,$postEmail,$subject);
             });
             return ResponseFormatter::success(

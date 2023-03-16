@@ -134,32 +134,6 @@ getNotification()
                 }
             });
         }
-        function timeSince(date) {
-            var seconds = Math.floor((new Date() - date) / 1000);
-
-            var interval = seconds / 31536000;
-
-            // if (interval > 1) {
-            // return Math.floor(interval) + " years";
-            // }
-            // interval = seconds / 2592000;
-            // if (interval > 1) {
-            // return Math.floor(interval) + " months";
-            // }
-            // interval = seconds / 86400;
-            // if (interval > 1) {
-            // return Math.floor(interval) + " days";
-            // }
-            interval = seconds / 3600;
-            if (interval > 1) {
-            return Math.floor(interval) + " hours";
-            }
-            interval = seconds / 60;
-            if (interval > 1) {
-            return Math.floor(interval) + " minutes";
-            }
-            return Math.floor(seconds) + " seconds";
-        }
         function getNotification(){
           
             $('#notificationBody').empty()
@@ -173,12 +147,16 @@ getNotification()
             async: true,
             success: function(response) {
              
-                if(response.countStatus.new == 0){
-                    $('#notificationCount').hide()
-                  
-                }else{
-                    $('#notificationCount').show()
-                }
+              if(response.data.length == 0){
+                $('#notifikasi').hide()
+              }else{
+                $('#notifikasi').show()
+                    if(response.countStatus.new == 0){
+                        $('#notificationCount').hide()
+                    
+                    }else{
+                        $('#notificationCount').show()
+                    }
                     var data =''
                     $('#notificationCount').html(response.countStatus.new)
                     for(i = 0; i < response.data.length; i++ )
@@ -208,6 +186,7 @@ getNotification()
                                                    `;
                     }
                     $('#notificationBody').html(data)
+              }
 
                  
                     
@@ -238,26 +217,63 @@ getNotification()
                 }
             }); 
         }
-        function master_chart(title,labels,type,id,data_a){
+        function master_chart(title,labels,type,id,data_a,color){
             const data = {
                 labels: labels,
                 datasets: [{
                 label: title,
-                backgroundColor: 'rgb(255, 99, 132)',
+                backgroundColor:color,
                 borderColor: 'rgb(255, 99, 132)',
-                data: data_a,
+                datalabels: {
+                    color: 'black',
+                            anchor:'end',
+                            align: 'end',
+                            formatter: (value, ctx) => {
+                            let sum = 0;
+                            for( i =0; i< ctx.dataset.data.length ; i++){
+                                sum +=ctx.dataset.data[i]
+                            }
+                            let percentage = (value * 100 / sum).toFixed(2) + "%";
+                            
+                            return percentage;
+                            }
+                         
+                        },
+                data:data_a
                 }]
             }
-            const config = {
-                type:type,
+            var chart = new Chart(id, {
+                type: type,
                 data: data,
-                options: {}
-            };
-       
-            var myChart = new Chart(
-                id,
-                config
-            );
+                options:{
+                    legend: {
+                        display: false
+                    },
+                    // tooltips: {
+                    //     callbacks: {
+                    //         label: function(tooltipItem, data) 
+                    //                     {
+                    //                     return tooltipItem.yLabel.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    //                     }
+                    //     }
+                    // },
+                    layout:{
+                            padding: 30
+                        },
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function(value) {if (value % 1 === 0) {return value;}}
+                                },
+                            }
+                        ]
+                    }
+            }
+            
+            
+            });
         }
         function pieChart(title,label,data,color,type,id){
         
@@ -274,8 +290,15 @@ getNotification()
             
             }
             const option={
+                responsive: true,
                     legend: {
-                        display: false
+                        display: true,
+                        position:'bottom',
+                       
+                        labels:{
+                            usePointStyle:true,
+                          
+                        }
                     },
                     tooltips: {
                         enabled: true
@@ -283,7 +306,12 @@ getNotification()
                 
                     plugins: {
                         legend:{
-                            display: false
+                            labels: {
+                                // This more specific font property overrides the global property
+                                font: {
+                                    size: 14
+                                }
+                            }
                         },
                         datalabels: {
                         formatter: (value, ctx) => {
@@ -306,6 +334,56 @@ getNotification()
                 options:option
             
             
+            });
+        }
+        function timeConvert(n) {
+            var num = n;
+            var hours = (num / 60);
+            var rhours = Math.floor(hours);
+            var minutes = (hours - rhours) * 60;
+            var rminutes = Math.round(minutes);
+            var label = rhours == 0 ?  rminutes +' menit' : rhours + ' jam ' + rminutes + ' menit'
+            return label 
+        }
+        function uploadFile(url,data, route){
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: route,
+                type: "post",
+                dataType: 'json',
+                async: true,
+                processData: false,
+                contentType: false,
+                data: data,
+                beforeSend: function() {
+                    SwalLoading('Inserting progress, please wait .');
+                },
+                success: function(response) {
+                    swal.close();
+                    $('.message_error').html('')
+                    toastr['success'](response.meta.message);
+                    window.location = route;
+                },
+                error: function(response) {
+                    $('.message_error').html('')
+                    swal.close();
+                    if(response.status == 500){
+                        console.log(response)
+                        toastr['error'](response.responseJSON.meta.message);
+                        return false
+                    }
+                    if(response.status === 422)
+                    {
+                        $.each(response.responseJSON.errors, (key, val) => 
+                            {
+                                $('span.'+key+'_error').text(val)
+                            });
+                    }else{
+                        toastr['error']('Failed to get data, please contact ICT Developer');
+                    }
+                 }
             });
         }
  // End Repository Pattern

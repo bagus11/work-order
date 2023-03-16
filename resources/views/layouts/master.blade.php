@@ -212,15 +212,18 @@ tr.shown td.details-click {
    filter: drop-shadow(1px 1px 4px gold);
 }
 .datatable-stepper{
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100% !important;
   font-size: 12px;
-  overflow-x:auto !important;
+  overflow-x:auto !important; */
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 12px;
+  width: 100% !important;
+  border: 1px solid #ddd;
   
-  }
-.datatable-stepper td, .datatable-stepper th {
-  padding: 8px;
   }
   .datatable-stepper tr:nth-child(even){background-color: #f2f2f2;}
 
@@ -231,7 +234,7 @@ tr.shown td.details-click {
   padding-top: 10px;
   padding-bottom: 10px;
   text-align: center;
-  background-color: white;
+  background-color: rgb(174, 171, 171);
   color: black;
   overflow-x:auto !important;
   }
@@ -239,5 +242,6 @@ tr.shown td.details-click {
         border: 1px solid #ddd;
         padding: 8px;
        
-        }
+    }
+    
 </style>

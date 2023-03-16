@@ -27,6 +27,7 @@ class AssignmentController extends Controller
         ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
         ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
         ->whereNull('work_orders.priority')
+        ->where('status_wo','!=','5')
         ->orderBy('work_orders.status_wo','asc')
         ->get();
         return response()->json([
@@ -109,7 +110,8 @@ class AssignmentController extends Controller
                          'subject'=>$log_wo->subject,
                          'comment'=>$request->note,
                          'priority'=>$request->priority,
-                         'creator'=>auth()->user()->id
+                         'creator'=>auth()->user()->id,
+                         'duration'=>0
                     ];
                     $picName = User::find($user_pic);
                     $userPost =[
@@ -119,9 +121,9 @@ class AssignmentController extends Controller
                          'link'=>'work_order_list',
                          'userId'=>$log_wo->user_id,
                          'created_at'=>date('Y-m-d H:i:s')
-                     ];
+                     ]; 
                      $picPost =[
-                         'message'=>auth()->user()->name.' has assigned work order transaction with request code :'.$log_wo->request_code.' to you',
+                         'message'=>auth()->user()->name.' has assign work order transaction with request code :'.$log_wo->request_code.' to you',
                          'subject'=>'Assignment WO',
                          'status'=>0,
                          'link'=>'work_order_list',
@@ -159,10 +161,21 @@ class AssignmentController extends Controller
      $priority = $request->select_level_priority;
      $request_code = $request->request_code;
           try {
-          
-               $update = WorkOrder::where('request_code',$request_code)->update([
-                    'priority'=>$priority
-               ]);
+               $pic = WorkOrder::where('request_code',$request_code)->first();
+               $postNotif =[
+                    'message'=>auth()->user()->name.' has set priority to work order transaction with request code :'.$request_code,
+                    'subject'=>'Update Priority',
+                    'status'=>0,
+                    'link'=>'work_order_list',
+                    'userId'=>$pic->user_id_support,
+                    'created_at'=>date('Y-m-d H:i:s')
+               ];
+               $sendNotif = WONotification::create($postNotif);
+               if($sendNotif){
+                    $update = WorkOrder::where('request_code',$request_code)->update([
+                         'priority'=>$priority
+                    ]);
+               }
                return ResponseFormatter::success(
                $update,
                'Category successfully added'

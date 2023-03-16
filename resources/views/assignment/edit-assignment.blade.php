@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title">Assign Ticket</h4>
+                <h4 class="modal-title">Detail Ticket</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -48,13 +48,13 @@
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <label for="">Subject</label>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-2">
+                        <div class="col-7 col-sm-8 col-md-10  mt-2">
                            <span id="subject"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <label for="">Additional Info</label>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4 mt-2">
+                        <div class="col-7 col-sm-8 col-md-10 mt-2">
                            <span id="add_info"></span>
                         </div>
                     </div>

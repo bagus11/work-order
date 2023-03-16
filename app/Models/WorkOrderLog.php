@@ -18,6 +18,10 @@ class WorkOrderLog extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id_support');
     }
+    public function creator()
+    {
+        return $this->hasOne(User::class, 'id', 'creator');
+    }
     public function priority(){
         return $this->hasOne(MasterPriority::class,'id','priority');
     }

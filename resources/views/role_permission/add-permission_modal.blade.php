@@ -17,11 +17,13 @@
                         <div class="col-md-8">
                             <select name="option" class="select2" style="width:100%"  id="option">
                                 <option value="view">View</option>
+                                <option value="get-only_user">Only User</option>
                                 <option value="get-all">Get All</option>
                                 <option value="get-problem_type">Problem Tyoe</option>
                                 <option value="rating-pic">Rating PIC</option>
                                 <option value="activation">Activation</option>
                                 <option value="rating">Rating</option>
+                                <option value="priority">Priority</option>
                                 <option value="create">Create</option>
                                 <option value="update">Update</option>
                                 <option value="delete">Delete</option>

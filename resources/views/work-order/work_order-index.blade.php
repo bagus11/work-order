@@ -69,11 +69,15 @@
                     <table class="datatable-bordered nowrap display" id="wo_table">
                         <thead>
                             <tr>
+                                @can('priority-work_order_list')
                                 <th style="text-align:center;width:11%"></th>
+                                @endcan
                                 <th style="text-align:center;width:11%">Request By</th>
                                 <th style="text-align:center;width:11%">Office</th>
                                 <th style="text-align:center;width:11%">Request Code</th>
-                                <th style="text-align:center;width:11%">Level</th>
+                                @can('priority-work_order_list')
+                                <th style="text-align:center;width:11%">Priority</th>
+                                @endcan
                                 <th style="text-align:center;width:11%">Departement</th>
                                 <th style="text-align:center;width:11%">Category</th>
                                 <th style="text-align:center;width:11%">Status</th>

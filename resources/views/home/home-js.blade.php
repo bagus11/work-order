@@ -164,10 +164,10 @@
                         color.push(masterColor[i])
                     }
                  
-                    $('#percentageChart_container').append('<canvas id="percentageChart" width="`250" height="250" ></canvas>')
+                    $('#percentageChart_container').append('<canvas id="percentageChart" style="width:400px !important; height:400px !important" ></canvas>')
                     var canvas = document.getElementById("percentageChart");
                     var chart = canvas.getContext('2d')
-                    pieChart('Percentage',label,data,color,'pie',chart)
+                    pieChart('Percentage',label,data,color,'doughnut',chart)
                 }else{
                    $('#percentageLabel').html('Data is Null')
                 }
@@ -264,14 +264,17 @@
         $('#ratingLog').DataTable().destroy();
         var data=''
                 var avg =0;
+                var avgDuration =0;
                 for(i = 0; i < response.data.length; i++ )
                 {
                     avg += response.data[i]['rating'] == null ? 0 :response.data[i]['rating']
+                    avgDuration += response.data[i]['duration'] == null ? 0 :response.data[i]['duration']
                     data += `<tr style="text-align: center;">
-                                <td style="width:25%;text-align:center;">${i + 1}</td>
-                                <td style="width:25%;text-align:left;">${response.data[i]['date']==null?'':response.data[i]['date']}</td>
-                                <td style="width:25%;text-align:left;">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
-                                <td style="width:25%;text-align:center;">${response.data[i]['rating']==null?'':response.data[i]['rating']}</td>
+                                <td style="width:2%;text-align:center;">${i + 1}</td>
+                                <td style="width:19%;text-align:center;">${response.data[i]['date']==null?'':response.data[i]['date']}</td>
+                                <td style="width:23%;text-align:center;">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
+                                <td style="width:15%;text-align:center;">${response.data[i]['rating']==null?'':response.data[i]['rating']}</td>
+                                <td style="width:19%;text-align:center;">${response.data[i]['duration']==null?'':timeConvert(response.data[i]['duration'])}</td>
                             </tr>
                             `;
                 }
@@ -282,6 +285,7 @@
                                 <td style="text-align:right;font-weight:bold"> Average</td>
                                 <td></td>
                                 <td style="width:25%;text-align:center;;font-weight:bold"> ${parseFloat(avg /response.data.length).toFixed(2) }</td>
+                                <td style="width:25%;text-align:center;;font-weight:bold"> ${timeConvert(avgDuration/response.data.length)}</td>
                             </tr>
                     `;
                 }
@@ -307,10 +311,11 @@
                 {
                   
                     data += `<tr style="text-align: center;">
-                                <td style="width:25%;text-align:center;">${i + 1}</td>
-                                <td style="width:25%;text-align:left;">${response.classementPIC[i]['name']==null?'':response.classementPIC[i]['name']}</td>
-                                <td style="width:25%;text-align:center;">${response.classementPIC[i]['count']==null?'':response.classementPIC[i]['count']}</td>
-                                <td style="width:25%;text-align:center;">${response.classementPIC[i]['classement']==null?'': parseFloat(response.classementPIC[i].classement).toFixed(2)}</td>
+                                <td style="width5%;text-align:center;">${i + 1}</td>
+                                <td style="width:59%;text-align:left;">${response.classementPIC[i]['name']==null?'':response.classementPIC[i]['name']}</td>
+                                <td style="width:12%;text-align:center;">${response.classementPIC[i]['count']==null?'':response.classementPIC[i]['count']}</td>
+                                <td style="width:12%;text-align:center;">${response.classementPIC[i]['classement']==null?'': parseFloat(response.classementPIC[i].classement).toFixed(2)}</td>
+                                <td style="width:12%;text-align:center;">${response.classementPIC[i]['duration']==null?'': timeConvert(response.classementPIC[i].duration)}</td>
                             </tr>
                             `;
                 }
@@ -318,7 +323,7 @@
                     $('#classementTable > tbody:first').html(data);
                     $('#classementTable').DataTable({
                         "destroy": true,
-                        "autoWidth" : false,
+                        "autoWidth" : true,
                         "searching": false,
                         "aaSorting" : true,
                         "ordering":false,
@@ -400,10 +405,10 @@
                     }
                     $('canvas#percentageChart').remove()
                     $('canvas#percentageChart_container').remove();
-                    $('#percentageChart_container').append('<canvas id="percentageChart" width="100" height="100" ></canvas>')
+                    $('#percentageChart_container').append('<canvas id="percentageChart" style="width:400px !important; height:400px !important" ></canvas>')
                     var canvas = document.getElementById("percentageChart");
                     var chart = canvas.getContext('2d')
-                    pieChart('Percentage',label,data,color,'pie',chart)
+                    pieChart('Percentage',label,data,color,'doughnut',chart)
                }
                else{
                 $('#percentageLabel').show();
@@ -447,11 +452,11 @@
               
                 for(i = 0; i < response.data.length; i++ )
                 {
-                    data += `<tr style="text-align: center;">
-                                <td style="width:25%;text-align:center;">${i + 1}</td>
-                                <td style="width:25%;text-align:left;">${response.data[i]['date']==null?'':response.data[i]['date']}</td>
-                                <td style="width:25%;text-align:left;">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
-                                <td style="width:25%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
+                    data += `<tr>
+                                <td style="width:5%;text-align:center;">${i + 1}</td>
+                                <td style="width:30%;text-align:center;">${response.data[i]['date']==null?'':response.data[i]['date']}</td>
+                                <td style="width:35%;text-align:center;">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
+                                <td style="width:30%;text-align:left;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
                             </tr>
                             `;
                 }
