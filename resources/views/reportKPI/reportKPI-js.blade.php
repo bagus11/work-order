@@ -69,6 +69,7 @@
             },
             success: function(response) {
                 swal.close();
+                
                 // Chart Counting By Location
                     var labelName =[]
                     var totalCount =[]
@@ -89,12 +90,12 @@
                     $('canvas#percentageCategory').remove()
                     $('canvas#percentageCategoryContainer').remove();
                     $('#percentageCategoryContainer').append('<canvas id="percentageCategory" width="20" height="20" ></canvas>')
-                    var percentageCategory = document.getElementById("percentageCategory");
+                    var percentageCategory      = document.getElementById("percentageCategory");
                     var percentageCategorychart = percentageCategory.getContext('2d')
-                    var masterColor =['#F7464A','#46BFBD','#FDB45C','#293462']
-                    var percentageColor = []
-                    var labelPercentageName =[]
-                    var totalPercentageCount =[]
+                    var masterColor             = ['#F7464A','#46BFBD','#FDB45C','#293462']
+                    var percentageColor         = []
+                    var labelPercentageName     = []
+                    var totalPercentageCount    = []
                     for(j= 0 ; j< response.percentage.length; j ++){
                         totalPercentageCount.push(response.percentage[j].count)
                         labelPercentageName.push(response.percentage[j].problemName)
@@ -104,9 +105,11 @@
                 // End Pie Chart Percentage Category
 
                 // Set Label
-                    var percentageLabel =parseFloat(response.result.done / response.result.wo_total * 100).toFixed(2)
-                    var durationLv1Label = timeConvert(response.result.duration_lv2 / response.level2.count)
-                    var durationLv2Label = timeConvert(response.result.duration / response.result.wo_total - response.level2.count)
+              
+                    var level2Label             =   response.level2 == null ? 0 :response.level2.count;
+                    var percentageLabel     =   parseFloat(response.result.done / response.result.wo_total * 100).toFixed(2)
+                    var durationLv1Label    =   timeConvert(response.result.duration_lv2 /level2Label)
+                    var durationLv2Label    =   timeConvert(response.result.duration / response.result.wo_total - level2Label)
                     $('#userNameLabel').html(' :'+response.user.name)
                     $('#departementUserLabel').html(' : '+response.user.departement.name)
                     $('#positionUserLabel').html(' :'+response.user.jabatan.name)
@@ -141,5 +144,12 @@
             'id':$('#user_id').val()
         }
         getKPIUserDetail(data)
+    })
+    $('#btnPrintKPI').on('click', function(){
+        var dateFilter = $('#dateFilter').val();
+        var id = $('#user_id').val();
+
+        window.open(`printKPIUser/${dateFilter}/${id}`,'_blank');
+      
     })
 </script>

@@ -21,6 +21,7 @@
         @include('layouts.sidebar')
 
         <div class="content-wrapper py-4">
+            <input type="hidden" id="authId" value="{{auth()->user()->id}}">
             @yield('content')
         </div>
 
@@ -174,6 +175,26 @@ td.details-click {
     cursor: alias;
 }
 tr.shown td.details-click {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+
+th.subdetails-control {
+  background-color: #04AA6D;
+  color: white;
+}
+td.subdetails-control {
+background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+cursor: alias;
+}
+tr.shown td.subdetails-control {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+
+td.subdetails-click {
+    background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: alias;
+}
+tr.shown td.subdetails-click {
     background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
 }
 .rating {

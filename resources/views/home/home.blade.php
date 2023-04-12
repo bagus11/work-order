@@ -272,7 +272,7 @@
         </div>
         @endcan
         @can('get-all-dashboard')
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header bg-white">
                     <label class="mt-2"> Ranking PIC</label>
@@ -334,7 +334,7 @@
         </div>
         @endcan
         @can('get-problem_type-dashboard')
-        <div class="col-12 col-sm-12 col-md-4">
+        <div class="col-12 col-sm-12 col-md-4 col-xd-4">
             <div class="card">
                 <div class="card-header bg-white">
                     <label class="mt-2">Percentage</label>
@@ -344,7 +344,7 @@
                                 <ion-icon name="filter-sharp"></ion-icon>
                             </button>
                         
-                            <div class="dropdown-menu dropdown-menu-center" id="percentageFilter" role="menu" style="width:350px !important;">
+                            <div class="dropdown-menu dropdown-menu-right" id="percentageFilter" role="menu" style="width:350px !important;">
                                 <div class="container">
                                     <div class="row">
                                             <div class="col-md-4 mt-2">
@@ -384,7 +384,7 @@
             </div>
         </div>
         @endcan
-        <div class="col-12 col-sm-12 col-md-6">
+        <div class="col-12 col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header bg-white">
                     <label for=""> Tracking History</label>

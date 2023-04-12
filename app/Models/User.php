@@ -36,5 +36,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(MasterJabatan::class,'id','jabatan');
     }
+    public function DetailTeam()
+    {
+        return $this->hasOne(DetailTeam::class,'id','userId');
+    }
 
 }

@@ -24,7 +24,10 @@
                                 <option value="activation">Activation</option>
                                 <option value="rating">Rating</option>
                                 <option value="priority">Priority</option>
+                                <option value="manual">Manual</option>
                                 <option value="create">Create</option>
+                                <option value="create_detail">Create Detail</option>
+                                <option value="update_detail">Update Detail</option>
                                 <option value="update">Update</option>
                                 <option value="delete">Delete</option>
                             </select>

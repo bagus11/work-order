@@ -104,7 +104,7 @@ class WorkOrderController extends Controller
         $request_type = $request->request_type;
         $categories = $request->categories;
         $problem_type = $request->problem_type;
-        $subject = $request->subject;
+        $subject = $request->subject; 
         $add_info = $request->add_info;
         $departement_for = $request->departement_for;
         $validator = Validator::make($request->all(),[
@@ -144,11 +144,14 @@ class WorkOrderController extends Controller
                         $ticket_code = $month_before[0] + 1 .'/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
                     }   
                 }
-                $ticketName = explode("/", $ticket_code);
-                $ticketName2 = implode('',$ticketName);
-                $custom_file_name = 'UA-'.$ticketName2;
-                $originalName = $request->file('attachment')->getClientOriginalExtension();
-                $fileName =$custom_file_name.'.'.$originalName;
+                $fileName ='';
+                if($request->file('attachment')){
+                    $ticketName = explode("/", $ticket_code);
+                    $ticketName2 = implode('',$ticketName);
+                    $custom_file_name = 'UA-'.$ticketName2;
+                    $originalName = $request->file('attachment')->getClientOriginalExtension();
+                    $fileName =$custom_file_name.'.'.$originalName;
+                }
              
                 
                 $post =[
@@ -169,7 +172,7 @@ class WorkOrderController extends Controller
                     'rating'=>0,
                     'duration'=>0,
                     'created_at'=>date('Y-m-d H:i:s'),
-                    'attachment_user'=>'storage/public/attachmentUser/'.$fileName
+                    'attachment_user'=>$fileName != ''? 'storage/attachmentUser/'.$fileName :null
                 ];
                 $post_log =[
                     'request_code'=>$ticket_code,
@@ -179,7 +182,7 @@ class WorkOrderController extends Controller
                     'subject'=>strtoupper($subject),
                     'add_info'=>$add_info,
                     'user_id'=>auth()->user()->id,
-                    'assignment'=>0,
+                    'assignment'=>0, 
                     'status_wo'=>0,
                     'category'=>$categories,
                     'follow_up'=>0,
@@ -206,6 +209,7 @@ class WorkOrderController extends Controller
 
                 // User Request For 
                 $departementId = MasterDepartement::where('initial',$departement_for)->first();
+                $headDeptLocation = MasterJabatan::where('departement_id',$departementId->id)->first();
                 $userDept = User::where('departement',$departementId->id)->get();
                 $userArray = [];
                 foreach($userDept as $row){
@@ -213,7 +217,7 @@ class WorkOrderController extends Controller
                         'message'=>auth()->user()->name.' has created new work order transaction',
                         'subject'=>'New Work Order',
                         'status'=>0,
-                        'link'=>'work_order_list',
+                        'link'=>$row->jabatan == $headDeptLocation->id ?'work_order_assignment':'work_order_list',
                         'userId'=>$row->id,
                         'created_at'=>date('Y-m-d H:i:s')
                     ];
@@ -224,7 +228,9 @@ class WorkOrderController extends Controller
                     WorkOrder::create($post);
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
-                    $request->file('attachment')->storeAs('public/attachmentUser',$fileName);
+                    if($request->file('attachment')){
+                        $request->file('attachment')->storeAs('public/attachmentUser',$fileName);
+                    }
                   
                     // $title = "Support Ticket";
                     // $subject = 'NEW - '.$post['subject'];
@@ -295,16 +301,39 @@ class WorkOrderController extends Controller
                 ]);
             }else{
                $validasi_user           = WorkOrder::find($request->id);
+                $postHead =[];
                if($validasi_user->user_id_support == auth()->user()->id){
-                    $post               =[
-                                            'status_wo'=>$status_wo,
-                                            'status_approval'=>2,
-                                        ];
                     $log_wo             =   WorkOrder::find($request->id);
+                    $fileName           ='';
+                    if($request->file('attachmentPIC')){
+                        $ticketName     = explode("/", $log_wo->request_code);
+                        $ticketName2    = implode('',$ticketName);
+                        $custom_file_name = 'PA-'.$ticketName2;
+                        $originalName   = $request->file('attachmentPIC')->getClientOriginalExtension();
+                        $fileName       =$custom_file_name.'.'.$originalName;
+                    }
+                    // checking if status wo before is pending, cant change level 
+                   if($log_wo->level == 2){
+
+                       $post               =[
+                                               'status_wo'=>$status_wo,
+                                               'status_approval'=>2,
+                                               'attachment_pic'=> $fileName != ''? 'storage/attachmentPIC/'.$fileName  : null,
+   
+                                           ];
+                   }else{
+
+                       $post               =[
+                                               'status_wo'=>$status_wo,
+                                               'status_approval'=>2,
+                                               'attachment_pic'=> $fileName != ''? 'storage/attachmentPIC/'.$fileName  : null,
+                                               'level'=>$status_wo == 2 ? 2 : 1
+   
+                                           ];
+                   }
                     $workOrderStatus    =   WorkOrderLog::where('request_code', $log_wo->request_code)
                                                         ->orderBy('created_at','desc')
                                                         ->first();
-
                     $timeBeforePost = $workOrderStatus->created_at;
                     $timeBefore         =   Carbon::createFromFormat('Y-m-d H:i:s', $timeBeforePost);
                     $timeNow            =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
@@ -327,7 +356,6 @@ class WorkOrderController extends Controller
                                             'creator'=>auth()->user()->id,
                                             'duration'=>$totalDuration
                                         ];
-                    
                       // User Request For 
                     $message            = $status_wo == 4 ?'finish ':'pending';
                     $userPost           =[
@@ -338,11 +366,30 @@ class WorkOrderController extends Controller
                                             'userId'=>$log_wo->user_id,
                                             'created_at'=>date('Y-m-d H:i:s')
                                         ];
-                    
-                     DB::transaction(function() use($post,$request, $post_log,$userPost) {
+                    if($status_wo == 2){
+                        $headPosition = MasterJabatan::where('departement_id',auth()->user()->departement)->first();
+                        $headUser = User::where('jabatan', $headPosition->id)->first();
+                        $postHead  =[
+                            'message'=>auth()->user()->name.' has pending  wo transaction with request code : '.$post_log['request_code'],
+                            'subject'=>'WO Progress',
+                            'status'=>0,
+                            'link'=>'work_order_list',
+                            'userId'=>$headUser->id,
+                            'created_at'=>date('Y-m-d H:i:s')
+                        ];
+                    }
+                    // dd($post);
+                     DB::transaction(function() use($post,$request, $post_log,$userPost,$fileName,$status_wo,$postHead) {
+                        if($request->file('attachmentPIC')){
+                            $request->file('attachmentPIC')->storeAs('public/attachmentPIC',$fileName);
+                        }
                                 WorkOrder::find($request->id)->update($post);
                                 WorkOrderLog::create($post_log);
                                 WONotification::create($userPost);
+                                // Send Notification on Head Depaetement
+                                if($status_wo == 2){
+                                    WONotification::create($postHead);
+                                }
                     });
                     $successValidation= WorkOrder::find($request->id); 
                     if($successValidation->status_wo == $status_wo){

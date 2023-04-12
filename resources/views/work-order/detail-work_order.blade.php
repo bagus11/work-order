@@ -179,10 +179,16 @@
                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                     <label for="">Attachment User</label>
                                                 </div>
-                                                <div class="col-7 col-sm-7 col-md-10  mt-2">
-                                                   
+                                                <div class="col-7 col-sm-7 col-md-4  mt-2">
                                                         <div id="attachment_user_detail"></div>
-                                                    
+                                                </div>
+                                                <div class="col-5 col-sm-5 col-md-2  mt-2">
+                                                    <label for="">Attachment PIC</label>
+                                                </div>
+                                                <div class="col-7 col-sm-7 col-md-4  mt-2">
+                                                        <div id="attachment_pic_detail">
+                                                            <span>:-</span>
+                                                        </div>
                                                 </div>
 
                                             </div>

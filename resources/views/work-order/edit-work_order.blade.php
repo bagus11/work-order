@@ -50,7 +50,7 @@
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
                             <label for="">Additional Info</label>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-2 ">
+                        <div class="col-7 col-sm-8 col-md-10  mt-2 ">
                           <span id="add_info_update"></span>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                         </div>
                         <div class="col-12 col-sm-8 col-md-4">
                             <select name="select_status_wo" class="select2 form-control" style="width:100%" id="select_status_wo">
-                                <option value="">Select Progress</option>
+                            <option value="">Select Progress</option>
                                 <option value="4">DONE</option>
                                 <option value="2">PENDING</option>
                             </select>
@@ -89,6 +89,19 @@
                             <span  style="color:red;" class="message_error text-red block note_pic_error"></span>
                         </div>
                         
+                    </div>
+                    <input type="hidden" class="form-control" id="picFileName">
+                    <div id="attachment_container">
+                        <div class="form-group row">
+                            <div class="col-12 col-sm-4 col-md-2  mt-2 mt-2">
+                                <label for="">Attachment</label>
+                            </div>
+                            <div class="col-12 col-sm-8 col-md-8 mt-2">
+                                <input type="file" class="form-control-file" id="attachmentPIC">
+                                <span  style="color:red;" class="message_error text-red block attachmentPIC_error"></span>                                
+                            </div>
+
+                        </div>
                     </div>
                </div>
             </div>

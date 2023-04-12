@@ -87,14 +87,70 @@ get_work_order_list()
     $('#select_status_wo').on('change', function(){
         var select_status_wo = $('#select_status_wo').val()
         $('#status_wo').val(select_status_wo)
+        var picFileName = $('#picFileName').val()
+            if(select_status_wo == 4 ){
+            
+                if(picFileName ){
+                    $('#attachment_container').hide()
+                }else{
+                    $('#attachment_container').show()
+                }
+            }else{
+                $('#attachment_container').hide()
+            }     
     })
-    $('#btn_edit_wo').on('click', function(){
-        var data ={
-            'status_wo':$('#status_wo').val(),
-            'note_pic':$('#note_pic').val(),
-            'id':$('#wo_id').val()
-        }
-        approve_assignment(data)
+    $('#btn_edit_wo').on('click', function(e){
+        e.preventDefault();
+        var formData        = new FormData();    
+        var status_wo    = $('#status_wo').val()
+        var note_pic      = $('#note_pic').val()
+        var id         = $('#wo_id').val()
+
+        var attachmentPIC      = $('#attachmentPIC')[0].files[0];
+        formData.append('attachmentPIC',attachmentPIC)
+        formData.append('status_wo',status_wo)
+        formData.append('note_pic',note_pic)
+        formData.append('id',id)
+       
+        $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: 'approve_assignment_pic',
+                type: "post",
+                dataType: 'json',
+                async: true,
+                processData: false,
+                contentType: false,
+                data: formData,
+                beforeSend: function() {
+                    SwalLoading('Inserting progress, please wait .');
+                },
+                success: function(response) {
+                    swal.close();
+                    $('.message_error').html('')
+                    if(response.status==422)
+                    {
+                        $.each(response.message, (key, val) => 
+                        {
+                           $('span.'+key+'_error').text(val[0])
+                        });
+                        return false;
+                    }else if(response.status==500){
+                        toastr['warning'](response.message);
+                    }
+                    else{
+                        toastr['success'](response.message);
+                        window.location = "{{route('work_order_list')}}";
+                    }
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+        
+        
     })
     $('#btn_manual_approve').on('click', function(){
         var data ={
@@ -248,18 +304,39 @@ get_work_order_list()
                 $('#status_wo_detail').html(': ' + status_wo)
                 $('#note_detail').val(response.data_log.comment)
                 $('#requestCodeWo').val(response.data_log.request_code)
+                $('#attachment_user_detail').empty()
+                $('#attachment_pic_detail').empty()
                 if(response.detail.attachment_user){
-                    $('#attachment_user_detail').empty()
+                    var fileName = response.detail.attachment_user.split('/')
                     $('#attachment_user_detail').append(`
                     <p>:
-                        <a target="_blank" href="{{URL::asset('${response.detail.attachment_user}')}}" class="ml-3" style="color:blue">
-                            <i class="far fa-file-pdf" style="color: red;font-size: 20px;"></i>
-                            Klik untuk lihat file</a>
+                        <a target="_blank" href="{{URL::asset('${response.detail.attachment_user}')}}" class="ml-3" style="color:blue;">
+                            <i class="far fa-file" style="color: red;font-size: 20px;"></i>
+                            ${fileName[2]}</a>
                     </p>
                             
                             `)
+                }else{
+                    $('#attachment_user_detail').append(`<span>: -<span>`)
+
+                }
+                if(response.detail.attachment_pic){
+                    var fileNamePIC = response.detail.attachment_pic.split('/')
+                   
+                    $('#attachment_pic_detail').append(`
+                    <p>:
+                        <a target="_blank" href="{{URL::asset('${response.detail.attachment_pic}')}}" class="ml-3" style="color:blue;">
+                            <i class="far fa-file" style="color: red;font-size: 20px;"></i>
+                            ${fileNamePIC[2]}</a>
+                    </p>
+                            
+                            `)
+                }else{
+                    $('#attachment_pic_detail').append(`<span>: -<span>`)
+
                 }
 
+                
                 $('#creator_detail').html(response.data_log.username) 
                 $('#pic_wo_detail').html( response.pic == null ? ': -' : ': '+ response.pic.username)  
                 getStepper(request)
@@ -275,6 +352,13 @@ get_work_order_list()
   
     $('#wo_table').on('click', '.updatePIC', function() {
             var id = $(this).data('id');
+            $('#attachment_container').hide();
+            $('#select_status_wo').empty()
+            $('#select_status_wo').append(`
+                    <option value="">Select Progress</option>
+                    <option value='4'>DONE</option>
+                    <option value='2'>PENDING</option>`)
+            $('#note_pic').val('')
             $.ajax({
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -291,6 +375,7 @@ get_work_order_list()
                 },
                 success: function(response) {
                 swal.close();
+
                 $('#select_request_type_update').html(': '+response.detail.request_type)
                 $('#select_categories_update').html(': '+response.detail.categories_name)
                 $('#select_problem_type_update').html(': '+response.detail.problem_type_name)
@@ -304,7 +389,9 @@ get_work_order_list()
                 $('#wo_id').val(id)
                 $('#note').val(response.data_log.comment)
                 $('#creator').html(response.data_log.username)  
+                $('#picFileName').val(response.detail.attachment_pic)  
               
+
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -464,6 +551,7 @@ get_work_order_list()
     $('#note_pic').val(rating__result)
     })
     executeRating(ratingStars, ratingResult);
+  
     function get_work_order_list(){
         $('#wo_table').DataTable().clear();
         $('#wo_table').DataTable().destroy();

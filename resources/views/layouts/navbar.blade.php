@@ -22,9 +22,11 @@
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">  
              
                 <div class="dropdown-divider"></div>
-                    <a href="{{route('setting_password')}}" class="dropdown-item">
+                @can('view-setting_password')
+                <a href="{{route('setting_password')}}" class="dropdown-item">
                     <i class="fas fa-tools mr-2"></i>Setting<span class="float-right text-muted text-sm"></span>
-                    </a>
+                </a>
+                @endcan
 
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('logout') }}"

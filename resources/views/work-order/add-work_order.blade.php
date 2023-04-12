@@ -75,10 +75,10 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 mt-2">
-                            <label for="">Attachment</label>
+                            <label  class="form-label" for="attachment" for="">Attachment</label>
                         </div>
                         <div class="col-md-10">
-                            <input type="file" class="form-control" id="attachment" required>
+                            <input type="file" class="form-control-file" id="attachment" required>
                            
                             <span  style="color:red;" class="message_error text-red block attachment_error"></span>
                         </div>

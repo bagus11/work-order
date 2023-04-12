@@ -126,7 +126,7 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btn_update_roles" type="button" class="btn btn-success">
+                <button id="btnPrintKPI" type="button" class="btn btn-success">
                 <i class="fas fa-print"></i> Print KPI User
                 </button>
             </div>

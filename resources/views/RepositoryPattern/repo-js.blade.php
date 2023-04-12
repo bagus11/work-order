@@ -40,6 +40,33 @@ getNotification()
                 }
             });
         }
+        function getName(route, id, name){
+            $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: route,
+            type: "get",
+            dataType: 'json',
+            async: true,
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                $('#'+id).empty();
+                $('#'+id).append('<option value ="">Choose '+ name +'</option>');
+                $.each(response.data,function(i,data,param){
+                    $('#'+id).append('<option value="'+data.id+'">' + data.name +'</option>');
+                });
+                
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+        }
         function getSelect(route,data, id, name){
             $.ajax({
             headers: {
@@ -134,8 +161,7 @@ getNotification()
                 }
             });
         }
-        function getNotification(){
-          
+        function getNotification(){   
             $('#notificationBody').empty()
             $.ajax({
             headers: {
@@ -187,10 +213,6 @@ getNotification()
                     }
                     $('#notificationBody').html(data)
               }
-
-                 
-                    
-                
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -386,5 +408,36 @@ getNotification()
                  }
             });
         }
+        function saveRepo(url,data,route){
+            $.ajax({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: url,
+                type: "post",
+                dataType: 'json',
+                async: true,
+                data: data,
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success: function(response) {
+                    swal.close();
+                    if(response.status==500){
+                        toastr['warning'](response.message);
+                    }
+                    else{
+                        toastr['success'](response.message);
+                        window.location = route;
+                    }
+                    
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+        }
+    
  // End Repository Pattern
 </script>

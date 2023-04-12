@@ -72,7 +72,7 @@ class RegisterController extends Controller
             'flg_aktif'=>1,
             'jabatan'=>'',
             'departement'=>'',
-            'kode_kantor'=>'',
+            'kode_kantor'=>'1',
             'password' => Hash::make($data['password']),
         ]);
         $user->assignRole('User');

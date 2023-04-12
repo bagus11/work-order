@@ -44,54 +44,73 @@ class CountingWOMonthly extends Command
     public function handle()
     {
         $arrayPost =[];
-        $requestFor = WorkOrder::whereBetween(DB::raw('DATE(created_at)'), [date('Y-m').'-01', date('Y-m-d')])->groupBy('request_for')->get();
-        for($i = 0; $i < count($requestFor); $i ++){
-            $departementId = MasterDepartement :: where('initial', $requestFor[$i]->request_for)->first();
-            $user = User:: where('departement', $departementId->id)->get();
-            for($j = 0; $j < count($user);  $j++){
-                $WorkOrderCounting  = WorkOrder::select(DB::raw('COUNT(id) as totalWO'),DB::raw('SUM(duration) as totalDuration'),'request_for','user_id_support','request_for')
-                                                ->whereBetween(DB::raw('DATE(created_at)'), [date('Y-m').'-01', date('Y-m-d')])
-                                                ->where('status_wo','!=', 5)
-                                                ->where('user_id_support', $user[$j]->id)
-                                                ->groupBy('user_id_support')
-                                                ->first();
-                $WorkOrderDone      = WorkOrder::select(DB::raw('COUNT(id) as totalDone'),'request_for')
-                                                ->whereBetween(DB::raw('DATE(created_at)'), [date('Y-m').'-01', date('Y-m-d')])
-                                                ->where('status_wo',4)
-                                                ->where('status_approval',1)
-                                                ->where('user_id_support', $user[$j]->id)
-                                                ->groupBy('user_id_support')
-                                                ->first();
-                $WorkOrderLevel2    = WorkOrder::select(DB::raw('SUM(work_orders.duration) as level2'),'work_orders.user_id_support')
-                                                ->join('work_order_logs','work_orders.request_code','work_order_logs.request_code')
-                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [date('Y-m').'-01', date('Y-m-d')])
-                                                ->where('work_orders.status_wo','!=', 5)
-                                                ->where('work_order_logs.status_wo',2)
-                                                ->where('work_orders.user_id_support', $user[$j]->id)
-                                                ->groupBy('work_orders.user_id_support')
-                                                ->first();
-                $intervalDate       = \Carbon\Carbon::today()->subMonth()->format('Y-m-d');
-                $intervalLastDay    = \Carbon\Carbon::createFromFormat('Y-m-d', $intervalDate)
+        $intervalDate                           =\Carbon\Carbon::today()->subMonth()->format('Y-m-d');
+        $intervalLastDay                        =\Carbon\Carbon::createFromFormat('Y-m-d', $intervalDate)
                                                     ->endOfMonth()
                                                     ->format('Y-m-d');
-                $interval           = WOCounting::where(DB::raw('DATE(created_at)'),$intervalLastDay)->where('user_id', $user[$j]->id)->first();
-                $woTotal = $WorkOrderCounting == null ? 0 : $WorkOrderCounting->totalWO;
-                $unfinishedBefore = $interval == null ? 0 : $interval->unfinished; 
-                $woDone = $WorkOrderDone == null ? 0 : $WorkOrderDone->totalDone;
-                $woLv2 = $WorkOrderLevel2 == null ? 0 : $WorkOrderLevel2->level2;
-                $woLv1 = $WorkOrderCounting == null ? 0 : $WorkOrderCounting->totalDuration;
-                $post = [
-                    'user_id'=>$user[$j]->id,
-                    'done'=>$woDone,
-                    'unfinished'=>$woTotal - $woDone,
-                    'request_for'=>$requestFor[$i]->request_for,
-                    'wo_total'=> $unfinishedBefore +  $woTotal,
-                    'duration_lv2'=>$woLv2,
-                    'duration'=>$woLv1 - $woLv2,
-                    'created_at'=> date('Y-m-d H:i:s')
-                ];
-                array_push($arrayPost,$post);
-            }
+        $requestFor                             = WorkOrder::whereBetween(DB::raw('DATE(created_at)'), [date('Y-m').'-01', date('Y-m-d')])->groupBy('request_for')->get();
+        for($k = 0; $k < count($requestFor); $k ++){
+            $departementId                      = MasterDepartement :: where('initial', $requestFor[$k]->request_for)->first();
+            $mappingUser                        = User :: where('departement', $departementId->id)->get();
+                for($i = 0; $i < count($mappingUser); $i++){
+                    $woCounting                 = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalWO'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.id as officeId','work_orders.category')
+                                                    ->join('users','users.id','work_orders.user_id_support')
+                                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                    ->where('work_orders.user_id_support',$mappingUser[$i]->id)
+                                                    ->where('work_orders.status_wo','!=', 5)
+                                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [date('Y-m').'-01', date('Y-m-d')])
+                                                    ->groupBy('work_orders.user_id_support')
+                                                    ->groupBy('master_kantor.id')
+                                                    ->groupBy('work_orders.category')
+                                                    ->groupBy('work_orders.level')
+                                                    ->get();
+                    $woDone                     = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalDone'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                    ->join('users','users.id','work_orders.user_id_support')
+                                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                    ->where('work_orders.user_id_support',$mappingUser[$i]->id)
+                                                    ->where('work_orders.status_wo', 4)
+                                                    ->where('work_orders.status_approval', 1)
+                                                    ->whereBetween(DB::raw('DATE(work_orders.updated_at)'), [date('Y-m').'-01', date('Y-m-d')])
+                                                    ->groupBy('work_orders.user_id_support')
+                                                    ->groupBy('master_kantor.id')
+                                                    ->groupBy('work_orders.category')
+                                                    ->groupBy('work_orders.level')
+                                                    ->get();
+
+                    $intervalMonthBefore        = WOCounting::where(DB::raw('DATE(created_at)'),$intervalLastDay)
+                                                    ->where('user_id', $mappingUser[$i]->id)
+                                                    ->groupBy('user_id')
+                                                    ->groupBy('officeId')
+                                                    ->groupBy('categories')
+                                                    ->groupBy('level')
+                                                    ->get();
+                  
+                            for($j=0; $j < count($woCounting); $j ++){
+                      
+                                $woTotal                =   $woCounting[$j] == null ? 0 : $woCounting[$j]->totalWO;
+                                $CountingwoDone         =   $woDone[$j]->totalDone ?? 0;
+
+                                $woLv1                  =   $woCounting[$j]->totalDuration ?? 0;
+                                $unfinished             =  isset( $intervalMonthBefore[$j]) ? $intervalMonthBefore[$j]['unfinished'] : 0 ;
+                                $post                   = [
+                                                            'user_id'       => $mappingUser[$i]->id,
+                                                            'level'         => $woCounting[$j]->level,
+                                                            'done'          => $CountingwoDone,
+                                                            'unfinished'    => $woTotal - $CountingwoDone < 0 ?  ($woTotal - $CountingwoDone)*-1 : $woTotal - $CountingwoDone,
+                                                            'wo_total'      =>  $unfinished +  $woCounting[$j]->totalWO,
+                                                            'request_for'   => $requestFor[$k]->request_for,
+                                                            'duration_lv2'  => 0,
+                                                            'duration'      => $woLv1 ,
+                                                            'created_at'    =>  date('Y-m-d H:i:s'),
+                                                            'officeId'      => $woCounting[$j]->officeId,
+                                                            'categories'    => $woCounting[$j]->category,
+                                                        ];
+                                                        
+                                                        array_push($arrayPost, $post);
+                            }
+                         
+                       
+                }
         }
         WOCounting::insert($arrayPost);
         Log::info('Cron is running successfully');
