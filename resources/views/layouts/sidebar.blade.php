@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-warning elevation-4">
     <a href="{{route('dashboard')}}" class="brand-link">
-        <span class="brand-text font-weight-light" >Work Order</span>
+       <img src="{{asset('icon.png')}}" width="100px" style="margin-left:auto;margin-right:auto;display:block" alt="">
     </a>
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">

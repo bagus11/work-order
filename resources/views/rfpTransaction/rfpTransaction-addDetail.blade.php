@@ -73,6 +73,31 @@
                                         <input type="date" readonly class="form-control" name="deadlineMaster" id="deadlineMaster">
                                     </div>
                                 </div>
+                                <div class="mt-2">
+                                    <div class="card collapsed-card">
+                                        <div class="card-header">
+                                            <label for="">List Module</label>
+                                            <div class="card-tools">
+                                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="datatable-bordered nowrap display" id="rfpModuleTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align:center">Start Date</th>
+                                                        <th style="text-align:center">Deadline</th>
+                                                        <th style="text-align:center">Activity</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
                         <div class="card">
@@ -100,23 +125,27 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-2 mt-2">
+                                        <label for="">Start Date</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="date" id="startDateDetail" class="form-control" value="{{date('Y-m-d')}}" >
+                                    </div>
+                                    <div class="col-md-2 mt-2">
                                         <label for="">Deadline</label>
                                     </div>
                                     <div class="col-md-4">
                                         <input type="date" id="datelineDetail" class="form-control" value="{{date('Y-m-d')}}">
                                         <span  style="color:red;" class="message_error text-red block datelineDetail_error"></span>
                                     </div>
-                                    <div class="col-md-2 mt-2">
-                                        <label for="">Start Date</label>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="date" id="startDateDetail" class="form-control" value="{{date('Y-m-d')}}" >
-                                    </div>
+                               
                                 </div>
                             </div>
                             <div class="card-footer justify-content-end">
                                 <button class="btn btn-success btn-sm" style="float:right" id="btnAddArrayDetail">
                                     <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="btn btn-info btn-sm " style="float:right" id="btnEditArrayDetail">
+                                    <i class="fas fa-check"></i>
                                 </button>
                             </div>
                         </div>
@@ -127,6 +156,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
+                                        <input type="hidden" class="form-control" id="idArrayDetail">
                                         <table class="datatable-bordered nowrap display" id="detailRFPTable">
                                             <thead>
                                                 <tr>

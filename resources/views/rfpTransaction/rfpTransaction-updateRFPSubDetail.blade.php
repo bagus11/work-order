@@ -70,9 +70,10 @@
                             <select name="selectProgressUpdate" class="select2" id="selectProgressUpdate">
                                 <option value="">Choose Progress</option>
                                 <option value="0">On Progress</option>
-                                <option value="1">DONE</option>
+                                <option value="1">Done</option>
                             </select>
                             <input type="hidden" name="progressUpdate" id="progressUpdate">
+                            <input type="hidden" name="requestCodeUpdateProgress" id="requestCodeUpdateProgress">
                             <span  style="color:red;" class="message_error text-red block progressUpdate_error"></span>
                         </div>
                     </div>

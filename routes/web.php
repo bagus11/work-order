@@ -188,7 +188,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('manual_approve', [WorkOrderController::class, 'manual_approve'])->name('manual_approve');
     Route::post('rating_pic', [WorkOrderController::class, 'rating_pic'])->name('rating_pic');
     Route::get('getStepper', [WorkOrderController::class, 'getStepper'])->name('getStepper');
-
+    // Report Work Order
+    Route::get('printWO/{from}/{date}/{officeFilter}/{statusFilter}',[WorkOrderController::class, 'printWO']);
+    // Report Work Order
 
     Route::post('manual_wo', [WorkOrderController::class, 'manual_wo'])->name('manual_wo');
 
@@ -220,6 +222,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getKPIUserDetail', [ReportKPIController::class, 'getKPIUserDetail'])->name('getKPIUserDetail');
     Route::get('printKPIUser', [ReportKPIController::class, 'printKPIUser'])->name('printKPIUser');
     Route::get('printKPIUser/{dateFilter}/{id}',[ReportKPIController::class, 'printKPIUser']);
+  
     
     // MasterTeam
     Route::get('getMasterTeam', [masterTeamController::class, 'getMasterTeam'])->name('getMasterTeam');

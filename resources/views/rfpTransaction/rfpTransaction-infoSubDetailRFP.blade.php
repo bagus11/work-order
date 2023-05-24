@@ -23,7 +23,20 @@
                         <div class="col-md-4">
                             <input type="text" readonly name="usernameSubDetailInfo" class="form-control" id="usernameSubDetailInfo">
                         </div>
-                    
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-2 mt-2">
+                            <label for="">Start Date</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" readonly class="form-control" id="startDateSubDetailInfo">
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <label for="">Deadline</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" readonly class="form-control" id="datelineSubDetailInfo">
+                        </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 mt-2">
@@ -40,21 +53,6 @@
                         </div>
                         <div class="col-md-10">
                             <textarea class="form-control" readonly id="descriptionSubDetailInfo" rows="3"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group row">
-                        <div class="col-md-2 mt-2">
-                            <label for="">Start Date</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="date" readonly class="form-control" id="startDateSubDetailInfo">
-                        </div>
-                        <div class="col-md-2 mt-2">
-                            <label for="">Deadline</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="date" readonly class="form-control" id="datelineSubDetailInfo">
                         </div>
                     </div>
                 </div>

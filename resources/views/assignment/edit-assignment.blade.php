@@ -25,7 +25,6 @@
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                             <input type="hidden" class="form-control" id="wo_id" readonly>
                             <span id="username"></span>
-                        
                         </div>
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <label for="">Request Code</label>
@@ -60,7 +59,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-12 col-sm-4 col-md-2 mt-2">
-                            <label for="">Level</label>1
+                            <label for="">Level</label>
                         </div>
                         <div class="col-12 col-sm-8 col-md-4 ">
                             <select name="selectPriority" class="select2" style="width: 100%" id="selectPriority">

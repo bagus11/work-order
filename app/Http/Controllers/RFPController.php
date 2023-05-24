@@ -121,13 +121,15 @@ class RFPController extends Controller
     public function getrfpTransactionDetail(Request $request)
     {
         $detail = RFPTransaction ::with(['location','departementRelation','userRelation','categoryRelation'])->find($request->id);
+        $module = RFPDetail::with('userRelation')->where('request_code', $request->request_code)->get();
         return response()->json([
-            'detail'=>$detail
+            'detail'=>$detail,
+            'module'=>$module,
         ]);
     }
     public function getRFPDetail(Request $request)
     {
-        $data = RFPDetail ::with(['userRelation','rfpRelation'])->where('request_code',$request->request_code)->get();
+        $data = RFPDetail ::with(['userRelation','rfpRelation','rfpRelation.userRelation'])->where('request_code',$request->request_code)->get();
         return response()->json([
             'data'=>$data
         ]); 
@@ -140,40 +142,41 @@ class RFPController extends Controller
      
         foreach($request->array as $row){
            
-                $requestType = 'RFPD';
+                
                 $increment_code= RFPDetail::orderBy('id','desc')->first();
                 $date_month =strtotime(date('Y-m-d'));
                 $month =idate('m', $date_month);
                 $year = idate('y', $date_month);
                 $month_convert =  NumConvert::roman($month);
-                $departementId = RFPTransaction::where('request_code',$row[0])->first();
-                $departementInitial = MasterDepartement::find($departementId->id)->first();
+               
+                $requestCodeExplode = explode('/',$row[0]);
+               
                 if($increment_code ==null){
-                    $ticket_code = '1/'.$requestType.'/'.$departementInitial->initial.'/'.$month_convert.'/'.$year;
+                    $ticket_code = '1/'.$requestCodeExplode[0].$requestCodeExplode[3].$requestCodeExplode[4].'/'.$month_convert.'/'.$year;
                 }else{
                     $month_before = explode('/',$increment_code->detail_code,-1);
                    
-                    if($month_convert != $month_before[3]){
+                    if($month_convert != $month_before[2]){
                        
-                        $ticket_code = '1/'.$requestType.'/'.$departementInitial->initial.'/'.$month_convert.'/'.$year;
+                        $ticket_code = '1/'.$requestCodeExplode[0].$requestCodeExplode[3].$requestCodeExplode[4].'/'.$month_convert.'/'.$year;
                     }else{
-                        $ticket_code = $month_before[0] + 1 .'/'.$requestType.'/'.$departementInitial->initial.'/'.$month_convert.'/'.$year;
+                        $ticket_code = $month_before[0] + 1 .'/'.$requestCodeExplode[0].$requestCodeExplode[3].$requestCodeExplode[4].'/'.$month_convert.'/'.$year;
                     }   
                 }
                 $post =[
                     'request_code'  =>$row[0],
                     'user_id'       =>auth()->user()->id,
                     'title'         =>$row[1],
-                    'start_date'      =>$row[3],
-                    'dateline'      =>$row[4],
+                    'start_date'    =>$row[4],
+                    'dateline'      =>$row[3],
                     'description'   =>$row[2],
                     'detail_code'   =>$ticket_code,
                     'status'        =>0
                 ];
-              
-                RFPDetail::create($post);
-                $message ="Data successfully inserted";
-                $status =200;
+            
+                RFPDetail::create($post); 
+                $message    =   "Data successfully inserted";
+                $status     =   200;
         }
      
      
@@ -193,21 +196,23 @@ class RFPController extends Controller
                 $month =idate('m', $date_month);
                 $year = idate('y', $date_month);
                 $month_convert =  NumConvert::roman($month);
-                $departementId = RFPTransaction::where('request_code',$request->request_code)->first();
-                $departementInitial = MasterDepartement::find($departementId->id)->first();
+              
+                $requestCodeExplode = explode('/',$row[0]);
+             
                 if($increment_code ==null){
-                    $ticket_code = '1/'.$requestType.'/'.$departementInitial->initial.'/'.$month_convert.'/'.$year;
+                    $ticket_code = '1'.'/'.$requestCodeExplode[0].$requestCodeExplode[2].$requestCodeExplode[3].'/'.$month_convert.'/'.$year;
                 }else{
                     $month_before = explode('/',$increment_code->subdetail_code,-1);
-                    if($month_convert != $month_before[3]){
-                        $ticket_code = '1/'.$requestType.'/'.$departementInitial->initial.'/'.$month_convert.'/'.$year;
+                    if($month_convert != $month_before[2]){
+                        $ticket_code = '1'.'/'.$requestCodeExplode[0].$requestCodeExplode[2].$requestCodeExplode[3].'/'.$month_convert.'/'.$year;
                     }else{
-                        $ticket_code = $month_before[0] + 1 .'/'.$requestType.'/'.$departementInitial->initial.'/'.$month_convert.'/'.$year;
+                        $ticket_code = $month_before[0] + 1 .'/'.$requestCodeExplode[0].$requestCodeExplode[2].$requestCodeExplode[3].'/'.$month_convert.'/'.$year;
                     }   
                 }
               
                 $post =[
                     'detail_code'   =>$row[0],
+                    'request_code'  =>$row[6],
                     'user_id'       =>$row[4],
                     'title'         =>$row[1],
                     'dateline'      =>$row[3],
@@ -216,8 +221,20 @@ class RFPController extends Controller
                     'subdetail_code'=>$ticket_code,
                     'status'        =>0
                 ];
-               
-                RFPSubDetail::create($post);
+                DB::transaction(function() use($post,$request,$row) {
+                $insert = RFPSubDetail::create($post);
+                if($insert){
+                    $statusDone     = RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('detail_code',$row[0])->where('status',1)->first();
+                    $statusAll      = RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('detail_code',$row[0])->first();
+                    $percentage     = ($statusDone->percentage / $statusAll->percentage) * 100;
+                    RFPDetail::where('detail_code', $row[0])->update(['percentage'=>$percentage]);
+
+                    $statusRFPDone  = RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('request_code',$row[6])->where('status',1)->first();
+                    $statusRFPAll   = RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('request_code',$row[6])->first();
+                    $percentageTransaction     = ($statusRFPDone->percentage / $statusRFPAll->percentage) * 100;
+                    RFPTransaction::where('request_code', $row[6])->update(['progress'=>$percentageTransaction]);
+                }
+            });
                 $message ="Data successfully inserted";
                 $status =200;
         }
@@ -228,22 +245,25 @@ class RFPController extends Controller
     }
     public function editRFPDetail(Request $request)
     {
-        $data = RFPDetail ::with(['userRelation','rfpRelation'])->find($request->id);
-        $user = RFPTransaction::select('users.name','users.id')
+        $data       = RFPDetail ::with(['userRelation','rfpRelation'])->find($request->id);
+        $user       = RFPTransaction::select('users.name','users.id')
                                 ->join('master_teams','master_teams.id','=','rfp_transaction.teamId')
                                 ->join('detail_teams','detail_teams.masterId','=','master_teams.id')
                                 ->join('users','users.id','=','detail_teams.userId')
                                 ->where('rfp_transaction.request_code',$request->request_code)
                                 ->get();
                                
+        $module     = RFPSubDetail ::with(['userRelation'])->where('detail_code', $request->detail)->get(); 
+                               
         return response()->json([
             'user'=>$user,
             'data'=>$data,
+            'module'=>$module,
         ]); 
     }
     public function getRFPSubDetail(Request $request)
     {
-        $data = RFPSubDetail::with('userRelation')->where('detail_code',$request->detail_code)->get();                             
+        $data = RFPSubDetail::with(['userRelation', 'rfpDetailRelation'])->where('detail_code',$request->detail_code)->orderBy('start_date','asc')->get();                             
         return response()->json([
             'data'=>$data,
         ]); 
@@ -334,34 +354,64 @@ class RFPController extends Controller
     }
     public function updateRFPSubDetailProgress(Request $request, UpdateProgressRFPSubDetailRequest $UpdateProgressRFPSubDetailRequest)
     {
-        // try {
+        try {
             $UpdateProgressRFPSubDetailRequest->validated();
             $post =[
                 'description'=>$request->addInfoUpdate,
                 'status'=>$request->progressUpdate,
                 'userId'=>auth()->user()->id,
                 'activityCode'=>$request->id
-            ];          
-            $update =RFPSubDetail::where('subdetail_code',$request->id)->update(['status'=>$request->progressUpdate]);
+            ];
+            if($request->progressUpdate == 1 ){
+                $postUpdate = [
+                    'finish_date'=>date('Y-m-d') > $request->startDateSubDetailUpdate ? date('Y-m-d') : $request->startDateSubDetailUpdate,
+                    'status'=>$request->progressUpdate
+                ];
+            }else{
+                $postUpdate = [
+                    'status'=>$request->progressUpdate
+                ];   
+            }
+              
+            $update =RFPSubDetail::where('subdetail_code',$request->id)->update($postUpdate);
             
             if($update){
                 DailyActivity::create($post);
-                $statusDone = RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('detail_code',$request->detail_code)->where('status',1)->first();
-                $statusAll = RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('detail_code',$request->detail_code)->first();
-                $percentage = ($statusDone->percentage / $statusAll->percentage) * 100;
-                RFPDetail::where('detail_code', $request->detail_code)->update(['percentage'=>$percentage]);
+                $statusDone     =   RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('detail_code',$request->detail_code)->where('status',1)->first();
+                $statusAll      =   RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('detail_code',$request->detail_code)->first();
+                $percentage     =   ($statusDone->percentage / $statusAll->percentage) * 100;
+                $statusRFPDone  =   RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('request_code',$request->request_code)->where('status',1)->first();
+                $statusRFPAll   =   RFPSubDetail::select(DB::raw('count(id) as percentage'))->where('request_code',$request->request_code)->first();
+                $percentageRFP  =   ($statusRFPDone->percentage / $statusRFPAll->percentage) * 100 ; 
+                if($percentage == 100 ){
+                    if($percentageRFP == 100){
+                       RFPTransaction::where('request_code',$request->request_code)->update([
+                        'progress'=>$percentageRFP,
+                        'status'=>1
+                       ]);
+                    }
+                    RFPDetail::where('detail_code', $request->detail_code)->update([
+                        'percentage'=>$percentage,
+                        'status'=> 1
+                    ]);
+                }else{
+                    RFPDetail::where('detail_code', $request->detail_code)->update(['percentage'=>$percentage]);
+                    RFPTransaction::where('request_code',$request->request_code)->update([
+                        'progress'=>$percentageRFP
+                    ]);
+                }
             }
             return ResponseFormatter::success(
                 $post,
                 'Request For Project successfully updated'
             );            
-        // } catch (\Throwable $th) {
-        //     return ResponseFormatter::error(
-        //         $th,
-        //         'Request For Project failed to add',
-        //         500
-        //     );
-        // }
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Request For Project failed to add',
+                500
+            );
+        }
     }
 }
 

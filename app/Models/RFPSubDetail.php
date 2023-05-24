@@ -13,6 +13,10 @@ class RFPSubDetail extends Model
 
     public function userRelation()
     {
-        return $this->hasOne(User::class,'id','user_id');
+        return $this->belongsTo(User::class,'user_id');
+    }
+    public function rfpDetailRelation()
+    {
+        return $this->hasOne(RFPDetail::class,'detail_code','detail_code');
     }
 }

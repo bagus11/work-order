@@ -46,6 +46,11 @@
                                         </select>
                                     </div>
                                     <div class="mt-2 mb-2">
+                                        @can('create-work_order_list')
+                                        <button class="btn btn-info btn-block" id="btnReportWO">
+                                            <ion-icon name="print"></ion-icon>  Print WO
+                                        </button>
+                                        @endcan
                                         <button class="btn btn-warning btn-block" id="btnFilter" onclick="get_work_order_list()">
                                             <ion-icon name="filter-sharp"></ion-icon> Filter
                                         </button>

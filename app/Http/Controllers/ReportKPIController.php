@@ -123,7 +123,6 @@ class ReportKPIController extends Controller
                                     'kpiUserbyOffice1'=>$kpiUserbyOffice1,
                                     'kpiUserbyOfficeDone1'=>$kpiUserbyOfficeDone1,
                                     'detailTicket'=>$detailTicket,
-
                                 
                                 ];
             

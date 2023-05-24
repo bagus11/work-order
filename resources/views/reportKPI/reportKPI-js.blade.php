@@ -107,9 +107,9 @@
                 // Set Label
               
                     var level2Label             =   response.level2 == null ? 0 :response.level2.count;
-                    var percentageLabel     =   parseFloat(response.result.done / response.result.wo_total * 100).toFixed(2)
-                    var durationLv1Label    =   timeConvert(response.result.duration_lv2 /level2Label)
-                    var durationLv2Label    =   timeConvert(response.result.duration / response.result.wo_total - level2Label)
+                    var percentageLabel         =   response.result == null ? '-' : parseFloat(response.result.done / response.result.wo_total * 100).toFixed(2)
+                    var durationLv1Label        =   response.result ==null ? '-' : timeConvert(response.result.duration_lv2 /level2Label)
+                    var durationLv2Label        =   response.result == null ? '-' :  timeConvert(response.result.duration / response.result.wo_total - level2Label)
                     $('#userNameLabel').html(' :'+response.user.name)
                     $('#departementUserLabel').html(' : '+response.user.departement.name)
                     $('#positionUserLabel').html(' :'+response.user.jabatan.name)

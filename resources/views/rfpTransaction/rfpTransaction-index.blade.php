@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Master Team Project')
+@section('title', 'RFP Transaction')
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -16,14 +16,13 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="datatable-bordered nowrap display" id="rfpTable">
+                    <table class="datatable-bordered nowrap display " id="rfpTable">
                         <thead>
                             <tr>
                                 <th style="text-align:center"></th>
                                 <th style="text-align:center">Request Code</th>
                                 <th style="text-align:center">Office</th>
                                 <th style="text-align:center">Name</th>
-                                <th style="text-align:center">Departement</th>
                                 <th style="text-align:center">Status</th>
                                 <th style="text-align:center">Action</th>
                             </tr>
@@ -39,6 +38,7 @@
 @include('rfpTransaction.rfpTransaction-editMaster')
 @include('rfpTransaction.rfpTransaction-editSubDetail')
 @include('rfpTransaction.rfpTransaction-addDetail')
+@include('rfpTransaction.rfpTransaction-detailRFPMaster')
 @include('rfpTransaction.rfpTransaction-addSubDetailRFP')
 @include('rfpTransaction.rfpTransaction-updateRFPSubDetail')
 @include('rfpTransaction.rfpTransaction-listSubDetailRFP')

@@ -10,4 +10,9 @@ class WorkOrder extends Model
     use HasFactory;
     protected $table = 'work_orders';
     protected $guarded = [];
+
+    public function picSupportName()
+    {
+        return $this->hasOne(User::class,'id', 'user_id_support');
+    }
 }

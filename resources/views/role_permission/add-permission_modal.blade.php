@@ -27,7 +27,9 @@
                                 <option value="manual">Manual</option>
                                 <option value="create">Create</option>
                                 <option value="create_detail">Create Detail</option>
+                                <option value="create_subdetail">Create Sub Detail</option>
                                 <option value="update_detail">Update Detail</option>
+                                <option value="update_subdetail">Update Sub Detail</option>
                                 <option value="update">Update</option>
                                 <option value="delete">Delete</option>
                             </select>

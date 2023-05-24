@@ -32,7 +32,7 @@
                         <label for="">Start Date</label>
                     </div>
                     <div class="col-md-4">
-                        <input type="date" class="form-control" id="startDateSubDetailEdit">
+                        <input type="date" readonly class="form-control" id="startDateSubDetailEdit">
                         <span  style="color:red;" class="message_error text-red block startDateSubDetailEdit_error"></span>
                     </div>
                     <div class="col-md-2 mt-2">

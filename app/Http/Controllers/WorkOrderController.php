@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\WONotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use \Mpdf\Mpdf as PDF;
 
 class WorkOrderController extends Controller
 {
@@ -27,6 +28,40 @@ class WorkOrderController extends Controller
     }
     public function get_work_order_list(Request $request)
     {
+        $day = \Carbon\Carbon::today()->subDays(10);
+        $validationChecking = WorkOrder::where('status_wo',4)->where('status_approval',2)->where(DB::raw('DATE(updated_at)','<=',$day))->get();
+        dd($validationChecking);
+        if(count($validationChecking) > 0 ){
+            foreach($validationChecking as $item){
+                $post=[
+                    'status_approval'=>1
+                ];
+                $updateChceking = WorkOrder::where($item->request_code)->update($post);
+                if($updateChceking){
+                    $postCommentChecking =[
+                        'request_code'=>$item->request_code,
+                        'request_type'=>$item->request_type,
+                        'departement_id'=>$item->departement_id,
+                        'problem_type'=>$item->problem_type,
+                        'subject'=>$item->subject,
+                        'add_info'=>$item->add_info,
+                        'user_id'=>$item->user_id,
+                        'assignment'=>$item->assignment, 
+                        'status_wo'=>$item->status_wo,
+                        'category'=>$item->categories,
+                        'follow_up'=>0,
+                        'status_approval'=>1,
+                        'duration'=>0,
+                        'user_id_support'=>$item->user_id_support,
+                        'created_at'=>date('Y-m-d H:i:s'),
+                        'creator'=>999,
+                        'comment'=>'Done by system'
+                    ];
+                    WorkOrderLog::create($postCommentChecking);
+                }
+            }
+        }
+  
         if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
         {
             $requestFor  = MasterDepartement::find(auth()->user()->departement);
@@ -47,6 +82,7 @@ class WorkOrderController extends Controller
             ->orderBy('work_orders.priority','desc')
             ->orderBy('id','desc')
             ->get();
+            
         }else if(auth()->user()->hasPermissionTo('get-only_user-work_order_list')){
             $data = DB::table('work_orders')
             ->select('work_orders.*','master_priorities.name as priorityName' ,'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
@@ -694,6 +730,160 @@ class WorkOrderController extends Controller
             'closed'=>$closed,
             'statusWo'=>$statusWo,
         ]);
+    }
+    public function printWO($from,$to,$officeFilter,$statusFilter)
+    {
+        try {
+                $requestFor  = MasterDepartement::find(auth()->user()->departement);
+                $officeString = '';
+                if($officeFilter == '*'){
+                    $officeString = null;
+                }else{
+                    $officeString = $officeFilter; 
+                }
+                $statusString ='';
+                if($statusFilter !='*'){
+                    $statusString = $statusFilter;
+                }
+                $reportWO       = WorkOrder::with('picSupportName')
+                                    ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name')
+                                    ->leftJoin('users','users.id','=','work_orders.user_id')
+                                    ->join('master_categories','master_categories.id','=','work_orders.category')
+                                    ->join('master_departements','master_departements.id','=','work_orders.departement_id')
+                                    ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                    ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                    ->where('work_orders.request_for',$requestFor->initial)
+                                    ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                    ->orderBy('created_at', 'asc')
+                                    ->get();
+                $woCounting     = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalWO'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.id as officeId','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'),  [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                      ->where('work_orders.request_for',$requestFor->initial)
+                                    ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                    ->first();
+                $woOnProgress    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalProgress'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 1)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+                $woPending    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalPending'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 2)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+                $woRevision    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalRevision'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 3)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+                $woReject    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalReject'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 5)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+                $woOnChecking    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalChecking'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 4)
+                                    ->where('work_orders.status_approval', 2)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+                $woDone             = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalDone'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 4)
+                                    ->where('work_orders.status_approval', 1)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+                $woNew    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalNew'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                    ->join('users','users.id','work_orders.user_id')
+                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                    ->where('work_orders.status_wo', 4)
+                                    ->where('work_orders.status_approval', 2)
+                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                     ->where('master_kantor.id','like','%'.$officeString.'%')
+                                    ->first();
+            // $countingWODone = 
+                            $data=[
+                                'reportWO'=>$reportWO,
+                                'woCounting'=>$woCounting,
+                                'woOnProgress'=>$woOnProgress,
+                                'woDone'=>$woDone,
+                                'woPending'=>$woPending,
+                                'woRevision'=>$woRevision,
+                                'woReject'=>$woReject,
+                                'woOnChecking'=>$woOnChecking,
+                                'woNew'=>$woNew,
+                                'from'=>$from,
+                                'to'=>$to,
+                            ];
+                            $cetak              = view('work-order.reportWorkOrder',$data);
+                            $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
+                            $header             = '';
+                            $header             .= '<table width="100%">
+                                                        <tr>
+                                                            <td style="padding-left:10px;">
+                                                                <span style="font-size: 16px; font-weight: bold;"> PT PRALON</span>
+                                                                <br>
+                                                                <span style="font-size:9px;">Synergy Building #08-08 Tangerang 15143 - Indonesia +62 21 304 38808</span>
+                                                            </td>
+                                                            <td style="width:33%"></td>
+                                                                <td style="width: 50px; text-align:right;">'.$imageLogo.'
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                    </table>
+                                                    <hr>';
+                            
+                            $footer             = '<hr>
+                                                    <table width="100%" style="font-size: 10px;">
+                                                        <tr>
+                                                            <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                                                            <td width="10%" style="text-align: right;"> {PAGENO}</td>
+                                                        </tr>
+                                                    </table>';
+                
+                              
+                                $mpdf           = new PDF();
+                                $mpdf->SetHTMLHeader($header);
+                                $mpdf->SetHTMLFooter($footer);
+                                $mpdf->AddPage(
+                                    'P', // L - landscape, P - portrait 
+                                    '',
+                                    '',
+                                    '',
+                                    '',
+                                    5, // margin_left
+                                    5, // margin right
+                                    25, // margin top
+                                    20, // margin bottom
+                                    5, // margin header
+                                    5
+                                ); // margin footer
+                                $mpdf->WriteHTML($cetak);
+                                // Output a PDF file directly to the browser
+                                ob_clean();
+                                $mpdf->Output('Report Wo'.'('.date('Y-m-d').').pdf', 'I');
+
+            } catch (\Mpdf\MpdfException $e) {
+                // Process the exception, log, print etc.
+                echo $e->getMessage();
+            }
     }
 
 }

@@ -255,7 +255,7 @@ tr.shown td.subdetails-click {
   padding-top: 10px;
   padding-bottom: 10px;
   text-align: center;
-  background-color: rgb(174, 171, 171);
+  
   color: black;
   overflow-x:auto !important;
   }
@@ -264,5 +264,5 @@ tr.shown td.subdetails-click {
         padding: 8px;
        
     }
-    
+   
 </style>

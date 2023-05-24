@@ -1,15 +1,15 @@
 <script>
-const ratingStars = [...document.getElementsByClassName("rating__star")];
-const ratingResult = document.querySelector(".rating__result");
-getOfficeName('officeFilter')
-$(document).on('click', '.dropdown-menu', function (e) {
-  e.stopPropagation();
-});
-$('#refresh').on('click', function(){
-    get_work_order_list();
-    getNotification()
-})
-get_work_order_list()
+    const ratingStars = [...document.getElementsByClassName("rating__star")];
+    const ratingResult = document.querySelector(".rating__result");
+    getOfficeName('officeFilter')
+    $(document).on('click', '.dropdown-menu', function (e) {
+        e.stopPropagation();
+    });
+    $('#refresh').on('click', function(){
+        get_work_order_list();
+        getNotification()
+    })
+    get_work_order_list()
     $('#add_wo').on('click', function(){
         getDepartementName('get_departement_name','select_departement','Departement')
         $('.message_error').html('')
@@ -25,9 +25,9 @@ get_work_order_list()
     $('#select_departement').on('change', function(){
         getSelect('get_categories_id',{'initial':$('#select_departement').val()},'select_categories', 'Categories')
     })
-   $('#select_categories').on('change', function(){
-    getSelect('get_problem_type_name',{'id': $('#select_categories').val()},'select_problem_type', 'Problem Type')
-   })
+    $('#select_categories').on('change', function(){
+        getSelect('get_problem_type_name',{'id': $('#select_categories').val()},'select_problem_type', 'Problem Type')
+    })
     $('#btn_save_wo').on('click', function(e){
         e.preventDefault();
         var formData        = new FormData();    
@@ -168,7 +168,7 @@ get_work_order_list()
             'approve':1,
         }
         if(ratingResult.innerText ==''|| ratingResult.innerText==0){
-            toastr['error']('Anda belum memberi penilaian');
+            toastr['error']('Please give rate for PIC');
         }else{
             rating_pic(data)
         }
@@ -349,7 +349,6 @@ get_work_order_list()
             });
     
     });
-  
     $('#wo_table').on('click', '.updatePIC', function() {
             var id = $(this).data('id');
             $('#attachment_container').hide();
@@ -400,7 +399,6 @@ get_work_order_list()
             });
     
     });
-  
     $('#wo_table').on('click', '.manualAssign', function() {
         var id = $(this).data('id');
         $('#manual_assign_id_wo').val(id)
@@ -409,21 +407,29 @@ get_work_order_list()
         var requestCodeWo = $('#requestCodeWo').val();
         getLogHistory(requestCodeWo)
     })
+    $('#btnReportWO').on('click', function(){
+        var from = $('#from').val();
+        var to = $('#to').val();
+        var officeFilter = $('#officeFilter').val();
+        var statusFilter = $('#statusFilter').val();
+
+    window.open(`printWO/${from}/${to}/${officeFilter =='' ? '*':officeFilter}/${statusFilter =='' ? '*' : statusFilter}`,'_blank');
+    })
     const progressSteps = document.querySelectorAll('.progress-step');
     let formSetpsNum =0
     function updateProgressBar()
-   {
-       progressSteps.forEach((progressStep, idx)=>{
-           if(idx < formSetpsNum +1)
-           {
-               progressStep.classList.add('progress-step-active')
-           }else{
-               progressStep.classList.remove('progress-step-active')
-           }
-       });
-       const progressActive = document.querySelectorAll('.progress-step-active');
-       progress.style.width =((progressActive.length - 1) / (progressSteps.length -1) *100 +'%')
-   }
+    {
+        progressSteps.forEach((progressStep, idx)=>{
+            if(idx < formSetpsNum +1)
+            {
+                progressStep.classList.add('progress-step-active')
+            }else{
+                progressStep.classList.remove('progress-step-active')
+            }
+        });
+        const progressActive = document.querySelectorAll('.progress-step-active');
+        progress.style.width =((progressActive.length - 1) / (progressSteps.length -1) *100 +'%')
+    }
     function getStepper(request_code){
         $('#stepperTable').DataTable().clear();
         $('#stepperTable').DataTable().destroy();
@@ -525,23 +531,23 @@ get_work_order_list()
     }
     printRatingResult(ratingResult);
     function executeRating(stars, result) {
-    const starClassActive = "rating__star fas fa-star";
-    const starClassUnactive = "rating__star far fa-star";
-    const starsLength = stars.length;
-    let i;
-    stars.map((star) => {
-        star.onclick = () => {
-            i = stars.indexOf(star);
+        const starClassActive = "rating__star fas fa-star";
+        const starClassUnactive = "rating__star far fa-star";
+        const starsLength = stars.length;
+        let i;
+        stars.map((star) => {
+            star.onclick = () => {
+                i = stars.indexOf(star);
 
-            if (star.className.indexOf(starClassUnactive) !== -1) {
-                printRatingResult(result, i + 1);
-                for (i; i >= 0; --i) stars[i].className = starClassActive;
-            } else {
-                printRatingResult(result, i);
-                for (i; i < starsLength; ++i) stars[i].className = starClassUnactive;
-            }
-        };
-    });
+                if (star.className.indexOf(starClassUnactive) !== -1) {
+                    printRatingResult(result, i + 1);
+                    for (i; i >= 0; --i) stars[i].className = starClassActive;
+                } else {
+                    printRatingResult(result, i);
+                    for (i; i < starsLength; ++i) stars[i].className = starClassUnactive;
+                }
+            };
+        });
     }
     function printRatingResult(result, num) {
     result.textContent = num;
@@ -582,7 +588,7 @@ get_work_order_list()
                             const date = d.toISOString().split('T')[0];
                             const time = d.toTimeString().split(' ')[0];
                             d2 = new Date (response.data[i].created_at );
-                            d2.setMinutes ( d.getMinutes() + 5 );
+                            d2.setMinutes ( d.getMinutes() + 1 );
                             var d3 =  d2.toTimeString().split(' ')[0];
                             var date_now = new Date();
                             var date_format = date_now.toISOString().split('T')[0];
@@ -626,7 +632,7 @@ get_work_order_list()
                                 break
                             case 2:
                                     priorityLabel ='Medium'
-                                    priorityColor ='color:grey'
+                                    priorityColor ='color:black'
                                 break
                             case 3:
                                     priorityLabel ='High'
@@ -646,8 +652,10 @@ get_work_order_list()
                                         </button> `;
                             }
                             if( date == date_format){
+                              
                                 if(d3 < time_now && response.data[i].status_wo == 0 )
                                 {
+                                  
                                     approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
                                                 <ion-icon name="checkmark-circle"></ion-icon>
                                             </button> `;
@@ -687,7 +695,7 @@ get_work_order_list()
                                     @can('update-work_order_list')
                                       ${update_progress}
                                     @endcan
-                                    @can('manual_approval-work_order_list')
+                                    @can('manual-work_order_list')
                                       ${approve_manual}
                                     @endcan
                                     @can('rating-work_order_list')
@@ -910,8 +918,7 @@ get_work_order_list()
                 toastr['error']('Failed to get data, please contact ICT Developer');
             }
         });
-    }
-   
+    } 
     function approve_assignment(data)
     {
         $.ajax({

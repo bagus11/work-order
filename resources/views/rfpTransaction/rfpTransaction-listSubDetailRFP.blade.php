@@ -17,11 +17,11 @@
                                 <thead>
                                     <tr>
                                         <th style="text-align:center;"></th>
+                                        <th style="text-align:center;">Start Date</th>
+                                        <th style="text-align:center;">Deadline</th>
                                         <th style="text-align:center;">Sub Detail Code</th>
                                         <th style="text-align:center;">Activity</th>
                                         <th style="text-align:center;">PIC</th>
-                                        <th style="text-align:center;">Start Date</th>
-                                        <th style="text-align:center;">Deadline</th>
                                         <th style="text-align:center;">Status</th>
                                         <th style="text-align:center;">Action</th>
                                     </tr>

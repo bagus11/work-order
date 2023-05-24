@@ -15,6 +15,6 @@ class RFPDetail extends Model
         return $this->hasOne(User::class,'id','user_id');
     }
     public function rfpRelation(){
-        return $this->hasOne(RFPTransaction::class,'request_code','request_code');
+        return $this->hasMany(RFPSubDetail::class,'detail_code','detail_code');
     }
 }
