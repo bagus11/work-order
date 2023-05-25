@@ -31,9 +31,9 @@ class WorkOrderController extends Controller
         $day = \Carbon\Carbon::today()->subDays(7);
         $validationChecking = WorkOrder::where('status_wo',4)
                                         ->where('status_approval',2)
-                                        ->where('updated_at', '<=', Carbon::now()->subDays(2)->toDateTimeString())
+                                        ->where('updated_at', '<=', Carbon::now()->subDays(7)->toDateTimeString())
                                         ->get();
-        // dd($validationChecking);
+        
         if(count($validationChecking) > 0 ){
             foreach($validationChecking as $item){
                 $post=[
