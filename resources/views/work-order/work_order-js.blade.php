@@ -799,10 +799,7 @@
                                     status_color ='#F0A04B'
                                 }
                             }
-                            else  if(response.log_data[i].status_wo==5){
-                                status_wo ="Complete"
-                                status_color ='black'
-                            }else{
+                          else{
                                 status_wo ="REJECT"
                                 status_color ='red'
                             }

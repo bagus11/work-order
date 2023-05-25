@@ -28,9 +28,12 @@ class WorkOrderController extends Controller
     }
     public function get_work_order_list(Request $request)
     {
-        $day = \Carbon\Carbon::today()->subDays(10);
-        $validationChecking = WorkOrder::where('status_wo',4)->where('status_approval',2)->where(DB::raw('DATE(updated_at)','<=',$day))->get();
-        dd($validationChecking);
+        $day = \Carbon\Carbon::today()->subDays(7);
+        $validationChecking = WorkOrder::where('status_wo',4)
+                                        ->where('status_approval',2)
+                                        ->where('updated_at', '<=', Carbon::now()->subDays(2)->toDateTimeString())
+                                        ->get();
+        // dd($validationChecking);
         if(count($validationChecking) > 0 ){
             foreach($validationChecking as $item){
                 $post=[
@@ -414,7 +417,6 @@ class WorkOrderController extends Controller
                             'created_at'=>date('Y-m-d H:i:s')
                         ];
                     }
-                    // dd($post);
                      DB::transaction(function() use($post,$request, $post_log,$userPost,$fileName,$status_wo,$postHead) {
                         if($request->file('attachmentPIC')){
                             $request->file('attachmentPIC')->storeAs('public/attachmentPIC',$fileName);
