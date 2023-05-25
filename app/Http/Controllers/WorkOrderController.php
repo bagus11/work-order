@@ -28,40 +28,62 @@ class WorkOrderController extends Controller
     }
     public function get_work_order_list(Request $request)
     {
-        $day = \Carbon\Carbon::today()->subDays(7);
         $validationChecking = WorkOrder::where('status_wo',4)
                                         ->where('status_approval',2)
-                                        ->where('updated_at', '<=', Carbon::now()->subDays(7)->toDateTimeString())
+                                        ->where('updated_at', '<=', Carbon::now()->subDays(4)->toDateTimeString())
                                         ->get();
-        
+      
         if(count($validationChecking) > 0 ){
             foreach($validationChecking as $item){
-                $post=[
-                    'status_approval'=>1
+                $postValidateion=[
+                    'status_approval'=>1,
+                    'updated_at'=>date('Y-m-d H:i:s')
                 ];
-                $updateChceking = WorkOrder::where($item->request_code)->update($post);
-                if($updateChceking){
-                    $postCommentChecking =[
-                        'request_code'=>$item->request_code,
-                        'request_type'=>$item->request_type,
-                        'departement_id'=>$item->departement_id,
-                        'problem_type'=>$item->problem_type,
-                        'subject'=>$item->subject,
-                        'add_info'=>$item->add_info,
-                        'user_id'=>$item->user_id,
-                        'assignment'=>$item->assignment, 
-                        'status_wo'=>$item->status_wo,
-                        'category'=>$item->categories,
-                        'follow_up'=>0,
-                        'status_approval'=>1,
-                        'duration'=>0,
-                        'user_id_support'=>$item->user_id_support,
-                        'created_at'=>date('Y-m-d H:i:s'),
-                        'creator'=>999,
-                        'comment'=>'Done by system'
-                    ];
-                    WorkOrderLog::create($postCommentChecking);
-                }
+                
+                DB::transaction(function() use($postValidateion,$item) {
+                     WorkOrder::where('request_code', $item->request_code)->update($postValidateion);
+                  
+                        $postCommentChecking =[
+                            'request_code'=>$item->request_code,
+                            'request_type'=>$item->request_type,
+                            'departement_id'=>$item->departement_id,
+                            'problem_type'=>$item->problem_type,
+                            'subject'=>$item->subject,
+                            'add_info'=>$item->add_info,
+                            'user_id'=>$item->user_id,
+                            'assignment'=>$item->assignment, 
+                            'status_wo'=>$item->status_wo,
+                            'category'=>$item->category,
+                            'follow_up'=>0,
+                            'status_approval'=>1,
+                            'duration'=>0,
+                            'user_id_support'=>$item->user_id_support,
+                            'created_at'=>date('Y-m-d H:i:s'),
+                            'creator'=>999,
+                            'comment'=>'Done by system'
+                        ];
+                        WorkOrderLog::create($postCommentChecking);
+    
+                            $postNotif = [
+                                'userId'    =>$item->user_id,
+                                'status'    =>0,
+                                'message'   =>'your work order with request code : '.$item->request_code.' has been closed by system',
+                                'link'      =>'work_order_list',
+                                'subject'   =>'WO Progress'
+    
+                            ];
+                            $postNotifUser = [
+                                'userId'    =>$item->user_id_support,
+                                'status'    =>0,
+                                'message'   =>'your work order with request code : '.$item->request_code.' has been closed by system',
+                                'link'      =>'work_order_list',
+                                'subject'   =>'WO Progress'
+    
+                            ];
+                            WONotification::create($postNotif);
+                            WONotification::create($postNotifUser);
+                });
+                
             }
         }
   
