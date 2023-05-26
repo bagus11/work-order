@@ -587,7 +587,8 @@ class WorkOrderController extends Controller
              ]);
          }else{
             $param = $approve == 1?4:3;
-            $log_wo = WorkOrder::find($request->id);
+            $log_wo = WorkOrder::with('picName','picSupportName')->find($request->id);
+            
             $sumofDuration = WorkOrderLog::select(DB::raw('SUM(duration) as sumOfDuration'))->where('request_code', $log_wo->request_code)->first();
            
               $post=[
@@ -626,15 +627,15 @@ class WorkOrderController extends Controller
             ];
             $categoriesName = MasterCategory::find($log_wo->category);
             $userName = User::find($log_wo->user_id);
-            $headDepartement = MasterDepartement::find($log_wo->departement_id);
+            $headDepartement = MasterDepartement::where('initial',$log_wo->request_for)->first();
             $problemType = ProblemType::find($log_wo->problem_type);
             $postEmail = [
                 'request_code'=>$log_wo->request_code,
                 'request_type'=>$log_wo->request_type,
                 'problem_type'=>$problemType->name,
-                 'comment'=>$request->note_pic,
+                'comment'=>$request->note_pic,
                 'categories'=>$categoriesName->name,
-                'pic'=> auth()->user()->name,
+                'pic'=> $log_wo->picSupportName->name,
                 'request_by'=>$userName->name,
                 'headDepartement'=>$headDepartement->name
 

@@ -22,8 +22,8 @@
         <br>
     </p>
     <p style="font-size:12px">
-        For details of the work order transaction, please click  <a href="{{ url('work_order_list')}}">here</a> <br> 
-        That's all we can say, thank you for your cooperation
+        For detail of the work order transaction, please click  <a href="{{ url('work_order_list')}}">here</a> <br> 
+       Thank you for your cooperation
     </p>
 </body>
 </html>

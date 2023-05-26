@@ -15,4 +15,8 @@ class WorkOrder extends Model
     {
         return $this->hasOne(User::class,'id', 'user_id_support');
     }
+    public function picName()
+    {
+        return $this->hasOne(User::class,'id', 'user_id');
+    }
 }
