@@ -100,6 +100,7 @@
 @include('work-order.manual_assign-work_order')
 @include('work-order.rating-work_order')
 @include('work-order.detail-work_order')
+@include('work-order.hold-work_order')
 @endsection
 @push('custom-js')
 @include('work-order.work_order-js')

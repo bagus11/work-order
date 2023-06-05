@@ -401,7 +401,7 @@ class RFPController extends Controller
                     ]);
                 }
             }
-            return ResponseFormatter::success(
+            return ResponseFormatter::success(                                 
                 $post,
                 'Request For Project successfully updated'
             );            

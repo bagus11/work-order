@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ManualWOController;
 use App\Http\Controllers\MasterCategoryController;
@@ -188,6 +189,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('manual_approve', [WorkOrderController::class, 'manual_approve'])->name('manual_approve');
     Route::post('rating_pic', [WorkOrderController::class, 'rating_pic'])->name('rating_pic');
     Route::get('getStepper', [WorkOrderController::class, 'getStepper'])->name('getStepper');
+    Route::post('holdProgressRequest', [WorkOrderController::class, 'holdProgressRequest'])->name('holdProgressRequest');
     // Report Work Order
     Route::get('printWO/{from}/{date}/{officeFilter}/{statusFilter}',[WorkOrderController::class, 'printWO']);
     // Report Work Order
@@ -248,5 +250,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getSubDetailRFP', [RFPController::class, 'getSubDetailRFP'])->name('getSubDetailRFP');
     Route::post('updateRFPSubDetail', [RFPController::class, 'updateRFPSubDetail'])->name('updateRFPSubDetail');
     Route::post('updateRFPSubDetailProgress', [RFPController::class, 'updateRFPSubDetailProgress'])->name('updateRFPSubDetailProgress');
+
+    // Hold Request Page
+    Route::get('hold_request', [HoldRequestController::class, 'index'])->name('hold_request');
+    Route::get('getHoldRequest', [HoldRequestController::class, 'getHoldRequest'])->name('getHoldRequest');
+    Route::get('getWOActive', [HoldRequestController::class, 'getWOActive'])->name('getWOActive');
+    Route::get('getWODetail', [HoldRequestController::class, 'getWODetail'])->name('getWODetail');
+
+    // Hold Request Page
+
 });
 

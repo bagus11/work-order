@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
+use App\Http\Requests\UpdateHHoldProgressRequest;
 use App\Models\MasterCategory;
 use App\Models\MasterDepartement;
 use App\Models\WorkOrder;
@@ -232,6 +234,7 @@ class WorkOrderController extends Controller
                     'user_id_support'=>'',
                     'rating'=>0,
                     'duration'=>0,
+                    'hold_progress'=>0,
                     'created_at'=>date('Y-m-d H:i:s'),
                     'attachment_user'=>$fileName != ''? 'storage/attachmentUser/'.$fileName :null
                 ];
@@ -249,6 +252,7 @@ class WorkOrderController extends Controller
                     'follow_up'=>0,
                     'status_approval'=>0,
                     'duration'=>0,
+                    'hold_progress'=>0,
                     'user_id_support'=>'',
                     'created_at'=>date('Y-m-d H:i:s'),
                     'creator'=>auth()->user()->id,
@@ -395,7 +399,7 @@ class WorkOrderController extends Controller
                     $workOrderStatus    =   WorkOrderLog::where('request_code', $log_wo->request_code)
                                                         ->orderBy('created_at','desc')
                                                         ->first();
-                    $timeBeforePost = $workOrderStatus->created_at;
+                    $timeBeforePost     = $workOrderStatus->created_at;
                     $timeBefore         =   Carbon::createFromFormat('Y-m-d H:i:s', $timeBeforePost);
                     $timeNow            =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
                     $totalDuration      =   $timeBefore->diffInMinutes($timeNow);
@@ -413,6 +417,7 @@ class WorkOrderController extends Controller
                                             'status_approval'=>$log_wo->status_approval,
                                             'user_id_support'=>$log_wo->user_id_support,
                                             'subject'=>$log_wo->subject,
+                                            'hold_progress'=>$log_wo->hold_progress,
                                             'comment'=>$request->note_pic,
                                             'creator'=>auth()->user()->id,
                                             'duration'=>$totalDuration
@@ -909,6 +914,36 @@ class WorkOrderController extends Controller
                 // Process the exception, log, print etc.
                 echo $e->getMessage();
             }
+    }
+    public function holdProgressRequest(Request $request, UpdateHHoldProgressRequest $updateHHoldProgressRequest)
+    {   
+        // try {
+            $updateHHoldProgressRequest->validated();
+            $rfm = WorkOrder::find($request->id);
+            $workOrderStatus    =   WorkOrderLog::where('request_code', $rfm->request_code)
+                                    ->orderBy('created_at','desc')
+                                    ->first();
+            $timeBeforePost     =   $workOrderStatus->created_at;
+            $timeBefore         =   Carbon::createFromFormat('Y-m-d H:i:s', $timeBeforePost);
+            $timeNow            =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+            $totalDuration      =   $timeBefore->diffInMinutes($timeNow);
+          
+            $post=[
+                // 'duration'=>$totalDuration,
+                'hold_progress'=>1,
+            ];
+            $rfm->update($post);
+            return ResponseFormatter::success(
+                $post,
+                'Category successfully added'
+            );            
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error(
+        //         $th,
+        //         'Category failed to add',
+        //         500
+        //     );
+        // }
     }
 
 }
