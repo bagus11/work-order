@@ -256,6 +256,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getHoldRequest', [HoldRequestController::class, 'getHoldRequest'])->name('getHoldRequest');
     Route::get('getWOActive', [HoldRequestController::class, 'getWOActive'])->name('getWOActive');
     Route::get('getWODetail', [HoldRequestController::class, 'getWODetail'])->name('getWODetail');
+    Route::post('updateHoldRequest', [HoldRequestController::class, 'updateHoldRequest'])->name('updateHoldRequest');
+    Route::post('updateResumeRequest', [HoldRequestController::class, 'updateResumeRequest'])->name('updateResumeRequest');
 
     // Hold Request Page
 

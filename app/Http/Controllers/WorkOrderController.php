@@ -917,7 +917,7 @@ class WorkOrderController extends Controller
     }
     public function holdProgressRequest(Request $request, UpdateHHoldProgressRequest $updateHHoldProgressRequest)
     {   
-        // try {
+        try {
             $updateHHoldProgressRequest->validated();
             $rfm = WorkOrder::find($request->id);
             $workOrderStatus    =   WorkOrderLog::where('request_code', $rfm->request_code)
@@ -927,23 +927,59 @@ class WorkOrderController extends Controller
             $timeBefore         =   Carbon::createFromFormat('Y-m-d H:i:s', $timeBeforePost);
             $timeNow            =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
             $totalDuration      =   $timeBefore->diffInMinutes($timeNow);
+            $masterJabatan      =   MasterJabatan::where('departement_id',auth()->user()->departement)->orderBy('id','asc')->first();
+            $userJabatan        =   User::where('jabatan', $masterJabatan->id)->first();
           
             $post=[
-                // 'duration'=>$totalDuration,
                 'hold_progress'=>1,
             ];
-            $rfm->update($post);
+            $postLog=[
+                'request_code'=>$workOrderStatus->request_code,
+                'request_type'=>$workOrderStatus->request_type,
+                'departement_id'=>$workOrderStatus->departement_id,
+                'add_info'=>$workOrderStatus->add_info,
+                'user_id'=>$workOrderStatus->user_id,
+                'assignment'=>$workOrderStatus->assignment,
+                'status_wo'=>$workOrderStatus->status_wo,
+                'priority'=>$workOrderStatus->priority,
+                'category'=>$workOrderStatus->category,
+                'follow_up'=>$workOrderStatus->follow_up,
+                'status_approval'=>$workOrderStatus->status_approval,
+                'user_id_support'=>$workOrderStatus->user_id_support,
+                'subject'=>$workOrderStatus->subject,
+                'problem_type'=>$workOrderStatus->problem_type,
+                'comment'=>$request->holdProgressNote,
+                'creator'=>auth()->user()->id,
+                'duration'=>$totalDuration,
+                'hold_progress'=>1,
+                'transfer_pic'=>$workOrderStatus->transfer_pic,
+                'request_id'=>$workOrderStatus->request_id,
+            ];
+            $postHead  =[
+                'message'=>auth()->user()->name.' has submitted a request to hold wo transaction with request code : '.$request->request_code,
+                'subject'=>'Hold Request',
+                'status'=>0,
+                'link'=>'hold_request',
+                'userId'=>$userJabatan->id,
+                'created_at'=>date('Y-m-d H:i:s')
+            ];
+            DB::transaction(function() use($post,$request, $postHead, $postLog, $rfm) {
+                $rfm->update($post);
+                WorkOrderLog::create($postLog);
+                WONotification::create($postHead);
+
+            });
             return ResponseFormatter::success(
                 $post,
-                'Category successfully added'
+                'Hold Request successfully added'
             );            
-        // } catch (\Throwable $th) {
-        //     return ResponseFormatter::error(
-        //         $th,
-        //         'Category failed to add',
-        //         500
-        //     );
-        // }
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Hold Request failed to add',
+                500
+            );
+        }
     }
 
 }

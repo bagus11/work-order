@@ -611,6 +611,7 @@
                                 status_wo ='NEW'
                                 status_color ='black'
                             }else  if(response.data[i].status_wo==1){
+
                                 if(response.data[i].hold_progress == 1){
                                     status_wo ="HOLD Request"
                                     status_color ='#213555'
@@ -619,13 +620,16 @@
                                     status_wo ="HOLD"
                                     status_color ='#213555'
                                 }else{
-                                    status_wo ="NEW"
-                                    status_color ='red'
+                                    status_wo ="On Progress"
+                                    status_color ='#5BC0F8'
                                 }
+
                             }else  if(response.data[i].status_wo==2){
+
                                 status_wo ="PENDING"
                                 status_color ='#FFC93C'
                             }else  if(response.data[i].status_wo==3){
+
                                 if(response.data[i].hold_progress == 1){
                                     status_wo ="HOLD Request"
                                     status_color ='#213555'
@@ -637,7 +641,9 @@
                                     status_wo ="REVISION"
                                     status_color ='red'
                                 }
+
                             }else if(response.data[i].status_wo==4){
+
                                 if(response.data[i].status_approval == '1'){
                                     status_wo ="DONE"
                                     status_color ='green'
@@ -678,29 +684,31 @@
                           var auth_id = $('#auth_id').val()
                         
                             if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
-                                if(auth_id == response.data[i].user_id_support)
-                                update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
-                                            <i class="fas fa-pen"></i>
-                                        </button> `;
-                                    if(response.data[i].hold_progress == 0 ){
-                                        holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
-                                                    <i class="fas fa-pause"></i>
-                                                </button> `;
-                                    }
+                                if(auth_id == response.data[i].user_id_support){
+                                    update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
+                                                <i class="fas fa-pen"></i>
+                                            </button> `;
+                                        if(response.data[i].hold_progress == 0 ){
+                                            holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
+                                                        <i class="fas fa-pause"></i>
+                                                    </button> `;
+                                        }
+                                }
+                              
                             }
                             if( date == date_format){
                               
                                 if(d3 < time_now && response.data[i].status_wo == 0 )
                                 {
                                     approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
-                                                <ion-icon name="checkmark-circle"></ion-icon>
-                                            </button> `;
+                                                        <i class="fas fa-user"></i>
+                                                    </button> `;
                                 }
                             }else if(date < date_format){
                                 if(response.data[i].status_wo == 0){
                                     approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
-                                                    <ion-icon name="checkmark-circle"></ion-icon>
-                                                </button> `;
+                                                        <i class="fas fa-user"></i>
+                                                    </button> `;
                                 }
                             }
                             if((response.data[i].status_wo == 4 && response.data[i].status_approval == 0) || (response.data[i].status_approval == 2 && response.data[i].status_wo == 4)){
@@ -820,15 +828,33 @@
                                 status_wo ='NEW'
                                 status_color ='black'
                             }else  if(response.log_data[i].status_wo==1){
-                                status_wo ="ON PROGRESS"
-                                status_color ='#5BC0F8'
+                                if(response.log_data[i].hold_progress == 1){
+                                    status_wo ="HOLD Request"
+                                    status_color ='#213555'
+
+                                }else if(response.log_data[i].hold_progress == 2){
+                                    status_wo ="HOLD"
+                                    status_color ='#213555'
+                                }else{
+                                    status_wo ="On Progress"
+                                    status_color ='#5BC0F8'
+                                }
                             }else  if(response.log_data[i].status_wo==2){
                                 status_wo ="PENDING"
                                 status_color ='#FFC93C'
                             }else  if(response.log_data[i].status_wo==3){
                                 revision ++
-                                status_wo ="REVISION " + revision
-                                status_color ='red'
+                                if(response.log_data[i].hold_progress == 1){
+                                    status_wo ="HOLD Request"
+                                    status_color ='#213555'
+
+                                }else if(response.log_data[i].hold_progress == 2){
+                                    status_wo ="HOLD"
+                                    status_color ='#213555'
+                                }else{
+                                    status_wo ="REVISION " +revision
+                                    status_color ='red'
+                                }
                             }else if(response.log_data[i].status_wo == 4){
                                 if(response.log_data[i].status_approval == 1){
                                     status_wo ="DONE"
@@ -855,7 +881,7 @@
                                 color_assignment ='red'
                             }
                             var picDuration = '-'
-                            if(status_wo =='CHECKING' || status_wo =='PENDING'){
+                            if(status_wo =='CHECKING' || status_wo =='PENDING' || status_wo =='HOLD Request' || status_wo =='HOLD'){
 
                                 picDuration= response.log_data[i].duration == 0 ? timeConvert(response.log_data[i].duration) : timeConvert(response.log_data[i].duration)
                             }

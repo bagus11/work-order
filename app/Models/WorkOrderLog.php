@@ -25,4 +25,16 @@ class WorkOrderLog extends Model
     public function priority(){
         return $this->hasOne(MasterPriority::class,'id','priority');
     }
+    public function departementName()
+    {
+        return $this->hasOne(MasterDepartement::class, 'id','departement_id');
+    }
+    public function categoryName()
+    {
+        return $this->hasOne(MasterCategory::class, 'id','category');
+    }
+    public function problemTypeName()
+    {
+        return $this->hasOne(ProblemType::class, 'id','problem_type');
+    }
 }
