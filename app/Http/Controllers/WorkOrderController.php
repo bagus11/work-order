@@ -956,7 +956,7 @@ class WorkOrderController extends Controller
                 'request_id'=>$workOrderStatus->request_id,
             ];
             $postHead  =[
-                'message'=>auth()->user()->name.' has submitted a request to hold wo transaction with request code : '.$request->request_code,
+                'message'=>auth()->user()->name.' has submitted a request to hold wo transaction with request code : '.$workOrderStatus->request_code,
                 'subject'=>'Hold Request',
                 'status'=>0,
                 'link'=>'hold_request',

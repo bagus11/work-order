@@ -4,6 +4,7 @@
     // Call Function
 
     // Operation
+        // Open Modal
             $('#btnAddTransfer').on('click', function(){
                 $('#detailTicketContainer').prop('hidden', true)
                 $.ajax({
@@ -36,39 +37,43 @@
             })
             onChange('selectRequestCode','requestCode')
             onChange('selectPIC','picId')
+        // End Open Modal
 
-            // Get Detail Ticket
-                $('#selectRequestCode').on('change', function(){
-                    $('#detailTicketContainer').prop('hidden', false)
-                    $.ajax({
-                    url: 'getWODetail',
-                    type: "get",
-                    dataType: 'json',
-                    async: true,
-                    data:{
-                        'requestCode':$('#requestCode').val()
-                    },
-                    beforeSend: function() {
-                        SwalLoading('Please wait ...');
-                    },
-                    success: function(response) {
-                        swal.close();
-                        $('#detailRequestBy').val(response.detail.pic_name.name)
-                        $('#selectPIC').val(response.detail.user_id_support)
-                        $('#selectPIC').select2().trigger('change');
-                        $('#detailDepartement').val(response.detail.departement_name.name)
-                        $('#detailCategory').val(response.detail.category_name.name)
-                        $('#detailProblemType').val(response.detail.problem_type_name.name)
-                        $('#detailSubject').val(response.detail.subject)
+        // Get Detail Ticket
+            $('#selectRequestCode').on('change', function(){
+                $('.message_error').html('')
+                $('#detailTicketContainer').prop('hidden', false)
+                $.ajax({
+                url: 'getWODetail',
+                type: "get",
+                dataType: 'json',
+                async: true,
+                data:{
+                    'requestCode':$('#requestCode').val()
+                },
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success: function(response) {
+                    swal.close();
+                    $('#detailRequestBy').val(response.detail.user_p_i_c.name)
+                    $('#selectPIC').val(response.detail.user_id_support)
+                    $('#selectPIC').select2().trigger('change');
+                    $('#detailDepartement').val(response.detail.departement_name.name)
+                    $('#detailCategory').val(response.detail.category_name.name)
+                    $('#detailProblemType').val(response.detail.problem_type_name.name)
+                    $('#detailSubject').val(response.detail.subject)
                     
-                    },
-                    error: function(response) {
-                        swal.close();
-                        toastr['error']('Failed to get data, please contact ICT Developer');
-                    }
-                });   
-                })
-            // Get Detail Ticket
+                    $('#picId').val('')
+                },
+                error: function(response) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });   
+            })
+        // Get Detail Ticket
+    
         // Save Add PIC Transafer 
             $('#btnSaveType').on('click', function(){
                 var data={
@@ -206,7 +211,15 @@
 
         // End Hold Assignment
 
-    
+        // Transfer PIC
+            $('#btnSaveTransferPIC').on('click', function(){
+                var data={
+                    'requestCode':$('#requestCode').val(),
+                    'picId':$('#picId').val(),
+                }
+                store('saveTransferPIC', data,'hold_request')
+            })
+        // End Transfer PIC
 
     // End Operation
 

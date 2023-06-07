@@ -77,7 +77,7 @@
                </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btn_save_categories" type="button" class="btn btn-success">
+                <button id="btnSaveTransferPIC" type="button" class="btn btn-success">
                     <i class="fas fa-check"></i>
                 </button>
             </div>

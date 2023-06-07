@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
+use App\Http\Requests\StoreTransferPICRequest;
 use App\Http\Requests\UpdateHoldRequestProgress;
 use App\Models\User;
 use App\Models\WONotification;
@@ -25,7 +26,9 @@ class HoldRequestController extends Controller
                             ->where(function($query){
                                 $query->whereIn('hold_progress', [1,2])
                                       ->orWhere('transfer_pic',1);
-                            })->get();
+                            })
+                            ->orderBy('id', 'desc')
+                            ->get();
         return response()->json([
             'data'=>$data,
         ]);
@@ -101,7 +104,7 @@ class HoldRequestController extends Controller
                 'link'=>'work_order_list',
                 'userId'=>$workOrderStatus->user_id,
                 'created_at'=>date('Y-m-d H:i:s')
-            ];
+            ];  
             
             DB::transaction(function() use($post,$request, $postHead, $postLog, $postUser) {
                 WorkOrder::where('request_code', $request->request_code)->update($post);
@@ -157,7 +160,7 @@ class HoldRequestController extends Controller
                     'problem_type'=>$workOrderStatus->problem_type,
                     'comment'=>'Work Order can be processed again',
                     'creator'=>auth()->user()->id,
-                    'duration'=>$totalDuration,
+                    'duration'=>0,
                     'hold_progress'=>4,
                     'transfer_pic'=>$workOrderStatus->transfer_pic,
                     'request_id'=>$workOrderStatus->request_id,
@@ -179,7 +182,6 @@ class HoldRequestController extends Controller
                 'userId'=>$workOrderStatus->user_id,
                 'created_at'=>date('Y-m-d H:i:s')
             ];
-            
             DB::transaction(function() use($post,$request, $postHead, $postLog, $postUser) {
                 WorkOrder::where('request_code', $request->request_code)->update($post);
                 WorkOrderLog::create($postLog);
@@ -196,5 +198,56 @@ class HoldRequestController extends Controller
                 'status'=>$status,
                 'message'=>$message,
                 ]);
+    }
+    public function saveTransferPIC(Request $request, StoreTransferPICRequest $storeTransferPICRequest)
+    {
+        try {
+            $storeTransferPICRequest->validated();
+            $rfm = WorkOrder::where('request_code', $request->requestCode)->first();
+            $workOrderStatus    =   WorkOrderLog::where('request_code', $rfm->request_code)
+                                    ->orderBy('created_at','desc')
+                                    ->first();
+            $timeBeforePost     =   $workOrderStatus->created_at;
+            $timeBefore         =   Carbon::createFromFormat('Y-m-d H:i:s', $timeBeforePost);
+            $timeNow            =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+            $totalDuration      =   $timeBefore->diffInMinutes($timeNow);
+          
+            $post=[
+                'hold_progress'=>$request->hold_progress,
+            ];
+            $postLog=[
+                    'request_code'=>$request->requestCode,
+                    'request_type'=>$workOrderStatus->request_type,
+                    'departement_id'=>$workOrderStatus->departement_id,
+                    'add_info'=>$workOrderStatus->add_info,
+                    'user_id'=>$workOrderStatus->user_id,
+                    'assignment'=>$workOrderStatus->assignment,
+                    'status_wo'=>$workOrderStatus->status_wo,
+                    'priority'=>$workOrderStatus->priority,
+                    'category'=>$workOrderStatus->category,
+                    'follow_up'=>$workOrderStatus->follow_up,
+                    'status_approval'=>$workOrderStatus->status_approval,
+                    'user_id_support'=>$workOrderStatus->user_id_support,
+                    'subject'=>$workOrderStatus->subject,
+                    'problem_type'=>$workOrderStatus->problem_type,
+                    'comment'=>$request->holdComment,
+                    'creator'=>auth()->user()->id,
+                    'duration'=>$totalDuration,
+                    'hold_progress'=>$request->hold_progress,
+                    'transfer_pic'=>$workOrderStatus->transfer_pic,
+                    'request_id'=>$workOrderStatus->request_id,
+            ];
+            $assign = $request->hold_progress == 2 ? 'accept' : 'reject';
+            return ResponseFormatter::success(
+                $post,
+                'Category successfully added'
+            );            
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Category failed to add',
+                500
+            );
+        }
     }
 }
