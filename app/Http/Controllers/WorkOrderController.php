@@ -417,6 +417,7 @@ class WorkOrderController extends Controller
                             // Initialing Date && Time
                                 $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
                                 $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
+                                $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
                                 
                                 $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
 
@@ -438,7 +439,11 @@ class WorkOrderController extends Controller
                             // Validation Date
                                 if($startDatePIC == $shiftstartDate)
                                 {
-                                    $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
+                                    if($startTimePIC >=$shiftendtime){
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
+                                    }else{
+                                        $totalTime += $endTimeSystem->diffInMinutes($startTimePIC);
+                                    }
                                 }else{
                                     if($shiftendDate == $dateNow){
                                         if(strtotime($timeSystem) >= $shiftendTime){
