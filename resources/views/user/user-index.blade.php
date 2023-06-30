@@ -7,11 +7,13 @@
             <div class="card card-dark">
                 <div class="card-header">
                     <div class="card-title">List User</div>
+                    @can('import_user-user_setting')
                     <div class="card-tools">
-                        {{-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addRoleModal" style="float:right" onclick="clear_roles()">
-                            <i class="fas fa-plus"></i>
-                        </button> --}}
+                        <button class="btn btn-sm btn-success" title="Import User HRIS" id="btnImportUser">
+                            <i class="fa-solid fa-user-secret"></i>
+                        </button>
                     </div>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <table class="datatable-bordered" id="user_table" style="width: 100%">
@@ -20,6 +22,7 @@
                                 <th></th>
                                 <th>Status</th>
                                 <th>Name</th>
+                                <th>NIK</th>
                                 <th>Email</th>
                                 <th>Action</th>
                             </tr>

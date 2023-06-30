@@ -119,10 +119,12 @@ class WorkOrderController extends Controller
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
             ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
+            // ->where('work_orders.transfer_pic',0)
             ->where('work_orders.status_wo','like','%'.$request->statusFilter.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where('user_id', auth()->user()->id) 
             ->orderBy('status_wo', 'asc')
+            ->orderBy('work_orders.hold_progress', 'desc')
             ->orderBy('work_orders.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
             ->orderBy('work_orders.created_at','desc')
@@ -294,7 +296,7 @@ class WorkOrderController extends Controller
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
                     if($request->file('attachment')){
-                        $request->file('attachment')->storeAs('public/attachmentUser',$fileName);
+                        $request->file('attachment')->storeAs('public/AttachmentDigitalBook',$fileName);
                     }
                   
                     // $title = "Support Ticket";
@@ -399,29 +401,82 @@ class WorkOrderController extends Controller
                     $workOrderStatus    =   WorkOrderLog::where('request_code', $log_wo->request_code)
                                                         ->orderBy('created_at','desc')
                                                         ->first();
-                    $timeBeforePost     = $workOrderStatus->created_at;
-                    $timeBefore         =   Carbon::createFromFormat('Y-m-d H:i:s', $timeBeforePost);
-                    $timeNow            =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
-                    $totalDuration      =   $timeBefore->diffInMinutes($timeNow);
-                    $post_log           = [
-                                            'request_code'=>$log_wo->request_code,
-                                            'request_type'=>$log_wo->request_type,
-                                            'departement_id'=>$log_wo->departement_id,
-                                            'problem_type'=>$log_wo->problem_type,
-                                            'add_info'=>$log_wo->add_info,
-                                            'user_id'=>$log_wo->user_id,
-                                            'assignment'=>$log_wo->assignment,
-                                            'status_wo'=>$status_wo,
-                                            'category'=>$log_wo->category,
-                                            'follow_up'=>$log_wo->follow_up,
-                                            'status_approval'=>$log_wo->status_approval,
-                                            'user_id_support'=>$log_wo->user_id_support,
-                                            'subject'=>$log_wo->subject,
-                                            'hold_progress'=>$log_wo->hold_progress,
-                                            'comment'=>$request->note_pic,
-                                            'creator'=>auth()->user()->id,
-                                            'duration'=>$totalDuration
-                                        ];
+                    // Setup Duration
+                        $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
+                        $dateNow            =   date('Y-m-d');
+                       
+                        $client = new \GuzzleHttp\Client();
+                        $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
+                        $response = $api->getBody()->getContents();
+                        $data =json_decode($response, true);
+                        $totalTime =0;
+                        
+                        foreach($data as $row){
+                          if($row['daytype'] =='WD'){
+                            
+                            // Initialing Date && Time
+                                $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
+                                $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
+                                
+                                $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
+
+                                $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
+                                $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
+                               
+                                $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
+
+                                $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
+                                $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
+                                $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
+
+                                $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
+                                $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
+                                $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
+                                $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+                            // Initialing Date && Time
+                            
+                            // Validation Date
+                                if($startDatePIC == $shiftstartDate)
+                                {
+                                    $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
+                                }else{
+                                    if($shiftendDate == $dateNow){
+                                        if(strtotime($timeSystem) >= $shiftendTime){
+                                            $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                        }else{
+                                            $totalTime += $endTimeSystem->diffInMinutes($shiftendtime);
+                                        }
+                                    }else{
+                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                    }
+                                }
+                            // Validation Date
+                          }
+                        }
+                    // Setup Duration
+                      
+                    // Post 
+                        $post_log           = [
+                                                'request_code'=>$log_wo->request_code,
+                                                'request_type'=>$log_wo->request_type,
+                                                'departement_id'=>$log_wo->departement_id,
+                                                'problem_type'=>$log_wo->problem_type,
+                                                'add_info'=>$log_wo->add_info,
+                                                'user_id'=>$log_wo->user_id,
+                                                'assignment'=>$log_wo->assignment,
+                                                'status_wo'=>$status_wo,
+                                                'category'=>$log_wo->category,
+                                                'follow_up'=>$log_wo->follow_up,
+                                                'status_approval'=>$log_wo->status_approval,
+                                                'user_id_support'=>$log_wo->user_id_support,
+                                                'subject'=>$log_wo->subject,
+                                                'hold_progress'=>$log_wo->hold_progress,
+                                                'comment'=>$request->note_pic,
+                                                'creator'=>auth()->user()->id,
+                                                'duration'=>$totalTime
+                                            ];
+
+                    // Post 
                       // User Request For 
                     $message            = $status_wo == 4 ?'finish ':'pending';
                     $userPost           =[
@@ -595,7 +650,7 @@ class WorkOrderController extends Controller
             $log_wo = WorkOrder::with('picName','picSupportName')->find($request->id);
             
             $sumofDuration = WorkOrderLog::select(DB::raw('SUM(duration) as sumOfDuration'))->where('request_code', $log_wo->request_code)->first();
-           
+
               $post=[
                    'status_wo'=>$approve == 1?4:3,
                     'status_approval'=>$approve,
@@ -644,8 +699,7 @@ class WorkOrderController extends Controller
                 'request_by'=>$userName->name,
                 'headDepartement'=>$headDepartement->name
 
-            ];
-           
+            ]; 
             if($approve == 2){
                 // Validasi, jika revisi udah 3 kali, WO udah jadi Reject. Jika udah mengirim ke dua, maka akan akan mengirim email ke Head Derpartement
                 $validasi = WorkOrderLog::where('request_code',$log_wo->request_code)->where('status_wo',3)->count();
@@ -722,12 +776,13 @@ class WorkOrderController extends Controller
                   }
 
             }else{
-                DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
+                DB::transaction(function() use($post,$request, $post_log,$approve,$userPost,$log_wo) {
                     WorkOrder::find($request->id)->update($post);
                     WorkOrderLog::create($post_log);
                     WONotification::create($userPost); 
-     
-               });
+                    });
+             
+               }
             }
             
          
@@ -736,7 +791,7 @@ class WorkOrderController extends Controller
                    $status = 200;
                    $message = "Data successfully inserted";
               }
-         }
+         
         return response()->json([
              'status'=>$status,
              'message'=>$message,

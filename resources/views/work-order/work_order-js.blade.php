@@ -250,9 +250,11 @@
         $('#problem_type').val(select_problem_type)
     })
     $('#wo_table').on('click', '.detailWO', function() {
+        $('#attachment_user_detail').empty()
+        $('#attachment_pic_detail').empty()
             var id = $(this).data('id');
             var request =  $(this).data('request');
-           
+            $('#oldTicketContainer').prop('hidden',true)
             $.ajax({
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -304,8 +306,7 @@
                 $('#status_wo_detail').html(': ' + status_wo)
                 $('#note_detail').val(response.data_log.comment)
                 $('#requestCodeWo').val(response.data_log.request_code)
-                $('#attachment_user_detail').empty()
-                $('#attachment_pic_detail').empty()
+              
                 if(response.detail.attachment_user){
                     var fileName = response.detail.attachment_user.split('/')
                     $('#attachment_user_detail').append(`
@@ -335,12 +336,57 @@
                     $('#attachment_pic_detail').append(`<span>: -<span>`)
 
                 }
-
                 
                 $('#creator_detail').html(response.data_log.username) 
                 $('#pic_wo_detail').html( response.pic == null ? ': -' : ': '+ response.pic.username)  
                 getStepper(request)
                 getLogHistory(response.data_log.request_code)
+
+                // Old Ticket
+                    if(response.OldTicket){
+                        console.log(response.OldTicket)
+                        $('#oldTicketContainer').prop('hidden',false)
+                        $('#oldTicketRequestBy').html(': '+response.OldTicket.pic_name.name)
+                        $('#oldTicketRequestCode').html(': '+response.OldTicket.request_code)
+                        $('#oldTicketRequestType').html(': '+response.OldTicket.request_type)
+                        $('#oldTicketCategories').html(': '+response.OldTicket.category_name.name)
+                        $('#oldTicketProblemType').html(': '+response.OldTicket.problem_type_name.name)
+                        $('#oldTicketSubject').html(': '+response.OldTicket.subject)
+                        $('#oldTicketAdditionalInfo').html(': '+response.OldTicket.add_info)
+                        $('#oldTicketPIC').html(': '+response.OldTicket.pic_support_name.name)
+                        $('#oldTicketAttachmentUser').empty()
+                        $('#oldTicketAttachmentPIC').empty()
+                        if(response.OldTicket.attachment_user){
+                            var fileName = response.OldTicket.attachment_user.split('/')
+                            $('#oldTicketAttachmentUser').append(`
+                            <p>:
+                                <a target="_blank" href="{{URL::asset('${response.OldTicket.attachment_user}')}}" class="ml-3" style="color:blue;">
+                                    <i class="far fa-file" style="color: red;font-size: 20px;"></i>
+                                    ${fileName[2]}</a>
+                            </p>
+                                    
+                                    `)
+                        }else{
+                            $('#oldTicketAttachmentUser').append(`<span>: -<span>`)
+
+                        }
+                        if(response.OldTicket.attachment_pic){
+                            var fileNamePIC = response.OldTicket.attachment_pic.split('/')
+                        
+                            $('#oldTicketAttachmentPIC').append(`
+                            <p>:
+                                <a target="_blank" href="{{URL::asset('${response.OldTicket.attachment_pic}')}}" class="ml-3" style="color:blue;">
+                                    <i class="far fa-file" style="color: red;font-size: 20px;"></i>
+                                    ${fileNamePIC[2]}</a>
+                            </p>
+                                    
+                                    `)
+                        }else{
+                            $('#oldTicketAttachmentPIC').append(`<span>: -<span>`)
+
+                        }
+                    }
+                // End Old Ticket
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -607,55 +653,61 @@
                             var time_now = date_now.toTimeString().split(' ')[0];;
                             var satatus_wo = '';
                             var status_color = ''
-                            if(response.data[i].status_wo==0){
-                                status_wo ='NEW'
-                                status_color ='black'
-                            }else  if(response.data[i].status_wo==1){
-
-                                if(response.data[i].hold_progress == 1){
-                                    status_wo ="HOLD Request"
-                                    status_color ='#213555'
-
-                                }else if(response.data[i].hold_progress == 2){
-                                    status_wo ="HOLD"
-                                    status_color ='#213555'
+                            if(response.data[i].transfer_pic == 1){
+                                    status_wo ='TAKE OUT'
+                                    status_color ='red'
+                            }else{
+                                if(response.data[i].status_wo==0){
+                                    status_wo ='NEW'
+                                    status_color ='black'
+                                }else  if(response.data[i].status_wo==1){
+    
+                                    if(response.data[i].hold_progress == 1){
+                                        status_wo ="HOLD Request"
+                                        status_color ='#213555'
+    
+                                    }else if(response.data[i].hold_progress == 2){
+                                        status_wo ="HOLD"
+                                        status_color ='#213555'
+                                    }else{
+                                        status_wo ="On Progress"
+                                        status_color ='#5BC0F8'
+                                    }
+    
+                                }else  if(response.data[i].status_wo==2){
+    
+                                    status_wo ="PENDING"
+                                    status_color ='#FFC93C'
+                                }else  if(response.data[i].status_wo==3){
+    
+                                    if(response.data[i].hold_progress == 1){
+                                        status_wo ="HOLD Request"
+                                        status_color ='#213555'
+    
+                                    }else if(response.data[i].hold_progress == 2){
+                                        status_wo ="HOLD"
+                                        status_color ='#213555'
+                                    }else{
+                                        status_wo ="REVISION"
+                                        status_color ='red'
+                                    }
+    
+                                }else if(response.data[i].status_wo==4){
+    
+                                    if(response.data[i].status_approval == '1'){
+                                        status_wo ="DONE"
+                                        status_color ='green'
+                                    }else{
+                                        status_wo ="CHECKING"
+                                        status_color ='#F0A04B'
+                                    }
+                                
                                 }else{
-                                    status_wo ="On Progress"
-                                    status_color ='#5BC0F8'
-                                }
-
-                            }else  if(response.data[i].status_wo==2){
-
-                                status_wo ="PENDING"
-                                status_color ='#FFC93C'
-                            }else  if(response.data[i].status_wo==3){
-
-                                if(response.data[i].hold_progress == 1){
-                                    status_wo ="HOLD Request"
-                                    status_color ='#213555'
-
-                                }else if(response.data[i].hold_progress == 2){
-                                    status_wo ="HOLD"
-                                    status_color ='#213555'
-                                }else{
-                                    status_wo ="REVISION"
+                                    status_wo ="REJECT"
                                     status_color ='red'
                                 }
-
-                            }else if(response.data[i].status_wo==4){
-
-                                if(response.data[i].status_approval == '1'){
-                                    status_wo ="DONE"
-                                    status_color ='green'
-                                }else{
-                                    status_wo ="CHECKING"
-                                    status_color ='#F0A04B'
-                                }
-                            
-                            }else{
-                                status_wo ="REJECT"
-                                status_color ='red'
                             }
+
                           var priorityLabel ='-'
                           var priorityColor =''
                           var update_progress ='';
@@ -682,19 +734,19 @@
                             break
                           }
                           var auth_id = $('#auth_id').val()
-                        
                             if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
-                                if(auth_id == response.data[i].user_id_support){
-                                    update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
-                                                <i class="fas fa-pen"></i>
-                                            </button> `;
-                                        if(response.data[i].hold_progress == 0 ){
-                                            holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
-                                                        <i class="fas fa-pause"></i>
-                                                    </button> `;
-                                        }
+                                if(response.data[i].transfer_pic == 0){
+                                    if(auth_id == response.data[i].user_id_support){
+                                        update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
+                                                    <i class="fas fa-pen"></i>
+                                                </button> `;
+                                            if(response.data[i].hold_progress == 0 ){
+                                                holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
+                                                            <i class="fas fa-pause"></i>
+                                                        </button> `;
+                                            }
+                                    }
                                 }
-                              
                             }
                             if( date == date_format){
                               

@@ -259,8 +259,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('updateHoldRequest', [HoldRequestController::class, 'updateHoldRequest'])->name('updateHoldRequest');
     Route::post('updateResumeRequest', [HoldRequestController::class, 'updateResumeRequest'])->name('updateResumeRequest');
     Route::post('saveTransferPIC', [HoldRequestController::class, 'saveTransferPIC'])->name('saveTransferPIC');
-
+    
     // Hold Request Page
-
+    // Import User from HRIS
+        Route::get('getUserHris', [UserController::class, 'getUserHris'])->name('getUserHris');
+    // Import User from HRIS
 });
 

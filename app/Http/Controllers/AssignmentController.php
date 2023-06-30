@@ -28,6 +28,7 @@ class AssignmentController extends Controller
         ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
         ->whereNull('work_orders.priority')
         ->where('status_wo','!=','5')
+        ->where('transfer_pic',0)
         ->orderBy('work_orders.status_wo','asc')
         ->get();
         return response()->json([
@@ -52,20 +53,25 @@ class AssignmentController extends Controller
                               ->where('work_order_logs.request_code',$detail->request_code)
                               ->orderBy('work_order_logs.id','desc')
                               ->first();
-        $pic = WorkOrder::select('users.name as username')->join('users','users.id','work_orders.user_id_support')->where('work_orders.id',$request->id)->first();
-        $data = User::where('departement',auth()->user()->departement)
-                    ->where('id','!=',auth()->user()->id)
-                    ->where('id','!=',$detail->user_id)
-                    ->get();
-        $priority = MasterPriority::all();
-        return response()->json([
-            'detail'=>$detail,
-            'data_log'=>$data_log,
-            'priority'=>$priority,
-            'data'=>$data,
-            'pic'=>$pic,
-
-        ]);
+          $pic = WorkOrder::select('users.name as username')->join('users','users.id','work_orders.user_id_support')->where('work_orders.id',$request->id)->first();
+          $data = User::where('departement',auth()->user()->departement)
+                         ->where('id','!=',auth()->user()->id)
+                         ->where('id','!=',$detail->user_id)
+                         ->get();
+          $priority = MasterPriority::all();
+        
+          $OldTicket       =    WorkOrder::with(['picSupportName','picName','departementName','categoryName','problemTypeName'])
+                                             ->where('request_code',$detail->request_id)
+                                             ->where('transfer_pic',1)
+                                             ->first();
+          return response()->json([
+               'detail'=>$detail,
+               'data_log'=>$data_log,
+               'priority'=>$priority,
+               'data'=>$data,
+               'OldTicket'=>$OldTicket,
+               'pic'=>$pic,
+          ]);
    }
    public function approve_assignment(Request $request)
    {
@@ -77,6 +83,7 @@ class AssignmentController extends Controller
           $validator = Validator::make($request->all(),[
                'user_pic'=>'required',
                'priority'=>'required',
+               'note'=>'required',
            
            ]);
                if($request->approve == 1){

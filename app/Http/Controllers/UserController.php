@@ -8,6 +8,7 @@ use App\Models\MasterKantor;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -89,6 +90,37 @@ class UserController extends Controller
         return response()->json([
             'status'=>$status,
             'message'=>$message
+        ]);
+    }
+    function getUserHris() {        
+        set_time_limit(100000);
+        $client = new \GuzzleHttp\Client();
+        $request = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=ALL&startdate=2023-06-07&enddate=2023-06-07');
+        $response = $request->getBody()->getContents();
+        $data =json_decode($response, true);
+        $status =500;
+        $message ='Data has been failed import';
+        $Arraypost=[];
+        foreach($data as $row){
+            $validation = User::where('nik',$row['emp_no'])->count();
+            if($validation == 0){
+                $post=[
+                    'name'          =>$row['Full_Name'],
+                    'nik'           =>$row['emp_no'],
+                    'password'      => Hash::make('pass12345'),
+                    'email'         =>'user'.$row['emp_no'].'@pralon.com'
+                ];
+                array_push($Arraypost,$post);
+            }
+        }
+        $insert = User::insert($Arraypost);
+        if($insert){
+            $status =200;
+            $message ='Data Successfully imported :)';
+        }
+        return response()->json([
+           'status'=>$status,
+           'message'=>$message
         ]);
     }
 }

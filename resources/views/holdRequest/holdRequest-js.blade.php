@@ -279,7 +279,7 @@
             $('#holdRequestTable').DataTable({
                     scrollX  : true,
                     scrollY  :280
-                }).columns.adjust()
+            }).columns.adjust()
         }
     // End Function
 </script>

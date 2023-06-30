@@ -54,7 +54,8 @@
     }
     function update_user(){
         var data ={
-            'user_name':$('#user_name').val()
+            'user_name':$('#user_name').val(),
+            'email_user':$('#email_user').val()
         }
         $.ajax({
                 headers: {

@@ -62,7 +62,9 @@
            $('ul.nav-sidebar a').filter(function() {
                return this.href == url;
            }).addClass('active');
-       
+           $.ajaxSetup({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+           })
            // for treeview
            $('ul.nav-treeview a').filter(function() {
                return this.href == url;

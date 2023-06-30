@@ -26,7 +26,9 @@
                                 <option value="priority">Priority</option>
                                 <option value="manual">Manual</option>
                                 <option value="create">Create</option>
+                                <option value="import_user">Import User HRIS</option>
                                 <option value="create_detail">Create Detail</option>
+                                <option value="viewOldTicket">View Old Ticket</option>
                                 <option value="create_subdetail">Create Sub Detail</option>
                                 <option value="update_detail">Update Detail</option>
                                 <option value="update_subdetail">Update Sub Detail</option>

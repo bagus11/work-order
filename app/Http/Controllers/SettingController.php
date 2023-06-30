@@ -18,12 +18,26 @@ class SettingController extends Controller
       
         $status =500;
         $message ='Data failed to save';
-        $validator = Validator::make($request->all(),[
-            'user_name'=>['required'],
-          
-        ],[
-            'user_name.required'=>'Password sekarang harus diisi',
-        ]);
+        $userEmailValidation = User::find(auth()->user()->id);
+        $post =[];
+
+        if($request->email_user == $userEmailValidation->email){
+            $validator = Validator::make($request->all(),[
+                'user_name'=>['required']      
+            ]);
+            $post=[
+                'name'=>$request->user_name,
+            ];
+        }else{
+            $validator = Validator::make($request->all(),[
+                'user_name'=>['required'],
+                'email_user'=>['required','unique:users,email'],
+            ]);
+            $post=[
+                'name'=>$request->user_name,
+                'email'=>$request->email_user,
+            ];
+        }
         if($validator->fails()){
             return response()->json([
                 'message'=>$validator->errors(), 
@@ -31,7 +45,7 @@ class SettingController extends Controller
             ]);
         }else{
             $user = User::find(auth()->user()->id);
-            $user->update(['name'=> $user_name]);
+            $user->update($post);
             if($user){
                 $status =200;
                 $message='Data successfully inserted';

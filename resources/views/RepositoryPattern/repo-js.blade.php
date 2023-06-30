@@ -438,6 +438,21 @@ getNotification()
                 }
             });
         }
-    
+        function getCallback(route,data,callback){
+            $.ajax({
+            url: route,
+            type: "get",
+            dataType: 'json',
+            data:data,
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: callback,
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            }); 
+        }
  // End Repository Pattern
 </script>

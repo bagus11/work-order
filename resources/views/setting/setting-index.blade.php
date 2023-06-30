@@ -33,7 +33,7 @@
                                 <label for="">Email</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" id="email_user" value="{{auth()->user()->email}}" class="form-control" readonly>
+                                <input type="text" id="email_user" value="{{auth()->user()->email}}" class="form-control">
                             </div>
                         </div>
                         
