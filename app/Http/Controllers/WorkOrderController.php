@@ -296,7 +296,7 @@ class WorkOrderController extends Controller
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
                     if($request->file('attachment')){
-                        $request->file('attachment')->storeAs('public/AttachmentDigitalBook',$fileName);
+                        $request->file('attachment')->storeAs('/attachmentUser',$fileName);
                     }
                   
                     // $title = "Support Ticket";
@@ -418,12 +418,10 @@ class WorkOrderController extends Controller
                                 $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
                                 $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
                                 $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
-                                
                                 $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
 
                                 $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
                                 $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
-                               
                                 $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
 
                                 $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));

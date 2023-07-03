@@ -384,7 +384,7 @@
             </div>
         </div>
         @endcan
-        <div class="col-12 col-sm-12 col-md-4">
+        <div class="col-12 col-sm-12 col-md-4" hidden>
             <div class="card">
                 <div class="card-header bg-white">
                     <label for=""> Tracking History</label>
