@@ -59929,7 +59929,26 @@ a.text-dark:hover, a.text-dark:focus {
 .invisible {
   visibility: hidden !important;
 }
-
+.bg-mainCore{
+  background-color: #19A7CE !important;
+  color: white;
+}
+.bg-primaryClient{
+  background-color: #068DA9 !important;
+  color: white;
+}
+.bg-secondaryClient{
+  background-color: #7E1717 !important;
+  color: white;
+}
+.bg-thirdClient{
+  background-color: #E55807 !important;
+  color: white;
+}
+.bg-greyClient{
+  background-color: #FFF4F4 !important;
+  color: white;
+}
 @media print {
   *,
   *::before,
@@ -60004,5 +60023,6 @@ a.text-dark:hover, a.text-dark:focus {
     color: inherit;
     border-color: #dee2e6;
   }
+ 
 }
 

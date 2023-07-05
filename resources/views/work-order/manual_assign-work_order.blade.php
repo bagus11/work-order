@@ -25,7 +25,7 @@
             </div>
            
             <div class="modal-footer justify-content-end">
-                <button id="btn_manual_reject" type="button" class="btn btn-danger">Reject</button>
+                {{-- <button id="btn_manual_reject" type="button" class="btn btn-danger">Reject</button> --}}
                 <button id="btn_manual_approve" type="button" class="btn btn-success">Accept</button>
             </div>
         </div>

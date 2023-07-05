@@ -303,16 +303,16 @@
                 autoWidth:true
             }).columns.adjust()    
         });
-        $('#btnSaveRFPDetail').on('click', function(){
-            if(arrayDetailRFP.length == 0){
-                toastr['error']('please insert data');
-            }else{
-                var data ={
-                    'array':arrayDetailRFP
-                }
-                saveRepo('saveRFPDetail',data,'rfp_transaction')
-            }
-        })
+        // $('#btnSaveRFPDetail').on('click', function(){
+        //     if(arrayDetailRFP.length == 0){
+        //         toastr['error']('please insert data');
+        //     }else{
+        //         var data ={
+        //             'array':arrayDetailRFP
+        //         }
+        //         saveRepo('saveRFPDetail',data,'rfp_transaction')
+        //     }
+        // })
         $('#detailRFPTable').on('click', '.editArrayRFP', function(){
             var id = $(this).data("id");
             $('#idArrayDetail').val(id)

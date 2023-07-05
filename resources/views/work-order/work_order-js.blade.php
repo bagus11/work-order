@@ -737,13 +737,16 @@
                             if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
                                 if(response.data[i].transfer_pic == 0){
                                     if(auth_id == response.data[i].user_id_support){
-                                        update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
+                                            console.log(response.data[i].hold_progress +'  '+response.data[i].request_code)
+                                            if(response.data[i].hold_progress == 0 || response.data[i].hold_progress == 4){
+                                                if(response.data[i].hold_progress == 0){
+                                                    holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
+                                                                <i class="fas fa-pause"></i>
+                                                            </button> `;
+                                                }
+                                                update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
                                                     <i class="fas fa-pen"></i>
                                                 </button> `;
-                                            if(response.data[i].hold_progress == 0 ){
-                                                holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
-                                                            <i class="fas fa-pause"></i>
-                                                        </button> `;
                                             }
                                     }
                                 }
@@ -766,7 +769,7 @@
                             if((response.data[i].status_wo == 4 && response.data[i].status_approval == 0) || (response.data[i].status_approval == 2 && response.data[i].status_wo == 4)){
                                 if(auth_id == response.data[i].user_id){
                                     make_sure_done =`<button title="Approvement" class="ratingPIC btn btn-sm btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#ratingPIC">
-                                                     <ion-icon name="star"></ion-icon>
+                                                     <i class="fas fa-star"></i>
                                                 </button> `;
                                 }
                             }
