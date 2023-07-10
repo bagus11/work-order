@@ -90,6 +90,13 @@ class MasterDepartementController extends Controller
             'data'=>$data
         ]);
     }
+    public function get_departement_name_ict()
+    {
+        $data = MasterDepartement::where('flg_aktif',1)->where('initial','ICT')->get();
+        return response()->json([
+            'data'=>$data
+        ]);
+    }
     public function update_departement(Request $request, UpdateMasterDepartementRequest $updateMasterDepartementRequest){
         try {
             $updateMasterDepartementRequest->validated();

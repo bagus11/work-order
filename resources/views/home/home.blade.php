@@ -344,7 +344,7 @@
                                 <ion-icon name="filter-sharp"></ion-icon>
                             </button>
                         
-                            <div class="dropdown-menu dropdown-menu-right" id="percentageFilter" role="menu" style="width:350px !important;">
+                            <div class="dropdown-menu dropdown-menu-left" id="percentageFilter" role="menu" style="width:350px !important;">
                                 <div class="container">
                                     <div class="row">
                                             <div class="col-md-4 mt-2">

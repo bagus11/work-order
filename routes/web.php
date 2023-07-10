@@ -169,6 +169,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('update_status_departement', [MasterDepartementController::class, 'update_status_departement'])->name('update_status_departement');
     Route::get('detail_departement', [MasterDepartementController::class, 'detail_departement'])->name('detail_departement');
     Route::get('get_departement_name', [MasterDepartementController::class, 'get_departement_name'])->name('get_departement_name');
+    Route::get('get_departement_name_ict', [MasterDepartementController::class, 'get_departement_name_ict'])->name('get_departement_name_ict');
     Route::post('update_departement', [MasterDepartementController::class, 'update_departement'])->name('update_departement');
 
     //Master jabatan

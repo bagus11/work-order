@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-          <div class="col-md-6">
+          <div class="col">
                 <div class="card card-dark">
                     <div class="card-header">
                         <div class="card-title">Role User</div>
@@ -28,7 +28,8 @@
                     </div>
                 </div>
           </div>
-          <div class="col-md-6">
+          @can('get-only_user-user_access')
+          <div class="col">
             <div class="card card-dark">
                 <div class="card-header">
                     <div class="card-title">Role Permission</div>
@@ -49,7 +50,9 @@
                     </table>
                 </div>
             </div>
-      </div>
+        </div>
+              
+          @endcan
     </div>
 </div>
 @include('user_access.add-role_user_modal')

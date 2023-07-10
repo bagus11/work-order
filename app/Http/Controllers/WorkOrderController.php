@@ -119,15 +119,15 @@ class WorkOrderController extends Controller
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
             ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
-            // ->where('work_orders.transfer_pic',0)
+            ->where('work_orders.transfer_pic',0)
             ->where('work_orders.status_wo','like','%'.$request->statusFilter.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where('user_id', auth()->user()->id) 
-            ->orderBy('status_wo', 'asc')
-            ->orderBy('work_orders.hold_progress', 'desc')
+            ->orderBy('work_orders.status_wo', 'desc')
+            // ->orderBy('work_orders.hold_progress', 'desc')
             ->orderBy('work_orders.status_approval','desc')
-            ->orderBy('work_orders.priority','desc')
-            ->orderBy('work_orders.created_at','desc')
+            // ->orderBy('work_orders.priority','desc')
+            // ->orderBy('work_orders.created_at','desc')
             ->get();
         }
         else{
@@ -146,7 +146,7 @@ class WorkOrderController extends Controller
                 $query->where('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
             })
             ->orderBy('status_wo', 'asc')
-            ->orderBy('work_orders.status_approval','desc')
+            ->orderBy('.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
             ->orderBy('work_orders.created_at','desc')
             ->get();

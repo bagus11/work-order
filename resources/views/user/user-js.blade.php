@@ -83,7 +83,7 @@
                     $('#user_table > tbody:first').html(data);
                     $('#user_table').DataTable({
                                 scrollX  : true,
-                                scrollY  :260
+                                scrollY  :230
                         }).columns.adjust()
             },
             error: function(xhr, status, error) {

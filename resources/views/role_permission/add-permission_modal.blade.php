@@ -24,6 +24,7 @@
                                 <option value="activation">Activation</option>
                                 <option value="rating">Rating</option>
                                 <option value="priority">Priority</option>
+                                <option value="only_role">Only Role</option>
                                 <option value="manual">Manual</option>
                                 <option value="create">Create</option>
                                 <option value="import_user">Import User HRIS</option>

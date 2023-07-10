@@ -77,6 +77,7 @@
                                 @can('priority-work_order_list')
                                 <th style="text-align:center;width:11%"></th>
                                 @endcan
+                                <th style="text-align:center;width:11%">Created At</th>
                                 <th style="text-align:center;width:11%">Request By</th>
                                 <th style="text-align:center;width:11%">Office</th>
                                 <th style="text-align:center;width:11%">Request Code</th>

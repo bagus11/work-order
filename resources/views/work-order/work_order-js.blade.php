@@ -11,7 +11,7 @@
     })
     get_work_order_list()
     $('#add_wo').on('click', function(){
-        getDepartementName('get_departement_name','select_departement','Departement')
+        getDepartementName('get_departement_name_ict','select_departement','Departement')
         $('.message_error').html('')
         $('#subject').val('')
         $('#add_info').val('')
@@ -715,6 +715,7 @@
                           var resumeButton ='';
                           var approve_manual ='';
                           var make_sure_done ='';
+                          var buttonPrint   = '';
                           switch(response.data[i].priority){
                             case 1:
                                 priorityLabel ='Low'
@@ -737,7 +738,6 @@
                             if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
                                 if(response.data[i].transfer_pic == 0){
                                     if(auth_id == response.data[i].user_id_support){
-                                            console.log(response.data[i].hold_progress +'  '+response.data[i].request_code)
                                             if(response.data[i].hold_progress == 0 || response.data[i].hold_progress == 4){
                                                 if(response.data[i].hold_progress == 0){
                                                     holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
@@ -752,7 +752,6 @@
                                 }
                             }
                             if( date == date_format){
-                              
                                 if(d3 < time_now && response.data[i].status_wo == 0 )
                                 {
                                     approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
@@ -773,6 +772,13 @@
                                                 </button> `;
                                 }
                             }
+                            if(response.data[i].status_wo != 0){
+                                buttonPrint =`
+                                        <a  href="#" class="badge badge-primary" target="_blank">
+
+                                        </a>
+                                `;
+                            }
                             var detailWO = `<button title="Detail" class="detailWO btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#detailWO">
                                                  <i class="fas fa-eye"></i>    
                                             </button> `;
@@ -780,6 +786,7 @@
                                 @can('priority-work_order_list')
                                 <td class='details-control'></td>
                                 @endcan
+                                <td style="width:11%;text-align:left;">${response.data[i]['created_at']==null?'':response.data[i]['created_at']}</td>
                                 <td style="width:11%;text-align:left;">${response.data[i]['username']==null?'':response.data[i]['username']}</td>
                                 <td style="width:11%;text-align:left;">${response.data[i]['kantor_name']==null?'':response.data[i]['kantor_name']}</td>
                                 <td style="width:11%;text-align:left;" class="request_code">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
@@ -811,7 +818,8 @@
                     $('#wo_table > tbody:first').html(data);
                         var table = $('#wo_table').DataTable({
                             scrollX  : true,
-                            scrollY  :305,
+                            scrollY: true,
+                            scrollCollapse : true,
                             autoWidth:true
                         }).columns.adjust()    
                         $('#wo_table tbody').off().on('click', 'td.details-control', function (e) {

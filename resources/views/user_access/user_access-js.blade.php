@@ -90,7 +90,7 @@
                     {
                         $('#permission_table').DataTable({
                             scrollX  : true,
-                            scrollY  :190
+                            scrollY  :280
                       }).columns.adjust()
                     });
                
@@ -151,7 +151,7 @@
                     {
                         $('#edit_permission_table').DataTable({
                             scrollX  : true,
-                            scrollY  :190
+                            scrollY  :280
                       }).columns.adjust()
                         
                     });
@@ -251,7 +251,7 @@
                     $('#role_user_table > tbody:first').html(data);
                     $('#role_user_table').DataTable({
                         scrollX  : true,
-                        scrollY  :190
+                        scrollY  :280
                     }).columns.adjust()
             },
             error: function(xhr, status, error) {
@@ -362,7 +362,7 @@
                     $('#role_permission_table > tbody:first').html(data);
                     $('#role_permission_table').DataTable({
                         scrollX  : true,
-                        scrollY  :190,
+                        scrollY  :280,
                     }).columns.adjust()
             },
             error: function(xhr, status, error) {
