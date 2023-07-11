@@ -31,4 +31,7 @@ class WorkOrder extends Model
     {
         return $this->hasOne(ProblemType::class, 'id','problem_type');
     }
+    function detailWORelation() {
+        return $this->hasMany(WorkOrderLog::class,'request_code','request_code');
+    }
 }

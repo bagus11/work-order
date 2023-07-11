@@ -341,7 +341,7 @@ class WorkOrderController extends Controller
     }
     public function get_wo_log(Request $request)
     {
-        $log_data = WorkOrderLog::select(DB::raw('DATE_FORMAT(work_order_logs.created_at, "%d %b %Y, %H:%i") as date'), 'work_order_logs.*')->with(['userPIC','userPICSupport','priority','creator'])->where('request_code', $request->request_code)->orderBy('created_at','asc')->get();
+        $log_data = WorkOrderLog::select(DB::raw('DATE_FORMAT(work_order_logs.created_at, "%d %b %Y, %H:%i") as date'), 'work_order_logs.*')->with(['userPIC','userPICSupport','priority','creatorRelation'])->where('request_code', $request->request_code)->orderBy('created_at','asc')->get();
         return response()->json([
             'log_data'=>$log_data,
         ]);
@@ -1037,6 +1037,68 @@ class WorkOrderController extends Controller
                 'Hold Request failed to add',
                 500
             );
+        }
+    }
+    function reportDetailWO($request_code){
+       $requestCode = str_replace("&*.","/",$request_code);
+       try 
+       {
+            $getTicket          = WorkOrder::with(['picSupportName','picName','departementName','categoryName','problemTypeName','detailWORelation','picSupportName.locationRelation.regencyRelation','detailWORelation.creatorRelation'])->where('request_code',$requestCode)->first();
+            $mengetahui         = 
+            $data               =[
+                'getTicket'=>$getTicket
+            ];
+            
+            $cetak              = view('work-order.WOReport',$data);
+            $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
+            $header             = '';
+            $header             .= '<table width="100%">
+                                        <tr>
+                                            <td style="padding-left:10px;">
+                                                <span style="font-size: 16px; font-weight: bold;"> PT PRALON</span>
+                                                <br>
+                                                <span style="font-size:8px;">'.$getTicket->picSupportName->locationRelation->address.'</span>
+                                            </td>
+                                            <td style="width:30%"></td>
+                                                <td style="width: 50px; text-align:right;">'.$imageLogo.'
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                    <hr>';
+            
+            $footer             = '<hr>
+                                    <table width="100%" style="font-size: 10px;">
+                                        <tr>
+                                            <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                                            <td width="10%" style="text-align: right;"> {PAGENO}</td>
+                                        </tr>
+                                    </table>';
+            
+                        
+            $mpdf           = new PDF();
+            $mpdf->SetHTMLHeader($header);
+            $mpdf->SetHTMLFooter($footer);
+            $mpdf->AddPage(
+                'P', // L - landscape, P - portrait 
+                '',
+                '',
+                '',
+                '',
+                5, // margin_left
+                5, // margin right
+                25, // margin top
+                20, // margin bottom
+                5, // margin header
+                5
+            ); // margin footer
+            $mpdf->WriteHTML($cetak);
+            // Output a PDF file directly to the browser
+            ob_clean();
+            $mpdf->Output('Report Wo'.'('.date('Y-m-d').').pdf', 'I');
+        } catch (\Mpdf\MpdfException $e) {
+            // Process the exception, log, print etc.
+            echo $e->getMessage();
         }
     }
 

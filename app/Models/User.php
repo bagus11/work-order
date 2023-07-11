@@ -40,5 +40,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(DetailTeam::class,'id','userId');
     }
-
+    function locationRelation() {
+        return $this->hasOne(MasterKantor::class,'id','kode_kantor');
+    }
 }

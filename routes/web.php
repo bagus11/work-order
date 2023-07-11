@@ -193,6 +193,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('holdProgressRequest', [WorkOrderController::class, 'holdProgressRequest'])->name('holdProgressRequest');
     // Report Work Order
     Route::get('printWO/{from}/{date}/{officeFilter}/{statusFilter}',[WorkOrderController::class, 'printWO']);
+    Route::get('reportDetailWO/{id}',[WorkOrderController::class, 'reportDetailWO']);
     // Report Work Order
 
     Route::post('manual_wo', [WorkOrderController::class, 'manual_wo'])->name('manual_wo');

@@ -773,9 +773,10 @@
                                 }
                             }
                             if(response.data[i].status_wo != 0){
+                                var requestDetailTicket = response.data[i].request_code.replace(/\//g, "&*.")
                                 buttonPrint =`
-                                        <a  href="#" class="badge badge-primary" target="_blank">
-
+                                        <a  href="reportDetailWO/${requestDetailTicket}" data-request="${response.data[i].request_code}" class="btn btn-sm btn-success" target="_blank">
+                                            <i class="fa-solid fa-print"></i>
                                         </a>
                                 `;
                             }
@@ -798,6 +799,7 @@
                                 <td style="width:11%;text-align:center; color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
                                 <td style="width:11%;text-align:center">
                                     ${detailWO}
+                                    ${buttonPrint}
                                     @can('update-work_order_list')
                                       ${update_progress}
                                       ${holdButton}
@@ -1209,8 +1211,8 @@
                 data +=`
                         <div class="direct-chat-msg ${response.log_data[i].creator.id == $('#auth_id').val() ?'right':''}">
                             <div class="direct-chat-infos clearfix">
-                                <span class="direct-chat-name ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator == null ?'':response.log_data[i].creator.name}</span>
-                                <span class="direct-chat-timestamp ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-left':'float-right'}">${response.log_data[i].date}</span>
+                                <span class="direct-chat-name ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator == null ?'':response.log_data[i].creatorRelation.name}</span>
+                                <span class="direct-chat-timestamp ${response.log_data[i].creatorRelation.id == $('#auth_id').val() ?'float-left':'float-right'}">${response.log_data[i].date}</span>
                             </div>
                             
                                 <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">

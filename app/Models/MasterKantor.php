@@ -11,5 +11,8 @@ class MasterKantor extends Model
     protected $table = 'master_kantor';
 
     protected $guarded = [];
+    function regencyRelation() {
+        return $this->hasOne(Regency::class,'id','id_city');
+    }
 
 }

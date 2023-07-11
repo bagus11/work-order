@@ -18,7 +18,7 @@ class WorkOrderLog extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id_support');
     }
-    public function creator()
+    public function creatorRelation()
     {
         return $this->hasOne(User::class, 'id', 'creator');
     }
