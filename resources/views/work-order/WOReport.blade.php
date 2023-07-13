@@ -80,7 +80,7 @@
                 <td style="width: 24%"><input type="checkbox" style="border-radius: 5px !important;" class="diterapkan" name="diterapkan" {{$getTicket->status_wo == 1  ?'checked="checked"':''}}> On Progress</td>
                 <td style="width: 10%"><input type="checkbox" style="border-radius: 5px !important;" class="diterapkan" name="diterapkan" {{$getTicket->status_wo == 2 ?'checked="checked"':''}}> Pending</td>
                 <td style="width: 20%"><input type="checkbox" style="border-radius: 5px !important;" class="diterapkan" name="diterapkan" {{$getTicket->status_wo == 3 ?'checked="checked"':''}}> Revision</td>
-                <td style="width: 20%"><input type="checkbox" style="border-radius: 5px !important;" class="diterapkan" name="diterapkan" {{$getTicket->status_wo == 4 ?'checked="checked"':''}}> Done</td>
+                <td style="width: 20%"><input type="checkbox" style="border-radius: 5px !important;" class="diterapkan" name="diterapkan" {{$getTicket->status_wo == 4 ?'checked="checked"':''}}> {{$getTicket->status_wo == 4 && $getTicket->transfer_pic == 1 ?'Take Out' : 'Done'}}</td>
                 <td style="width: 10%"><input type="checkbox" style="border-radius: 5px !important;" class="diterapkan" name="diterapkan" {{$getTicket->status_wo == 5 ?'checked="checked"':''}}> Reject</td>
             </tr>
         </table>
@@ -121,10 +121,10 @@
                 $splitName = explode(' ',$getTicket->picSupportName->locationRelation->city);
             @endphp
             <div class="container">
-                <p style="font-size: 9px;text-align:right">{{$splitName[1]}}, {{date('F d Y')}}</p>
                <table style="width: 100%;font-size:9px;">
                    <tr>
                        <td style="width: 33%">
+                        {{$splitName[1]}}, {{date('F d Y')}}
                            <p>Dibuat</p>
                                <br>
                                <br>
@@ -135,6 +135,7 @@
                                <p> {{$getTicket->picName->name}}</p>
                        </td>
                        <td style="width: 33%;text-align:center">
+                            <br>    
                            <p>Dikerjakan</p>
                                <br>
                                <br>
@@ -144,16 +145,16 @@
                                <br>
                                <p> {{$getTicket->picSupportName->name}}</p>
                        </td>
-                       <td style="width: 33%;text-align:right">
-                           <p>Mengetahui</p>
-                               <br>
-                               <br>
-                               <br>
-                               <br>
-                               <br>
-                               <br>
-                               <p></p>
-                       </td>
+                       <td style="width: 33%;text-align:right;">
+                            <p>Mengetahui</p>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                            {{-- <p></p> --}}
+                       
                    </tr>
                </table>
             </div>
