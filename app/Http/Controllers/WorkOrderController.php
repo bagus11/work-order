@@ -504,7 +504,7 @@ class WorkOrderController extends Controller
                     }
                      DB::transaction(function() use($post,$request, $post_log,$userPost,$fileName,$status_wo,$postHead) {
                         if($request->file('attachmentPIC')){
-                            $request->file('attachmentPIC')->storeAs('public/attachmentPIC',$fileName);
+                            $request->file('attachmentPIC')->storeAs('/attachmentPIC',$fileName);
                         }
                                 WorkOrder::find($request->id)->update($post);
                                 WorkOrderLog::create($post_log);
