@@ -38,8 +38,9 @@ class WorkOrderController extends Controller
         if(count($validationChecking) > 0 ){
             foreach($validationChecking as $item){
                 $postValidateion=[
-                    'status_approval'=>1,
-                    'updated_at'=>date('Y-m-d H:i:s')
+                    'status_approval'   =>1,
+                    'updated_at'        =>date('Y-m-d H:i:s'),
+                    'rating'            =>5
                 ];
                 
                 DB::transaction(function() use($postValidateion,$item) {
@@ -462,7 +463,7 @@ class WorkOrderController extends Controller
                         $post_log           = [
                                                 'request_code'=>$log_wo->request_code,
                                                 'request_type'=>$log_wo->request_type,
-                                                'departement_id'=>$log_wo->departement_id,
+                                                'departement_id'=>$log_wo->departement_id,  
                                                 'problem_type'=>$log_wo->problem_type,
                                                 'add_info'=>$log_wo->add_info,
                                                 'user_id'=>$log_wo->user_id,
@@ -502,6 +503,7 @@ class WorkOrderController extends Controller
                             'created_at'=>date('Y-m-d H:i:s')
                         ];
                     }
+                    dd($totalTime);
                      DB::transaction(function() use($post,$request, $post_log,$userPost,$fileName,$status_wo,$postHead) {
                         if($request->file('attachmentPIC')){
                             $request->file('attachmentPIC')->storeAs('/attachmentPIC',$fileName);
@@ -1044,7 +1046,7 @@ class WorkOrderController extends Controller
        try 
        {
             $getTicket          = WorkOrder::with(['picSupportName','picName','departementName','categoryName','problemTypeName','detailWORelation','picSupportName.locationRelation.regencyRelation','detailWORelation.creatorRelation'])->where('request_code',$requestCode)->first();
-            $mengetahui         = 
+            $mengetahui         = '';
             $data               =[
                 'getTicket'=>$getTicket
             ];
