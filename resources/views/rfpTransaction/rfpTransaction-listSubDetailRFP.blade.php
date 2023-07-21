@@ -11,7 +11,7 @@
             <div class="modal-body">
                <div class="container">   
                     <div class="form-gruop row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <input type="hidden" name="listDetailCode" id="listDetailCode">
                             <table class="datatable-bordered nowrap display" id="listSubDetailTable" style="width:450px !important">
                                 <thead>

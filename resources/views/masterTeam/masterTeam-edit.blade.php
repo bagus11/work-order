@@ -31,7 +31,7 @@
                     </div>
                  
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-12">
                             <table class="datatable-bordered nowrap display" id="listTeamProject">
                                 <thead>
                                     <tr>

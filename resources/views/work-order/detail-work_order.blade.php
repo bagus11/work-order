@@ -314,7 +314,7 @@
                                     {{-- Detail --}}
                                     <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
                                             <div class="row">
-                                                <div class="col-12 col-sm-12 col-md-12">
+                                                <div class="col-12 col-sm-12 col-12">
                                                     <div class="direct-chat-messages" id="logMessage">
     
                                                     </div>   

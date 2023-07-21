@@ -155,7 +155,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-12">
                                         <input type="hidden" class="form-control" id="idArrayDetail">
                                         <table class="datatable-bordered nowrap display" id="detailRFPTable">
                                             <thead>

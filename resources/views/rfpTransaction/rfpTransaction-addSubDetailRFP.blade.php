@@ -60,7 +60,7 @@
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <div class="col-md-12">
+                                <div class="col-12">
                                     <div class="card collapsed-card">
                                         <div class="card-header">
                                             <label for="">List Sub Module</label>
@@ -136,7 +136,7 @@
                                
                             </div>
                             <div class="row mt-2">
-                                <div class="col-md-12">
+                                <div class="col-12">
                                     <input type="hidden"  id="idSubArrayDetail">
                                     <table class="datatable-bordered nowrap display" id="SubdetailRFPTable">
                                         <thead>
