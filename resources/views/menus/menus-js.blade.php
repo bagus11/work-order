@@ -216,10 +216,10 @@
                                 <td style="width:25%;text-align:center">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
                                 <td style="width:25%;text-align:center">
                                        
-                                        <button title="Detail" class="editMenus btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMenusModal">
+                                        <button title="Detail" class="editMenus btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMenusModal">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
-                                        <button title="Delete" class="deleteMenus btn btn-danger"data-id="${response.data[i]['id']}">
+                                        <button title="Delete" class="deleteMenus btn btn-sm btn-danger"data-id="${response.data[i]['id']}">
                                         <i class="fas fa-solid fa-trash"></i>
                                         </button>   
                                         
@@ -382,10 +382,10 @@
                                 <td style="width:25%;text-align:center;">${response.data[i]['status']== 0 ?'inactive':'active'}</td>
                                 <td style="width:25%;text-align:center">
                                     
-                                        <button title="Detail" class="editeSubmenus btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editSubmenusModal">
+                                        <button title="Detail" class="editeSubmenus btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editSubmenusModal">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
-                                        <button title="Delete" class="deleteSubmenus btn btn-danger"data-id="${response.data[i]['id']}">
+                                        <button title="Delete" class="deleteSubmenus btn btn-sm btn-danger"data-id="${response.data[i]['id']}">
                                         <i class="fas fa-solid fa-trash"></i>
                                         </button>   
                                         

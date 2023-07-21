@@ -111,7 +111,7 @@
                                 <td style="text-align: left;">${response.data[i]['initial']==null?'':response.data[i]['initial']}</td>
                                 <td style="width:25%;text-align:center">
                                     @can('update-master_departement')
-                                    <button title="Detail" class="editDepartement btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editDepartement">
+                                    <button title="Detail" class="editDepartement btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editDepartement">
                                         <i class="fas fa-solid fa-eye"></i>
                                     </button>
                                     @else

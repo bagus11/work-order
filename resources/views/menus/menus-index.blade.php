@@ -6,10 +6,10 @@
           <div class="col-md-6">
                 <div class="card card-dark">
                     <div class="card-header">
-                        <div class="card-title">List Menus</div>
+                        List Menus
                         <div class="card-tools">
                             @can('create-menus')
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-danger" style="float:right" onclick="clear_menus()">
+                            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-danger" style="float:right" onclick="clear_menus()">
                                 <i class="fas fa-plus"></i>
                             </button>
                             @endcan
@@ -34,12 +34,12 @@
           <div class="col-md-6">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List Submenus</div>
+                    List Submenus
                     <div class="card-tools">
                         {{-- <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
                         </button> --}}
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addSubmenusModal" style="float:right" onclick="clear_submenus()">
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addSubmenusModal" style="float:right" onclick="clear_submenus()">
                             <i class="fas fa-plus"></i>
                         </button>
                         

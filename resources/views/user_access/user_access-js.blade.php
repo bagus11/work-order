@@ -241,7 +241,7 @@
                                 <td style="text-align: left;">${response.data[i]['user_name']==null?'':response.data[i]['user_name']}</td>
                                 <td style="text-align: left;">${response.data[i]['roles_name']==null?'':response.data[i]['roles_name']}</td>
                                 <td style="width:25%;text-align:center">
-                                        <button title="Detail" class="editRoles btn btn-primary rounded"data-id="${response.data[i]['user_id']}" data-toggle="modal" data-target="#editRolesUserModal">
+                                        <button title="Detail" class="editRoles btn btn-sm btn-primary rounded"data-id="${response.data[i]['user_id']}" data-toggle="modal" data-target="#editRolesUserModal">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
                                 </td>
@@ -349,10 +349,10 @@
                     data += `<tr style="text-align: center;">
                                 <td style="text-align: left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
                                 <td style="width:25%;text-align:center">
-                                    <button title="Add Permission" class="addPermission btn btn-success rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#addPermissionModal">
-                                            <i class="fas fa-solid fa-plus"></i>
+                                    <button title="Add Permission" class="addPermission btn btn-sm btn-success rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#addPermissionModal">
+                                            <i class="fas fa-plus"></i>
                                     </button>    
-                                    <button title="List" class="editPermission btn btn-danger rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editPermissionModal">
+                                    <button title="List" class="editPermission btn btn-sm btn-danger rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editPermissionModal">
                                             <i class="fas fa-solid fa-list"></i>
                                     </button>
                                 </td>

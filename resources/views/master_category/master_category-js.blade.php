@@ -116,7 +116,7 @@
                                 <td style="text-align: left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
                                 <td style="text-align: center;">${response.data[i].departement.name==null?'':response.data[i].departement.name}</td>
                                 <td style="width:25%;text-align:center">
-                                    <button title="Detail" class="editCategories btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editCategories">
+                                    <button title="Detail" class="editCategories btn-sm btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editCategories">
                                         <i class="fas fa-solid fa-eye"></i>
                                     </button>   
                                 </td>

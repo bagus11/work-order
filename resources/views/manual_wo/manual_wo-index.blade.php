@@ -6,7 +6,7 @@
           <div class="col-md-10">
             <div class="card card-dark">
                 <div class="card-header">
-                        <label for="">Add Manual Work Order</label>
+                    Add Manual Work Order
                 </div>
                 <div class="card-body">
                    <div class="container">
@@ -108,7 +108,7 @@
                 </div>
                 <div class="card-footer">
                     <button id="btnSaveManualWO" style="float:right" class="btn btn-success">
-                        Save Change
+                        <i class="fas fa-check"></i>
                     </button>
                 </div>
             </div>

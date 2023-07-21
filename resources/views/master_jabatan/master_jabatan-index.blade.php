@@ -3,13 +3,13 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-          <div class="col-md-10">
+          <div class="col-md-12">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List Jabatan</div>
+                    List Jabatan
                     <div class="card-tools">
                         @can('create-master_jabatan')
-                        <button id="add_jabatan" type="button" class="btn btn-success" data-toggle="modal" data-target="#addJabatan" style="float:right">
+                        <button id="add_jabatan" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addJabatan" style="float:right">
                             <i class="fas fa-plus"></i>
                         </button>
                         @endcan

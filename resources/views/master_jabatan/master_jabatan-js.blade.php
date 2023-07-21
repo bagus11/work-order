@@ -113,7 +113,7 @@
                                 <td style="text-align: center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
                                 <td style="width:25%;text-align:center">
                                     @can('update-master_jabatan')
-                                    <button title="Detail" class="editJabatan btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editJabatan">
+                                    <button title="Detail" class="editJabatan btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editJabatan">
                                         <i class="fas fa-solid fa-eye"></i>
                                     </button>
                                     @else

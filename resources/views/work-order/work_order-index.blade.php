@@ -11,7 +11,7 @@
                   
                     <div class="card-tools">
                         <div class="btn-group" style="float:right">
-                            <button type="button" class="btn btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
+                            <button type="button" class="btn btn-sm btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
                                 <ion-icon name="filter-sharp"></ion-icon>
                             </button>
                        
@@ -59,11 +59,11 @@
                             </div>
                         </div>
                         @can('create-work_order_list')
-                            <button id="add_wo" type="button" class="btn btn-success " style="float:right"  data-toggle="modal" data-target="#addMasterKantor">
+                            <button id="add_wo" type="button" class="btn btn-sm btn-success " style="float:right"  data-toggle="modal" data-target="#addMasterKantor">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         @endcan
-                    <button id="refresh" title="Refresh" style="float:right" class="btn btn-info mr-2">
+                    <button id="refresh" title="Refresh" style="float:right" class="btn btn-sm btn-info mr-2">
                         <i class="fas fa-refresh"></i>
                     </button>
                       

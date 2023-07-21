@@ -3,13 +3,13 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-          <div class="col-md-10">
+          <div class="col-md-12">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List Departement</div>
+                    List Departement
                     <div class="card-tools">
                         @can('create-master_departement')
-                        <button id="add_kantor" type="button" class="btn btn-success" data-toggle="modal" data-target="#addDepartement" style="float:right">
+                        <button id="add_kantor" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addDepartement" style="float:right">
                             <i class="fas fa-plus"></i>
                         </button>
                         @endcan

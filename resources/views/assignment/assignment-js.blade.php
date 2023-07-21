@@ -178,12 +178,12 @@ get_assignment()
                             var assignPIC =''
                             var priority =''
                             if(response.data[i].status_wo ==0){
-                                assignPIC =` <button title="Assign PIC" class="editAssignment btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editAssignment">
+                                assignPIC =` <button title="Assign PIC" class="editAssignment btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editAssignment">
                                                 <i class="fas fa-solid fa-user"></i>
                                             </button> `;
                             }
                             if(response.data[i].status_wo != 0 && response.data[i].priority == null){
-                                priority =` <button title="Assign Priority" class="edit_priority btn btn-warning rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editPriority">
+                                priority =` <button title="Assign Priority" class="edit_priority btn btn-sm btn-warning rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editPriority">
                                                 <i class="fas fa-solid fa-city"></i>
                                             </button> `;
                             }

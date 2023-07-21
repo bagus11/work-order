@@ -149,10 +149,10 @@
                                 <td style="text-align: left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
                                 <td style="width:25%;text-align:center">
                                        
-                                        <button title="Detail" class="editRoles btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editRolesModal">
+                                        <button title="Detail" class="editRoles btn btn-sm btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editRolesModal">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
-                                        <button title="Delete" class="deleteRoles btn btn-danger"data-id="${response.data[i]['id']}">
+                                        <button title="Delete" class="deleteRoles btn btn-sm btn-danger"data-id="${response.data[i]['id']}">
                                         <i class="fas fa-solid fa-trash"></i>
                                         </button>   
                                         
@@ -198,7 +198,7 @@
                     data += `<tr style="text-align: center;">
                                 <td style="text-align: left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
                                 <td style="width:25%;text-align:center">
-                                        <button title="Delete" class="deletePermission btn btn-danger"data-id="${response.data[i]['id']}">
+                                        <button title="Delete" class="deletePermission btn-sm btn btn-danger"data-id="${response.data[i]['id']}">
                                         <i class="fas fa-solid fa-trash"></i>
                                         </button>   
                                         

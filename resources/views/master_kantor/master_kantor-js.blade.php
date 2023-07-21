@@ -170,7 +170,7 @@
                                 <td style="width:25%;text-align:left;">${response.data[i]['name']==null?'':response.data[i]['name']}</td>
                                 <td style="width:25%;text-align:left;">${response.data[i]['city']==null?'':response.data[i]['city']}</td>
                                 <td style="width:25%;text-align:center">
-                                        <button title="Detail" class="editKantor btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMasterKantor">
+                                        <button title="Detail" class="editKantor btn-sm btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editMasterKantor">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button> 
                                 </td>

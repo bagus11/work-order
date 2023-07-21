@@ -118,7 +118,7 @@
                                 <td style="text-align: center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
                                 <td style="width:25%;text-align:center">
                                     @can('update-problem_type')
-                                    <button title="Detail" class="editProblems btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editProblems">
+                                    <button title="Detail" class="editProblems btn-sm btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editProblems">
                                         <i class="fas fa-solid fa-eye"></i>
                                     </button>
                                     @endcan   

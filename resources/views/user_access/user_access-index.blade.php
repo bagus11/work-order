@@ -6,9 +6,9 @@
           <div class="col">
                 <div class="card card-dark">
                     <div class="card-header">
-                        <div class="card-title">Role User</div>
+                        Role User
                         <div class="card-tools">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addRoleUserModal" style="float:right" onclick="get_username()">
+                            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addRoleUserModal" style="float:right" onclick="get_username()">
                                 <i class="fas fa-plus"></i>
                             </button>
                             
@@ -32,9 +32,9 @@
           <div class="col">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">Role Permission</div>
+                    Role Permission
                     <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <button type="button" class="btn  btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
                         </button>
                     </div>

@@ -6,9 +6,9 @@
           <div class="col-md-6">
                 <div class="card card-dark">
                     <div class="card-header">
-                        <div class="card-title">List Role</div>
+                        List Role
                         <div class="card-tools">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addRoleModal" style="float:right" onclick="clear_roles()">
+                            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addRoleModal" style="float:right" onclick="clear_roles()">
                                 <i class="fas fa-plus"></i>
                             </button>
                             
@@ -30,12 +30,12 @@
           <div class="col-md-6">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List Permission</div>
+                    List Permission
                     <div class="card-tools">
                         {{-- <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
                         </button> --}}
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addPermissionModal" style="float:right" onclick="permission_menus_name()">
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addPermissionModal" style="float:right" onclick="permission_menus_name()">
                             <i class="fas fa-plus"></i>
                         </button>
                         

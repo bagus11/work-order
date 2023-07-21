@@ -9,7 +9,7 @@
                     <label for="">List Assignment</label>
                     <div class="card-tools">
                         <button id="refresh" onclick="get_work_order_list()" title="Refresh" class="btn btn-sm btn-info mr-2" style="float:right">
-                            <ion-icon name="refresh-sharp"></ion-icon>
+                            <i class="fas fa-refresh"></i>
                         </button>
                     </div>
                 </div>

@@ -3,10 +3,10 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-          <div class="col-md-10">
+          <div class="col-md-12">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List User</div>
+                    List User
                     @can('import_user-user_setting')
                     <div class="card-tools">
                         <button class="btn btn-sm btn-success" title="Import User HRIS" id="btnImportUser">

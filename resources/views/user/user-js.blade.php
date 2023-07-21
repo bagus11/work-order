@@ -60,7 +60,7 @@
                 for(i = 0; i < response.data.length; i++ )
                 {
                     data += `<tr style="text-align: center;">
-                                @can('activation-master_jabatan')
+                                @can('activation-user_setting')
                                 <td style="text-align: center;"> <input type="checkbox" id="check" name="check" class="is_checked" style="border-radius: 5px !important;" value="${response.data[i]['id']}"  data-flg_aktif="${response.data[i]['flg_aktif']}" data-id="${response.data[i]['id']}" ${response.data[i]['flg_aktif'] == 1 ?'checked':'' }></td>
                                 @else
                                 <td style="text-align: center;">
@@ -73,7 +73,7 @@
                                 <td style="text-align: left;">${response.data[i]['email']==null?'':response.data[i]['email']}</td>
                                 <td style="width:25%;text-align:center">
                                     
-                                        <button title="Detail" class="editUser btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editUser">
+                                        <button title="Detail" class="editUser btn-sm btn btn-primary rounded"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#editUser">
                                             <i class="fas fa-solid fa-eye"></i>
                                         </button>
                                 </td>

@@ -8,8 +8,8 @@
                 <div class="card-header bg-dark">
                     List Assignment
                     <div class="card-tools">
-                        <button id="btnAddTransfer" type="button" class="btn btn-success" data-toggle="modal" data-target="#addPICTransfer" style="float:right">
-                            <i class="fa-solid fa-square-plus"></i>
+                        <button id="btnAddTransfer" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addPICTransfer" style="float:right">
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
                 </div>
