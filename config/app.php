@@ -44,7 +44,7 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Application URL
-    |--------------------------------------------------------------------------
+    |--------------------------------------------------------------------------s
     |
     | This URL is used by the console to properly generate URLs when using
     | the Artisan command line tool. You should set this to the root of

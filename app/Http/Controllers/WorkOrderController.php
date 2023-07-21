@@ -443,17 +443,16 @@ class WorkOrderController extends Controller
                                         $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
                                     }else{
                                         $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
-                                       
                                     }
                                    
                                 }else{
                                     if($shiftendDate == $dateNow){
-                                        if(strtotime($timeSystem) >= $shiftendTime){
+                                        if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
                                              
                                             $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
                                         }else{
-                                            dd($timeSystem . ' = '. $shiftendTime);
-                                            $totalTime += $endTimeSystem->diffInMinutes($shiftendtime);
+                                            $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                                          
                                         }
                                     }else{
                                         $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
@@ -463,7 +462,7 @@ class WorkOrderController extends Controller
                           }
                         }
                     // Setup Duration
-                      
+                    // dd($totalTime);
                     // Post 
                         $post_log           = [
                                                 'request_code'=>$log_wo->request_code,
@@ -508,7 +507,7 @@ class WorkOrderController extends Controller
                             'created_at'=>date('Y-m-d H:i:s')
                         ];
                     }
-                    dd($totalTime);
+                   
                      DB::transaction(function() use($post,$request, $post_log,$userPost,$fileName,$status_wo,$postHead) {
                         if($request->file('attachmentPIC')){
                             $request->file('attachmentPIC')->storeAs('/attachmentPIC',$fileName);

@@ -55,6 +55,9 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
 
         <script>
+            function zoom() {
+                document.body.style.zoom = "80%" 
+            }
             $(document).ready(function(){
                 $(".select2").select2();
             });
@@ -98,7 +101,7 @@
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100% !important;
-  font-size: 12px;
+  font-size: 10px;
   overflow-x:auto !important;
   
   }
@@ -117,8 +120,9 @@
   border: 1px solid #ddd;
   padding-top: 10px;
   padding-bottom: 10px;
-  text-align: center;
+  /* text-align: center; */
   background-color: white;
+  font-size: 11px !important;
   color: black;
   overflow-x:auto !important;
   }
