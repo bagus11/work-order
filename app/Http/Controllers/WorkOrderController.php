@@ -438,16 +438,21 @@ class WorkOrderController extends Controller
                             // Validation Date
                                 if($startDatePIC == $shiftstartDate)
                                 {
-                                    if($startTimePIC >=$shiftendtime){
+                                   
+                                    if($startTimePIC >=$shiftendTime){
                                         $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
                                     }else{
-                                        $totalTime += $endTimeSystem->diffInMinutes($startTimePIC);
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
+                                       
                                     }
+                                   
                                 }else{
                                     if($shiftendDate == $dateNow){
                                         if(strtotime($timeSystem) >= $shiftendTime){
+                                             
                                             $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
                                         }else{
+                                            dd($timeSystem . ' = '. $shiftendTime);
                                             $totalTime += $endTimeSystem->diffInMinutes($shiftendtime);
                                         }
                                     }else{
