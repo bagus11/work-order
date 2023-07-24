@@ -1211,8 +1211,8 @@
                 data +=`
                         <div class="direct-chat-msg ${response.log_data[i].creator.id == $('#auth_id').val() ?'right':''}">
                             <div class="direct-chat-infos clearfix">
-                                <span class="direct-chat-name ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator == null ?'':response.log_data[i].creatorRelation.name}</span>
-                                <span class="direct-chat-timestamp ${response.log_data[i].creatorRelation.id == $('#auth_id').val() ?'float-left':'float-right'}">${response.log_data[i].date}</span>
+                                <span class="direct-chat-name ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator_relation == null ?'':response.log_data[i].creator_relation.name}</span>
+                                <span class="direct-chat-timestamp ${response.log_data[i].creator_relation.id == $('#auth_id').val() ?'float-left':'float-right'}">${response.log_data[i].date}</span>
                             </div>
                             
                                 <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
