@@ -34,15 +34,17 @@ class WorkOrderController extends Controller
                                         ->where('status_approval',2)
                                         ->where('updated_at', '<=', Carbon::now()->subDays(4)->toDateTimeString())
                                         ->get();
-      
+       
         if(count($validationChecking) > 0 ){
             foreach($validationChecking as $item){
+                $sumofDuration = WorkOrderLog::select(DB::raw('SUM(duration) as sumOfDuration'))->where('request_code', $item->request_code)->first();
                 $postValidateion=[
                     'status_approval'   =>1,
                     'updated_at'        =>date('Y-m-d H:i:s'),
-                    'rating'            =>5
+                    'rating'            =>5,
+                    'duration'          =>$sumofDuration->sumOfDuration
                 ];
-                
+            
                 DB::transaction(function() use($postValidateion,$item) {
                      WorkOrder::where('request_code', $item->request_code)->update($postValidateion);
                   

@@ -199,7 +199,7 @@
         <div class="col-12 col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header bg-white">
-                    <label class="mt-2"> Rating</label>
+                    Rating
                     <div class="card-tools">
                             <div class="btn-group" style="float:right">
                                 <button type="button" class="btn btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
@@ -233,7 +233,7 @@
                                     <div class="container">
                                         <div class="row">
                                                 <div class="col-md-4 mt-2">
-                                                    <label for="">Filter Type</label>
+                                                    Filter Type
                                                 </div>
                                                 <div class="col-md-8">
                                                     <select  id="selectRatingFilter" class="select2">
@@ -245,7 +245,7 @@
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col-md-4 mt-2">
-                                                    <label for="">Filter</label>
+                                                    Filter
                                                 </div>
                                                 <div class="col-md-8" id="paramterRatingFilter">
                                                         <label class="mt-2" for="">All Period</label>
@@ -275,7 +275,7 @@
         <div class="col-12 col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header bg-white">
-                    <label class="mt-2"> Ranking PIC</label>
+                     Ranking PIC
                     <div class="card-tools">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
@@ -286,7 +286,7 @@
                                     <div class="container">
                                             <div class="row">
                                                     <div class="col-md-4 mt-2">
-                                                        <label for="">Filter Type</label>
+                                                        Filter Type
                                                     </div>
                                                     <div class="col-md-8">
                                                         <select  id="selectFilter" class="select2">
@@ -298,7 +298,7 @@
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-4 mt-2">
-                                                        <label for="">Filter</label>
+                                                        Filter
                                                     </div>
                                                     <div class="col-md-8" id="paramterFilter">
                                                             <label class="mt-2" for="">All Period</label>
@@ -332,12 +332,14 @@
                 <div class="card-footer"></div>
             </div>
         </div>
+
+        
         @endcan
         @can('get-problem_type-dashboard')
         <div class="col-12 col-sm-12 col-md-4 col-xd-4">
             <div class="card">
                 <div class="card-header bg-white">
-                    <label class="mt-2">Percentage</label>
+                    Percentage
                     <div class="card-tools">
                         <div class="btn-group">
                             <button type="button" class="btn btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
@@ -384,10 +386,28 @@
             </div>
         </div>
         @endcan
+        @if (auth()->user()->can('get-problem_type-dashboard') || auth()->user()->can('get-all-dashboard'))
+        <div class="col-12 col-sm-12 col-md-4 col-xd-4">
+            <div class="card">
+                <div class="card-header bg-white">
+                    Ticket Lv 2
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                            </button>
+                    </div>
+                </div>
+                    <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px;">
+                    
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+        @endif
         <div class="col-12 col-sm-12 col-md-4" hidden>
             <div class="card">
                 <div class="card-header bg-white">
-                    <label for=""> Tracking History</label>
+                    Tracking History
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                         <i class="fas fa-minus"></i>
