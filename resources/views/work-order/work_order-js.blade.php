@@ -1209,9 +1209,9 @@
                for(i = 0; i < response.log_data.length; i++){
               
                 data +=`
-                        <div class="direct-chat-msg ${response.log_data[i].creator.id == $('#auth_id').val() ?'right':''}">
+                        <div class="direct-chat-msg ${response.log_data[i].creator_relation.id == $('#auth_id').val() ?'right':''}">
                             <div class="direct-chat-infos clearfix">
-                                <span class="direct-chat-name ${response.log_data[i].creator.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator_relation == null ?'':response.log_data[i].creator_relation.name}</span>
+                                <span class="direct-chat-name ${response.log_data[i].creator_relation.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.log_data[i].creator_relation == null ?'':response.log_data[i].creator_relation.name}</span>
                                 <span class="direct-chat-timestamp ${response.log_data[i].creator_relation.id == $('#auth_id').val() ?'float-left':'float-right'}">${response.log_data[i].date}</span>
                             </div>
                             
