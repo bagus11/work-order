@@ -2,6 +2,7 @@
     getRatingLog()
     get_wo_summary()
     problemType()
+    $('#level2TableContainer').prop('hidden', true)
     $(document).on('click', '#filter', function (e) {
         e.stopPropagation();
     });
@@ -219,13 +220,13 @@
         }
         datatableHelper(data,'logDoneTable')
     })
-    $('#btnRejectLog').on('click', function(){
+    $('#btnCheckingLog').on('click', function(){
         var data ={
             'from_date':$('#from_date').val(),
             'end_date':$('#end_date').val(),
             'status':5
         }
-        datatableHelper(data,'logRejectTable')
+        datatableHelper(data,'logCheckingTable')
     })
     $('#from_date').on('change', function(){
         get_wo_summary()
@@ -361,12 +362,17 @@
                     $('#status_pending').html(response.status_pending.status_pending)
                     $('#status_revision').html(response.status_revision.status_revision)
                     $('#status_done').html(response.status_done.status_done)
-                    $('#status_reject').html(response.status_reject.status_reject)
+                    $('#status_checking').html(response.status_checking.status_checking)
                     $('#jabatanUser').html(response.jabatan)
                     $('#ratingUser').html('Rating : ' + rating +' / 5.0')
                     $('#totalTask').html('Total Task : '+response.ratingUser.total)
                     // master_chart('Supplier',bulan,type,chart,data)
                     response.classementPIC == null ? '': getClassement(response)
+                   
+                    if(response.ticketLevel2.length > 0){
+                        $('#level2TableContainer').prop('hidden', false)
+                        mappingLevel2(response.ticketLevel2)
+                    }
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -403,6 +409,7 @@
                         label.push(response.data[i].problemName)
                         color.push(masterColor[i])
                     }
+                    console.log(response.data)
                     $('canvas#percentageChart').remove()
                     $('canvas#percentageChart_container').remove();
                     $('#percentageChart_container').append('<canvas id="percentageChart" style="width:400px !important; height:400px !important" ></canvas>')
@@ -472,5 +479,37 @@
                         'scrollY':150,
                        "bInfo" : false
                     }).columns.adjust()
+    }
+    function mappingLevel2(response){
+        $('#level2Table').DataTable().clear();
+        $('#level2Table').DataTable().destroy();
+            var data=''
+            for(i = 0; i < response.length; i++ )
+            {
+                console.log(response[i])
+                        picDuration= response[i].duration == 0 ? timeConvert(response[i].duration) : timeConvert(response[i].duration)
+                        
+                        data += `<tr>
+                                    <td>${response[i].request_code}</td>
+                                    <td>${response[i].departement_name.name}</td>
+                                    <td>${response[i].category_name.name}</td>
+                                    <td>${response[i].problem_type_name.name}</td>
+                                    <td>${response[i].pic_support_name.name}</td>
+                                    <td>${picDuration}</td>
+                                </tr>
+                                `;
+                }
+        $('#level2Table'+' > tbody:first').html(data);
+        $('#level2Table').DataTable({
+            "destroy": true,
+            "autoWidth" : false,
+            "searching": false,
+            "aaSorting" : true,
+            "ordering":false,
+            "paging":   false,
+            "scrollX":true,
+            'scrollY':150,
+            "bInfo" : false
+        }).columns.adjust()
     }
 </script>

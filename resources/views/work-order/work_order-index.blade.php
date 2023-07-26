@@ -42,6 +42,9 @@
                                         <option value="2">PENDING</option>
                                         <option value="3">REVISION</option>
                                         <option value="4">DONE</option>
+                                        <option value="6">CHECKING</option>
+                                        <option value="7">HOLD</option>
+                                        <option value="8">TAKE OUT</option>
                                         <option value="5">REJECT</option>
                                         </select>
                                     </div>

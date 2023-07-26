@@ -163,19 +163,19 @@
             </div>
             <div class="col-12 col-sm-6 col-md-4">
                     <div class="info-box">
-                        <span class="info-box-icon bg-black elevation-1"><i class="fas fa-chart-bar"></i></span>
+                        <span class="info-box-icon bg-orange elevation-1"><i class="fas fa-chart-bar"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Reject</span>
-                                <span class="info-box-number"  id="status_reject">
+                            <span class="info-box-text">Checking</span>
+                                <span class="info-box-number"  id="status_checking">
                             </span>
                         </div>
-                        <button type="button" class="btn btn-tool dropdown-toggle" id="btnRejectLog" style="margin-top:3px" data-toggle="dropdown">
+                        <button type="button" class="btn btn-tool dropdown-toggle" id="btnCheckingLog" style="margin-top:3px" data-toggle="dropdown">
                           <i class="fas fa-history"></i>
                           </button>
     
                           <div class="dropdown-menu dropdown-menu-right" role="menu" style="min-width:285px; max-width:330px; !important;">
                               <div class="container">
-                                      <table class="datatable-bordered nowrap display" id="logRejectTable">
+                                      <table class="datatable-bordered nowrap display" id="logCheckingTable">
                                           <thead>
                                               <tr>
                                                 <th style="text-align:center;width:5%">No</th>
@@ -387,7 +387,7 @@
         </div>
         @endcan
         @if (auth()->user()->can('get-problem_type-dashboard') || auth()->user()->can('get-all-dashboard'))
-        <div class="col-12 col-sm-12 col-md-4 col-xd-4">
+        <div class="col-12 col-sm-12 col-md-8 col-xd-8" id="level2TableContainer">
             <div class="card">
                 <div class="card-header bg-white">
                     Ticket Lv 2
@@ -398,6 +398,19 @@
                     </div>
                 </div>
                     <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px;">
+                        <table class="datatable-bordered nowrap display table-wrapper no-footer dataTable" id="level2Table">
+                            <thead>
+                                <tr>
+                                    <th>RFM</th>
+                                    <th>Departement</th>
+                                    <th>Category</th>
+                                    <th>Problem Type</th>
+                                    <th>PIC</th>
+                                    <th>Durasi</th>
+                                </tr>
+                            </thead>
+
+                        </table>
                     
                 </div>
                 <div class="card-footer"></div>
