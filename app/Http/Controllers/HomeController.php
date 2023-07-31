@@ -46,7 +46,9 @@ class HomeController extends Controller
                                         ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
                                         ->first();
             $status_done            = WorkOrder::select(DB::raw('COUNT(id) as status_done'))
-                                        ->where('status_wo', 4)->where('status_approval', 1)
+                                        ->where('status_wo', 4)
+                                        ->where('status_approval', 1)
+                                        ->where('transfer_pic', 0)
                                         ->where('request_for',$userDepartement->initial)
                                         ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
                                         ->first();

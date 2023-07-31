@@ -148,11 +148,10 @@ class WorkOrderController extends Controller
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where('user_id', auth()->user()->id) 
-            ->orderBy('work_orders.status_wo', 'desc')
-            // ->orderBy('work_orders.hold_progress', 'desc')
+            ->orderBy('status_wo', 'asc')
             ->orderBy('work_orders.status_approval','desc')
-            // ->orderBy('work_orders.priority','desc')
-            // ->orderBy('work_orders.created_at','desc')
+            ->orderBy('work_orders.priority','desc')
+            ->orderBy('id','desc')
             ->get();
         }
         else{
@@ -174,9 +173,9 @@ class WorkOrderController extends Controller
                 $query->where('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
             })
             ->orderBy('status_wo', 'asc')
-            ->orderBy('.status_approval','desc')
+            ->orderBy('work_orders.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
-            ->orderBy('work_orders.created_at','desc')
+            ->orderBy('id','desc')
             ->get();
         }
        return response()->json([
