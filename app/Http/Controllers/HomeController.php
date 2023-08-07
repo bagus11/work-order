@@ -72,6 +72,7 @@ class HomeController extends Controller
                                         ->groupBy('work_orders.user_id_support')
                                         ->where('status_approval',1)
                                         ->where('request_for',$userDepartement->initial)
+                                        ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from_date, $end_date])
                                         ->orderBy('classement','desc')
                                         ->orderBy('count','desc')
                                         ->get();
