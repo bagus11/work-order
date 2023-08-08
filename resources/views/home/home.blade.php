@@ -272,7 +272,7 @@
         </div>
         @endcan
         @can('get-all-dashboard')
-        <div class="col-12 col-sm-12 col-md-4">
+        <div class="col-12 col-sm-12 col-md-6">
             <div class="card">
                 <div class="card-header bg-white">
                      Ranking PIC
@@ -387,15 +387,47 @@
         </div>
         @endcan
         @if (auth()->user()->can('get-problem_type-dashboard') || auth()->user()->can('get-all-dashboard'))
-        <div class="col-12 col-sm-12 col-md-8 col-xd-8" id="level2TableContainer">
+        <div class="col-12 col-sm-12 col-md-6 col-xd-6" id="level2TableContainer">
             <div class="card">
                 <div class="card-header bg-white">
                     Ticket Lv 2
                     <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
+                                <ion-icon name="filter-sharp"></ion-icon>
                             </button>
-                    </div>
+                        
+                            <div class="dropdown-menu dropdown-menu-right" id="ticketFilter" role="menu" style="width:350px !important;">
+                                <div class="container">
+                                        <div class="row">
+                                                <div class="col-md-4 mt-2">
+                                                    Filter Type
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <select  id="selectTicketFilter" class="select2">
+                                                        <option value="1">All Period</option>    
+                                                        <option value="2">Month</option>    
+                                                        <option value="3">Year</option>    
+                                                    </select>       
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-md-4 mt-2">
+                                                    Filter
+                                                </div>
+                                                <div class="col-md-8" id="paramterTicketFilter">
+                                                        <label class="mt-2" for="">All Period</label>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-warning btn-block mt-2" id="btnRankingFilter">
+                                                <ion-icon name="filter-sharp"></ion-icon> Filter
+                                            </button>     
+                                </div>
+                            </div>  
+                        </div>
+
+
+                </div>
                 </div>
                     <div class="card-body" style="font-size:12px;text-align:center;margin-bottom:-20px;">
                         <table class="datatable-bordered nowrap display table-wrapper no-footer dataTable" id="level2Table">
