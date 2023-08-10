@@ -41,8 +41,41 @@
                     </tr>
                 </tbody>
             </table>
+
+            <br>
+            <table class="table-stepper" style="padding-left:80px;padding-right:80px">
+                <thead>
+                    <tr>
+                        <th>Total Duration</th>
+                        <th>Office Name</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($avgDuration as $item)
+                    @php
+                       $time =  date('H i', mktime(0, $item->totalDuration));
+                       $timeExplode = explode(' ', $time);
+                       $jam =$timeExplode[0];
+                       $menit =$timeExplode[1]; 
+                    @endphp
+                        <tr>
+                            <td>{{$jam }} hour {{$menit}} minutes</td>
+                            <td>{{$item->officeName}}</td>
+                            <td style="text-align: center">{{$item->level}}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2">
+                                Data is Null
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+  
     <br>
     <p style="font-size:10px">
         <b>Detail RFM :</b>
@@ -53,11 +86,13 @@
             <tr>
                 <th>Created At</th>
                 <th>Request Code</th>
+                <th>Level</th>
                 <th>Departement</th>
                 <th>Categories</th>
                 <th>Subject</th>
                 <th>PIC</th>
                 <th>Status</th>
+                <th>Duration</th>
             </tr>
         </thead>
         <tbody>
@@ -92,11 +127,13 @@
                     <tr>
                         <td style="text-align:center">{{$item->created_at}}</td>
                         <td style="text-align:center">{{$item->request_code}}</td>
+                        <td style="text-align:center">{{$item->level}}</td>
                         <td style="text-align:center">{{$item->departement_name}}</td>
                         <td style="text-align:center">{{$item->categories_name}}</td>
                         <td style="text-align:left">{{$subject[0]}}</td>
                         <td style="text-align:{{$item->picSupportName == null ? 'center': 'left'}}">{{$item->picSupportName == null ? '-' : $item->picSupportName->name}}</td>
                         <td style="text-align:center">{{$statusLabel}}</td>
+                        <td style="text-align:center">{{$item->duration == 0 ? '-' : $item->duration}}</td>
                     </tr>
             @empty
                     <tr>

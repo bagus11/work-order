@@ -898,11 +898,11 @@ class WorkOrderController extends Controller
                     $statusString = $statusFilter;
                 }
                 $reportWO       = WorkOrder::with('picSupportName')
-                                    ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name')
+                                    ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
                                     ->leftJoin('users','users.id','=','work_orders.user_id')
-                                    ->join('master_categories','master_categories.id','=','work_orders.category')
-                                    ->join('master_departements','master_departements.id','=','work_orders.departement_id')
-                                    ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                    ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                                    ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+                                    ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
                                     ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
                                     ->where('work_orders.request_for',$requestFor->initial)
                                     ->where('master_kantor.id','like','%'.$officeString.'%')
@@ -970,6 +970,22 @@ class WorkOrderController extends Controller
                                     ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
                                      ->where('master_kantor.id','like','%'.$officeString.'%')
                                     ->first();
+
+                $avgDuration  =  WorkOrder::select(DB::raw('SUM(work_orders.duration) as totalDuration'),'request_code','master_kantor.name as officeName','work_orders.level')
+                                ->leftJoin('users','users.id','=','work_orders.user_id')
+                                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                                ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+                                ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                ->where('work_orders.request_for',$requestFor->initial)
+                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                ->groupBy('work_orders.level')
+                                ->groupBy('users.kode_kantor')
+                                ->orderBy('work_orders.created_at', 'asc')
+                                ->get();
+
             // $countingWODone = 
                             $data=[
                                 'reportWO'=>$reportWO,
@@ -983,6 +999,7 @@ class WorkOrderController extends Controller
                                 'woNew'=>$woNew,
                                 'from'=>$from,
                                 'to'=>$to,
+                                'avgDuration'=>$avgDuration,
                             ];
                             $cetak              = view('work-order.reportWorkOrder',$data);
                             $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
