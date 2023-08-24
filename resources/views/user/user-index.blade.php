@@ -6,7 +6,7 @@
           <div class="col-12">
             <div class="card card-dark">
                 <div class="card-header">
-                    List User
+                    
                     @can('import_user-user_setting')
                     <div class="card-tools">
                         <button class="btn btn-sm btn-success" title="Import User HRIS" id="btnImportUser">

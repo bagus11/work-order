@@ -45,6 +45,7 @@
         formData.append('subject',subject)
         formData.append('add_info',add_info)
         formData.append('departement_for',departement_for)
+       
         $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -58,10 +59,12 @@
                 data: formData,
                 beforeSend: function() {
                     SwalLoading('Inserting progress, please wait .');
+                    $('#btn_save_wo').prop('disabled',true)
                 },
                 success: function(response) {
                     swal.close();
                     $('.message_error').html('')
+                    $('#btn_save_wo').prop('disabled',false)
                     if(response.status==422)
                     {
                         $.each(response.message, (key, val) => 

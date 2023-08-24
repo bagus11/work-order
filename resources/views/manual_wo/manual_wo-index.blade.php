@@ -5,7 +5,6 @@
     <div class="col-12">
       <div class="card card-dark">
           <div class="card-header">
-              Add Manual Work Order
           </div>
           <div class="card-body">
              <div class="container">
