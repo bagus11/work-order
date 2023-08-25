@@ -68,9 +68,9 @@
                 <tr>
                     <td  style="width: 15%">Description</td>
                     <td  style="width: 1%">:</td>
-                    <td  style="width: 24%">{{$getTicket->add_info}}</td>
-                    <td  style="width: 20%"></td>
-                    <td  style="width: 15%"></td>
+                    <td  style="width: 44%">{{$getTicket->add_info}}</td>
+                    <td  style="width: 10%"></td>
+                    <td  style="width: 5%"></td>
                     <td  style="width: 1%"></td>
                     <td  style="width: 24%"></td>
                 </tr>
