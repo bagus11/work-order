@@ -317,7 +317,7 @@ class WorkOrderController extends Controller
                     ];
                     array_push($userArray, $userPost);
                 }
-                dd($post);
+                // dd($post)
                 DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName) {
                     WorkOrder::create($post);
                     WorkOrderLog::create($post_log);
