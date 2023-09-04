@@ -154,7 +154,7 @@ class ManualWOController extends Controller
             );
         }
     }
-    
+
     public function sendMail($title,$to,$post,$postEmail,$subject)
     {
         $emails =$to;
