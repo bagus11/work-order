@@ -131,7 +131,7 @@ class ManualWOController extends Controller
                 'userId'=>$headUser->id,
                 'created_at'=>date('Y-m-d H:i:s')
             ];
-            DB::transaction(function() use($post,$post_log,$post_log2, $postEmail,$userPost,$headPost) {
+            DB::transaction(function() use($post,$post_log,$post_log2, $postEmail,$userPost,$headPost,$headUser) {
                 WorkOrder::create($post);
                 WorkOrderLog::create($post_log);
                 WorkOrderLog::create($post_log2);
@@ -139,7 +139,7 @@ class ManualWOController extends Controller
                 WONotification::create($headPost);
                 $title = "Manual Support Ticket";
                 $subject = 'ON PROGRESS - '.$post['subject'];
-                $to ="kutukan3@gmail.com";
+                $to =$headUser->email;
                 $this->sendMail($title,$to,$post,$postEmail,$subject);
             });
             return ResponseFormatter::success(
@@ -167,7 +167,7 @@ class ManualWOController extends Controller
             'title' =>$title,
             'subject'=>$subject,
             'body'=>$message,
-            'footer' => 'Email otomatis dari PT.Pralon(ICT Division)'
+            'footer' => 'Email otomatis dari PT.Pralon(ICT Department)'
         ];
         Mail::to($emails)
         ->cc('bagus.slamet@pralon.com')
