@@ -47,6 +47,7 @@
                 <thead>
                     <tr>
                         <th>Total Duration</th>
+                        <th>Average</th>
                         <th>Office Name</th>
                         <th>Level</th>
                     </tr>
@@ -61,6 +62,7 @@
                     @endphp
                         <tr>
                             <td>{{$jam }} hour {{$menit}} minutes</td>
+                            <td>{{$item}}</td>
                             <td>{{$item->officeName}}</td>
                             <td style="text-align: center">{{$item->level}}</td>
                         </tr>
