@@ -59,10 +59,17 @@
                        $timeExplode = explode(' ', $time);
                        $jam =$timeExplode[0];
                        $menit =$timeExplode[1]; 
+
+
+                       $avgTime     = date('H i', mktime(0, $item->totalDuration / $woDone->totalDone));
+                       $avgExplode  = explode(' ', $avgTime);
+                       $avgHour     = $avgExplode[0];
+                       $avgMinute   = $avgExplode[1];
+                       
                     @endphp
                         <tr>
                             <td>{{$jam }} hour {{$menit}} minutes</td>
-                            <td>{{$item}}</td>
+                            <td>{{$avgHour }} hour {{$avgMinute}} minutes</td>
                             <td>{{$item->officeName}}</td>
                             <td style="text-align: center">{{$item->level}}</td>
                         </tr>
