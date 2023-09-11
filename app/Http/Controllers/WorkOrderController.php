@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Validator;
 use NumConvert;
 use App\Mail\SendMail;
 use App\Models\MasterJabatan;
+use App\Models\MasterKantor;
 use App\Models\ProblemType;
 use App\Models\User;
 use App\Models\WONotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use \Mpdf\Mpdf as PDF;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class WorkOrderController extends Controller
 {
@@ -317,15 +319,36 @@ class WorkOrderController extends Controller
                     ];
                     array_push($userArray, $userPost);
                 }
-                // dd($post)
-                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName) {
+                // Set Telegram Message
+                    $locationName = MasterKantor::find(auth()->user()->kode_kantor);
+                    $text = "<b style='text-align:center'>New Work Order Ticket</b>\n\n\n\n"
+                    . "RFM: ".$ticket_code."\n"
+                    . "Categories   : ".$categoriesName->name."\n"
+                    . "Problem Type : ".$problemType->name."\n"
+                    . "Subject      : ".$problemType->name."\n"
+                    . "Add Info     : ".$add_info."\n"
+                    . "PIC          : ".auth()->user()->name."\n"
+                    . "Location     : ".$locationName->name."\n"
+                    . " \n";
+
+                // Set Telegram Message
+                
+                // dd($post);
+                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$text) {
                     WorkOrder::create($post);
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
                     if($request->file('attachment')){
                         $request->file('attachment')->storeAs('/attachmentUser',$fileName);
                     }
-                  
+                    // Send To Telegram Chanel
+                        Telegram::sendMessage([
+                            'chat_id' => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
+                            'parse_mode' => 'HTML',
+                            'text' => $text
+                        ]);
+                    // Send To Telegram Chanel
+                    
                     // $title = "Support Ticket";
                     // $subject = 'NEW - '.$post['subject'];
                     // $to ="kutukan3@gmail.com";
