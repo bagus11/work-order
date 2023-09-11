@@ -322,7 +322,7 @@ class WorkOrderController extends Controller
               
 
                 // dd($post);
-                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$ticket_code,$categoriesName,$problemType,$add_info) {
+                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$ticket_code,$categoriesName,$problemType,$add_info,$subject) {
                     WorkOrder::create($post);
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
@@ -336,7 +336,7 @@ class WorkOrderController extends Controller
                         . "RFM: ".$ticket_code."\n"
                         . "Categories   : ".$categoriesName->name."\n"
                         . "Problem Type : ".$problemType->name."\n"
-                        . "Subject      : ".$problemType->name."\n"
+                        . "Subject      : ".strtoupper($subject)."\n"
                         . "Add Info     : ".$add_info."\n"
                         . "PIC          : ".auth()->user()->name."\n"
                         . "Location     : ".$locationName->name."\n\n\n\n"
