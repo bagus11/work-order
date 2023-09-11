@@ -329,10 +329,10 @@ class WorkOrderController extends Controller
                     . "Add Info     : ".$add_info."\n"
                     . "PIC          : ".auth()->user()->name."\n"
                     . "Location     : ".$locationName->name."\n"
-                    . " \n";
+                    . " \n\n\n\n\n\n\n\n\n\n\n\n\n ==> ICT DEV <==";
 
                 // Set Telegram Message
-                
+
                 // dd($post);
                 DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$text) {
                     WorkOrder::create($post);
