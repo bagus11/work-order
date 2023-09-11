@@ -319,22 +319,10 @@ class WorkOrderController extends Controller
                     ];
                     array_push($userArray, $userPost);
                 }
-                // Set Telegram Message
-                    $locationName = MasterKantor::find(auth()->user()->kode_kantor);
-                    $text = "<b style='text-align:center'>New Work Order Ticket</b>\n\n\n\n"
-                    . "RFM: ".$ticket_code."\n"
-                    . "Categories   : ".$categoriesName->name."\n"
-                    . "Problem Type : ".$problemType->name."\n"
-                    . "Subject      : ".$problemType->name."\n"
-                    . "Add Info     : ".$add_info."\n"
-                    . "PIC          : ".auth()->user()->name."\n"
-                    . "Location     : ".$locationName->name."\n"
-                    . " \n\n\n\n\n\n\n\n\n\n\n\n\n ==> ICT DEV <==";
-
-                // Set Telegram Message
+              
 
                 // dd($post);
-                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$text) {
+                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$ticket_code,$categoriesName,$problemType,$add_info) {
                     WorkOrder::create($post);
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
@@ -342,6 +330,19 @@ class WorkOrderController extends Controller
                         $request->file('attachment')->storeAs('/attachmentUser',$fileName);
                     }
                     // Send To Telegram Chanel
+                      // Set Telegram Message
+                        $locationName = MasterKantor::find(auth()->user()->kode_kantor);
+                        $text = "<b style='text-align:center'>New Work Order Ticket</b>\n\n\n\n"
+                        . "RFM: ".$ticket_code."\n"
+                        . "Categories   : ".$categoriesName->name."\n"
+                        . "Problem Type : ".$problemType->name."\n"
+                        . "Subject      : ".$problemType->name."\n"
+                        . "Add Info     : ".$add_info."\n"
+                        . "PIC          : ".auth()->user()->name."\n"
+                        . "Location     : ".$locationName->name."\n\n\n\n"
+                        . " ICT DEV";
+    
+                    // Set Telegram Message
                         Telegram::sendMessage([
                             'chat_id' => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
                             'parse_mode' => 'HTML',
