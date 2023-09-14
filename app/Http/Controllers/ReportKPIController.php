@@ -176,4 +176,13 @@ class ReportKPIController extends Controller
         }
     }
 
+    function getUserSupport() {
+        $data = DB::table('users')->select('users.name','users.id')->join('model_has_roles','model_has_roles.model_id','=','users.id')
+        ->where('model_has_roles.role_id',3)
+        ->where('users.departement',auth()->user()->departement)
+        ->get();
+        return response()->json([
+            'data'=>$data
+        ]);
+    }
 }

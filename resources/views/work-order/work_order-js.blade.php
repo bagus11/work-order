@@ -2,6 +2,8 @@
     const ratingStars = [...document.getElementsByClassName("rating__star")];
     const ratingResult = document.querySelector(".rating__result");
     getOfficeName('officeFilter')
+    getSelect('getUserSupport',null,'selectSupportFilter','User')
+    onChange('selectSupportFilter','userIdSupportFilter')
     $(document).on('click', '.dropdown-menu', function (e) {
         e.stopPropagation();
     });
@@ -473,8 +475,9 @@
         var to = $('#to').val();
         var officeFilter = $('#officeFilter').val();
         var statusFilter = $('#statusFilter').val();
+        var userId = $('#userIdSupportFilter').val();
 
-        window.open(`printWO/${from}/${to}/${officeFilter =='' ? '*':officeFilter}/${statusFilter =='' ? '*' : statusFilter}`,'_blank');
+        window.open(`printWO/${from}/${to}/${officeFilter =='' ? '*':officeFilter}/${statusFilter =='' ? '*' : statusFilter}/${userId =='' ? '*' : userId}`,'_blank');
     })
     const progressSteps = document.querySelectorAll('.progress-step');
     let formSetpsNum =0
@@ -635,6 +638,7 @@
                 'statusFilter':$('#statusFilter').val(),
                 'from':$('#from').val(),
                 'to':$('#to').val(),
+                'userIdSupportFilter':$('#userIdSupportFilter').val(),
             },
             beforeSend: function() {
                 SwalLoading('Please wait ...');

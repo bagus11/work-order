@@ -93,6 +93,7 @@
     <table class="table-stepper">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Created At</th>
                 <th>Request Code</th>
                 <th>Level</th>
@@ -105,7 +106,9 @@
             </tr>
         </thead>
         <tbody>
-            
+            @php
+                $i = 0;
+            @endphp
             @forelse ($reportWO as $item)
                 @php
                     $statusLabel = '';
@@ -134,16 +137,20 @@
                     $subject = explode('_',$item->subject)
                 @endphp
                     <tr>
+                        <td style="text-align:center">{{$i+1}}</td>
                         <td style="text-align:center">{{$item->created_at}}</td>
                         <td style="text-align:center">{{$item->request_code}}</td>
                         <td style="text-align:center">{{$item->level}}</td>
-                        <td style="text-align:center">{{$item->departement_name}}</td>
-                        <td style="text-align:center">{{$item->categories_name}}</td>
+                        <td style="text-align:left">{{$item->departement_name}}</td>
+                        <td style="text-align:left">{{$item->categories_name}}</td>
                         <td style="text-align:left">{{$subject[0]}}</td>
                         <td style="text-align:{{$item->picSupportName == null ? 'center': 'left'}}">{{$item->picSupportName == null ? '-' : $item->picSupportName->name}}</td>
-                        <td style="text-align:center">{{$statusLabel}}</td>
+                        <td style="text-align:left">{{$statusLabel}}</td>
                         <td style="text-align:center">{{$item->duration == 0 ? '-' : $item->duration}}</td>
                     </tr>
+                @php
+                    $i++;
+                @endphp
             @empty
                     <tr>
                         <td colspan="7">

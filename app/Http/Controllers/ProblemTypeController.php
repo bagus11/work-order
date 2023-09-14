@@ -24,7 +24,7 @@ class ProblemTypeController extends Controller
     }
     public function get_problem_type_name(Request $request)
     {
-        $data = ProblemType::where('flg_aktif',1 )->where('categories_id', 'like','%'.$request->id.'%')->get();
+        $data = ProblemType::where('flg_aktif',1 )->where('categories_id', 'like','%'.$request->id.'%')->where('type',1)->get();
         return response()->json([
             'data'=>$data
         ]);
@@ -52,7 +52,8 @@ class ProblemTypeController extends Controller
             $post=[
                 'name'=>$problem_name,
                 'categories_id'=>$categories_id,
-                'flg_aktif'=>1
+                'flg_aktif'=>1,
+                'type'=>$request->tipeId
             ];
             $insert = ProblemType::create($post);
             if($insert){

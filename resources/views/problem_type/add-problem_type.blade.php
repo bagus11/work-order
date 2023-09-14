@@ -29,6 +29,19 @@
                             <span  style="color:red;" class="message_error text-red block problem_name_error"></span>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <div class="col-md-4 mt-2">
+                            <label for="">Tipe </label>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="select_type"  class="select2" id="select_type">
+                                <option value="1">Work Order </option>
+                                <option value="2">Incident </option>
+                            </select>
+                            <input type="hidden" value="1" class="form-control" id="tipeId">
+                            <span  style="color:red;" class="message_error text-red block tipe_error"></span>
+                        </div>
+                    </div>
                    
                </div>
             </div>

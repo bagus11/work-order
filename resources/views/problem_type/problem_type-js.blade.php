@@ -49,6 +49,7 @@
         var select_categories_update = $('#select_categories_update').val()
         $("#categories_id_update").val(select_categories_update)
     })
+    onChange('select_type','tipeId')
     $('#problem_table').on('click', '.editProblems', function() {
             var id = $(this).data('id');
             $.ajax({
@@ -151,6 +152,7 @@
                 data: {
                     'problem_name':$('#problem_name').val(),
                     'categories_id':$('#categories_id').val(),
+                    'tipeId':$('#tipeId').val(),
                 },
                 beforeSend: function() {
                     SwalLoading('Please wait ...');

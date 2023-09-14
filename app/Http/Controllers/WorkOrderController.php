@@ -109,6 +109,7 @@ class WorkOrderController extends Controller
             $statusApproval  = 1;
             $transferPIC     = 0;
         }
+        // dd($request->userIdSupportFilter);
         if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
         {
             $requestFor     = MasterDepartement::find(auth()->user()->departement);
@@ -123,6 +124,7 @@ class WorkOrderController extends Controller
             ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('work_orders.request_for',$requestFor->initial)
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
+            ->where('work_orders.user_id_support','like','%'.$request->userIdSupportFilter.'%')
             ->where('work_orders.status_wo','like','%'.$statusFilter.'%')
             ->where('work_orders.status_approval','like','%'.$statusApproval.'%')
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
@@ -133,7 +135,6 @@ class WorkOrderController extends Controller
             ->orderBy('work_orders.priority','desc')
             ->orderBy('id','desc')
             ->get();
-            
         }else if(auth()->user()->hasPermissionTo('get-only_user-work_order_list')){
             $data = DB::table('work_orders')
             ->select('work_orders.*','master_priorities.name as priorityName' ,'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
@@ -146,6 +147,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.transfer_pic',0)
             ->where('work_orders.status_wo','like','%'.$statusFilter.'%')
             ->where('work_orders.status_approval','like','%'.$statusApproval.'%')
+            ->where('work_orders.user_id_support','like','%'.$request->userIdSupportFilter.'%')
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
@@ -166,6 +168,7 @@ class WorkOrderController extends Controller
             ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
             ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
+            ->where('work_orders.user_id_support','like','%'.$request->userIdSupportFilter.'%')
             ->where('work_orders.status_wo','like','%'.$statusFilter.'%')
             ->where('work_orders.status_approval','like','%'.$statusApproval.'%')
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
@@ -350,15 +353,6 @@ class WorkOrderController extends Controller
                         ]);
                     // Send To Telegram Chanel
                     
-                    // $title = "Support Ticket";
-                    // $subject = 'NEW - '.$post['subject'];
-                    // $to ="kutukan3@gmail.com";
-                    // $data=[
-                    //     'post'=>$post,
-                    //     'postEmail'=>$postEmail,
-                    // ];
-                    // $message = view('email.newWo',$data);
-                    // $this->sendMail($title,$to,$message,$subject);
                 });
                 $validasi = WorkOrderLog::where('request_code', $ticket_code)->where('status_wo',0)->count();
                 if($validasi==1){
@@ -434,64 +428,64 @@ class WorkOrderController extends Controller
                                             ->orderBy('created_at','desc')
                                             ->first();
                     // Setup Duration
-                    $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
-                    $dateNow            =   date('Y-m-d');
+                        $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
+                        $dateNow            =   date('Y-m-d');
 
-                    $client = new \GuzzleHttp\Client();
-                    $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
-                    $response = $api->getBody()->getContents();
-                    $data =json_decode($response, true);
-                    $totalTime =0;
+                        $client = new \GuzzleHttp\Client();
+                        $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
+                        $response = $api->getBody()->getContents();
+                        $data =json_decode($response, true);
+                        $totalTime =0;
 
-                    foreach($data as $row){
-                        if($row['daytype'] =='WD'){
+                        foreach($data as $row){
+                            if($row['daytype'] =='WD'){
 
-                        // Initialing Date && Time
-                            $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
-                            $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
-                            $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
-                            $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
+                            // Initialing Date && Time
+                                $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
+                                $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
+                                $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
+                                $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
 
-                            $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
-                            $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
-                            $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
+                                $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
+                                $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
+                                $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
 
-                            $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
-                            $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
-                            $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
+                                $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
+                                $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
+                                $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
 
-                            $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
-                            $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
-                            $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
-                            $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
-                        // Initialing Date && Time
+                                $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
+                                $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
+                                $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
+                                $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+                            // Initialing Date && Time
 
-                        // Validation Date
-                            if($startDatePIC == $shiftstartDate)
-                            {
-                                if($startTimePIC >=$shiftendTime){
-                                    $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
-                                }else{
-                                    $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
-                                    // dd($startTimePIC . ' == '.$shiftendTime.'  ==> '.$totalTime);
-                                }
-                            
-                            }else{
-                                if($shiftendDate == $dateNow){
-                                    if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
-                                        
-                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                            // Validation Date
+                                if($startDatePIC == $shiftstartDate)
+                                {
+                                    if($startTimePIC >=$shiftendTime){
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
                                     }else{
-                                        $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
-                                    
+                                        $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
+                                        // dd($startTimePIC . ' == '.$shiftendTime.'  ==> '.$totalTime);
                                     }
+                                
                                 }else{
-                                    $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                    if($shiftendDate == $dateNow){
+                                        if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
+                                            
+                                            $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                        }else{
+                                            $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                                        
+                                        }
+                                    }else{
+                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                    }
                                 }
+                            // Validation Date
                             }
-                        // Validation Date
                         }
-                    }
                     // Setup Duration
                     // checking if status wo before is pending, cant change level 
                    if($log_wo->level == 2){
@@ -907,7 +901,7 @@ class WorkOrderController extends Controller
             'statusWo'=>$statusWo,
         ]);
     }
-    public function printWO($from,$to,$officeFilter,$statusFilter)
+    public function printWO($from,$to,$officeFilter,$statusFilter,$userId)
     {
         try {
                 $requestFor  = MasterDepartement::find(auth()->user()->departement);
@@ -921,94 +915,200 @@ class WorkOrderController extends Controller
                 if($statusFilter !='*'){
                     $statusString = $statusFilter;
                 }
-                $reportWO       = WorkOrder::with('picSupportName')
-                                    ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
-                                    ->leftJoin('users','users.id','=','work_orders.user_id')
-                                    ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
-                                    ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
-                                    ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
-                                    ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
-                                    ->where('work_orders.request_for',$requestFor->initial)
-                                    ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->where('work_orders.status_wo','like','%'.$statusString.'%')
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                    ->orderBy('created_at', 'asc')
-                                    ->get();
-                $woCounting     = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalWO'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.id as officeId','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'),  [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                      ->where('work_orders.request_for',$requestFor->initial)
-                                    ->where('work_orders.status_wo','like','%'.$statusString.'%')
-                                    ->first();
-                $woOnProgress    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalProgress'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 1)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
-                $woPending    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalPending'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 2)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
-                $woRevision    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalRevision'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 3)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
-                $woReject    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalReject'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 5)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
-                $woOnChecking    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalChecking'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 4)
-                                    ->where('work_orders.status_approval', 2)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
-                $woDone             = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalDone'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 4)
-                                    ->where('work_orders.status_approval', 1)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
-                $woNew    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalNew'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
-                                    ->join('users','users.id','work_orders.user_id')
-                                    ->join('master_kantor','master_kantor.id','users.kode_kantor')
-                                    ->where('work_orders.status_wo', 4)
-                                    ->where('work_orders.status_approval', 2)
-                                    ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                     ->where('master_kantor.id','like','%'.$officeString.'%')
-                                    ->first();
+                $userIdString ='';
+                if($userId !='*'){
+                    $userIdString = $userId;
+                }
+                if($userId !=''){
+                    $reportWO               = WorkOrder::with('picSupportName')
+                                                ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
+                                                ->leftJoin('users','users.id','=','work_orders.user_id')
+                                                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                                                ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+                                                ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                                ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                                ->where('user_id_support',$userIdString)
+                                                ->where('work_orders.request_for',$requestFor->initial)
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->orderBy('created_at', 'asc')
+                                                ->get();
+                    $woCounting             = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalWO'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.id as officeId','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'),  [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->where('work_orders.user_id_support','like','%'.$userIdString.'%')
+                                                ->where('user_id_support',$userIdString)
+                                                ->first();
+                    $woOnProgress           = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalProgress'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 1)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->where('user_id_support',$userIdString)
+                                                ->first();
+                    $woPending              = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalPending'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 2)
+                                                ->where('user_id_support',$userIdString)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woRevision             = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalRevision'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 3)
+                                                ->where('user_id_support',$userIdString)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woReject               = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalReject'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 5)
+                                                ->where('user_id_support',$userIdString)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woOnChecking           = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalChecking'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 4)
+                                                ->where('work_orders.status_approval', 2)
+                                                ->where('user_id_support',$userIdString)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woDone                 = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalDone'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 4)
+                                                ->where('work_orders.status_approval', 1)
+                                                ->where('user_id_support',$userIdString)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woNew                  = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalNew'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 4)
+                                                ->where('work_orders.status_approval', 2)
+                                                ->where('user_id_support',$userIdString)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
 
-                $avgDuration  =  WorkOrder::select(DB::raw('SUM(work_orders.duration) as totalDuration'),'request_code','master_kantor.name as officeName','work_orders.level')
-                                ->leftJoin('users','users.id','=','work_orders.user_id')
-                                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
-                                ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
-                                ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
-                                ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
-                                ->where('work_orders.request_for',$requestFor->initial)
-                                ->where('master_kantor.id','like','%'.$officeString.'%')
-                                ->where('work_orders.status_wo','like','%'.$statusString.'%')
-                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
-                                ->groupBy('work_orders.level')
-                                ->groupBy('users.kode_kantor')
-                                ->orderBy('work_orders.created_at', 'asc')
-                                ->get();
+                    $avgDuration            =  WorkOrder::select(DB::raw('SUM(work_orders.duration) as totalDuration'),'request_code','master_kantor.name as officeName','work_orders.level')
+                                                ->leftJoin('users','users.id','=','work_orders.user_id')
+                                                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                                                ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+                                                ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                                ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                                ->where('work_orders.request_for',$requestFor->initial)
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('user_id_support',$userIdString)
+                                                ->groupBy('work_orders.level')
+                                                ->groupBy('users.kode_kantor')
+                                                ->orderBy('work_orders.created_at', 'asc')
+                                                ->get();
+                }else{
+                    $reportWO       = WorkOrder::with('picSupportName')
+                                                ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
+                                                ->leftJoin('users','users.id','=','work_orders.user_id')
+                                                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                                                ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+                                                ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                                ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                                ->where('work_orders.request_for',$requestFor->initial)
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->orderBy('created_at', 'asc')
+                                                ->get();
+                    $woCounting     = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalWO'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.id as officeId','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'),  [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                                ->first();
+                    $woOnProgress    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalProgress'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 1)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woPending    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalPending'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 2)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woRevision    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalRevision'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 3)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woReject    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalReject'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 5)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woOnChecking    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalChecking'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 4)
+                                                ->where('work_orders.status_approval', 2)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woDone             = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalDone'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 4)
+                                                ->where('work_orders.status_approval', 1)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+                    $woNew    = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalNew'),'level',DB::raw('SUM(work_orders.duration) as totalDuration'),'work_orders.request_for','user_id_support','work_orders.request_for','master_kantor.name','work_orders.category')
+                                                ->join('users','users.id','work_orders.user_id')
+                                                ->join('master_kantor','master_kantor.id','users.kode_kantor')
+                                                ->where('work_orders.status_wo', 4)
+                                                ->where('work_orders.status_approval', 2)
+                                                ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
+                                                ->first();
+            
+                    $avgDuration  =  WorkOrder::select(DB::raw('SUM(work_orders.duration) as totalDuration'),'request_code','master_kantor.name as officeName','work_orders.level')
+                                            ->leftJoin('users','users.id','=','work_orders.user_id')
+                                            ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                                            ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+                                            ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
+                                            ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                            ->where('work_orders.request_for',$requestFor->initial)
+                                            ->where('master_kantor.id','like','%'.$officeString.'%')
+                                            ->where('work_orders.status_wo','like','%'.$statusString.'%')
+                                            ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
+                                            ->groupBy('work_orders.level')
+                                            ->groupBy('users.kode_kantor')
+                                            ->orderBy('work_orders.created_at', 'asc')
+                                            ->get();                      
+                   
+                }
+                // dd($reportWO);
+                
 
             // $countingWODone = 
                             $data=[

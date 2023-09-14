@@ -15,12 +15,16 @@
         {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="icon" href="{{URL::asset('icon.jpg')}}">
+    
+        <!-- Tempus Dominus Styles -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     </head>
     <body class="hold-transition sidebar-mini">
         <div class="wrapper">
         @include('layouts.navbar')
         @include('layouts.sidebar')
-
+        <input type="hidden" class="form-control" id="auth_id" value="{{auth()->user()->id}}">
         <div class="content-wrapper py-4">
             <input type="hidden" id="authId" value="{{auth()->user()->id}}">
             @yield('content')
@@ -53,8 +57,16 @@
         integrity="sha512-+UYTD5L/bU1sgAfWA0ELK5RlQ811q8wZIocqI7+K0Lhh8yVdIoAMEs96wJAIbgFvzynPm36ZCXtkydxu1cs27w==" crossorigin="anonymous" 
         referrerpolicy="no-referrer"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+       <!--Moment JS CDN-->
+        <script src="https://momentjs.com/downloads/moment.js"></script>
 
+        <!--Tempusdominus JS CDN-->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+
+        <!--Tempusdominus CSS CDN-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
         <script>
+            
             function zoom() {
                 document.body.style.zoom = "80%" 
             }
@@ -270,6 +282,19 @@ tr.shown td.subdetails-click {
         border: 1px solid #ddd;
         padding: 8px;
        
+    }
+    fieldset.scheduler-border {
+        border: 1px groove #ddd !important;
+        padding: 0 1.4em 1.4em 1.4em !important;
+        margin: 0 0 1.5em 0 !important;
+        -webkit-box-shadow:  0px 0px 0px 0px #000;
+                box-shadow:  0px 0px 0px 0px #000;
+    }
+
+    legend.scheduler-border {
+        font-size: 12px !important;
+        font-weight: bold !important;
+        text-align: left !important;
     }
    
 </style>

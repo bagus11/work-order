@@ -48,6 +48,14 @@
                                         <option value="5">REJECT</option>
                                         </select>
                                     </div>
+                                    @can('create-work_order_list')
+                                    <div class="mt-2">
+                                        <label for="">User Support</label>
+                                        <select class="select2" id="selectSupportFilter" >
+                                        </select>
+                                        <input type="hidden" id="userIdSupportFilter">
+                                    </div>
+                                    @endcan
                                     <div class="mt-2 mb-2">
                                         @can('create-work_order_list')
                                         <button class="btn btn-info btn-block" id="btnReportWO">
@@ -73,7 +81,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <input type="hidden" id="auth_id" value="{{auth()->user()->id}}">
+                    
                     <table class="datatable-bordered nowrap display" id="wo_table">
                         <thead>
                             <tr>

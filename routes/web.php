@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\ManualWOController;
 use App\Http\Controllers\MasterCategoryController;
 use App\Http\Controllers\MasterDepartementController;
@@ -192,7 +193,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getStepper', [WorkOrderController::class, 'getStepper'])->name('getStepper');
     Route::post('holdProgressRequest', [WorkOrderController::class, 'holdProgressRequest'])->name('holdProgressRequest');
     // Report Work Order
-    Route::get('printWO/{from}/{date}/{officeFilter}/{statusFilter}',[WorkOrderController::class, 'printWO']);
+    Route::get('printWO/{from}/{date}/{officeFilter}/{statusFilter}/{userId}',[WorkOrderController::class, 'printWO']);
     Route::get('reportDetailWO/{id}',[WorkOrderController::class, 'reportDetailWO']);
     // Report Work Order
 
@@ -223,6 +224,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     // KPIUSer
     Route::get('getKPIUser', [ReportKPIController::class, 'getKPIUser'])->name('getKPIUser');
+    Route::get('getUserSupport', [ReportKPIController::class, 'getUserSupport'])->name('getUserSupport');
     Route::get('getKPIUserDetail', [ReportKPIController::class, 'getKPIUserDetail'])->name('getKPIUserDetail');
     Route::get('printKPIUser', [ReportKPIController::class, 'printKPIUser'])->name('printKPIUser');
     Route::get('printKPIUser/{dateFilter}/{id}',[ReportKPIController::class, 'printKPIUser']);
@@ -263,6 +265,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('saveTransferPIC', [HoldRequestController::class, 'saveTransferPIC'])->name('saveTransferPIC');
     
     // Hold Request Page
+
+    // Incident Log
+        Route::get('incident_log', [IncidentController::class, 'index'])->name('incident_log');
+        Route::get('getIncident', [IncidentController::class, 'getIncident'])->name('getIncident');
+        Route::get('getCategoryIncident', [IncidentController::class, 'getCategoryIncident'])->name('getCategoryIncident');
+        Route::get('getIncidentProblem', [IncidentController::class, 'getIncidentProblem'])->name('getIncidentProblem');
+        Route::post('addIncident', [IncidentController::class, 'addIncident'])->name('addIncident');
+        Route::get('getIncidentDetail', [IncidentController::class, 'getIncidentDetail'])->name('getIncidentDetail');
+        Route::post('updateIncident', [IncidentController::class, 'updateIncident'])->name('updateIncident');
+    // Incident Log
     // Import User from HRIS
         Route::get('getUserHris', [UserController::class, 'getUserHris'])->name('getUserHris');
     // Import User from HRIS
