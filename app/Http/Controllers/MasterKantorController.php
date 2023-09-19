@@ -96,9 +96,9 @@ class MasterKantorController extends Controller
                 'status'=>422
             ]);
         }else{
-            $city = DB::table('tbl_kabkot')->select('kabupaten_kota')->where('id',$id_regency)->first();
+            $city = DB::table('tbl_kabkot')->select('name')->where('id',$id_regency)->first();
             $post =[
-              'city'=>$city->kabupaten_kota,
+              'city'=>$city->name,
               'name'=>$office_name,
               'office_type'=>$office_type,
               'address'=>$office_address,
@@ -140,7 +140,8 @@ class MasterKantorController extends Controller
     }
     public function detail_kantor(Request $request)
     {
-        $detail = DB::table('master_kantor')->select('master_kantor.*','tbl_provinsi.provinsi as province_name', 'tbl_kabkot.kabupaten_kota as regency_name','tbl_kecamatan.kecamatan as district_name', 'tbl_kelurahan.kelurahan as village_name','tbl_kelurahan.kd_pos as postal_code')
+        $detail = DB::table('master_kantor')
+                    ->select('master_kantor.*','tbl_provinsi.name as province_name', 'tbl_kabkot.name as regency_name','tbl_kecamatan.name as district_name', 'tbl_kelurahan.name as village_name','tbl_kelurahan.kd_pos as postal_code')
                     ->join('tbl_provinsi','tbl_provinsi.id','=','master_kantor.id_prov')
                     ->join('tbl_kabkot','tbl_kabkot.id','=','id_city')
                     ->join('tbl_kecamatan','tbl_kecamatan.id','=','id_district')

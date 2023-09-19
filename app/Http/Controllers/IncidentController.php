@@ -51,7 +51,7 @@ class IncidentController extends Controller
         ]);
     }
     function addIncident(Request $request, StoreIncidentRequest $storeIncidentRequest) {
-        try {
+        // try {
             $storeIncidentRequest->validated();
             $increment_code     = IncidentHeader::orderBy('id','desc')->first();
             $date_month         = strtotime(date('Y-m-d'));
@@ -62,11 +62,11 @@ class IncidentController extends Controller
             if($increment_code ==null){
                 $ticket_code = '1/INC/'.$departement_for->initial.'/'.$month_convert.'/'.$year;
             }else{
-                $month_before = explode('/',$increment_code->request_code,-1);
+                $month_before = explode('/',$increment_code->incident_code,-1);
                 if($month_convert != $month_before[3]){
                     $ticket_code = '1/INC/'.$departement_for->initial.'/'.$month_convert.'/'.$year;
                 }else{
-                    $ticket_code = $month_before[0] + 1 .'/'.$request_type.'/'.$departement_for->initial.'/'.$month_convert.'/'.$year;
+                    $ticket_code = $month_before[0] + 1 .'/'.'INC/'.$departement_for->initial.'/'.$month_convert.'/'.$year;
                 }   
             }
             $fileName ='';
@@ -108,13 +108,13 @@ class IncidentController extends Controller
                 $post,
                 'Incident successfully added'
             );            
-        } catch (\Throwable $th) {
-            return ResponseFormatter::error(
-                $th,
-                'Incident failed to add',
-                500
-            );
-        }
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error(
+        //         $th,
+        //         'Incident failed to add',
+        //         500
+        //     );
+        // }
     }
     function getIncidentDetail(Request $request) {
         $detail = IncidentHeader::with([
@@ -130,7 +130,7 @@ class IncidentController extends Controller
         ]);
     }
     function updateIncident(Request $request, UpdateIncidentRequest $updateIncidentRequest){
-        try {
+        // try {
             $updateIncidentRequest->validated();
             $dataOld = IncidentHeader::where('incident_code',$request->id)->first();
             $fileName ='';
@@ -142,7 +142,7 @@ class IncidentController extends Controller
                 $fileName =$custom_file_name.'.'.$originalName;
             }
               // Setup Duration
-                    $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
+                    $dateBeforePost     =   Carbon::parse($dataOld->start_time)->format('Y-m-d');
                     $dateNow            =   date('Y-m-d');
 
                     $client = new \GuzzleHttp\Client();
@@ -151,55 +151,59 @@ class IncidentController extends Controller
                     $data =json_decode($response, true);
                     $totalTime =0;
 
-                    foreach($data as $row){
-                        if($row['daytype'] =='WD'){
+                    // foreach($data as $row){
+                    //     if($row['daytype'] =='WD'){
 
-                        // Initialing Date && Time
-                            $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
-                            $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
-                            $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
-                            $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
+                    //     // Initialing Date && Time
+                    //         $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($dataOld->start_time));
+                    //         $startDatePIC               =   date('Y-m-d', strtotime($dataOld->start_time));
+                    //         $startTimePIC               =   date('H:i:s', strtotime($dataOld->start_time));
+                    //         $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
 
-                            $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
-                            $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
-                            $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
+                    //         $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
+                    //         $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
+                    //         $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
 
-                            $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
-                            $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
-                            $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
+                    //         $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime($request->end_date_incident_edit));
+                    //         $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
+                    //         $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
 
-                            $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
-                            $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
-                            $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
-                            $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
-                        // Initialing Date && Time
+                    //         $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
+                    //         $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
+                    //         $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
+                    //         $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+                    //     // Initialing Date && Time
 
-                        // Validation Date
-                            if($startDatePIC == $shiftstartDate)
-                            {
-                                if($startTimePIC >=$shiftendTime){
-                                    $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
-                                }else{
-                                    $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
-                                    // dd($startTimePIC . ' == '.$shiftendTime.'  ==> '.$totalTime);
-                                }
+                    //     // Validation Date
+                    //         if($startDatePIC == $shiftstartDate)
+                    //         {
+                    //             if($startTimePIC >=$shiftendTime){
+                    //                 $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
+                    //             }else{
+                    //                 $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
+                    //                 // dd($startTimePIC . ' == '.$shiftendTime.'  ==> '.$totalTime);
+                    //             }
                             
-                            }else{
-                                if($shiftendDate == $dateNow){
-                                    if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
-                                        
-                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
-                                    }else{
-                                        $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                    //         }else{
+                    //             if($shiftendDate == $dateNow){
+                                   
+                    //                 if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
+                    //                     dd('test 1');
+                    //                     $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                    //                 }else{
+                    //                     $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                    //                     dd($endTimeSystem.'-'.$shiftstarttime.'='.$totalTime);
                                     
-                                    }
-                                }else{
-                                    $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
-                                }
-                            }
-                        // Validation Date
-                        }
-                    }
+                    //                 }
+                    //             }else{
+                                  
+                    //                 $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                    //             }
+                    //         }
+                    //     // Validation Date
+                    //     }
+                    // }
+                    // dd($totalTime);
              // Setup Duration
             $post=[
                 'end_date'=>$request->end_date_incident_edit,
@@ -224,12 +228,12 @@ class IncidentController extends Controller
                 $post,
                 'Incident successfully updated'
             );            
-        } catch (\Throwable $th) {
-            return ResponseFormatter::error(
-                $th,
-                'Incident failed to update',
-                500
-            );
-        }
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error(
+        //         $th,
+        //         'Incident failed to update',
+        //         500
+        //     );
+        // }
     }
 }

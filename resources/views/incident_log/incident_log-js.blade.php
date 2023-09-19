@@ -166,12 +166,16 @@
                 for(i = 0; i < response.length; i++ )
                 {
                     var fileName = response[i].attachment.split('/')
+                    var attachment = '-'
+                    if(response[i].attachment){
+                        attachment =` <a target="_blank" href="{{URL::asset('${response[i].attachment}')}}" style="color:blue;font-size:9.5px">
+                                        <i class="far fa-file" style="color: red;font-size: 10px;"></i>
+                                        ${fileName[2]} </a>`
+                    }
                     data += `<tr style="text-align: center;">
                             <td style="width:5%">${i + 1}</td>
-                                <td style="width:20%;text-align:left">
-                                    <a target="_blank" href="{{URL::asset('${response[i].attachment}')}}" class="ml-3" style="color:blue;">
-                                        <i class="far fa-file" style="color: red;font-size: 20px;"></i>
-                                        ${fileName[2]} </a>
+                                <td style="width:20%;text-align:center">
+                                   ${attachment}
                                 </td>
                                 <td style="text-align:left;width:65%">${response[i].comment}</td>
                                 <td style="width:10%">${response[i].status == 1 ?'-' : response[i].duration}</td>

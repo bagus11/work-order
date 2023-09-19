@@ -81,7 +81,7 @@
                                     </div>
 
                                     <div class="col-md-2 mt-2">
-                                        <p>Start Date</p>
+                                        <p>End Date</p>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="input-group date" id="end_date_incident_datetimepicker_detail" data-target-input="nearest">

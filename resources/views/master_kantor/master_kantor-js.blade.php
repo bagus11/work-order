@@ -217,7 +217,8 @@
                     $('#id_district').val('');
                     $('#id_village').val('');
                     $.each(response.get_province,function(i,data){
-                        $('#select_province').append('<option value="'+data.id+'">' + data.provinsi +'</option>');
+                       
+                        $('#select_province').append('<option value="'+data.id+'">' + data.name +'</option>');
                     });
                     
                 },
@@ -247,7 +248,8 @@
                 $('#select_regency').empty();
                 $('#select_regency').append('<option value ="">Pilih Kabupaten</option>');
                 $.each(response.get_regency,function(i,data){
-                    $('#select_regency').append('<option value="'+data.id+'">' + data.kabupaten_kota +'</option>');
+                    console.log(data)
+                    $('#select_regency').append('<option value="'+data.id+'">' + data.name +'</option>');
                 });
                 
             },
@@ -277,6 +279,7 @@
                 $('#select_regency_update').empty();
                 $('#select_regency_update').append('<option value ="">Pilih Kabupaten</option>');
                 $.each(response.get_regency,function(i,data){
+                    
                     $('#select_regency_update').append('<option value="'+data.id+'">' + data.kabupaten_kota +'</option>');
                 });
                 
@@ -307,7 +310,8 @@
                 $('#select_district').empty();
                 $('#select_district').append('<option value ="">Pilih Kecamatan</option>');
                 $.each(response.get_district,function(i,data){
-                    $('#select_district').append('<option value="'+data.id+'">' + data.kecamatan+'</option>');
+                    console.log(data)
+                    $('#select_district').append('<option value="'+data.id+'">' + data.name+'</option>');
                 });
                 
             },
@@ -368,7 +372,8 @@
                 $('#select_village').empty();
                 $('#select_village').append('<option value ="">Pilih Kelurahan</option>');
                 $.each(response.get_village,function(i,data){
-                    $('#select_village').append('<option value="'+data.id+'">' + data.kelurahan+'</option>');
+                    console.log(data)
+                    $('#select_village').append('<option value="'+data.id+'">' + data.name+'</option>');
                 });
                 
             },
@@ -398,6 +403,7 @@
                 $('#select_village_update').empty();
                 $('#select_village_update').append('<option value ="">Pilih Kelurahan</option>');
                 $.each(response.get_village,function(i,data){
+                    console.log(data)
                     $('#select_village_update').append('<option value="'+data.id+'">' + data.kelurahan+'</option>');
                 });
                 
