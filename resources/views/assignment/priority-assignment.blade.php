@@ -12,13 +12,13 @@
                <div class="container">
                 <div class="form-group row">
                     <div class="col-4 col-sm-4 col-md-2 mt-2">
-                        <label for="">Request Type</label>
+                        <p for="">Request Type</p>
                     </div>
                     <div class="col-8 col-sm-8 col-md-4  mt-2">
                         <span id="select_request_type_priority"></span>
                     </div>
                     <div class="col-4 col-sm-4 col-md-2 mt-2">
-                        <label for="">PIC</label>
+                        <p for="">PIC</p>
                     </div>
                     <div class="col-8 col-sm-8 col-md-4  mt-2">
                         <span id="pic_priority"></span>
@@ -26,7 +26,7 @@
                 </div>
                     <div class="form-group row" style="margin-top:-20px">
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Request By</label>
+                            <p for="">Request By</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-4  mt-2">
                             <input type="hidden" class="form-control" id="wo_id_priority" readonly>
@@ -34,31 +34,31 @@
                         
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Request Code</label>
+                            <p for="">Request Code</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-4  mt-2">
                             <span id="request_code_priority"></span>
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Categories</label>
+                            <p for="">Categories</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-4  mt-2">
                           <span id="select_categories_priority"></span>
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Problem Type</label>
+                            <p for="">Problem Type</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-4  mt-2">
                           <span id="select_problem_type_priority"></span>
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Subject</label>
+                            <p for="">Subject</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-10  mt-2">
                            <span id="subject_priority"></span>
                         </div>
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Additional Info</label>
+                            <p for="">Additional Info</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-10 mt-2">
                            <span id="add_info_priority"></span>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-4 col-sm-4 col-md-2 mt-2">
-                            <label for="">Level</label>
+                            <p for="">Level</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-4 ">
                             <select name="select_level_priority" class="select2" style="width: 100%" id="select_level_priority">
