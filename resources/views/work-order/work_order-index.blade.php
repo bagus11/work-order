@@ -19,22 +19,22 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-md-6 mt-2">
-                                            <label for="">From</label>
+                                            <p for="">From</p>
                                             <input type="date" id="from" class="form-control" value="{{date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "-1 month" ) )}}">
                                         </div>
                                         <div class="col-md-6 mt-2">
-                                            <label for="">To</label>
+                                            <p for="">To</p>
                                             <input type="date" class="form-control" id="to" value="{{date('Y-m-d')}}">
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <label for="">Office</label>
+                                        <p for="">Office</p>
                                         <select name="officeFilter" id="officeFilter" class="select2" style="width:100%">
                                             <option value=""> * - All Office</option>
                                         </select>
                                     </div>
                                     <div class="mt-2">
-                                        <label for=""> Status</label>
+                                        <p for=""> Status</p>
                                         <select class="select2" id="statusFilter">
                                         <option value="">* - All Progress</option>
                                         <option value="0">NEW</option>
@@ -50,7 +50,7 @@
                                     </div>
                                     @can('create-work_order_list')
                                     <div class="mt-2">
-                                        <label for="">User Support</label>
+                                        <p for="">User Support</p>
                                         <select class="select2" id="selectSupportFilter" >
                                         </select>
                                         <input type="hidden" id="userIdSupportFilter">
