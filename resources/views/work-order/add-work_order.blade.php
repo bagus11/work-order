@@ -14,7 +14,7 @@
       
                     <div class="form-group row">
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
-                            <label for="">Request Type</label>
+                            <p for="">Request Type</p>
                         </div>
                         <div class="col-12 col-sm-7 col-md-4">
                             <select name="select_request_type" class="select2" style="width: 100%" id="select_request_type">
@@ -25,7 +25,7 @@
                             <input type="hidden" id="request_type" class="form-controll">
                         </div>
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
-                            <label for="">Request For</label>
+                            <p for="">Request For</p>
                         </div>
                         <div class="col-12 col-sm-7 col-md-4 ">
                             <select name="select_departement" id="select_departement" class="select2" style="width: 100%"></select>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
-                            <label for="">Categories</label>
+                            <p for="">Categories</p>
                         </div>
                         <div class="col-12 col-sm-7 col-md-4">
                             <select name="select_categories" class="select2" style="width: 100%" id="select_categories">
@@ -45,7 +45,7 @@
                             <span  style="color:red;" class="message_error text-red block categories_error"></span>
                         </div>
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
-                            <label for="">Problem Type</label>
+                            <p for="">Problem Type</p>
                         </div>
                         <div class="col-12 col-sm-7 col-md-4">
                             <select name="select_problem_type" class="select2" style="width: 100%" id="select_problem_type">
@@ -57,7 +57,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
-                            <label for="">Subject</label>
+                            <p for="">Subject</p>
                         </div>
                         <div class="col-12 col-sm-7 col-md-6">
                             <input type="text" class="form-control" id="subject">
@@ -66,7 +66,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
-                            <label for="">Additional Info</label>
+                            <p for="">Additional Info</p>
                         </div>
                         <div class="col-12 col-sm-7 col-md-10">
                             <textarea class="form-control" id="add_info" rows="3"></textarea>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 mt-2">
-                            <label  class="form-label" for="attachment" for="">Attachment</label>
+                            <p  class="form-label" for="attachment" for="">Attachment</p>
                         </div>
                         <div class="col-md-10">
                             <input type="file" class="form-control-file" id="attachment" required>
