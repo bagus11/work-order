@@ -12,7 +12,7 @@
                       <div class="col-md-6">
                           <div class="row">
                               <div class="col-md-4 mt-2">
-                                  <label for="">Request Type</label>
+                                  <p for="">Request Type</p>
                               </div>
                               <div class="col-md-8">
                                   <select name="" class="select2" id="select_request_type">
@@ -28,7 +28,7 @@
                       <div class="col-md-6">
                           <div class="row">
                               <div class="col-md-4 mt-2">
-                                  <label for="">Request For</label>
+                                  <p for="">Request For</p>
                               </div>
                               <div class="col-md-8">
                                   <select name="" class="select2" id="select_request_for">
@@ -44,7 +44,7 @@
                       <div class="col-md-6">
                           <div class="row">
                               <div class="col-md-4 mt-2">
-                                  <label for="">Categories</label>
+                                  <p for="">Categories</p>
                               </div>
                               <div class="col-md-8">
                                   <select name="" class="select2" id="select_categories">
@@ -58,7 +58,7 @@
                       <div class="col-md-6">
                           <div class="row">
                               <div class="col-md-4 mt-2">
-                                  <label for="">Problem Type</label>
+                                  <p for="">Problem Type</p>
                               </div>
                               <div class="col-md-8">
                                   <select name="" class="select2" id="select_problem_type">
@@ -74,7 +74,7 @@
                       <div class="col-md-6">
                           <div class="row">
                               <div class="col-md-4 mt-2">
-                                  <label for="">Subject</label>
+                                  <p for="">Subject</p>
                               </div>
                               <div class="col-md-8">
                                   <input type="text" class="form-control" id="subject">
@@ -85,7 +85,7 @@
                   </div>
                   <div class="form-group row">
                       <div class="col-md-2 mt-2">
-                          <label for="">Add info</label>
+                          <p for="">Add info</p>
                       </div>
                       <div class="col-md-10">
                           <textarea class="form-control" id="add_info" rows="3"></textarea>
@@ -94,7 +94,7 @@
                   </div>
                   <div class="form-group row">
                       <div class="col-md-2 mt-2">
-                          <label for="">User</label>
+                          <p for="">User</p>
                       </div>
                       <div class="col-md-4">
                           <select name="" class="select2" id="select_username"></select>
