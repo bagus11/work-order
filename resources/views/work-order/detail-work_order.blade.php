@@ -133,37 +133,37 @@
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
                                                                     <input type="hidden" class="form-control" id="wo_id_detail" >
                                                                     <input type="hidden" class="form-control" id="requestCodeWo" >
-                                                                   <span id="username_detail"></span>
+                                                                   <p id="username_detail"></p>
                                                                 </div>
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                                     <p for="">Request Code</p>
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
-                                                                  <span id="request_code_detail"></span>
+                                                                  <p id="request_code_detail"></p>
                                                                 </div>
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                                     <p for="">Request Type</p>
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
-                                                                    <span for="" id="select_request_type_detail"></span>
+                                                                    <p for="" id="select_request_type_detail"></p>
                                                                 </div>
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                                     <p for="">Categories</p>
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
-                                                                    <span id="select_categories_detail"></span>
+                                                                    <p id="select_categories_detail"></p>
                                                                 </div>
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                                     <p for="">Problem Type</p>
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
-                                                                  <span for="" id="select_problem_type_detail"></span>
+                                                                  <p for="" id="select_problem_type_detail"></p>
                                                                 </div>
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                                     <p for="">Subject</p>
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
-                                                                  <span id="subject_detail"></span>
+                                                                  <p id="subject_detail"></p>
                                                                 </div>
                                                            
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
@@ -182,7 +182,7 @@
                                                                     <p for="">Additional Info</p>
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-10  mt-2">
-                                                                  <span for="" id="add_info_detail"></span>
+                                                                  <p for="" id="add_info_detail"></p>
                                                                 </div>
                                                                 <div class="col-5 col-sm-5 col-md-2  mt-2">
                                                                     <p for="">Attachment User</p>
@@ -195,7 +195,7 @@
                                                                 </div>
                                                                 <div class="col-7 col-sm-7 col-md-4  mt-2">
                                                                         <div id="attachment_pic_detail">
-                                                                            <span>:-</span>
+                                                                            <p>:-</p>
                                                                         </div>
                                                                 </div>
                 
