@@ -12,7 +12,7 @@
                <div class="container">
                     <div class="form-group row">
                         <div class="col-md-4 mt-2">
-                            <label for="">Note PIC</label>
+                            <p for="">Note PIC</p>
                         </div>
                         <div class="col-md-8">
                             <input type="hidden" id="holdProgressId">

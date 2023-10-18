@@ -11,52 +11,52 @@
                <div class="container">
                 <div class="form-group row">
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Request By</label>
+                        <p for="">Request By</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-4  mt-2">
                         <input type="hidden" class="form-control" id="wo_id_rating" readonly>
                       <span id="username_rating"></span>
                     </div>
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Request Code</label>
+                        <p for="">Request Code</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-4  mt-2">
                        <span id="request_code_rating"></span>
                     </div>
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Request Type</label>
+                        <p for="">Request Type</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-4  mt-2">
                        <span id="select_request_type_rating"></span>
                     </div>
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Categories</label>
+                        <p for="">Categories</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-4  mt-2">
                       <span id="select_categories_rating"></span>
                     </div>
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Problem Type</label>
+                        <p for="">Problem Type</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-4  mt-2">
                         <span id="select_problem_type_rating"></span>
                     </div>
 
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Subject</label>
+                        <p for="">Subject</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-4  mt-2">
                        <span id="subject_rating"></span>
                     </div>
 
                     <div class="col-5 col-sm-4 col-md-2  mt-2">
-                        <label for="">Additional Info</label>
+                        <p for="">Additional Info</p>
                     </div>
                     <div class="col-7 col-sm-8 col-md-10  mt-2">
                        <span id="add_info_rating"></span>
                     </div>
                     <div class="col-12 col-sm-4 col-md-2  mt-2">
-                        <label for="">Note</label>
+                        <p for="">Note</p>
                     </div>
                     <div class="col-12 col-sm-8 col-md-8" style="margin-top: -10px">
                         <span for="" id ="creator_rating" style="text-align: right;float:right"></span>
@@ -65,7 +65,7 @@
                 </div>
                     <div class="form-group row">
                         <div class="col-12 col-sm-4 col-md-2  mt-2">
-                            <label for="">Note PIC</label>
+                            <p for="">Note PIC</p>
                         </div>
                         <div class="col-12 col-sm-8 col-md-8  mt-2">
                             <textarea class="form-control" id="note_pic_rating" rows="2"></textarea>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-4 col-sm-4 col-md-2  mt-2">
-                            <label for="">Rating</label>
+                            <p for="">Rating</p>
                         </div>
                         <div class="col-8 col-sm-8 col-md-8  ">
                             <div class="rating">
