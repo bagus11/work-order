@@ -109,11 +109,15 @@
 </html>
 
 <style>
+    
+    .selectOption2{
+    font-size:9px;
+  }
 .datatable-bordered{
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100% !important;
-  font-size: 10px;
+  font-size: 9px;
   overflow-x:auto !important;
   
   }
@@ -127,14 +131,15 @@
   .datatable-bordered tr:nth-child(even){background-color: #f2f2f2;}
 
   .datatable-bordered tr:hover {background-color: #ddd;}
-
+  .countMoney{
+    text-align: end
+  }
   .datatable-bordered th {
   border: 1px solid #ddd;
   padding-top: 10px;
   padding-bottom: 10px;
-  /* text-align: center; */
+  text-align: center;
   background-color: white;
-  font-size: 11px !important;
   color: black;
   overflow-x:auto !important;
   }
@@ -146,19 +151,28 @@
     }
 .select2{
     width: 100% !important;
+    font-size:9px;
 }
 .select2-selection__rendered {
-    line-height: 35px !important;
+    line-height: 25px !important;
+    font-size:9px;
   
 }
 .select2-container .select2-selection--single {
-    height: 45px !important;
+    height: 35px !important;
+    font-size:9px;
 }
 .select2-selection__arrow {
-    height: 44px !important;
+    height: 34px !important;
+    font-size:9px;
 }
+
 .dataTables_scrollHeadInner, .table{
      width:100%!important; 
+     font-size:9px;
+}
+p{
+  font-size: 10px !important;
 }
 .open\:bg-green-200[open] {
   --tw-bg-opacity: 1;
@@ -260,7 +274,7 @@ tr.shown td.subdetails-click {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   border-spacing: 0;
-  font-size: 12px;
+  font-size: 9px;
   width: 100% !important;
   border: 1px solid #ddd;
   
@@ -283,9 +297,13 @@ tr.shown td.subdetails-click {
         padding: 8px;
        
     }
-    fieldset.scheduler-border {
+  .headerTitle{
+    font-size: 14px;
+
+  }
+  fieldset.scheduler-border {
         border: 1px groove #ddd !important;
-        padding: 0 1.4em 1.4em 1.4em !important;
+        padding: 0 1.5em 1.5em 1.5em !important;
         margin: 0 0 1.5em 0 !important;
         -webkit-box-shadow:  0px 0px 0px 0px #000;
                 box-shadow:  0px 0px 0px 0px #000;
@@ -295,6 +313,55 @@ tr.shown td.subdetails-click {
         font-size: 12px !important;
         font-weight: bold !important;
         text-align: left !important;
+    }
+    .btnAction  {
+      appearance: none;
+      backface-visibility: hidden;
+      background-color: #27ae60;
+      border-radius: 8px;
+      border-style: none;
+      box-shadow: rgba(39, 174, 96, .15) 0 4px 9px;
+      box-sizing: border-box;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-family: Inter,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: normal;
+      line-height: 1.5;
+      outline: none;
+      overflow: hidden;
+      padding: 13px 20px;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      transform: translate3d(0, 0, 0);
+      transition: all .3s;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    .btnAction :hover {
+      background-color: #1e8449;
+      opacity: 1;
+      transform: translateY(0);
+      transition-duration: .35s;
+    }
+
+    .btnAction :active {
+      transform: translateY(2px);
+      transition-duration: .35s;
+    }
+
+    .btnAction :hover {
+      box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
+    }
+    .myFont{
+      font-size:9px
     }
    
 </style>
