@@ -72,6 +72,7 @@
             }
             $(document).ready(function(){
                 $(".select2").select2();
+                $(".select2").select2({ dropdownCssClass: "myFont" });
             });
             var url = window.location;
            // for sidebar menu entirely but not cover treeview
