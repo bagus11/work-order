@@ -11,44 +11,44 @@
                <div class="container">
                     <div class="form-group row">
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Request By</label>
+                            <p for="">Request By</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                             <input type="hidden" class="form-control" id="wo_id" readonly>
                            <span id="username_update"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Request Code</label>
+                            <p for="">Request Code</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                           <span id="request_code_update"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Request Type</label>
+                            <p for="">Request Type</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                             <span id="select_request_type_update"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Categories</label>
+                            <p for="">Categories</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                          <span id="select_categories_update"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Problem Type</label>
+                            <p for="">Problem Type</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                           <span id="select_problem_type_update"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Subject</label>
+                            <p for="">Subject</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-4  mt-2">
                           <span id="subject_update"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2  mt-2">
-                            <label for="">Additional Info</label>
+                            <p for="">Additional Info</p>
                         </div>
                         <div class="col-7 col-sm-8 col-md-10  mt-2 ">
                           <span id="add_info_update"></span>
