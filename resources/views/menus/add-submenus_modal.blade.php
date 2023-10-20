@@ -13,7 +13,7 @@
                <div class="container">
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Name</label>
+                            <p for="">Name</p>
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="submenus_name">
@@ -22,7 +22,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Menus</label>
+                            <p for="">Menus</p>
                         </div>
                         <div class="col-md-8">
                             <select name="select_menus_id" class="select2" id="select_menus_id" style="width:100%"></select>
@@ -33,7 +33,7 @@
                   
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Link</label>
+                            <p for="">Link</p>
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="submenus_link">
@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Description</label>
+                            <p for="">Description</p>
                         </div>
                         <div class="col-md-8">
                             <textarea class="form-control" id="submenus_description" rows="3"></textarea>

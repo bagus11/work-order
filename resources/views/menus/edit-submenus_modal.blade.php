@@ -12,7 +12,7 @@
                <div class="container">
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Name</label>
+                            <p for="">Name</p>
                         </div>
                         <div class="col-md-8">
                             <input type="hidden" class="form-control" id="id_submenus_update">
@@ -22,7 +22,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Derivative</label>
+                            <p for="">Derivative</p>
                         </div>
                         <div class="col-md-8">
                             <select name="select_submenus" class="select_submenus select2" id="select_submenus" style="width: 100%"></select>
@@ -32,20 +32,20 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Status</label>
+                            <p for="">Status</p>
                         </div>
                         <div class="col-md-8">
                             <input type="checkbox" style="border-radius: 5px !important;" class="submenus_status_update" id="submenus_status_update" name="submenus_status_update">
-                                        <label for="cc" id="label_submenus_status" style="margin-top:10px">
+                                        <p for="cc" id="label_submenus_status" style="margin-top:10px">
                                             Active                  
-                                        </label>
+                                        </p>
                             <input type="hidden" class="form-control" id="status_submenus_update">
                             <span  style="color:red;" class="message_error text-red block menus_type_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Link</label>
+                            <p for="">Link</p>
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="submenus_link_update" readonly>
@@ -54,7 +54,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Description</label>
+                            <p for="">Description</p>
                         </div>
                         <div class="col-md-8">
                             <textarea class="form-control" id="submenus_description_update" rows="3"></textarea>

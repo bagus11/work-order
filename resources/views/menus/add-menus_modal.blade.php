@@ -12,7 +12,7 @@
                <div class="container">
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Name</label>
+                            <p for="">Name</p>
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="menus_name">
@@ -21,7 +21,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Icon</label>
+                            <p for="">Icon</p>
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="menus_icon">
@@ -30,7 +30,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Tipe</label>
+                            <p for="">Tipe</p>
                         </div>
                         <div class="col-md-8">
                             <select name="" id="select_menus_type" class="form-control">
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Link</label>
+                            <p for="">Link</p>
                         </div>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="menus_link">
@@ -53,7 +53,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-3 mt-2">
-                            <label for="">Description</label>
+                            <p for="">Description</p>
                         </div>
                         <div class="col-md-8">
                             <textarea class="form-control" id="menus_description" rows="3"></textarea>
