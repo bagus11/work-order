@@ -456,15 +456,45 @@ getNotification()
             }); 
         }
         function postAttachment(route,data,withFile,callback){
-        $.ajax({
+            $.ajax({
+                    url: route,
+                    type: 'POST',
+                    type: "post",
+                    dataType: 'json',
+                    async: true,
+                    processData: withFile,
+                    contentType: withFile,
+                    data: data,
+                    beforeSend: function() {
+                        SwalLoading('Please wait ...');
+                    },
+                    success:callback,
+                    error: function(response) {
+                        $('.message_error').html('')
+                        swal.close();
+                        if(response.status == 500){
+                            console.log(response)
+                            toastr['error'](response.responseJSON.meta.message);
+                            return false
+                        }
+                        if(response.status === 422){
+                            $.each(response.responseJSON.errors, (key, val) => 
+                                {
+                                    $('span.'+key+'_error').text(val)
+                                });
+                        }else{
+                            toastr['error']('Failed to get data, please contact ICT Developer');
+                        }
+                    }
+            });
+        }
+        function postCallback(route,data,callback){
+            $.ajax({
                 url: route,
-                type: 'POST',
                 type: "post",
                 dataType: 'json',
+                data:data,
                 async: true,
-                processData: withFile,
-                contentType: withFile,
-                data: data,
                 beforeSend: function() {
                     SwalLoading('Please wait ...');
                 },
@@ -477,7 +507,8 @@ getNotification()
                         toastr['error'](response.responseJSON.meta.message);
                         return false
                     }
-                    if(response.status === 422){
+                    if(response.status === 422)
+                    {
                         $.each(response.responseJSON.errors, (key, val) => 
                             {
                                 $('span.'+key+'_error').text(val)
@@ -486,7 +517,72 @@ getNotification()
                         toastr['error']('Failed to get data, please contact ICT Developer');
                     }
                 }
-        });
+            });  
+        }
+        function postCallbackNoSwal(route,data,callback){
+            $.ajax({
+                url: route,
+                type: "post",
+                dataType: 'json',
+                data:data,
+                async: true,
+                success:callback,
+                error: function(response) {
+                    $('.message_error').html('')
+                    swal.close();
+                    if(response.status == 500){
+                        console.log(response)
+                        toastr['error'](response.responseJSON.meta.message);
+                        return false
+                    }
+                    if(response.status === 422)
+                    {
+                        $.each(response.responseJSON.errors, (key, val) => 
+                            {
+                                $('span.'+key+'_error').text(val)
+                            });
+                    }else{
+                        toastr['error']('Failed to get data, please contact ICT Developer');
+                    }
+                }
+            });  
+        }
+        function getCallbackNoSwal(route,data,callback){
+            $.ajax({
+            url: route,
+            type: "get",
+            dataType: 'json',
+            data:data,
+            success: callback,
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            }); 
+        }
+        function getActiveItems(url,data,id,name){
+        $.ajax({
+                url: url,
+                type: "get",
+                dataType: 'json',
+                async: true,
+                data : data,
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success: function(response) {
+                swal.close();
+                    $('#'+id).empty()
+                    $('#'+id).append('<option value ="">Choose '+ name +'</option>');
+                    $.each(response.data,function(i,data){
+                        $('#'+id).append('<option data-name="'+ data.name +'" value="'+data.id+'">' + data.name +'</option>');
+                    });
+                },
+                error: function(response) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact Developer');
+                }
+            });   
     }
  // End Repository Pattern
 </script>

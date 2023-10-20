@@ -4,6 +4,8 @@ use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\inv\Master\MasterCategoryInvController;
+use App\Http\Controllers\Inv\Master\MasterTypeInvController;
 use App\Http\Controllers\ManualWOController;
 use App\Http\Controllers\MasterCategoryController;
 use App\Http\Controllers\MasterDepartementController;
@@ -278,5 +280,23 @@ Route::group(['middleware' => ['auth']], function() {
     // Import User from HRIS
         Route::get('getUserHris', [UserController::class, 'getUserHris'])->name('getUserHris');
     // Import User from HRIS
+
+    // Inventory
+        // Master
+            // Master Type
+            Route::get('master_type_inv', [MasterTypeInvController::class, 'index'])->name('master_type_inv'); 
+            Route::get('getTypeInv', [MasterTypeInvController::class, 'getTypeInv'])->name('getTypeInv'); 
+            Route::post('saveTypeInv', [MasterTypeInvController::class, 'saveTypeInv'])->name('saveTypeInv'); 
+            Route::get('detailTypeInv', [MasterTypeInvController::class, 'detailTypeInv'])->name('detailTypeInv'); 
+            Route::post('updateTypeInv', [MasterTypeInvController::class, 'updateTypeInv'])->name('updateTypeInv'); 
+            // Master Type
+
+            // Category
+                Route::get('master_category_inv', [MasterCategoryInvController::class, 'index'])->name('master_category_inv'); 
+                Route::get('getCategoryInv', [MasterCategoryInvController::class, 'getCategoryInv'])->name('getCategoryInv'); 
+                Route::post('saveCategoryInv', [MasterCategoryInvController::class, 'saveCategoryInv'])->name('saveCategoryInv'); 
+            // Category
+        // Master
+    // Inventory
 });
 
