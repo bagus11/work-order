@@ -5,12 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-dark">{{ __('Login') }}
-                <div class="card-tools">
-                    <a target="_blank" href="{{asset('storage/manualBook/DokumentasiAlurSistemUser.pdf')}}" class="btn btn-success" title="Download manual book here">
-                        <i class="fas fa-book"></i>
-                    </a>
-                </div>
+                <div class="card-header" style="background-color: #26577C;color:white">{{ __('Login') }}
+               
                 </div>
 
                 <div class="card-body">
@@ -21,7 +17,7 @@
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('NIK') }}</label>
 
                             <div class="col-md-6">
-                                <input id="nik" type="nik" class="form-control @error('nik') is-invalid @enderror" name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus>
+                                <input id="nik" style="font-size: 12px !important" type="nik" class="form-control @error('nik') is-invalid @enderror" name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus>
 
                                 @error('nik')
                                     <span class="invalid-feedback" role="alert">
@@ -35,7 +31,7 @@
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                <input id="password"  style="font-size: 12px !important" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
