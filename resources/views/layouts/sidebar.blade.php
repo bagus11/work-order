@@ -43,6 +43,7 @@
                                         ->where('submenus.id_menus', $item->id)
                                         ->where('submenus.status', 1)
                                         ->where('model_has_roles.model_id', auth()->user()->id)
+                                        ->orderBy('order','asc')
                                         ->get();
                             @endphp
                              <a href="#" class="nav-link">
