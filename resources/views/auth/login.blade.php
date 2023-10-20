@@ -14,7 +14,7 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('NIK') }}</label>
+                            <p for="email" class="col-md-4 col-form-label text-md-right">{{ __('NIK') }}</p>
 
                             <div class="col-md-6">
                                 <input id="nik" style="font-size: 12px !important" type="nik" class="form-control @error('nik') is-invalid @enderror" name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus>
@@ -28,7 +28,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+                            <p for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</p>
 
                             <div class="col-md-6">
                                 <input id="password"  style="font-size: 12px !important" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
