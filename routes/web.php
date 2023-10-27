@@ -5,6 +5,7 @@ use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\inv\Master\MasterCategoryInvController;
+use App\Http\Controllers\inv\Master\MasterProductInvController;
 use App\Http\Controllers\Inv\Master\MasterTypeInvController;
 use App\Http\Controllers\ManualWOController;
 use App\Http\Controllers\MasterCategoryController;
@@ -94,6 +95,9 @@ Route::group(['middleware' => ['auth']], function() {
     });
     Route::group(['middleware' => ['permission:view-rfp_transaction']], function () {
         Route::get('rfp_transaction', [RFPController::class, 'index'])->name('rfp_transaction');
+    });
+    Route::group(['middleware' => ['permission:view-master_product_inv']], function () {
+        Route::get('master_product_inv', [MasterProductInvController::class, 'index'])->name('master_product_inv');
     });
     // Menus
     Route::post('save_menus', [MenusController::class, 'save_menus'])->name('save_menus');
@@ -295,6 +299,10 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::get('master_category_inv', [MasterCategoryInvController::class, 'index'])->name('master_category_inv'); 
                 Route::get('getCategoryInv', [MasterCategoryInvController::class, 'getCategoryInv'])->name('getCategoryInv'); 
                 Route::post('saveCategoryInv', [MasterCategoryInvController::class, 'saveCategoryInv'])->name('saveCategoryInv'); 
+                Route::get('detailCategoryInv', [MasterCategoryInvController::class, 'detailCategoryInv'])->name('detailCategoryInv'); 
+                Route::post('updateCategoryInv', [MasterCategoryInvController::class, 'updateCategoryInv'])->name('updateCategoryInv'); 
+                Route::get('deleteCategoryInv', [MasterCategoryInvController::class, 'deleteCategoryInv'])->name('deleteCategoryInv'); 
+                Route::post('uploadCategory', [MasterCategoryInvController::class, 'uploadCategory'])->name('uploadCategory'); 
             // Category
         // Master
     // Inventory

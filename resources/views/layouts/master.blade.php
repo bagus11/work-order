@@ -362,7 +362,7 @@ tr.shown td.subdetails-click {
       box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
     }
     .myFont{
-      font-size:9px
+      font-size:9px !important
     }
    
 </style>

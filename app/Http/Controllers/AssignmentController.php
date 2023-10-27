@@ -46,7 +46,7 @@ class AssignmentController extends Controller
                               ->join('master_departements','master_departements.id','=','work_orders.departement_id')
                               ->where('work_orders.id',$request->id)
                               ->first();
-      
+          
           $data_log = DB::table('work_order_logs')
                               ->select('work_order_logs.*','users.name as username')
                               ->leftJoin('users', 'users.id','=', 'work_order_logs.creator')

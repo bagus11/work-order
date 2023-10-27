@@ -456,38 +456,38 @@ getNotification()
             }); 
         }
         function postAttachment(route,data,withFile,callback){
-            $.ajax({
-                    url: route,
-                    type: 'POST',
-                    type: "post",
-                    dataType: 'json',
-                    async: true,
-                    processData: withFile,
-                    contentType: withFile,
-                    data: data,
-                    beforeSend: function() {
-                        SwalLoading('Please wait ...');
-                    },
-                    success:callback,
-                    error: function(response) {
-                        $('.message_error').html('')
-                        swal.close();
-                        if(response.status == 500){
-                            console.log(response)
-                            toastr['error'](response.responseJSON.meta.message);
-                            return false
-                        }
-                        if(response.status === 422){
-                            $.each(response.responseJSON.errors, (key, val) => 
-                                {
-                                    $('span.'+key+'_error').text(val)
-                                });
-                        }else{
-                            toastr['error']('Failed to get data, please contact ICT Developer');
-                        }
+        $.ajax({
+                url: route,
+                type: 'POST',
+                type: "post",
+                dataType: 'json',
+                async: true,
+                processData: withFile,
+                contentType: withFile,
+                data: data,
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success:callback,
+                error: function(response) {
+                    $('.message_error').html('')
+                    swal.close();
+                    if(response.status == 500){
+                        console.log(response)
+                        toastr['error'](response.responseJSON.meta.message);
+                        return false
                     }
-            });
-        }
+                    if(response.status === 422){
+                        $.each(response.responseJSON.errors, (key, val) => 
+                            {
+                                $('span.'+key+'_error').text(val)
+                            });
+                    }else{
+                        toastr['error']('Failed to get data, please contact ICT Developer');
+                    }
+                }
+        });
+    }
         function postCallback(route,data,callback){
             $.ajax({
                 url: route,

@@ -5,8 +5,12 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}
-               
+                <div class="card-header bg-dark">{{ __('Login') }}
+                    <div class="card-tools">
+                        <a target="_blank" href="{{asset('storage/manualBook/DokumentasiAlurSistemUser.pdf')}}" class="btn btn-success" title="Download manual book here">
+                            <i class="fas fa-book"></i>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body">

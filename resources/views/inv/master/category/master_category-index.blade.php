@@ -13,6 +13,9 @@
                         <button id="add_category" type="button" class="btn btn-sm btn-success " style="float:right"  data-toggle="modal" data-target="#addMasterCategory">
                             <i class="fa-solid fa-plus"></i>
                         </button>
+                        <button id="btn_import_modal" type="button" class="btn btn-sm btn-info mr-2" style="float:right"  data-toggle="modal" data-target="#importMasterCategory">
+                            <i class="fa-solid fa-file-import"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -32,8 +35,9 @@
       </div>
     </div>
 
+@include('inv.master.category.modal.import-category')
 @include('inv.master.category.modal.add-category')
-{{-- @include('inv.master.category.modal.edit-category') --}}
+@include('inv.master.category.modal.edit-category')
 @endsection
 @push('custom-js')
 @include('inv.master.category.master_category-js')
