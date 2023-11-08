@@ -29,7 +29,7 @@
         </div>
     </div>
 </div>
-@include('holdRequest.holdRequest-add')
+@include('holdRequest.holdrequest-add')
 @include('holdRequest.holdRequest-edit')
 @include('holdRequest.resumeRequest-edit')
 @endsection

@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-dark-warning elevation-4">
+<aside class="main-sidebar sidebar-dark-warning elevation-4" style="background-color: #213555">
     <a href="{{route('dashboard')}}" class="brand-link">
        <img src="{{asset('icon.png')}}" width="100px" style="margin-left:auto;margin-right:auto;display:block" alt="">
     </a>

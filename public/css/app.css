@@ -60007,5 +60007,9 @@ a.text-dark:hover, a.text-dark:focus {
     color: inherit;
     border-color: #dee2e6;
   }
+  .bg-core {
+    background-color: #213555;
+    color : white;
+  }
 }
 

@@ -13,7 +13,7 @@ use App\Http\Controllers\MasterDepartementController;
 use App\Http\Controllers\MasterJabatanController;
 use App\Http\Controllers\MasterKantorController;
 use App\Http\Controllers\MasterPriorityController;
-use App\Http\Controllers\masterTeamController;
+use App\Http\Controllers\MasterTeamController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\ReportKPIController;
@@ -91,7 +91,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('ict_wo', [ManualWOController::class, 'index'])->name('ict_wo');
     });
     Route::group(['middleware' => ['permission:view-masterTeamProject']], function () {
-        Route::get('masterTeamProject', [masterTeamController::class, 'index'])->name('masterTeamProject');
+        Route::get('masterTeamProject', [MasterTeamController::class, 'index'])->name('masterTeamProject');
     });
     Route::group(['middleware' => ['permission:view-rfp_transaction']], function () {
         Route::get('rfp_transaction', [RFPController::class, 'index'])->name('rfp_transaction');
@@ -237,13 +237,13 @@ Route::group(['middleware' => ['auth']], function() {
   
     
     // MasterTeam
-    Route::get('getMasterTeam', [masterTeamController::class, 'getMasterTeam'])->name('getMasterTeam');
-    Route::post('addMasterTeam', [masterTeamController::class, 'addMasterTeam'])->name('addMasterTeam');
-    Route::get('getMasterTeamDetail', [masterTeamController::class, 'getMasterTeamDetail'])->name('getMasterTeamDetail');
-    Route::get('getDetailTeam', [masterTeamController::class, 'getDetailTeam'])->name('getDetailTeam');
-    Route::post('updateMasterTeam', [masterTeamController::class, 'updateMasterTeam'])->name('updateMasterTeam');
-    Route::post('addDetailTeam', [masterTeamController::class, 'addDetailTeam'])->name('addDetailTeam');
-    Route::post('updateDetailTeam', [masterTeamController::class, 'updateDetailTeam'])->name('updateDetailTeam');
+    Route::get('getMasterTeam', [MasterTeamController::class, 'getMasterTeam'])->name('getMasterTeam');
+    Route::post('addMasterTeam', [MasterTeamController::class, 'addMasterTeam'])->name('addMasterTeam');
+    Route::get('getMasterTeamDetail', [MasterTeamController::class, 'getMasterTeamDetail'])->name('getMasterTeamDetail');
+    Route::get('getDetailTeam', [MasterTeamController::class, 'getDetailTeam'])->name('getDetailTeam');
+    Route::post('updateMasterTeam', [MasterTeamController::class, 'updateMasterTeam'])->name('updateMasterTeam');
+    Route::post('addDetailTeam', [MasterTeamController::class, 'addDetailTeam'])->name('addDetailTeam');
+    Route::post('updateDetailTeam', [MasterTeamController::class, 'updateDetailTeam'])->name('updateDetailTeam');
     
     // 
     Route::get('getrfpTransaction', [RFPController::class, 'getrfpTransaction'])->name('getrfpTransaction');
