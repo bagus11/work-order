@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-dark">{{ __('Login') }}
+                <div class="card-header bg-core">{{ __('Login') }}
                     <div class="card-tools">
                         <a target="_blank" href="{{asset('storage/manualBook/DokumentasiAlurSistemUser.pdf')}}" class="btn btn-success" title="Download manual book here">
                             <i class="fas fa-book"></i>
@@ -42,20 +42,10 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <input type="checkbox" onclick="showPass()"> show password
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="form-group row mb-0">
                             <div class="col-md-8 offset-md-4">

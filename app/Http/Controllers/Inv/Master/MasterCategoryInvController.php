@@ -22,7 +22,6 @@ class MasterCategoryInvController extends Controller
         return response()->json([
             'data'=>$data
         ]);
-        
     }
     function saveCategoryInv(Request $request, StoreCategoryInvRequest $storeCategoryInvRequest) {
         try {

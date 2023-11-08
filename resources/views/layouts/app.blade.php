@@ -24,7 +24,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-dark  bg-core shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                   Work Order
@@ -50,3 +50,19 @@
     </div>
 </body>
 </html>
+<script>
+    function showPass() {
+        var x = document.getElementById("password");
+        if (x.type === "password") {
+            x.type = "text";
+        } else {
+            x.type = "password";
+        }
+    }
+</script>
+<style>
+    .bg-core {
+      background-color: #213555 !important;
+      color: white;
+    }
+</style>

@@ -4,8 +4,7 @@
 <div class="justify-content-center">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-dark">
-                List Assignment
+            <div class="card-header bg-core">
                 <div class="card-tools">
                     <button id="btnAddTransfer" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addPICTransfer" style="float:right">
                         <i class="fas fa-plus"></i>

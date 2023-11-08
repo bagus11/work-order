@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Master Category')
+@section('title', 'Master Brand')
 @section('content')
 
 
@@ -7,10 +7,12 @@
           <div class="col-12">
             <div class="card card-dark">
                 <div class="card-header bg-core">
-                    <div class="card-title"></div>
+                    <div class="card-title">
+                        Brand List
+                    </div>
                   
                     <div class="card-tools">
-                        <button id="add_category" type="button" class="btn btn-sm btn-success " style="float:right"  data-toggle="modal" data-target="#addMasterCategory">
+                        <button id="add_brand" type="button" class="btn btn-sm btn-success " style="float:right"  data-toggle="modal" data-target="#addMasterBrandModal">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                         <button id="btn_import_modal" type="button" class="btn btn-sm btn-info mr-2" style="float:right"  data-toggle="modal" data-target="#importMasterCategory">
@@ -20,12 +22,11 @@
                 </div>
                 <div class="card-body">
                     
-                    <table class="datatable-bordered nowrap display" id="category_table">
+                    <table class="datatable-bordered nowrap display" id="brand_table">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Name</th>
-                                <th>Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -35,10 +36,9 @@
       </div>
     </div>
 
-@include('inv.master.category.modal.import-category')
-@include('inv.master.category.modal.add-category')
-@include('inv.master.category.modal.edit-category')
+    @include('inv.master.brand.modal.add-master_brand')
+    @include('inv.master.brand.modal.edit-master_brand')
 @endsection
 @push('custom-js')
-@include('inv.master.category.master_category-js')
+@include('inv.master.brand.master_brand-js')
 @endpush

@@ -5,14 +5,14 @@
 
     <div class="justify-content-center">
           <div class="col-12">
-            <div class="card card-dark">
-                <div class="card-header">
+            <div class="card ">
+                <div class="card-header bg-core">
                     <div class="card-title"></div>
                   
                     <div class="card-tools">
                         <div class="btn-group" style="float:right">
                             <button type="button" class="btn btn-sm btn-tool dropdown-toggle" style="margin-top:3px" data-toggle="dropdown">
-                                <ion-icon name="filter-sharp"></ion-icon>
+                               <i class="fas fa-filter" style="color: white"></i>
                             </button>
                        
                             <div class="dropdown-menu dropdown-menu-right" id="filter" role="menu" style="width:250px !important;">

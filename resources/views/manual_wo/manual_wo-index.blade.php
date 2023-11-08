@@ -4,7 +4,7 @@
 <div class="justify-content-center">
     <div class="col-12">
       <div class="card card-dark">
-          <div class="card-header">
+          <div class="card-header bg-core">
           </div>
           <div class="card-body">
              <div class="container">

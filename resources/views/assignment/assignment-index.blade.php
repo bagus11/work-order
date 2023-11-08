@@ -4,7 +4,7 @@
 <div class="justify-content-center">
       <div class="col-12">
         <div class="card card-dark">
-            <div class="card-header">
+            <div class="card-header bg-core">
                 <label for="">List Assignment</label>
                 <div class="card-tools">
                     <button id="refresh" onclick="get_work_order_list()" title="Refresh" class="btn btn-sm btn-info mr-2" style="float:right">

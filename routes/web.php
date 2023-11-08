@@ -4,6 +4,7 @@ use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\inv\Master\MasterBrandController;
 use App\Http\Controllers\inv\Master\MasterCategoryInvController;
 use App\Http\Controllers\inv\Master\MasterProductInvController;
 use App\Http\Controllers\Inv\Master\MasterTypeInvController;
@@ -296,7 +297,8 @@ Route::group(['middleware' => ['auth']], function() {
             // Master Type
 
             // Category
-                Route::get('master_category_inv', [MasterCategoryInvController::class, 'index'])->name('master_category_inv'); 
+            
+                Route::get(' master_category_inv', [MasterCategoryInvController::class, 'index'])->name(' master_category_inv'); 
                 Route::get('getCategoryInv', [MasterCategoryInvController::class, 'getCategoryInv'])->name('getCategoryInv'); 
                 Route::post('saveCategoryInv', [MasterCategoryInvController::class, 'saveCategoryInv'])->name('saveCategoryInv'); 
                 Route::get('detailCategoryInv', [MasterCategoryInvController::class, 'detailCategoryInv'])->name('detailCategoryInv'); 
@@ -304,6 +306,15 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::get('deleteCategoryInv', [MasterCategoryInvController::class, 'deleteCategoryInv'])->name('deleteCategoryInv'); 
                 Route::post('uploadCategory', [MasterCategoryInvController::class, 'uploadCategory'])->name('uploadCategory'); 
             // Category
+
+            // Master Brand
+                Route::get('master_brand', [MasterBrandController::class, 'index'])->name('master_brand'); 
+                Route::get('getBrand', [MasterBrandController::class, 'getBrand'])->name('getBrand'); 
+                Route::post('addBrand', [MasterBrandController::class, 'addBrand'])->name('addBrand'); 
+                Route::get('detailBrand', [MasterBrandController::class, 'detailBrand'])->name('detailBrand'); 
+                Route::post('updateBrand', [MasterBrandController::class, 'updateBrand'])->name('updateBrand'); 
+                Route::get('deleteBrand', [MasterBrandController::class, 'deleteBrand'])->name('deleteBrand'); 
+            // Master Brand
         // Master
     // Inventory
 });

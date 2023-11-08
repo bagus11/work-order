@@ -6,7 +6,7 @@
     <div class="justify-content-center">
           <div class="col-12">
             <div class="card card-dark">
-                <div class="card-header">
+                <div class="card-header bg-core">
                     <div class="card-title"></div>
                   
                     <div class="card-tools">
