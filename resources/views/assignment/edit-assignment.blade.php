@@ -1,9 +1,13 @@
-
+<style>
+    span{
+        font-size: 11px !important;
+    }
+</style>
 <div class="modal fade" id="editAssignment">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title">Detail Ticket</h4>
+            <div class="modal-header bg-core">
+                Detail Ticket
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -14,7 +18,7 @@
                     <div class="col-5 col-sm-4 col-md-2 mt-2">
                         <p for="">Request Type</p>
                     </div>
-                    <div class="col-7 col-sm-8 col-md-4  mt-2">
+                    <div class="col-7 col-sm-8 col-md-4  mt-1">
                         <span id="select_request_type"></span>
                     </div>
                 </div>
@@ -22,26 +26,26 @@
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <p for="">Request By</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-2">
+                        <div class="col-7 col-sm-8 col-md-4  mt-1">
                             <input type="hidden" class="form-control" id="wo_id" readonly>
                             <span id="username"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <p for="">Request Code</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-2">
+                        <div class="col-7 col-sm-8 col-md-4  mt-1">
                             <span id="request_code"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <p for="">Categories</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-2">
+                        <div class="col-7 col-sm-8 col-md-4  mt-1">
                           <span id="select_categories"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
                             <p for="">Problem Type</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-2">
+                        <div class="col-7 col-sm-8 col-md-4  mt-1">
                           <span id="select_problem_type"></span>
                         </div>
                         <div class="col-5 col-sm-4 col-md-2 mt-2">
