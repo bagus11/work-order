@@ -113,6 +113,7 @@ class UserController extends Controller
                     ];
                     array_push($Arraypost,$post);
                 }
+                
             }
         }
         // dd($Arraypost);
