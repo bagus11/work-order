@@ -103,17 +103,18 @@ class UserController extends Controller
         $Arraypost=[];
         foreach($data as $row){
             $validation = User::where('nik',$row['emp_no'])->count();
-            if($validation < 1){
-                if($row['emp_no'] !=null){
-                    $post=[
-                        'name'          =>$row['Full_Name'],
-                        'nik'           =>$row['emp_no'],
-                        'password'      => Hash::make('pass12345'),
-                        'email'         =>'user'.$row['emp_no'].'@pralon.com'
-                    ];
-                    array_push($Arraypost,$post);
-                }
+            if($row['emp_no'] !=null){
+                if($validation < 1){
                 
+                        $post=[
+                            'name'          =>$row['Full_Name'],
+                            'nik'           =>$row['emp_no'],
+                            'password'      => Hash::make('pass12345'),
+                            'email'         =>'user'.$row['emp_no'].'@pralon.com'
+                        ];
+                        array_push($Arraypost,$post);
+                        
+                }
             }
         }
         // dd($Arraypost);
