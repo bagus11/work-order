@@ -102,17 +102,20 @@ class UserController extends Controller
         $message ='Data has been failed import';
         $Arraypost=[];
         foreach($data as $row){
-            $validation = User::where('nik',$row['emp_no'])->where('email','user'.$row['emp_no'].'@pralon.com')->count();
-            if($validation == 0){
-                $post=[
-                    'name'          =>$row['Full_Name'],
-                    'nik'           =>$row['emp_no'],
-                    'password'      => Hash::make('pass12345'),
-                    'email'         =>'user'.$row['emp_no'].'@pralon.com'
-                ];
-                array_push($Arraypost,$post);
+            $validation = User::where('nik',$row['emp_no'])->count();
+            if($validation < 1){
+                if($row['emp_no'] !=null){
+                    $post=[
+                        'name'          =>$row['Full_Name'],
+                        'nik'           =>$row['emp_no'],
+                        'password'      => Hash::make('pass12345'),
+                        'email'         =>'user'.$row['emp_no'].'@pralon.com'
+                    ];
+                    array_push($Arraypost,$post);
+                }
             }
         }
+        // dd($Arraypost);
         $insert = User::insert($Arraypost);
         if($insert){
             $status =200;
