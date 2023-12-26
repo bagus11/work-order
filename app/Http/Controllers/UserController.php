@@ -102,7 +102,7 @@ class UserController extends Controller
         $message ='Data has been failed import';
         $Arraypost=[];
         foreach($data as $row){
-            $validation = User::where('nik',$row['emp_no'])->count();
+            $validation = User::where('nik',$row['emp_no'])->where('email','user'.$row['emp_no'].'@pralon.com')->count();
             if($validation == 0){
                 $post=[
                     'name'          =>$row['Full_Name'],
