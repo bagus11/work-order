@@ -346,11 +346,11 @@ class WorkOrderController extends Controller
                         . " ICT DEV";
     
                     // Set Telegram Message
-                        // Telegram::sendMessage([
-                        //     'chat_id' => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
-                        //     'parse_mode' => 'HTML',
-                        //     'text' => $text
-                        // ]);
+                        Telegram::sendMessage([
+                            'chat_id' => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
+                            'parse_mode' => 'HTML',
+                            'text' => $text
+                        ]);
                     // Send To Telegram Chanel
                     
                 });
