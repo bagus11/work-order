@@ -48,7 +48,7 @@
                                         <option value="5">REJECT</option>
                                         </select>
                                     </div>
-                                    @can('create-work_order_list')
+                                    @can('view-user_setting')
                                     <div class="mt-2">
                                         <p for="">User Support</p>
                                         <select class="select2" id="selectSupportFilter" >

@@ -2,8 +2,8 @@
 <div class="modal fade" id="editPriority">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title">Assign Ticket</h4>
+            <div class="modal-header bg-core">
+                Assign Ticket
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>

@@ -1,9 +1,13 @@
-
+<style>
+    span{
+        font-size: 10px !important
+    }
+</style>
 <div class="modal fade" id="addMasterKantor">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title">Form Add Ticket</h4>
+            <div class="modal-header bg-core">
+                Form Add Ticket
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>

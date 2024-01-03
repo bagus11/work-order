@@ -741,6 +741,7 @@
                                 priorityColor ='color:red;font-weight:bold'
                             break
                           }
+                         
                           var auth_id = $('#auth_id').val()
                             if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
                                 if(response.data[i].transfer_pic == 0){
@@ -754,6 +755,9 @@
                                                 update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
                                                     <i class="fas fa-pen"></i>
                                                 </button> `;
+                                            }else{
+                                                status_wo ="HOLD Request"
+                                                status_color ='#213555'
                                             }
                                     }
                                 }
