@@ -27,6 +27,7 @@
                                 {{-- <option value="RFP">Request For Project</option> --}}
                             </select>
                             <input type="hidden" id="request_type" class="form-controll">
+                            <span  style="color:red;" class="message_error text-red block request_type_error"></span>
                         </div>
                         <div class="col-12 col-sm-5 col-md-2 mt-2">
                             <p for="">Request For</p>
