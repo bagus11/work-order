@@ -68,8 +68,8 @@
                     <fieldset class="scheduler-border">
                         <legend class="scheduler-border">Comment Activity</legend>
                         <input type="hidden" id="detail_code_chat">
+                        <input type="hidden" id="request_code_chat">
                         <div class="container" id="chat_container">
-
                         </div>
                         <fieldset class="scheduler-border">
                             <legend class="scheduler-border">Enter Comment Here</legend>

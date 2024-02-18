@@ -363,7 +363,10 @@ tr.shown td.subdetails-click {
       background-color: #213555 !important;
       color: white;
     }
-    
+    .desk {
+      display: flex;
+      justify-content: center;
+    }
         
     /* .cursor-grab {
       cursor: -webkit-grab;

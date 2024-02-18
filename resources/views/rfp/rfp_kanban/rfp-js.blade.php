@@ -132,20 +132,37 @@
                                     const time = d.toTimeString().split(' ')[0];
                                     var auth = $('#authId').val()
                                     var name_img = response.chat[j].user_relation.gender == 1 ? 'profile.png' : 'female_final.png';
-                                    chat +=`
-                                            <div class="direct-chat-msg ${response.chat[j].user_relation.id == $('#authId').val() ?'right':''}">
-                                                <div class="direct-chat-infos clearfix">
-                                                    <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
-                                                    <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
-                                                </div>
-                                                
-                                                    <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
-                                            
-                                                <div class="direct-chat-text" style='font-size:9px;'>
-                                                    ${response.chat[j].remark}
-                                                </div>
-                                            </div>
-                                    `;
+                                            if(response.chat[j].user_relation.id == 999){
+                                           
+                                              remark = `
+                                                  <div class="direct-chat-msg">
+                                                        <div class="direct-chat-infos clearfix">
+                                                            <span style='font-size:9px;' class="direct-chat-timestamp">${formatDate(date)} ${time}</span>
+                                                        </div>
+                                                       <div class="desk">
+                                                        <span style="font-size:9px !important;color:black;font-weight:normal !important; margin-left:auto;margin-right:auto;text-align:center !important;background-color:#d2d6de" class="badge badge-secondary p-2">${response.chat[j].remark}</span>
+                                                        </div>
+                                                        
+                                                    </div>
+
+                                              `
+                                            }else{
+                                              remark =`
+                                              <div class="direct-chat-msg ${response.chat[j].user_relation.id == $('#authId').val() ?'right':''}">
+                                                        <div class="direct-chat-infos clearfix">
+                                                            <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
+                                                            <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
+                                                        </div>
+                                                        
+                                                            <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
+                                                    
+                                                        <div class="direct-chat-text" style='font-size:9px;'>
+                                                            ${response.chat[j].remark}
+                                                        </div>
+                                                    </div>
+                                              `;
+                                            }
+                                            chat += remark;
                   }
                   $('#chat_container').append(chat)
                 // Mapping Chat
@@ -157,6 +174,8 @@
                   $('#status_kanban').html( response.detail.status == 1 ? ': ' + 'DONE' : ': ' + 'On Progress')
                   $('#percentage_kanban').html(': ' + response.detail.percentage)
                   $('#description_kanban').html(': ' + response.detail.description)
+                  $('#request_code_chat').val(response.detail.request_code)
+                  $('#detail_code_chat').val(id)
                 // Mapping Detail
                 },
             error: function(xhr, status, error) {
@@ -166,6 +185,7 @@
         });
  
    }
+
   //  Add Chat Comment
     $('#send_chat').on('click', function(){
       var data ={
@@ -215,6 +235,42 @@
     })
     
   //  Add Chat Comment
+
+  // Update Status SubDetail
+    $('#subDetailTable').on('change','.is_checked', function(){
+      
+      var data ={
+        'id'      : $(this).data('id'),
+        'status'  : $(this).data('status')
+      }
+      var detail_code = $('#detail_code_chat').val()
+      $.ajax({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{route('updateStatusSubDetail')}}",
+                type: "post",
+                dataType: 'json',
+                async: true,
+                data: data,
+                success: function(response) {
+                    if(response.status==500){
+                        toastr['warning'](response.message);
+                    }
+                    else{
+                        toastr['success'](response.message);
+                        showNoSwal(detail_code)
+
+                    }
+                    
+                },
+                error: function(xhr, status, error) {
+                    swal.close();
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            });
+    })
+  // Update Status SubDetail
   document.addEventListener('DOMContentLoaded', function () {
     // Set up Dragula for the kanban board
     const kanbanBoard = document.getElementById('kanban-board');
@@ -247,5 +303,168 @@
       // await fetch('/api/update-status', { method: 'POST', body: JSON.stringify({ cardId, newStatus }) });
     }
   });
+
+  // Function
+      function getChat(detail_code)
+      {
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('getChat')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+              'detail_code' : detail_code
+            },
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success: function(response) {
+                swal.close();
+                $('#chat_container').empty()
+                for(j = 0; j < response.chat.length; j++){
+                                    const d = new Date(response.chat[j].created_at)
+                                    const date = d.toISOString().split('T')[0];
+                                    const time = d.toTimeString().split(' ')[0];
+                                    var auth = $('#authId').val()
+                                    var name_img = response.chat[j].user_relation.gender == 1 ? 'profile.png' : 'female_final.png';
+                                    chat +=`
+                                            <div class="direct-chat-msg ${response.chat[j].user_relation.id == $('#authId').val() ?'right':''}">
+                                                <div class="direct-chat-infos clearfix">
+                                                    <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
+                                                    <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
+                                                </div>
+                                                
+                                                    <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
+                                            
+                                                <div class="direct-chat-text" style='font-size:9px;'>
+                                                    ${response.chat[j].remark}
+                                                </div>
+                                            </div>
+                                    `;
+                  }
+                  $('#chat_container').append(chat)
+
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+      }
+
+      function showNoSwal(id){
+            $('#detailKanbanModal').modal('show')
+            $('#detail_code_chat').val(id)
+            $.ajax({
+                    headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{route('getSubDetailKanban')}}",
+                    type: "get",
+                    dataType: 'json',
+                    async: true,
+                    data:{
+                      'detail_code' :id
+                    },
+                    success: function(response) {
+                      
+                        // Mapping Activity
+                          $('#subDetailTable').DataTable().clear();
+                          $('#subDetailTable').DataTable().destroy();
+                          
+                          $('#chat_container').empty()
+                          var chat = ''
+                          var data = ''
+                          var auth_id = $('#auth_id').val()
+                          for(i=0 ; i < response.data.length; i ++){
+                            var label = response.data[i].status == 1 ? `<s>${response.data[i].title}</s>` : `${response.data[i].title}`
+                            var disabled = response.data[i].user_id == auth_id ? '' : 'disabled'
+                            data +=`
+                              <tr>
+                                  <td style="width:5%;text-align:center">
+                                    <input type="checkbox" id="check" name="check" class="is_checked" style="border-radius: 5px !important;" value="${response.data[i]['id']}"  data-status="${response.data[i]['status']}" data-id="${response.data[i]['id']}" ${response.data[i]['status'] == 1 ?'checked':'' } ${disabled}>
+                                  </td>
+                                  <td>
+                                    ${label}
+                                  </td>
+                                  <td style="width:30%;">
+                                      ${response.data[i].user_relation.name}
+                                  </td>
+                              </tr>
+                              
+                          
+                            `;
+                          }
+                          $('#subDetailTable > tbody:first').html(data);
+                              $('#subDetailTable').DataTable({
+                                  scrollX  : true,
+                              }).columns.adjust()                    
+                        // Mapping Activity
+
+                        // Mapping Chat
+                        for(j = 0; j < response.chat.length; j++){
+                                    const d = new Date(response.chat[j].created_at)
+                                    const date = d.toISOString().split('T')[0];
+                                    const time = d.toTimeString().split(' ')[0];
+                                    var auth = $('#authId').val()
+                                    var name_img = response.chat[j].user_relation.gender == 1 ? 'profile.png' : 'female_final.png';
+                                            if(response.chat[j].user_relation.id == 999){
+                                           
+                                              remark = `
+                                                  <div class="direct-chat-msg">
+                                                        <div class="direct-chat-infos clearfix">
+                                                            <span style='font-size:9px;' class="direct-chat-timestamp">${formatDate(date)} ${time}</span>
+                                                        </div>
+                                                       <div class="desk">
+                                                        <span style="font-size:9px !important;color:black;font-weight:normal !important; margin-left:auto;margin-right:auto;text-align:center !important;background-color:#d2d6de" class="badge badge-secondary p-2">${response.chat[j].remark}</span>
+                                                        </div>
+                                                        
+                                                    </div>
+
+                                              `
+                                            }else{
+                                              remark =`
+                                              <div class="direct-chat-msg ${response.chat[j].user_relation.id == $('#authId').val() ?'right':''}">
+                                                        <div class="direct-chat-infos clearfix">
+                                                            <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
+                                                            <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
+                                                        </div>
+                                                        
+                                                            <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
+                                                    
+                                                        <div class="direct-chat-text" style='font-size:9px;'>
+                                                            ${response.chat[j].remark}
+                                                        </div>
+                                                    </div>
+                                              `;
+                                            }
+                                            chat += remark;
+                  }
+                  $('#chat_container').append(chat)
+                        // Mapping Chat
+
+                        // Mapping Detail
+                          $('#request_code_kanban').html(': ' + response.detail.request_code)
+                          $('#detail_code_kanban').html(': ' + response.detail.detail_code)
+                          $('#title_kanban').html(': ' + response.detail.title)
+                          $('#status_kanban').html( response.detail.status == 1 ? ': ' + 'DONE' : ': ' + 'On Progress')
+                          $('#percentage_kanban').html(': ' + response.detail.percentage)
+                          $('#description_kanban').html(': ' + response.detail.description)
+                          $('#request_code_chat').val(response.detail.request_code)
+                          $('#detail_code_chat').val(id)
+                        // Mapping Detail
+                        },
+                    error: function(xhr, status, error) {
+                        swal.close();
+                        toastr['error']('Failed to get data, please contact ICT Developer');
+                    }
+                });
+    
+      }
+  // Function
+
  
 </script>

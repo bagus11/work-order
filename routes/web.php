@@ -326,7 +326,9 @@ Route::group(['middleware' => ['auth']], function() {
         
         Route::get('project/{id}',[RFPDetailProjectController::class, 'project']);
         Route::get('getSubDetailKanban',[RFPDetailProjectController::class, 'getSubDetailKanban'])->name('getSubDetailKanban');
+        Route::get('getChat',[RFPDetailProjectController::class, 'getChat'])->name('getChat');
         Route::post('sendChat',[RFPDetailProjectController::class, 'sendChat'])->name('sendChat');
+        Route::post('updateStatusSubDetail',[RFPDetailProjectController::class, 'updateStatusSubDetail'])->name('updateStatusSubDetail');
         // Route::get('project/getRFPDetail',[RFPDetailProjectController::class, 'getRFPDetail'])->name('project/getRFPDetail');
     // RFP Kanban Mode
 });
