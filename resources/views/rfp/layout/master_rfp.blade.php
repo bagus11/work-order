@@ -10,9 +10,6 @@
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-        {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.2/css/bootstrap.css" rel="stylesheet"> --}}
-        {{-- <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css"> --}}
-        {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="icon" href="{{URL::asset('icon.jpg')}}">
     
@@ -20,10 +17,9 @@
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     </head>
-    <body class="hold-transition sidebar-mini">
+    <body class="hold-transition skin-blue sidebar-collapse">
         <div class="wrapper">
-        @include('layouts.navbar')
-        @include('layouts.sidebar')
+        @include('rfp.layout.navbar')
         <input type="hidden" class="form-control" id="auth_id" value="{{auth()->user()->id}}">
         <div class="content-wrapper py-4">
             <input type="hidden" id="authId" value="{{auth()->user()->id}}">
@@ -34,11 +30,10 @@
         <aside class="control-sidebar control-sidebar-dark overflow-auto">
 
             <div class="p-3">
-            <h5>Title</h5>
-            <p>Sidebar content</p>
+          
             </div>
         </aside>
-        @include('layouts.footer')
+        {{-- @include('layouts.footer') --}}
         </div>
 
         <script src="{{asset('js/app.js')}}"></script>
@@ -105,9 +100,6 @@
          
        </script>
         @include('RepositoryPattern.repo-js')
-        <script>  
-        getNotification()
-        </script>
         @stack('custom-js')
     </body>
 </html>
@@ -371,5 +363,15 @@ tr.shown td.subdetails-click {
       background-color: #213555 !important;
       color: white;
     }
-   
+    
+        
+    /* .cursor-grab {
+      cursor: -webkit-grab;
+      cursor: grab;
+    }
+
+    .tasks {
+      min-height: 450px;
+    }
+    */
 </style>

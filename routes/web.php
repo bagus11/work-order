@@ -18,6 +18,7 @@ use App\Http\Controllers\MasterTeamController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\ReportKPIController;
+use App\Http\Controllers\RFP\RFPDetailProjectController;
 use App\Http\Controllers\RFPController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SettingController;
@@ -317,5 +318,16 @@ Route::group(['middleware' => ['auth']], function() {
             // Master Brand
         // Master
     // Inventory
+
+
+
+
+    // RFP Kanban Mode
+        
+        Route::get('project/{id}',[RFPDetailProjectController::class, 'project']);
+        Route::get('getSubDetailKanban',[RFPDetailProjectController::class, 'getSubDetailKanban'])->name('getSubDetailKanban');
+        Route::post('sendChat',[RFPDetailProjectController::class, 'sendChat'])->name('sendChat');
+        // Route::get('project/getRFPDetail',[RFPDetailProjectController::class, 'getRFPDetail'])->name('project/getRFPDetail');
+    // RFP Kanban Mode
 });
 

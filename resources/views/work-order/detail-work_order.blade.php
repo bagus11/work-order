@@ -316,7 +316,7 @@
                                             <div class="row">
                                                 <div class="col-12 col-sm-12 col-12">
                                                     <div class="direct-chat-messages" id="logMessage">
-    
+                                                        
                                                     </div>   
                                                 </div>
                                             </div>

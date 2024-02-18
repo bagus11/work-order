@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg  modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title">Add Master Project</h4>
+                Add Master Project
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -12,7 +12,7 @@
                <div class="container">
                 <div class="form-group row">
                     <div class="col-md-2 mt-2">
-                        <label for=""> Departement</label>
+                        <p for=""> Departement</p>
                     </div>
                     <div class="col-md-4">
                         <select name="selectDepartement" class="select2" id="selectDepartement"></select>
@@ -20,7 +20,7 @@
                         <span  style="color:red;" class="message_error text-red block departement_error"></span>
                     </div>
                     <div class="col-md-2 mt-2">
-                        <label for=""> Categories</label>
+                        <p for=""> Categories</p>
                     </div>
                     <div class="col-md-4">
                         <select name="selectCategories" class="select2" id="selectCategories">
@@ -32,7 +32,7 @@
                   </div>
                 <div class="form-group row">
                     <div class="col-md-2 mt-2">
-                        <label for="">Title</label>
+                        <p for="">Title</p>
                     </div>
                     <div class="col-md-10">
                         <input type="text" class="form-control" id="title">
@@ -42,7 +42,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-2 mt-2">
-                        <label for="">Description</label>
+                        <p for="">Description</p>
                     </div>
                     <div class="col-md-10">
                         <textarea class="form-control" id="description" rows="3"></textarea>
@@ -52,14 +52,14 @@
                  
                     <div class="form-group row">
                         <div class="col-md-2 mt-2">
-                            <label for="">Start Date</label>
+                            <p for="">Start Date</p>
                         </div>
                         <div class="col-md-4">
                             <input type="date" class="form-control" id="startDate" value="{{date('Y-m-d')}}">
                             <span  style="color:red;" class="message_error text-red block startDate_error"></span>
                         </div>
                         <div class="col-md-2 mt-2">
-                            <label for="">Deadline</label>
+                            <p for="">Deadline</p>
                         </div>
                         <div class="col-md-4">
                             <input type="date" class="form-control" id="dateline" value="{{date("Y-m-d", strtotime( date( "Y-m-d", strtotime( date("Y-m-d") ) ) . "+1 month" ) )}}">
@@ -69,15 +69,15 @@
   
                     <div class="form-group row">
                         <div class="col-md-2 mt-2">
-                            <label  class="form-label" for="attachmentRFP" for="">Attachment</label>
+                            <p  class="form-p" for="attachmentRFP" for="">Attachment</p>
                         </div>
                         <div class="col-md-4">
-                            <input type="file" class="form-control-file" id="attachmentRFP" required>
+                            <input type="file" class="form-control-file" id="attachmentRFP" required style="font-size: 10px">
                            
                             <span  style="color:red;" class="message_error text-red block attachmentRFP_error"></span>
                         </div>
                         <div class="col-md-2 mt-2">
-                            <label for="">Team</label>
+                            <p for="">Team</p>
                         </div>
                         <div class="col-md-4">
                             <select name="selectTeam" class="select2" id="selectTeam"></select>
@@ -106,7 +106,9 @@
                </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button id="btnSaveRFP" type="button" class="btn btn-success">Save changes</button>
+                <button id="btnSaveRFP" type="button" class="btn btn-success btn-sm">
+                    <i class="fas fa-check"></i>
+                </button>
             </div>
         </div>
     </div>

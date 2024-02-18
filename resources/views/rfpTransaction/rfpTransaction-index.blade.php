@@ -6,10 +6,10 @@
           <div class="col-12">
             <div class="card card-dark">
                 <div class="card-header">
-                    <div class="card-title">List Request For Project</div>
+                    List Request For Project
                     <div class="card-tools">
                         @can('create-rfp_transaction')
-                            <button id="addRFP" type="button" class="btn btn-success" data-toggle="modal" data-target="#addRFPTransaction" style="float:right">
+                            <button id="addRFP" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addRFPTransaction" style="float:right">
                                 <i class="fas fa-plus"></i>
                             </button>
                         @endcan

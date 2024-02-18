@@ -2,8 +2,8 @@
 <div class="modal fade" id="manualAssign">
     <div class="modal-dialog  modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title">Manual Assign </h4>
+            <div class="modal-header bg-core">
+                Manual Assign
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>

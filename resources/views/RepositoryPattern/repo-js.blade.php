@@ -1,7 +1,6 @@
 <script>
 //   Repository Pattern
 var auth_id = $('#auth_id').val()
-getNotification()
         $(document).ready(function() {
             $('#notifikasi').on('click', function(){
                 getNotification()
@@ -452,6 +451,7 @@ getNotification()
             error: function(xhr, status, error) {
                 swal.close();
                 toastr['error']('Failed to get data, please contact ICT Developer');
+                console.log(error)
                 }
             }); 
         }
@@ -583,6 +583,19 @@ getNotification()
                     toastr['error']('Failed to get data, please contact Developer');
                 }
             });   
+    }
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+
+        return [year, month, day].join('-');
     }
  // End Repository Pattern
 </script>

@@ -1270,11 +1270,15 @@
                                 </td>
                                 <td style="width:10%">${status}</td>
                                 <td style="width:10%">
+                                    <button title="Go To Kanban " class="btn project btn-dark btn-sm" data-request="${response.data[i].request_code}">
+                                        <i class="fa-brands fa-stack-overflow"></i>
+                                    </button>
                                     ${addRFPDetail} ${editRFPMaster} ${detailRFPMaster}
                                 </td>
                             </tr>
                             `;
-                }
+                        }
+                               
                     $('#rfpTable > tbody:first').html(data);
                         var table = $('#rfpTable').DataTable({
                             scrollX  : true,
@@ -1302,6 +1306,11 @@
             }
         });
         }
+        $('#rfpTable').on('click','.project', function(){
+            var request = $(this).data('request')
+            replace = request.replaceAll('/','_');
+            window.open(`project/${replace}`,'_blank');
+        })
         function removeDuplicates(arr) {
             let unique = [];
             for (i = 0; i < arr.length; i++) {
