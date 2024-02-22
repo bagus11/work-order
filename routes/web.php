@@ -16,6 +16,7 @@ use App\Http\Controllers\MasterKantorController;
 use App\Http\Controllers\MasterPriorityController;
 use App\Http\Controllers\MasterTeamController;
 use App\Http\Controllers\MenusController;
+use App\Http\Controllers\Opex\Setting\OpexTeamController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\ReportKPIController;
 use App\Http\Controllers\RFP\RFPDetailProjectController;
@@ -331,5 +332,13 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('updateStatusSubDetail',[RFPDetailProjectController::class, 'updateStatusSubDetail'])->name('updateStatusSubDetail');
         // Route::get('project/getRFPDetail',[RFPDetailProjectController::class, 'getRFPDetail'])->name('project/getRFPDetail');
     // RFP Kanban Mode
+
+    // Opex
+        // Setting
+            // Master Opex Team
+            Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex'); 
+            // Master Opex Team
+        // Setting
+    // Opex
 });
 

@@ -12,18 +12,18 @@
                     <div class="container">
                        <div class="card">
                         <div class="card-header">
-                            <label for="">RFP Detail</label>
+                            <p for="">RFP Detail</p>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Detail Code</label>
+                                    <p for="">Detail Code</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="text" style="text-align: center" readonly class="form-control" id="detailCodeRFPDetail">
                                 </div>
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Request Code</label>
+                                    <p for="">Request Code</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="hidden" name="idRFPDetail" id="idRFPDetail">
@@ -33,13 +33,13 @@
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Activity</label>
+                                    <p for="">Activity</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="text" readonly class="form-control" style="text-align: center" name="activityRFPDetail" id="activityRFPDetail">
                                 </div>
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Request By</label>
+                                    <p for="">Request By</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="text" readonly class="form-control" name="requestBySubDetail" id="requestBySubDetail">
@@ -47,13 +47,13 @@
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Start Date</label>
+                                    <p for="">Start Date</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="date" readonly class="form-control" name="startDateRFPSubDetail" id="startDateRFPSubDetail">
                                 </div>
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Deadline</label>
+                                    <p for="">Deadline</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="date" readonly class="form-control" name="deadlineRFPSubDetail" id="deadlineRFPSubDetail">
@@ -63,7 +63,7 @@
                                 <div class="col-12">
                                     <div class="card collapsed-card">
                                         <div class="card-header">
-                                            <label for="">List Sub Module</label>
+                                            List Sub Module
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                                     <i class="fas fa-plus"></i>
@@ -89,19 +89,19 @@
                        </div>
                        <div class="card">
                         <div class="card-header">
-                            <label for="">RFP Sub Module</label>
+                            <p for="">RFP Sub Module</p>
                         </div>
                         <div class="card-body">
                             <div class="row mt-2">
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Activity</label>
+                                    <p for="">Activity</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" name="activitySubDetail" id="activitySubDetail">
                                     <span  style="color:red;" class="message_error text-red block activitySubDetail_error"></span>
                                 </div>
                                 <div class="col-md-2 mt-2">
-                                    <label for="">PIC</label>
+                                    <p for="">PIC</p>
                                 </div>
                                 <div class="col-md-4">
                                     <select name="selectPICSubDetail" class="select2" id="selectPICSubDetail"></select>
@@ -111,7 +111,7 @@
                           
                             <div class="row mt-2">
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Description</label>
+                                    <p for="">Description</p>
                                 </div>
                                 <div class="col-md-10">
                                     <textarea class="form-control" id="descriptionSubDetail" rows="3"></textarea>
@@ -120,14 +120,14 @@
                             </div>
                             <div class="row mt-2">
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Start Date</label>
+                                    <p for="">Start Date</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="date" id="startDateSubDetail" style="text-align:center" class="form-control" valu="{{date('Y-m-d')}}">
                                     <span  style="color:red;" class="message_error text-red block startDateSubDetail_error"></span>
                                 </div>
                                 <div class="col-md-2 mt-2">
-                                    <label for="">Deadline</label>
+                                    <p for="">Deadline</p>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="date" id="datelineSubDetail" style="text-align:center" class="form-control" value="{{date('Y-m-d')}}">

@@ -91,4 +91,26 @@ class RFPDetailProjectController extends Controller
             'message'=>$message,
         ]); 
     }
+    function sendChat(Request $request) {
+        $status         = 200;
+        $message        = 'Failed send remark, please contact ICT Dev';
+        $detail_code    = RFPDetail::where('detail_code', $request->detail_code)->first();
+        $post =[
+            'user_id'           => auth()->user()->id,
+            'detail_code'       => $request->detail_code,
+            'request_code'      => $detail_code->request_code,
+            'remark'            => $request->add_remark,
+            'attachment'        => ''
+        ];
+        $insert         = ChatModel::create($post);
+        if($insert){
+            $status = 200;
+            $message ='Successfully Update Progress';
+        }
+        return response()->json([
+            'status'=>$status,
+            'message'=>$message,
+        ]); 
+
+    }
 }

@@ -53,37 +53,44 @@
                                 <p id="description_kanban"></p>
                             </div>
                         </div>
+                        <table class="datatable-bordered nowrap display " id="subDetailTable">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center"></th>
+                                    <th style="text-align:center">Task List</th>
+                                    <th style="text-align:center">PIC</th>
+                                    <th style="text-align:center">Dateline</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </fieldset>
-                    <table class="datatable-bordered nowrap display " id="subDetailTable">
-                        <thead>
-                            <tr>
-                                <th style="text-align:center"></th>
-                                <th style="text-align:center">Title</th>
-                                <th style="text-align:center">PIC</th>
-                            </tr>
-                        </thead>
-                    </table>
+                 
                 </fieldset>
                 <div class="mt-2">
-                    <fieldset class="scheduler-border">
+                    <fieldset class="scheduler-border" style="margin:0px">
                         <legend class="scheduler-border">Comment Activity</legend>
                         <input type="hidden" id="detail_code_chat">
                         <input type="hidden" id="request_code_chat">
-                        <div class="container" id="chat_container">
-                        </div>
-                        <fieldset class="scheduler-border">
+                        <ul class="list-unstyled text-white"  id="chat_container" style="overflow-y:scroll;max-height:300px">
+                        
+                        </ul>
+                       
+                        <fieldset class="scheduler-border" style="margin:0px">
                             <legend class="scheduler-border">Enter Comment Here</legend>
-                            <div class="row">
-                                <div class="col-11">
-                                    <textarea class="form-control" id="add_remark" rows="3"></textarea>
-                                    <span  style="color:red;" class="message_error text-red block add_remark_error"></span>
-                                </div>
-                                <div class="col-1">
-                                    <button class="btn btn-success mt-2" title="send" id="send_chat">
-                                        <i class="fa-solid fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            </div>
+                            <table style="width: 100%">
+                                <tr>
+                                    <td style="width:90%">
+                                        <textarea class="form-control" id="add_remark" rows="3"></textarea>
+                                        <span  style="color:red;" class="message_error text-red block add_remark_error"></span>
+                                    </td>
+                                    <td style="width: 10%">
+                                        <button class="btn btn-success mt-2" title="send" id="send_chat">
+                                            <i class="fa-solid fa-paper-plane"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                         
                         </fieldset>
                     </fieldset>
                  

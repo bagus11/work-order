@@ -3,6 +3,7 @@
   var dataStart ={
     'request_code' : request_code
   }
+  let chat; 
   getData(dataStart)
   function getData(data){
     $('#kanban_new').empty()
@@ -73,9 +74,13 @@
         });
     }
    function show(id,title){
+    // 10000 milliseconds = 10 seconds
     $('#detailKanbanModal').modal('show')
     $('#detail_label').html(title)
     $('#detail_code_chat').val(id)
+    chat = setInterval(function() {
+        getChat(id);
+    }, 1000);
     $.ajax({
             headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -92,6 +97,7 @@
             },
             success: function(response) {
                 swal.close();
+                chat
                 // Mapping Activity
                   $('#subDetailTable').DataTable().clear();
                   $('#subDetailTable').DataTable().destroy();
@@ -114,6 +120,10 @@
                           <td style="width:30%;">
                               ${response.data[i].user_relation.name}
                           </td>
+                          <td style="width:10%;">
+                            ${response.data[i].finish_date}
+                          </td>
+
                       </tr>
                       
                   
@@ -121,7 +131,11 @@
                   }
                   $('#subDetailTable > tbody:first').html(data);
                       $('#subDetailTable').DataTable({
-                          scrollX  : true,
+                          scrollX       : true,
+                          ordering      : false,
+                          info          : false,
+                          filter        : false,
+                          paginate      : false
                       }).columns.adjust()                    
                 // Mapping Activity
 
@@ -139,7 +153,7 @@
                                                         <div class="direct-chat-infos clearfix">
                                                             <span style='font-size:9px;' class="direct-chat-timestamp">${formatDate(date)} ${time}</span>
                                                         </div>
-                                                       <div class="desk">
+                                                       <div class="desk" style="width=100px !important">
                                                         <span style="font-size:9px !important;color:black;font-weight:normal !important; margin-left:auto;margin-right:auto;text-align:center !important;background-color:#d2d6de" class="badge badge-secondary p-2">${response.chat[j].remark}</span>
                                                         </div>
                                                         
@@ -147,20 +161,49 @@
 
                                               `
                                             }else{
-                                              remark =`
-                                              <div class="direct-chat-msg ${response.chat[j].user_relation.id == $('#authId').val() ?'right':''}">
-                                                        <div class="direct-chat-infos clearfix">
-                                                            <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
-                                                            <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
-                                                        </div>
-                                                        
-                                                            <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
-                                                    
-                                                        <div class="direct-chat-text" style='font-size:9px;'>
-                                                            ${response.chat[j].remark}
+                                              if(response.chat[j].user_id == auth ){
+                                                remark =`
+                                                <li class="d-flex justify-content-between mb-4">
+                                                  <div class="card mask-custom style="width:630px !Important">
+                                                    <div class="card-header d-flex justify-content-between p-3"
+                                                      style="border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                                                      <p class="fw-bold mb-0" style="color:black">${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</p>
+                                                      <div class="card-tools" style="color:black !important;float:right;font-size:9px">
+                                                          <i class="far fa-clock" style="color:black;text-align:right"></i> ${formatDate(date)} ${time}
                                                         </div>
                                                     </div>
-                                              `;
+                                                    <div class="card-body">
+                                                      <p class="mb-0" style="color:black">
+                                                        ${response.chat[j].remark}
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp" alt="avatar"
+                                                    class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60" />
+                                                </li>
+                                                `;
+                                              }else{
+                                                remark =`
+                                                <li class="d-flex justify-content-between mb-4">
+                                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"
+                                                      class="rounded-circle d-flex align-self-end me-3 shadow-1-strong" width="60" />
+                                                    <div class="card mask-custom" style="width:630px !Important">
+                                                      <div class="card-header d-flex justify-content-between p-3"
+                                                        style="border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                                                        <p class="fw-bold mb-0" style="color:black">${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</p>
+                                                        <div class="card-tools" style="color:black !important;float:right;font-size:9px">
+                                                          <i class="far fa-clock" style="color:black;text-align:right"></i> ${formatDate(date)} ${time}
+                                                        </div>
+                                                      </div>
+                                                      <div class="card-body">
+                                                        <p class="mb-0" style="color:black">
+                                                          ${response.chat[j].remark}
+                                                        </p>
+                                                      </div>
+                                                    </div>
+                                                  </li>
+                                                `;
+                                              }
                                             }
                                             chat += remark;
                   }
@@ -185,13 +228,21 @@
         });
  
    }
-
+  //  Close Interval
+  $(document).ready(function () {
+    $('#detailKanbanModal').on('hidden.bs.modal', function () {
+      // var detail_code = $('#detail_code_chat').val()
+      clearInterval(chat);
+    })
+  })
+  //  Close Interval
   //  Add Chat Comment
-    $('#send_chat').on('click', function(){
-      var data ={
-        'detail_code' : $('#detail_code_chat').val(),
-        'remark'      : $('#remark').val()
-      }
+    $('#send_chat').on('click', function(e){
+      e.preventDefault();
+        var formData        = new FormData();    
+        var detail_code     = $('#detail_code_chat').val()
+        formData.append('detail_code', detail_code)
+        formData.append('add_remark',$('#add_remark').val())
       $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -204,13 +255,13 @@
                 contentType: false,
                 data: formData,
                 beforeSend: function() {
-                    SwalLoading('Inserting progress, please wait .');
-                    $('#btn_save_wo').prop('disabled',true)
+                    // SwalLoading('Inserting progress, please wait .');
+                    $('#send_chat').prop('disabled',true)
                 },
                 success: function(response) {
-                    swal.close();
+                    // swal.close();
                     $('.message_error').html('')
-                    $('#btn_save_wo').prop('disabled',false)
+                    $('#send_chat').prop('disabled',false)
                     if(response.status==422)
                     {
                         $.each(response.message, (key, val) => 
@@ -222,12 +273,13 @@
                         toastr['warning'](response.message);
                     }
                     else{
-                        toastr['success'](response.message);
-                        window.location = "{{route('work_order_list')}}";
+                        // toastr['success'](response.message);
+                        showNoSwal(detail_code)
+                        $('#add_remark').val('')
                     }
                 },
                 error: function(xhr, status, error) {
-                    swal.close();
+                    // swal.close();
                     toastr['error']('Failed to get data, please contact ICT Developer');
                 }
             });
@@ -318,11 +370,9 @@
             data:{
               'detail_code' : detail_code
             },
-            beforeSend: function() {
-                SwalLoading('Please wait ...');
-            },
             success: function(response) {
-                swal.close();
+              
+                var chat = ''
                 $('#chat_container').empty()
                 for(j = 0; j < response.chat.length; j++){
                                     const d = new Date(response.chat[j].created_at)
@@ -330,26 +380,69 @@
                                     const time = d.toTimeString().split(' ')[0];
                                     var auth = $('#authId').val()
                                     var name_img = response.chat[j].user_relation.gender == 1 ? 'profile.png' : 'female_final.png';
-                                    chat +=`
-                                            <div class="direct-chat-msg ${response.chat[j].user_relation.id == $('#authId').val() ?'right':''}">
-                                                <div class="direct-chat-infos clearfix">
-                                                    <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
-                                                    <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
-                                                </div>
-                                                
-                                                    <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
-                                            
-                                                <div class="direct-chat-text" style='font-size:9px;'>
-                                                    ${response.chat[j].remark}
-                                                </div>
-                                            </div>
-                                    `;
+                                            if(response.chat[j].user_relation.id == 999){
+                                           
+                                              remark = `
+                                                  <div class="direct-chat-msg">
+                                                        <div class="direct-chat-infos clearfix">
+                                                            <span style='font-size:9px;' class="direct-chat-timestamp">${formatDate(date)} ${time}</span>
+                                                        </div>
+                                                       <div class="desk" style="width=100px !important">
+                                                        <span style="font-size:9px !important;color:black;font-weight:normal !important; margin-left:auto;margin-right:auto;text-align:center !important;background-color:#d2d6de" class="badge badge-secondary p-2">${response.chat[j].remark}</span>
+                                                        </div>
+                                                        
+                                                    </div>
+
+                                              `
+                                            }else{
+                                              if(response.chat[j].user_id == auth ){
+                                                remark =`
+                                                <li class="d-flex justify-content-between mb-4">
+                                                  <div class="card mask-custom"  style="width:630px !Important">
+                                                    <div class="card-header d-flex justify-content-between p-3"
+                                                      style="border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                                                      <p class="fw-bold mb-0" style="color:black">${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</p>
+                                                      <div class="card-tools" style="color:black !important;float:right;font-size:9px">
+                                                          <i class="far fa-clock" style="color:black;text-align:right"></i> ${formatDate(date)} ${time}
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                      <p class="mb-0" style="color:black">
+                                                        ${response.chat[j].remark}
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                  <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}"    class="rounded-circle d-flex align-self-end me-3 shadow-1-strong" width="60" />
+                                                </li>
+                                                `;
+                                              }else{
+                                                remark =`
+                                                <li class="d-flex justify-content-between mb-4">
+                                                  <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}"    class="rounded-circle d-flex align-self-end me-3 shadow-1-strong" width="60" />
+                                                    <div class="card mask-custom" style="width:630px !Important">
+                                                      <div class="card-header d-flex justify-content-between p-3"
+                                                        style="border-bottom: 1px solid rgba(255, 255, 255, 0.3);">
+                                                        <p class="fw-bold mb-0" style="color:black">${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</p>
+                                                        <div class="card-tools" style="color:black !important;float:right;font-size:9px">
+                                                          <i class="far fa-clock" style="color:black;text-align:right"></i> ${formatDate(date)} ${time}
+                                                        </div>
+                                                      </div>
+                                                      <div class="card-body">
+                                                        <p class="mb-0" style="color:black">
+                                                          ${response.chat[j].remark}
+                                                        </p>
+                                                      </div>
+                                                    </div>
+                                                  </li>
+                                                `;
+                                              }
+                                            }
+                                            chat += remark;
                   }
                   $('#chat_container').append(chat)
 
             },
             error: function(xhr, status, error) {
-                swal.close();
                 toastr['error']('Failed to get data, please contact ICT Developer');
             }
         });
@@ -393,6 +486,9 @@
                                   <td style="width:30%;">
                                       ${response.data[i].user_relation.name}
                                   </td>
+                                  <td style="width:10%;">
+                                    ${response.data[i].finish_date}
+                                  </td>
                               </tr>
                               
                           
@@ -418,12 +514,10 @@
                                                         <div class="direct-chat-infos clearfix">
                                                             <span style='font-size:9px;' class="direct-chat-timestamp">${formatDate(date)} ${time}</span>
                                                         </div>
-                                                       <div class="desk">
-                                                        <span style="font-size:9px !important;color:black;font-weight:normal !important; margin-left:auto;margin-right:auto;text-align:center !important;background-color:#d2d6de" class="badge badge-secondary p-2">${response.chat[j].remark}</span>
+                                                       <div class="desk" style="width=100px !important">
+                                                        <span style="font-size:7px !important;color:black;font-weight:normal !important; margin-left:auto;margin-right:auto;text-align:center !important;background-color:#d2d6de" class="badge badge-secondary p-2">${response.chat[j].remark}</span>
                                                         </div>
-                                                        
                                                     </div>
-
                                               `
                                             }else{
                                               remark =`
@@ -432,14 +526,13 @@
                                                             <span class="direct-chat-name ${response.chat[j].user_relation.id == $('#authId').val() ?'float-right':'float-left'}" style='font-size:12px;'>${response.chat[j].user_relation == null ?'':response.chat[j].user_relation.name}</span>
                                                             <span style='font-size:9px;' class="direct-chat-timestamp ${response.chat[j].user_relation.id == $('#authId').val() ?'float-left':'float-right'}">${formatDate(date)} ${time}</span>
                                                         </div>
-                                                        
                                                             <img class="direct-chat-img" src="{{URL::asset('${name_img}')}}" alt="message user image">
-                                                    
                                                         <div class="direct-chat-text" style='font-size:9px;'>
                                                             ${response.chat[j].remark}
                                                         </div>
                                                     </div>
                                               `;
+                                            
                                             }
                                             chat += remark;
                   }
