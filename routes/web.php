@@ -17,6 +17,7 @@ use App\Http\Controllers\MasterPriorityController;
 use App\Http\Controllers\MasterTeamController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\Opex\Setting\OpexTeamController;
+use App\Http\Controllers\Opex\Setting\OpexTimelineController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\ReportKPIController;
 use App\Http\Controllers\RFP\RFPDetailProjectController;
@@ -241,6 +242,7 @@ Route::group(['middleware' => ['auth']], function() {
     
     // MasterTeam
     Route::get('getMasterTeam', [MasterTeamController::class, 'getMasterTeam'])->name('getMasterTeam');
+    Route::get('getOpexTeam', [MasterTeamController::class, 'getOpexTeam'])->name('getOpexTeam');
     Route::post('addMasterTeam', [MasterTeamController::class, 'addMasterTeam'])->name('addMasterTeam');
     Route::get('getMasterTeamDetail', [MasterTeamController::class, 'getMasterTeamDetail'])->name('getMasterTeamDetail');
     Route::get('getDetailTeam', [MasterTeamController::class, 'getDetailTeam'])->name('getDetailTeam');
@@ -337,7 +339,10 @@ Route::group(['middleware' => ['auth']], function() {
         // Setting
             // Master Opex Team
             Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex'); 
+            Route::get('opex_timeline', [OpexTimelineController::class, 'index'])->name('opex_timeline'); 
+            Route::get('getOPex', [OpexTimelineController::class, 'getOPex'])->name('getOPex'); 
             // Master Opex Team
+
         // Setting
     // Opex
 });

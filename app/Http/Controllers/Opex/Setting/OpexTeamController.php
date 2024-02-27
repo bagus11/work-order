@@ -8,6 +8,6 @@ use Illuminate\Http\Request;
 class OpexTeamController extends Controller
 {
     function index() {
-        return view('opex.setting.opex_team-index');
+        return view('opex.setting.opex_team.opex_team-index');
     }
 }

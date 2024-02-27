@@ -20,7 +20,14 @@ class MasterTeamController extends Controller
     }
     public function getMasterTeam()
     {
-        $data = MasterTeam::all();
+        $data = MasterTeam::where('mode',1)->get();
+        return response()->json([
+            'data'=>$data
+        ]);
+    }
+    public function getOpexTeam()
+    {
+        $data = MasterTeam::where('mode',2)->get();
         return response()->json([
             'data'=>$data
         ]);
@@ -30,7 +37,8 @@ class MasterTeamController extends Controller
         try {
             $StroeMasterTeamRequest->validated();
             $post =[
-                'name'=>$request->teamName,
+                'name'      =>$request->teamName,
+                'mode'      =>$request->mode != '' ? 2:1
             ];
             MasterTeam::create($post);
             return ResponseFormatter::success(
@@ -65,13 +73,14 @@ class MasterTeamController extends Controller
     public function updateMasterTeam(Request $request, UpdateMasterTeamRequest $updateMasterTeamRequest)
     { 
        
-        // try {
+        try {
             $updateMasterTeamRequest->validated();
             $post =[
                 'name'=>$request->teamNameUpdate
             ];
+            DetailTeam ::where('masterId',$request->id)->where('position',2)->update(['position'=>1]);
             $update = DetailTeam ::where('masterId',$request->id)->where('userId',$request->leaderId)->update(['position'=>2]);
-          
+            
             if($update){
                 MasterTeam::find($request->id)->update($post);
             }
@@ -79,13 +88,13 @@ class MasterTeamController extends Controller
                $post,
                 'Priority successfully updated'
             );            
-        // } catch (\Throwable $th) {
-        //     return ResponseFormatter::error(
-        //         $th,
-        //         'Priority failed to update',
-        //         500
-        //     );
-        // }
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Priority failed to update',
+                500
+            );
+        }
     }
     public function getDetailTeam(Request $request)
     {
