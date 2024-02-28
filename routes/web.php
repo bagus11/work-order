@@ -341,6 +341,9 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex'); 
             Route::get('opex_timeline', [OpexTimelineController::class, 'index'])->name('opex_timeline'); 
             Route::get('getOPex', [OpexTimelineController::class, 'getOPex'])->name('getOPex'); 
+            Route::post('addHeadOpex', [OpexTimelineController::class, 'addHeadOpex'])->name('addHeadOpex'); 
+            Route::get('detailHeadOpex', [OpexTimelineController::class, 'detailHeadOpex'])->name('detailHeadOpex'); 
+            Route::post('updateHeadOpex', [OpexTimelineController::class, 'updateHeadOpex'])->name('updateHeadOpex'); 
             // Master Opex Team
 
         // Setting

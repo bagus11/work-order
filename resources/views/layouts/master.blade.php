@@ -371,5 +371,7 @@ tr.shown td.subdetails-click {
       background-color: #213555 !important;
       color: white;
     }
-   
+   .message_error{
+    font-size: 9px !important;
+   }
 </style>
