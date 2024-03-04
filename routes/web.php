@@ -338,13 +338,17 @@ Route::group(['middleware' => ['auth']], function() {
     // Opex
         // Setting
             // Master Opex Team
-            Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex'); 
-            Route::get('opex_timeline', [OpexTimelineController::class, 'index'])->name('opex_timeline'); 
-            Route::get('getOPex', [OpexTimelineController::class, 'getOPex'])->name('getOPex'); 
-            Route::post('addHeadOpex', [OpexTimelineController::class, 'addHeadOpex'])->name('addHeadOpex'); 
-            Route::get('detailHeadOpex', [OpexTimelineController::class, 'detailHeadOpex'])->name('detailHeadOpex'); 
-            Route::post('updateHeadOpex', [OpexTimelineController::class, 'updateHeadOpex'])->name('updateHeadOpex'); 
+                Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex'); 
+                Route::get('opex_timeline', [OpexTimelineController::class, 'index'])->name('opex_timeline'); 
+                Route::get('getOPex', [OpexTimelineController::class, 'getOPex'])->name('getOPex'); 
+                Route::post('addHeadOpex', [OpexTimelineController::class, 'addHeadOpex'])->name('addHeadOpex'); 
+                Route::get('detailHeadOpex', [OpexTimelineController::class, 'detailHeadOpex'])->name('detailHeadOpex'); 
+                Route::post('updateHeadOpex', [OpexTimelineController::class, 'updateHeadOpex'])->name('updateHeadOpex'); 
             // Master Opex Team
+
+            // Opex Kanban 
+                Route::get('opx/{id}',[OpexTimelineController::class, 'opx']);
+            // Opex Kanban
 
         // Setting
     // Opex

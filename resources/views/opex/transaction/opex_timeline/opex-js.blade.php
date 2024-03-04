@@ -68,13 +68,19 @@
                 postCallback('updateHeadOpex',data, function(response){
                     swal.close()
                     $('.message_error').html('')
-                    toastr['success'](response.responseJSON.meta.message);
+                    toastr['success'](response.meta.message);
                     $('#editHeadModal').modal('hide')
                     getCallback('getOPex',null, function(response){
                         swal.close()
                         mappingTable(response.data)
                     })
                 })
+            })
+
+            $('#timeline_table').on('click','.project', function(){
+                var request = $(this).data('request')
+                replace = request.replaceAll('/','_');
+                window.open(`opx/${replace}`,'_blank');
             })
     // Operation
 
@@ -106,8 +112,7 @@
                             }
 
                     data += `<tr style="text-align: center;">
-                                <td style="width:5%" class='details-control'></td>
-                                <td style="width:11%;text-align:left;">${response[i].request_code}</td>
+                                <td style="width:11%;text-align:center;">${response[i].request_code}</td>
                                 <td style="width:11%;text-align:center;">${response[i].location_relation.initial}</td>
                                 <td style="width:11%;text-align:left;">  ${response[i].title}</td>
                                 <td>
@@ -121,10 +126,13 @@
                                     </div>
                                 </td>
                                 <td style="width:11%;text-align:left;">${status}</td>
-                                <td style="width:5%;text-align:left;">
+                                <td style="width:8%;text-align:left;">
                                     <button type="button" class="edit btn btn-sm btn-primary" data-request="${response[i].request_code}" data-toggle="modal" data-target="#editHeadModal" style="float:right">
                                         <i class="fas fa-eye"></i>
-                                    </button>    
+                                    </button>  
+                                    <button title="Go To Kanban " class="btn project btn-sm btn-dark" data-request="${response[i].request_code}">
+                                        <i class="fa-brands fa-stack-overflow"></i>
+                                    </button>
                                 </td>
                             </tr>
                             `;

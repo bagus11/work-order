@@ -19,7 +19,7 @@
                     <table class="datatable-bordered nowrap display" id="timeline_table">
                         <thead>
                             <tr>
-                                <th style="text-align:center"></th>
+                             
                                 <th style="text-align:center">Request Code</th>
                                 <th style="text-align:center">Office</th>
                                 <th style="text-align:center">Project Name</th>

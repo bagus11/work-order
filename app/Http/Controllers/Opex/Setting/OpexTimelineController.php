@@ -72,12 +72,12 @@ class OpexTimelineController extends Controller
             });
             return ResponseFormatter::success(
                 $post,
-                'Incident successfully added'
+                'Opex Header successfully added'
             );            
         } catch (\Throwable $th) {
             return ResponseFormatter::error(
                 $th,
-                'Incident failed to add',
+                'Opex Header failed to add',
                 500
             );
         }
@@ -105,14 +105,18 @@ class OpexTimelineController extends Controller
            });
            return ResponseFormatter::success(
                $post,
-               'Incident successfully added'
+               'Opex Header successfully added'
            );            
     //    } catch (\Throwable $th) {
     //        return ResponseFormatter::error(
     //            $th,
-    //            'Incident failed to add',
+    //            'Opex Header failed to add',
     //            500
     //        );
     //    }
    }
+   function opx($request_code) {
+    $data =['request_code' =>str_replace('_','/',$request_code)];
+    return view('opex.transaction.opex_kanban.kanban-index',$data);
+}
 }
