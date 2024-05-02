@@ -10,8 +10,6 @@
     $('#kanban_progress').empty()
     $('#kanban_pending').empty()
     $('#kanban_done').empty()
-        $('#wo_table').DataTable().clear();
-        $('#wo_table').DataTable().destroy();
         $.ajax({
             headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -72,7 +70,7 @@
                 toastr['error']('Failed to get data, please contact ICT Developer');
             }
         });
-    }
+  }
    function show(id,title){
     // 10000 milliseconds = 10 seconds
     $('#detailKanbanModal').modal('show')

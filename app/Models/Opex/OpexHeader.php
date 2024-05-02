@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 class OpexHeader extends Model
 {
     use HasFactory;
+    protected $table = 'category_inv';
+    protected $guarded = [];
     function locationRelation() {
-        return $this->hasOne(MasterKantor::class,'id','')
+        return $this->hasOne(MasterKantor::class,'id','');
     }
 }

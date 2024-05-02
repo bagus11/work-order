@@ -1257,14 +1257,14 @@
                                 <td class='details-control' style="width:5%"></td>
                                 <td class="request_code" style="width:15%">${response.data[i].request_code}</td>
                                 <td style="width:5%">${response.data[i].location.name}</td>
-                              
                                 <td  style="width:55%;">
-                                <div class="progress-group">
                                     <div class="progress-group">
-                                        ${response.data[i].title}
-                                        <span class="float-right" style="font-size:10px">${response.data[i].progress}%</span>
-                                        <div class="progress progress-sm">
-                                            <div class="progress-bar bg-success" style="width: ${response.data[i].progress}%"></div>
+                                        <div class="progress-group">
+                                            ${response.data[i].title}
+                                            <span class="float-right" style="font-size:10px">${response.data[i].progress}%</span>
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar bg-success" style="width: ${response.data[i].progress}%">
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

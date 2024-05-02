@@ -13,7 +13,8 @@
         {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.2/css/bootstrap.css" rel="stylesheet"> --}}
         {{-- <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css"> --}}
         {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link href="{{ asset('assets/select2/select2.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/sweetalert2/sweetalert2.css') }}" rel="stylesheet">
         <link rel="icon" href="{{URL::asset('icon.jpg')}}">
     
         <!-- Tempus Dominus Styles -->
@@ -42,13 +43,16 @@
         </div>
 
         <script src="{{asset('js/app.js')}}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
         <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
         {{-- <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script> --}}
         <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> 
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="{{ asset('assets/sweetalert2/sweetalert.min.js') }}"></script>
+        <script src="{{ asset('assets/select2/select2.full.min.js') }}"></script>
+        <script src="{{ asset('assets/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/select2/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>

@@ -10,7 +10,6 @@
             </div>
             <div class="modal-body">
                <div class="container">
-                  
                     <div class="form-group row">
                         <div class="col-md-4 mt-2">
                             <label for="">Name</label>
