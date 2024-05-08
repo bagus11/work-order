@@ -227,7 +227,11 @@
             url: 'getUserHris',
             type: "get",
             dataType: 'json',
+            beforeSend: function() {
+                    SwalLoading('Please wait ...');
+            },
             success: function(response){
+                swal.close()
                 if(response.status == 200){
                     get_user()
                     toastr['success'](response.message);

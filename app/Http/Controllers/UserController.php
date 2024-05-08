@@ -95,17 +95,18 @@ class UserController extends Controller
     function getUserHris() {        
         set_time_limit(100000);
         $client = new \GuzzleHttp\Client();
-        $request = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=ALL&startdate=2023-06-07&enddate=2023-06-07');
+        $request = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=ALL&startdate='.date('Y-m-d').'&enddate='.date('Y-m-d'));
         $response = $request->getBody()->getContents();
         $data =json_decode($response, true);
         $status =500;
         $message ='Data has been failed import';
         $Arraypost=[];
+        $array_validation =[];
         foreach($data as $row){
             $validation = User::where('nik',$row['emp_no'])->count();
             if($row['emp_no'] !=null){
                 if($validation < 1){
-                
+                        
                         $post=[
                             'name'          =>$row['Full_Name'],
                             'nik'           =>$row['emp_no'],
@@ -116,8 +117,11 @@ class UserController extends Controller
                         
                 }
             }
+            $postValidation =[$validation];
+            array_push($array_validation,$postValidation);
         }
-        // dd($Arraypost);
+        // dd($Arrayp
+        // dd($array_validation);
         $insert = User::insert($Arraypost);
         if($insert){
             $status =200;

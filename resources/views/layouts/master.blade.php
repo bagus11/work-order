@@ -14,7 +14,7 @@
         {{-- <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css"> --}}
         {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="{{ asset('assets/select2/select2.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('assets/sweetalert2/sweetalert2.css') }}" rel="stylesheet">
+        {{-- <link href="{{ asset('assets/sweetalert2/sweetalert2.css') }}" rel="stylesheet"> --}}
         <link rel="icon" href="{{URL::asset('icon.jpg')}}">
     
         <!-- Tempus Dominus Styles -->
@@ -51,7 +51,6 @@
         <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> 
         <script src="{{ asset('assets/sweetalert2/sweetalert.min.js') }}"></script>
         <script src="{{ asset('assets/select2/select2.full.min.js') }}"></script>
-        <script src="{{ asset('assets/select2/select2.min.js') }}"></script>
         <script src="{{ asset('assets/select2/select2.full.min.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
@@ -375,5 +374,7 @@ tr.shown td.subdetails-click {
       background-color: #213555 !important;
       color: white;
     }
-   
+   .message_error{
+    font-size: 9px !important;
+   }
 </style>

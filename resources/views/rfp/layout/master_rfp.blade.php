@@ -21,10 +21,10 @@
         <div class="wrapper">
         @include('rfp.layout.navbar')
         <input type="hidden" class="form-control" id="auth_id" value="{{auth()->user()->id}}">
-        <div class="content-wrapper py-4">
+        
             <input type="hidden" id="authId" value="{{auth()->user()->id}}">
             @yield('content')
-        </div>
+        
 
 
         <aside class="control-sidebar control-sidebar-dark overflow-auto">
