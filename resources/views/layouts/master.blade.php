@@ -116,7 +116,16 @@
 </html>
 
 <style>
-    
+      fieldset {
+              border: 1px solid#ddd;
+              font-family: Poppins !important;
+              padding: 10px;
+          }
+       
+          legend {
+              font-size: 14px;
+              padding: 0 10px;
+          } 
     .selectOption2{
     font-size:9px;
   }

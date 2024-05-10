@@ -349,7 +349,6 @@
 
                 // Old Ticket
                     if(response.OldTicket){
-                        console.log(response.OldTicket)
                         $('#oldTicketContainer').prop('hidden',false)
                         $('#oldTicketRequestBy').html(': '+response.OldTicket.pic_name.name)
                         $('#oldTicketRequestCode').html(': '+response.OldTicket.request_code)
@@ -479,6 +478,104 @@
 
         window.open(`printWO/${from}/${to}/${officeFilter =='' ? '*':officeFilter}/${statusFilter =='' ? '*' : statusFilter}/${userId =='' ? '*' : userId}`,'_blank');
     })
+    $('#wo_table').on('click','.chat', function(){
+        var request_code = $(this).data('request')
+        var data ={
+            'request_code' :request_code
+        }
+        $('#chat_request').val(request_code)
+        data_chat = setInterval(function() {
+            getCallbackNoSwal('getDisscuss',data,function(response){
+                swal.close()
+                var data_chat =''
+                for(i=0; i < response.data.length ; i++){
+                    const d = new Date(response.data[i].created_at)
+                    const date = d.toISOString().split('T')[0];
+                    const time = d.toTimeString().split(' ')[0];
+                    data_chat +=`
+                            <div class="direct-chat-msg ${response.data[i].user_relation.id == $('#auth_id').val() ?'right':''}">
+                                <div class="direct-chat-infos clearfix">
+                                    <span class="direct-chat-name ${response.data[i].user_relation.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.data[i].user_relation == null ?'':response.data[i].user_relation.name}</span>
+                                    <span class="direct-chat-timestamp ${response.data[i].user_relation.id == $('#auth_id').val() ?'float-left':'float-right'}">${convertDate(date)} ${time}</span>
+                                </div>
+                                    <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
+                                <div class="direct-chat-text" style="font-size:12px !important">
+                                    ${response.data[i].comment}
+                                </div>
+                            
+                            </div>
+                    `
+                }
+                $('#chat_container').html(data_chat)
+            })
+            }, 10000);
+        getCallback('getDisscuss',data,function(response){
+            swal.close()
+            var data_chat =''
+            for(i=0; i < response.data.length ; i++){
+                const d = new Date(response.data[i].created_at)
+                const date = d.toISOString().split('T')[0];
+                const time = d.toTimeString().split(' ')[0];
+                data_chat +=`
+                        <div class="direct-chat-msg ${response.data[i].user_relation.id == $('#auth_id').val() ?'right':''}">
+                            <div class="direct-chat-infos clearfix">
+                                <span class="direct-chat-name ${response.data[i].user_relation.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.data[i].user_relation == null ?'':response.data[i].user_relation.name}</span>
+                                <span class="direct-chat-timestamp ${response.data[i].user_relation.id == $('#auth_id').val() ?'float-left':'float-right'}">${convertDate(date)} ${time}</span>
+                            </div>
+                                <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
+                            <div class="direct-chat-text" style="font-size:12px !important">
+                                ${response.data[i].comment}
+                            </div>
+                        
+                        </div>
+                `
+            }
+            $('#chat_container').html(data_chat)
+        })
+        // chat_container
+    })
+    $('#btn_send_chat').on('click', function(){
+        var data ={
+            'remark_chat'   : $('#remark_chat').val(),
+            'request_code'  : $('#chat_request').val()
+        }
+        var remark = $('#remark_chat').val()
+        if(remark == ''){
+            toastr['error']('Remark is required');
+        }else{
+            postCallbackNoSwal('sendDisscuss', data, function(response){
+                getCallbackNoSwal('getDisscuss',data,function(response){
+                    swal.close()
+                    var data_chat =''
+                    for(i=0; i < response.data.length ; i++){
+                        const d = new Date(response.data[i].created_at)
+                        const date = d.toISOString().split('T')[0];
+                        const time = d.toTimeString().split(' ')[0];
+                        data_chat +=`
+                                <div class="direct-chat-msg ${response.data[i].user_relation.id == $('#auth_id').val() ?'right':''}">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name ${response.data[i].user_relation.id == $('#auth_id').val() ?'float-right':'float-left'}">${response.data[i].user_relation == null ?'':response.data[i].user_relation.name}</span>
+                                        <span class="direct-chat-timestamp ${response.data[i].user_relation.id == $('#auth_id').val() ?'float-left':'float-right'}">${convertDate(date)} ${time}</span>
+                                    </div>
+                                        <img class="direct-chat-img" src="{{URL::asset('profile.png')}}" alt="message user image">
+                                    <div class="direct-chat-text" style="font-size:12px !important">
+                                        ${response.data[i].comment}
+                                    </div>
+                                
+                                </div>
+                        `
+                    }
+                    $('#chat_container').html(data_chat)
+                })
+            })
+        }
+    })
+    $(document).ready(function () {
+    $('#chatModal').on('hidden.bs.modal', function () {
+      // var detail_code = $('#detail_code_chat').val()
+      clearInterval(data_chat);
+    })
+  })
     const progressSteps = document.querySelectorAll('.progress-step');
     let formSetpsNum =0
     function updateProgressBar()
@@ -794,6 +891,12 @@
                             var detailWO = `<button title="Detail" class="detailWO btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#detailWO">
                                                  <i class="fas fa-eye"></i>    
                                             </button> `;
+                            var chat ='';
+                            if(response.data[i].status != 4){
+                                chat = `<button title="Disscuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#chatModal">
+                                                     <i class="fas fa-comment"></i>    
+                                                </button> `;
+                            }
                     data += `<tr style="text-align: center;">
                                 @can('priority-work_order_list')
                                 <td class='details-control'></td>
@@ -823,7 +926,7 @@
                                     @can('rating-work_order_list')
                                     ${make_sure_done}
                                     @endcan
-                                    
+                                    ${chat}
                                 </td>
                             </tr>
                             `;

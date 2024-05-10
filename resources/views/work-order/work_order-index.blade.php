@@ -107,6 +107,7 @@
       </div>
     </div>
 
+@include('work-order.chat-work_order')
 @include('work-order.add-work_order')
 @include('work-order.edit-work_order')
 @include('work-order.manual_assign-work_order')

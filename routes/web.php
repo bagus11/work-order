@@ -194,6 +194,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     // WO List
     Route::get('get_work_order_list', [WorkOrderController::class, 'get_work_order_list'])->name('get_work_order_list');
+    Route::get('getDisscuss', [WorkOrderController::class, 'getDisscuss'])->name('getDisscuss'); 
+    Route::post('sendDisscuss', [WorkOrderController::class, 'sendDisscuss'])->name('sendDisscuss'); 
     Route::get('get_categories_name', [WorkOrderController::class, 'get_categories_name'])->name('get_categories_name');
     Route::post('save_wo', [WorkOrderController::class, 'save_wo'])->name('save_wo');
     Route::get('get_wo_log', [WorkOrderController::class, 'get_wo_log'])->name('get_wo_log');
@@ -344,6 +346,7 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::post('addHeadOpex', [OpexTimelineController::class, 'addHeadOpex'])->name('addHeadOpex'); 
                 Route::get('detailHeadOpex', [OpexTimelineController::class, 'detailHeadOpex'])->name('detailHeadOpex'); 
                 Route::post('updateHeadOpex', [OpexTimelineController::class, 'updateHeadOpex'])->name('updateHeadOpex'); 
+             
             // Master Opex Team
 
             // Opex Kanban 

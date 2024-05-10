@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use NumConvert;
 use App\Mail\SendMail;
+use App\Models\ChatRFM;
 use App\Models\MasterJabatan;
 use App\Models\MasterKantor;
 use App\Models\ProblemType;
@@ -190,6 +191,12 @@ class WorkOrderController extends Controller
     public function get_categories_name(Request $request){
       
         $data = MasterCategory::with('departement')->where('departement_id','like','%'.$request->departement_id.'%')->where('flg_aktif',1)->get();
+        return response()->json([
+            'data'=>$data
+        ]);
+    }
+    public function getDisscuss(Request $request){
+        $data = ChatRFM::with(['userRelation'])->where('request_code', $request->request_code)->get();
         return response()->json([
             'data'=>$data
         ]);
@@ -1305,6 +1312,24 @@ class WorkOrderController extends Controller
             // Process the exception, log, print etc.
             echo $e->getMessage();
         }
+    }
+    function sendDisscuss(Request $request){
+        $message ="Failed send message, please contact ICT Dev. Thanks";
+        $status =500;
+        $post = [
+            'request_code'  =>  $request->request_code,
+            'comment'       =>  $request->remark_chat,
+            'user_id'       => auth()->user()->id
+        ];
+        $insert = ChatRFM::create($post);
+        if($insert){
+            $message ="Successfully sending message :)";
+            $status =200;
+        }
+        return response()->json([   
+            'message'=>$message,
+            'status'=>$status,
+        ]);
     }
 
 }
