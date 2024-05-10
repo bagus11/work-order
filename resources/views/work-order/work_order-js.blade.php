@@ -919,7 +919,7 @@
                                 <td style="width:11%;text-align:center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
                                 <td style="width:11%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
                                 <td style="width:11%;text-align:center; color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
-                                <td style="width:11%;text-align:center">
+                                <td style="width:11%;text-align:left">
                                     ${detailWO}
                                     ${buttonPrint}
                                     @can('update-work_order_list')
