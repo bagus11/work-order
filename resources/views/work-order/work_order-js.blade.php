@@ -894,7 +894,7 @@
                                                  <i class="fas fa-eye"></i>    
                                             </button> `;
                             var chat ='';
-                            if(response.data[i].status_wo ==4 && response.data[i].status_approval == 0){
+                            if(response.data[i].status_wo == 4 && response.data[i].status_approval == 2){
                                 chat = `<button title="Disscuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#chatModal">
                                                      <i class="fas fa-comment"></i>    
                                                 </button> `;
