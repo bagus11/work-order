@@ -483,6 +483,7 @@
         var data ={
             'request_code' :request_code
         }
+        $('#remark_chat').val('')
         $('#chat_request').val(request_code)
         data_chat = setInterval(function() {
             getCallbackNoSwal('getDisscuss',data,function(response){
@@ -539,6 +540,7 @@
             'remark_chat'   : $('#remark_chat').val(),
             'request_code'  : $('#chat_request').val()
         }
+        $('#remark_chat').val('')
         var remark = $('#remark_chat').val()
         if(remark == ''){
             toastr['error']('Remark is required');
@@ -893,6 +895,7 @@
                                             </button> `;
                             var chat ='';
                             if(response.data[i].status != 4){
+                                console.log(response.data[i].status + ' == ' + response.data[i].request_code)
                                 chat = `<button title="Disscuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#chatModal">
                                                      <i class="fas fa-comment"></i>    
                                                 </button> `;
