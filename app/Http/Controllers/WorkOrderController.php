@@ -478,7 +478,7 @@ class WorkOrderController extends Controller
                                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime
                                         ];        
                                     }else{
-                                        $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
                                         $test_post =[
                                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 1'
                                         ];  
@@ -500,7 +500,7 @@ class WorkOrderController extends Controller
                                         
                                         }
                                     }else{
-                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime) - 60;
                                         $test_post =[
                                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 4'
                                         ];  
@@ -510,7 +510,7 @@ class WorkOrderController extends Controller
                             // Validation Date
                             }
                         }
-                        // dd($test)
+                        // dd($test);
                     // Setup Duration
                     // checking if status wo before is pending, cant change level 
                    if($log_wo->level == 2){
