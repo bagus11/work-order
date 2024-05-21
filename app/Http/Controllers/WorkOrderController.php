@@ -443,7 +443,8 @@ class WorkOrderController extends Controller
                         $response = $api->getBody()->getContents();
                         $data =json_decode($response, true);
                         $totalTime =0;
-
+                        $test =[];
+                        // dd($workOrderStatus);
                         foreach($data as $row){
                             if($row['daytype'] =='WD'){
 
@@ -465,34 +466,51 @@ class WorkOrderController extends Controller
                                 $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
                                 $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
                                 $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+                              
                             // Initialing Date && Time
 
                             // Validation Date
                                 if($startDatePIC == $shiftstartDate)
                                 {
                                     if($startTimePIC >=$shiftendTime){
-                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime); 
+                                        $test_post =[
+                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime
+                                        ];        
                                     }else{
                                         $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
-                                        // dd($startTimePIC . ' == '.$shiftendTime.'  ==> '.$totalTime);
+                                        $test_post =[
+                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 1'
+                                        ];  
                                     }
+                                    array_push($test,$test_post);
                                 
                                 }else{
                                     if($shiftendDate == $dateNow){
                                         if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
-                                            
                                             $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                            $test_post =[
+                                                'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 2'
+                                            ];  
                                         }else{
                                             $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                                            $test_post =[
+                                                'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 3'
+                                            ];  
                                         
                                         }
                                     }else{
                                         $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                        $test_post =[
+                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 4'
+                                        ];  
                                     }
+                                    array_push($test,$test_post);
                                 }
                             // Validation Date
                             }
                         }
+                        // dd($test)
                     // Setup Duration
                     // checking if status wo before is pending, cant change level 
                    if($log_wo->level == 2){

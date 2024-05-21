@@ -540,8 +540,9 @@
             'remark_chat'   : $('#remark_chat').val(),
             'request_code'  : $('#chat_request').val()
         }
-        $('#remark_chat').val('')
+        
         var remark = $('#remark_chat').val()
+        console.log(remark)
         if(remark == ''){
             toastr['error']('Remark is required');
         }else{
@@ -570,6 +571,7 @@
                     $('#chat_container').html(data_chat)
                 })
             })
+            $('#remark_chat').val('')
         }
     })
     $(document).ready(function () {
