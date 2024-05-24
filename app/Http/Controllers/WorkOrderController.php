@@ -1460,7 +1460,7 @@ class WorkOrderController extends Controller
             // Retrieve the most recent log entry before the current one based on created_at
             // Debugging: check $test after the loop
             
-            // $update = WorkOrderLog::find($row['id'])->update(['duration' => $totalTime]);
+            $update = WorkOrderLog::find($row['id'])->update(['duration' => $totalTime]);
             // Debugging: check the update result
             // dd($update);
             // Setup Duration
