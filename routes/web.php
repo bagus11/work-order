@@ -204,6 +204,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('rating_pic', [WorkOrderController::class, 'rating_pic'])->name('rating_pic');
     Route::get('getStepper', [WorkOrderController::class, 'getStepper'])->name('getStepper');
     Route::post('holdProgressRequest', [WorkOrderController::class, 'holdProgressRequest'])->name('holdProgressRequest');
+    Route::post('revisiDuration', [WorkOrderController::class, 'revisiDuration'])->name('revisiDuration');
     // Report Work Order
     Route::get('printWO/{from}/{date}/{officeFilter}/{statusFilter}/{userId}',[WorkOrderController::class, 'printWO']);
     Route::get('reportDetailWO/{id}',[WorkOrderController::class, 'reportDetailWO']);

@@ -1349,5 +1349,125 @@ class WorkOrderController extends Controller
             'status'=>$status,
         ]);
     }
+    function revisiDuration() {
+        $dataAll = WorkOrderLog::all();
+        $array = [];
+        $test = [];
+        $totalTime = 0;
+        foreach ($dataAll as $row) {
+            if($row->duration > 0){
 
+                $log_before = WorkOrderLog::with(['userPICSupport'])->where('id', '<', $row['id'])->orderBy('id', 'desc')->first();
+        
+                // Check if $log_before is null
+                if ($log_before === null) {
+                    continue; // Skip to the next iteration if $log_before is null
+                }else{
+    
+                    // dd($row->userPICSupport->nik);
+                    // Setup Duration
+                    $dateBeforePost = $log_before->created_at->format('Y-m-d');
+                    $startDateTimePIC = date('Y-m-d H:i:s', strtotime($row['created_at']));
+                    $end_date = explode(' ', $startDateTimePIC);
+                    $client = new \GuzzleHttp\Client();
+                    $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . $row->userPICSupport->nik . '&startdate=' . $dateBeforePost . '&enddate=' . $end_date[0]);
+                    $response = $api->getBody()->getContents();
+                    $data = json_decode($response, true);
+                    // dd($startDateTimePIC);
+                    // Debugging: check if API response is valid
+                    // dd($data); // Uncomment this line to debug the API response
+            
+                    $totalTime = 0;
+               
+            
+                    foreach ($data as $col) {
+                        // Debugging: check each item in $data
+                         // Uncomment this line to debug each item in $data
+            
+                        if ($col['daytype'] == 'WD') {
+                            // Initializing Date && Time
+                            $startDateTimePIC = date('Y-m-d H:i:s', strtotime($log_before->created_at));
+                            $a = date('Y-m-d', strtotime($log_before->created_at));
+                            $a2 = date('H:i:s', strtotime($log_before->created_at));
+                            $a1 = Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
+            
+                            $shiftstartDatetime = date('Y-m-d H:i:s', strtotime($col['shiftstarttime']));
+                            $b = date('Y-m-d', strtotime($col['shiftstarttime']));
+                            $b1 = Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
+            
+                            $dateTimeSystem = date('Y-m-d H:i:s', strtotime($row['created_at']));
+                            $c = date('Y-m-d', strtotime($dateTimeSystem));
+                            $c2 = date('H:i:s', strtotime($dateTimeSystem));
+                            $c1 = Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
+            
+                            $shiftendDatetime = date('Y-m-d H:i:s', strtotime($col['shiftendtime']));
+                            $b2 = date('Y-m-d', strtotime($col['shiftendtime']));
+                            $b4 = date('H:i:s', strtotime($shiftendDatetime));
+                            $b3 = Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+            
+                            // Validating Date
+                            if ($a === $c) {
+                                if($c2 >= $b2){
+                                    $totalTime += $a1->diffInMinutes($b3);
+                                    $test_post = [
+                                        'duration' => $a . ' == ' . $c . '  ==> ' . $totalTime. ' tahap 1 ' . ' ==> ' . $a2.' => ' .$c2.' => '.$b1,
+                                        'rfm'       =>$row->request_code,
+                                        'user_id'   => $row['user_id_support']
+                                    ];          
+                                }else{
+                                    $totalTime += $a1->diffInMinutes($c1);
+                                    $test_post = [
+                                        'duration' => $a . ' == ' . $c . '  ==> ' . $totalTime. ' tahap 2 ' . ' ==> ' . $a2.' => ' .$c2.' => '.$b1,
+                                        'rfm'       =>$row->request_code,
+                                        'user_id'   => $row['user_id_support']
+                                    ];         
+                                }                     
+                                array_push($test, $test_post);
+                            } else if ($a != $b) {
+                                if($b !== $c){
+                                    if($a2 <= $b2){
+                                        $totalTime += $b1->diffInMinutes($b3);
+                                        $test_post = [
+                                            'duration' => $a . ' == ' . $c . '  ==> ' . $totalTime. ' tahap 3 ' . ' ==> ' . $a2.' => ' .$c2.' => '.$b1.'  ==> '.$b.' ==> '.$b4,
+                                            'rfm'       =>$row->request_code,
+                                            'user_id'   => $row['user_id_support']
+                                        ];        
+                                    }
+                                }if($b === $c){
+                                    $partialTime = $b1->diffInMinutes($b2);
+                                    $totalTime += $b1->diffInMinutes($c1);
+                                    $test_post = [
+                                        'duration' => $a . ' == ' . $c . '  ==> ' . $totalTime. ' tahap 4 ' . ' ==> ' . $a2.' => ' .$c2.' => '.$b1.' =>'.$partialTime.'  ==> '.$b,
+                                        'rfm'       =>$row->request_code,
+                                        'user_id'   => $row['user_id_support']
+                                    ];        
+                                }
+                              
+                               
+                                array_push($test, $test_post);
+                            }
+                }
+                        // Validating Date
+                    }
+                    $post = [
+                        'request_code' => $row['request_code'],
+                        'id' => $row['id'],
+                        'duration' => $totalTime
+                    ];
+                    array_push($test, $post);
+                }
+            }
+            // Retrieve the most recent log entry before the current one based on created_at
+            // Debugging: check $test after the loop
+            
+            // $update = WorkOrderLog::find($row['id'])->update(['duration' => $totalTime]);
+            // Debugging: check the update result
+            // dd($update);
+            // Setup Duration
+        }
+        return ResponseFormatter::success(
+            $post,
+            'Revisi selesaii woi'
+        );         
+    }
 }

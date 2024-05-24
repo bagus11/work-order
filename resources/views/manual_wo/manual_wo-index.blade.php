@@ -108,6 +108,9 @@
               <button id="btnSaveManualWO" style="float:right" class="btn btn-success">
                   <i class="fas fa-check"></i>
               </button>
+              <button id="btnTest" style="float:right" class="btn btn-danger mr-2">
+                  <i class="fas fa-check"></i>
+              </button>
           </div>
       </div>
     </div>

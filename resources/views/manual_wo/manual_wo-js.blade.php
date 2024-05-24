@@ -26,4 +26,10 @@
 
         store('manual_wo',data,'work_order_list')
     })
+    $('#btnTest').on('click', function(){
+        postCallback('revisiDuration',null,function(response){
+            swal.close()
+            toastr['success'](response.meta.message);
+        })
+    })
 </script>
