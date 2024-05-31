@@ -108,9 +108,11 @@
               <button id="btnSaveManualWO" style="float:right" class="btn btn-success">
                   <i class="fas fa-check"></i>
               </button>
+              @can('create-work_order_list')
               <button id="btnTest" style="float:right" class="btn btn-danger mr-2">
                   <i class="fas fa-check"></i>
               </button>
+              @endcan
           </div>
       </div>
     </div>
