@@ -879,7 +879,7 @@
                             }
                             if((response.data[i].status_wo == 4 && response.data[i].status_approval == 0) || (response.data[i].status_approval == 2 && response.data[i].status_wo == 4)){
                                 if(auth_id == response.data[i].user_id){
-                                    make_sure_done =`<button title="Approvement" class="ratingPIC btn btn-sm btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#ratingPIC">
+                                    make_sure_done =`<button title="Approvement" class="ratingPIC btn btn-sm btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#ratingPIC">
                                                      <i class="fas fa-star"></i>
                                                 </button> `;
                                 }

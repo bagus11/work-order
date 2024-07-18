@@ -1181,7 +1181,7 @@ class WorkOrderController extends Controller
                                 $mpdf->SetHTMLHeader($header);
                                 $mpdf->SetHTMLFooter($footer);
                                 $mpdf->AddPage(
-                                    'P', // L - landscape, P - portrait 
+                                    'L', // L - landscape, P - portrait 
                                     '',
                                     '',
                                     '',

@@ -100,6 +100,7 @@
                 <th>Departement</th>
                 <th>Categories</th>
                 <th>Subject</th>
+                <th>Add Info</th>
                 <th>PIC</th>
                 <th>Status</th>
                 <th>Duration</th>
@@ -144,6 +145,7 @@
                         <td style="text-align:left">{{$item->departement_name}}</td>
                         <td style="text-align:left">{{$item->categories_name}}</td>
                         <td style="text-align:left">{{$subject[0]}}</td>
+                        <td style="text-align:left">{{$item->add_info}}</td>
                         <td style="text-align:{{$item->picSupportName == null ? 'center': 'left'}}">{{$item->picSupportName == null ? '-' : $item->picSupportName->name}}</td>
                         <td style="text-align:left">{{$statusLabel}}</td>
                         <td style="text-align:center">{{$item->duration == 0 ? '-' : $item->duration}}</td>
