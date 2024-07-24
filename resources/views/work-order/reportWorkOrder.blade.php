@@ -96,20 +96,21 @@
                 <th>No</th>
                 <th>Created At</th>
                 <th>Request Code</th>
-                <th>Level</th>
+                <th>User</th>
                 <th>Departement</th>
                 <th>Categories</th>
                 <th>Subject</th>
                 <th>Add Info</th>
                 <th>PIC</th>
                 <th>Status</th>
-                <th>Duration</th>
+                <th>Finished at</th>
             </tr>
         </thead>
         <tbody>
             @php
                 $i = 0;
             @endphp
+           
             @forelse ($reportWO as $item)
                 @php
                     $statusLabel = '';
@@ -141,14 +142,14 @@
                         <td style="text-align:center">{{$i+1}}</td>
                         <td style="text-align:center">{{$item->created_at}}</td>
                         <td style="text-align:center">{{$item->request_code}}</td>
-                        <td style="text-align:center">{{$item->level}}</td>
+                        <td style="text-align:left">{{$item->username}}</td>
                         <td style="text-align:left">{{$item->departement_name}}</td>
                         <td style="text-align:left">{{$item->categories_name}}</td>
                         <td style="text-align:left">{{$subject[0]}}</td>
                         <td style="text-align:left">{{$item->add_info}}</td>
                         <td style="text-align:{{$item->picSupportName == null ? 'center': 'left'}}">{{$item->picSupportName == null ? '-' : $item->picSupportName->name}}</td>
                         <td style="text-align:left">{{$statusLabel}}</td>
-                        <td style="text-align:center">{{$item->duration == 0 ? '-' : $item->duration}}</td>
+                        <td style="text-align:center">{{$item->finished}}</td>
                     </tr>
                 @php
                     $i++;

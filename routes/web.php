@@ -18,6 +18,9 @@ use App\Http\Controllers\MasterTeamController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\Opex\Setting\OpexTeamController;
 use App\Http\Controllers\Opex\Setting\OpexTimelineController;
+use App\Http\Controllers\OPX\MasterCategoryOPXController;
+use App\Http\Controllers\OPX\MasterProductOPXController;
+use App\Http\Controllers\OPX\MonitoringOPXController;
 use App\Http\Controllers\ProblemTypeController;
 use App\Http\Controllers\ReportKPIController;
 use App\Http\Controllers\RFP\RFPDetailProjectController;
@@ -27,6 +30,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkOrderController;
+use App\Models\OPX\MasterProductOPX;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -102,6 +106,15 @@ Route::group(['middleware' => ['auth']], function() {
     });
     Route::group(['middleware' => ['permission:view-master_product_inv']], function () {
         Route::get('master_product_inv', [MasterProductInvController::class, 'index'])->name('master_product_inv');
+    });
+    Route::group(['middleware' => ['permission:view-monitoring_opex']], function () {
+        Route::get('monitoring_opex', [MonitoringOPXController::class, 'index'])->name('monitoring_opex');
+    });
+    Route::group(['middleware' => ['permission:view-master_category_opex']], function () {
+        Route::get('master_category_opex', [MasterCategoryOPXController::class, 'index'])->name('master_category_opex');
+    });
+    Route::group(['middleware' => ['permission:view-master_product_opex']], function () {
+        Route::get('master_product_opex', [MasterProductOPXController::class, 'index'])->name('master_product_opex');
     });
     // Menus
     Route::post('save_menus', [MenusController::class, 'save_menus'])->name('save_menus');
@@ -355,6 +368,40 @@ Route::group(['middleware' => ['auth']], function() {
             // Opex Kanban
 
         // Setting
+
+        // Master
+            Route::get('getmasterCategoryOPX', [MasterCategoryOPXController::class, 'getmasterCategoryOPX'])->name('getmasterCategoryOPX'); 
+            Route::get('getDevCategoryOPX', [MasterCategoryOPXController::class, 'getDevCategoryOPX'])->name('getDevCategoryOPX'); 
+            Route::get('getActiveCategoryOPX', [MasterCategoryOPXController::class, 'getActiveCategoryOPX'])->name('getActiveCategoryOPX'); 
+            Route::get('getDevCategoryOPX', [MasterCategoryOPXController::class, 'getDevCategoryOPX'])->name('getDevCategoryOPX'); 
+            Route::post('addCategoryOPX', [MasterCategoryOPXController::class, 'addCategoryOPX'])->name('addCategoryOPX'); 
+            Route::post('updateCategoryOPX', [MasterCategoryOPXController::class, 'updateCategoryOPX'])->name('updateCategoryOPX'); 
+            Route::post('updateStatusCategoryOPX', [MasterCategoryOPXController::class, 'updateStatusCategoryOPX'])->name('updateStatusCategoryOPX'); 
+            
+            
+            Route::get('getProductOPX', [MasterProductOPXController::class, 'getProductOPX'])->name('getProductOPX'); 
+            Route::get('getProductFilter', [MasterProductOPXController::class, 'getProductFilter'])->name('getProductFilter'); 
+            Route::post('addProductOPX', [MasterProductOPXController::class, 'addProductOPX'])->name('addProductOPX'); 
+            Route::post('updateProductOPX', [MasterProductOPXController::class, 'updateProductOPX'])->name('updateProductOPX'); 
+            Route::post('updateStatusProductOPX', [MasterProductOPXController::class, 'updateStatusProductOPX'])->name('updateStatusProductOPX'); 
+
+
+        // Master
+        // Monitoring OPEX
+            Route::get('getOPX', [MonitoringOPXController::class, 'getOPX'])->name('getOPX'); 
+            Route::get('getDetervative', [MonitoringOPXController::class, 'getDetervative'])->name('getDetervative'); 
+            Route::get('getPOOPX', [MonitoringOPXController::class, 'getPOOPX'])->name('getPOOPX'); 
+            Route::get('getISOPX', [MonitoringOPXController::class, 'getISOPX'])->name('getISOPX'); 
+            Route::post('addOPX', [MonitoringOPXController::class, 'addOPX'])->name('addOPX'); 
+            Route::post('addPOOPX', [MonitoringOPXController::class, 'addPOOPX'])->name('addPOOPX'); 
+            Route::post('updateISOPX', [MonitoringOPXController::class, 'updateISOPX'])->name('updateISOPX'); 
+            Route::post('addISOPX', [MonitoringOPXController::class, 'addISOPX'])->name('addISOPX'); 
+            Route::post('updatePOOPX', [MonitoringOPXController::class, 'updatePOOPX'])->name('updatePOOPX'); 
+            Route::post('updatePROPX', [MonitoringOPXController::class, 'updatePROPX'])->name('updatePROPX'); 
+        // Monitoring OPEX
+        
     // Opex
+
+
 });
 

@@ -946,12 +946,13 @@ class WorkOrderController extends Controller
                 }
                 if($userId !=''){
                     $reportWO               = WorkOrder::with('picSupportName')
-                                                ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
+                                                ->select('work_orders.*', 'users.name as username','finished','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
                                                 ->leftJoin('users','users.id','=','work_orders.user_id')
                                                 ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
                                                 ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
                                                 ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
                                                 ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
+                                                ->leftJoin(DB::raw('(select request_code, created_at as finished from work_order_logs where status_wo = 4) as logs'), 'logs.request_code', '=', 'work_orders.request_code')
                                                 ->where('user_id_support',$userIdString)
                                                 ->where('work_orders.request_for',$requestFor->initial)
                                                 ->where('master_kantor.id','like','%'.$officeString.'%')
