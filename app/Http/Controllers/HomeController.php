@@ -273,6 +273,41 @@ class HomeController extends Controller
             'classementPIC'=>$classementPIC,
         ]);
     }
+    function getLevel2Filter(Request $request){
+       
+        if($request->filter_level == 2){
+            $date = Carbon::createFromFormat('Y-m-d', $request->filter.'-01')
+            ->endOfMonth()
+            ->format('Y-m-d');
+            $data =  WorkOrder::with(['categoryName','departementName','problemTypeName','picSupportName'])
+                                                     ->where([
+                                                         'status_wo' =>4,
+                                                         'level'     =>2
+                                                         ])
+                                                      ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->filter.'-01', $date])
+                                                      ->get();
+
+        }else if($request->filter_level == 3){
+            $data =  WorkOrder::with(['categoryName','departementName','problemTypeName','picSupportName'])
+                                                     ->where([
+                                                         'status_wo' =>4,
+                                                         'level'     =>2
+                                                         ])
+                                                      ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->filter.'-01-01', $request->filter.'-12-31'])
+                                                      ->get();
+        }
+        else{
+            $data =  WorkOrder::with(['categoryName','departementName','problemTypeName','picSupportName'])
+            ->where([
+                'status_wo' =>4,
+                'level'     =>2
+                ])
+             ->get();
+        }
+        return response()->json([
+            'data'=>$data,
+        ]);
+    }
     
     public function percentageType(Request $request){
         $data='';

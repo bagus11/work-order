@@ -30,6 +30,37 @@
             )
         }
     })
+    $('#selectTicketFilter').on('change', function(){
+        var selectTicketFilter = $('#selectTicketFilter').val()
+        if(selectTicketFilter == 2){
+            $('#paramterTicketFilter').empty()
+            $('#paramterTicketFilter').append(`
+                <input type="month" class="form-control" id="filter_level" value="{{date('Y-m')}}">
+            `);
+        }else if(selectTicketFilter == 3){
+            $('#paramterTicketFilter').empty()
+            $('#paramterTicketFilter').append(`
+                <input type="number" style="text-align:center" class="form-control" id="filter_level" value="{{date('Y')}}">
+            `);
+        }else{
+            $('#paramterTicketFilter').empty()
+            $('#paramterTicketFilter').append(
+                `
+                    <label class="mt-2">All Periode</label>
+                `
+            )
+        }
+    })
+    $('#btnLevel2').on('click', function(){
+        var data ={
+            'filter' : $('#filter_level').val(),
+            'filter_level' : $('#selectTicketFilter').val(),
+        }
+        getCallback('getLevel2Filter', data, function(response){
+            swal.close()
+            mappingLevel2(response.data)
+        })
+    })
     $('#selectPercentageFilter').on('change', function(){
         var selectPercentageFilter = $('#selectPercentageFilter').val()
         if(selectPercentageFilter == 2){

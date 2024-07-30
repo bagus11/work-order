@@ -239,6 +239,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getNotification', [HomeController::class, 'getNotification'])->name('getNotification');
     Route::post('updateNotif', [HomeController::class, 'updateNotif'])->name('updateNotif');
     Route::get('getRankingFilter', [HomeController::class, 'getRankingFilter'])->name('getRankingFilter');
+    Route::get('getLevel2Filter', [HomeController::class, 'getLevel2Filter'])->name('getLevel2Filter');
     Route::get('percentageType', [HomeController::class, 'percentageType'])->name('percentageType');
     Route::get('getWorkOrderByStatus', [HomeController::class, 'getWorkOrderByStatus'])->name('getWorkOrderByStatus');
 

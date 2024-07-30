@@ -418,7 +418,7 @@
                                                             <label class="mt-2" for="">All Period</label>
                                                     </div>
                                                 </div>
-                                                <button class="btn btn-warning btn-block mt-2" id="btnRankingFilter">
+                                                <button class="btn btn-warning btn-block mt-2" id="btnLevel2">
                                                     <ion-icon name="filter-sharp"></ion-icon> Filter
                                                 </button>     
                                     </div>
