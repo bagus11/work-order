@@ -150,8 +150,8 @@
                         </td>
                    </tr>
                </table>
-
             </div>
+            <p style="font-size:10px;margin-left:20px;margin-top: 50px; text-align:left;">03/ICT/08.2018 Rev.00</p>
     </div>
     <br>
     
