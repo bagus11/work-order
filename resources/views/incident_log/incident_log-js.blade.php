@@ -137,7 +137,10 @@
                             <i class="fas fa-solid fa-edit"></i>
                         </button>`;
             }
+            console.log(incidents[i].created_at)
             data += `<tr style="text-align: center;">
+                    
+                        <td></td>
                         <td>${incidents[i].incident_code}</td>
                         <td style="text-align:left">${incidents[i].location_relation.name}</td>
                         <td style="text-align:left">${incidents[i].categories_relation.name}</td>

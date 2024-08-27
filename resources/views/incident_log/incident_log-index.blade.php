@@ -16,6 +16,7 @@
                 <table class="datatable-bordered" id="incidentTable">
                     <thead>
                         <tr>
+                            <th style="text-align: center">Created At</th>
                             <th style="text-align: center">Incident Code</th>
                             <th style="text-align: center">Location</th>
                             <th style="text-align: center">Incident Category</th>
