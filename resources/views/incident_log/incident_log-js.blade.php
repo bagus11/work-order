@@ -137,10 +137,19 @@
                             <i class="fas fa-solid fa-edit"></i>
                         </button>`;
             }
-            console.log(incidents[i].created_at)
+            var timestamp = incidents[i].created_at;
+            var dateObject = new Date(timestamp);
+
+            // Format the date and time
+            var formattedDate = dateObject.toLocaleDateString('en-US'); // You can adjust the locale if needed
+            var formattedTime = dateObject.toLocaleTimeString('en-US');
+
+            // Combine date and time
+            var formattedDateTime = formattedDate + ' ' + formattedTime;
+
             data += `<tr style="text-align: center;">
                     
-                        <td></td>
+                        <td>${formattedDateTime}</td>
                         <td>${incidents[i].incident_code}</td>
                         <td style="text-align:left">${incidents[i].location_relation.name}</td>
                         <td style="text-align:left">${incidents[i].categories_relation.name}</td>
