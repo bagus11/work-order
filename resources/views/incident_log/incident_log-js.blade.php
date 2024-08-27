@@ -122,42 +122,44 @@
     // Operation
 
     // Function
-        function mappingTable(response){
-            $('#incidentTable').DataTable().clear();
-            $('#incidentTable').DataTable().destroy();
-            var data=''
-           
-                for(i = 0; i < response.length; i++ )
-                {
-                 
-                    var button ='';
-                    if(auth_id == response[i].user_id && response[i].status == 1){
-                        button =`   <button title="Update Incident" class="editHeader btn btn-sm btn-warning rounded" data-incidentcode="${response[i]['incident_code']}" data-toggle="modal" data-target="#editHeader">
-                                        <i class="fas fa-solid fa-edit"></i>
-                                    </button>`;
-                    }
-                    data += `<tr style="text-align: center;">
-                                <td>${response[i].incident_code}</td>
-                                <td style="text-align:left">${response[i].location_relation.name}</td>
-                                <td style="text-align:left">${response[i].categories_relation.name}</td>
-                                <td style="text-align:left">${response[i].problem_relation.name}</td>
-                                <td style="color : ${response[i].status == 1 ?'#8ECDDD' :'black'}; font-weight:bold"><strong>${response[i]['status']== 1 ?'START':'END'}</strong></td>
-                                <td>${response[i].status == 1 ?'-' : response[i].duration}</td>
-                                <td>
-                                    <button title="Detail" class="detailIncident btn btn-sm btn-primary rounded" data-incidentcode="${response[i]['incident_code']}" data-toggle="modal" data-target="#detailIncident">
-                                        <i class="fas fa-solid fa-eye"></i>
-                                    </button>
-                                    ${button}
-                                </td>
-                            </tr>
-                            `;
-                }
-                    $('#incidentTable > tbody:first').html(data);
-                    $('#incidentTable').DataTable({   
-                        scrollX  : true,
-                        scrollY  : 450
-                    }).columns.adjust()
+    function mappingTable(response){
+        // Access the actual data from the response
+        var incidents = response.data;
+
+        $('#incidentTable').DataTable().clear();
+        $('#incidentTable').DataTable().destroy();
+        var data = '';
+    
+        for (i = 0; i < incidents.length; i++) {
+            var button = '';
+            if (auth_id == incidents[i].user_id && incidents[i].status == 1) {
+                button = `<button title="Update Incident" class="editHeader btn btn-sm btn-warning rounded" data-incidentcode="${incidents[i]['incident_code']}" data-toggle="modal" data-target="#editHeader">
+                            <i class="fas fa-solid fa-edit"></i>
+                        </button>`;
+            }
+            data += `<tr style="text-align: center;">
+                        <td>${incidents[i].incident_code}</td>
+                        <td style="text-align:left">${incidents[i].location_relation.name}</td>
+                        <td style="text-align:left">${incidents[i].categories_relation.name}</td>
+                        <td style="text-align:left">${incidents[i].problem_relation.name}</td>
+                        <td style="color: ${incidents[i].status == 1 ? '#8ECDDD' : 'black'}; font-weight:bold"><strong>${incidents[i].status == 1 ? 'START' : 'END'}</strong></td>
+                        <td>${incidents[i].status == 1 ? '-' : incidents[i].duration}</td>
+                        <td>
+                            <button title="Detail" class="detailIncident btn btn-sm btn-primary rounded" data-incidentcode="${incidents[i]['incident_code']}" data-toggle="modal" data-target="#detailIncident">
+                                <i class="fas fa-solid fa-eye"></i>
+                            </button>
+                            ${button}
+                        </td>
+                    </tr>`;
         }
+        
+        $('#incidentTable > tbody:first').html(data);
+        $('#incidentTable').DataTable({   
+            scrollX: true,
+            scrollY: 450
+        }).columns.adjust();
+    }
+
         function mappingTableLog(response){
             $('#incidentLogTable').DataTable().clear();
             $('#incidentLogTable').DataTable().destroy();
