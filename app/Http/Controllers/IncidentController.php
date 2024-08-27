@@ -26,7 +26,7 @@ class IncidentController extends Controller
             'problemRelation',
             'categoriesRelation',
             'locationRelation',
-        ])->orderBy('created_at', 'desc')->orderBy('status','asc')->get();
+        ])->orderBy('status','asc')->get();
         return response()->json([
             'data'=>$data,
         ]);
