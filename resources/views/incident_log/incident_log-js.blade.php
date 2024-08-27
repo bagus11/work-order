@@ -124,7 +124,7 @@
     // Function
     function mappingTable(response){
         // Access the actual data from the response
-        var incidents = response.data;
+        var incidents = response;
 
         $('#incidentTable').DataTable().clear();
         $('#incidentTable').DataTable().destroy();
