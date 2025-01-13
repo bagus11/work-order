@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Asset\MasterAssetController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
@@ -115,6 +116,9 @@ Route::group(['middleware' => ['auth']], function() {
     });
     Route::group(['middleware' => ['permission:view-master_product_opex']], function () {
         Route::get('master_product_opex', [MasterProductOPXController::class, 'index'])->name('master_product_opex');
+    });
+    Route::group(['middleware' => ['permission:view-master_asset']], function () {
+        Route::get('master_asset', [MasterAssetController::class, 'index'])->name('master_product_opex');
     });
     // Menus
     Route::post('save_menus', [MenusController::class, 'save_menus'])->name('save_menus');
@@ -402,6 +406,15 @@ Route::group(['middleware' => ['auth']], function() {
         // Monitoring OPEX
         
     // Opex
+
+    // Asset
+        Route::get('getMasterAsset', [MasterAssetController::class, 'getMasterAsset'])->name('getMasterAsset'); 
+        Route::get('getMasterAssetUser', [MasterAssetController::class, 'getMasterAssetUser'])->name('getMasterAssetUser'); 
+        Route::get('mappingAssetUser', [MasterAssetController::class, 'mappingAssetUser'])->name('mappingAssetUser'); 
+        Route::get('mappingAssetChild', [MasterAssetController::class, 'mappingAssetChild'])->name('mappingAssetChild'); 
+        Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset'); 
+    
+    // Asset
 
 
 });
