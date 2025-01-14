@@ -207,15 +207,18 @@
                 $('#label_processor').html(': ' + row.spec_relation.processor)
                 $('#label_ram').html(': ' + row.spec_relation.ram + ' GB')
                 $('#label_storage').html(': ' + row.spec_relation.storage + ' GB')
+                $('.specification_container').prop('hidden', false)
+            }else{
+                $('.specification_container').prop('hidden', true)
             }
             $('#assetTitle').html(row.asset_code)
             $('#label_asset_code').html(": " + row.asset_code)
             $('#label_category').html(": " +row.category)
             $('#label_brand').html(": " + row.brand)
-            $('#label_type').html(row.type == 1 ?': Parent' : 'Child' )
+            $('#label_type').html(row.type == 1 ?': Parent' : ': Child' )
             $('#label_parent_code').html(row.parent_code == '' ? ': -' : ": " + row.parent_code)
-            $('#label_pic').html(row.user_relation == null ?': -' :row.user_relation.name)
-            $('#label_location').html(row.user_relation.location_relation == null ?': -' :row.user_relation.location_relation.name)
+            $('#label_pic').html(row.user_relation == null ?': -' :': '+row.user_relation.name)
+            $('#label_location').html(row.user_relation.location_relation == null ?': -' :': ' + row.user_relation.location_relation.name)
             $('#label_is_active').html(row.is_active == 1 ?': active' : ': inactive')
         }
   

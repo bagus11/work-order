@@ -12,6 +12,9 @@
                         <button class="btn btn-sm btn-success" title="Import User HRIS" id="btnImportUser">
                             <i class="fa-solid fa-user-secret"></i>
                         </button>
+                        <button class="btn btn-sm btn-primary" title="Import User HRIS" id="btnUpdateStartDate">
+                            <i class="fa-solid fa-user-secret"></i>
+                        </button>
                     </div>
                     @endcan
                 </div>

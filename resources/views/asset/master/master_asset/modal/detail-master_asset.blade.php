@@ -135,7 +135,7 @@
                                 </div>
                             </fieldset>
                             
-                            <fieldset class="scheduler-border" class="specification_container">
+                            <fieldset class="scheduler-border specification_container">
                                 <legend class="scheduler-border"> Asset Child</legend>
                                 <table class="datatable-bordered nowrap display" id="asset_child_table">
                                     <thead>

@@ -246,4 +246,11 @@
             }); 
         })
     // Import User
+
+    $('#btnUpdateStartDate').on('click', function(){
+        postCallback('updateJoinDateUser',null, function(response){
+            swal.close()
+            toastr['success'](response.meta.message)
+        })
+    })
 </script>

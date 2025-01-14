@@ -156,6 +156,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('update_status_user', [UserController::class, 'update_status_user'])->name('update_status_user');
     Route::get('detail_user', [UserController::class, 'detail_user'])->name('detail_user');
     Route::post('update_user_setting', [UserController::class, 'update_user_setting'])->name('update_user_setting');
+    Route::post('updateJoinDateUser', [UserController::class, 'updateJoinDateUser'])->name('updateJoinDateUser');
 
 
     // Setting

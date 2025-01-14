@@ -127,4 +127,65 @@ class UserController extends Controller
            'message'=>$message
         ]);
     }
+
+    function updateJoinDateUser() {
+        set_time_limit(100000); // Extend execution time
+        $users = User::where('start_date','0000-00-00')->get();
+        $status = 500;
+        $message = 'Failed to update data';
+    
+        foreach ($users as $user) {     
+            $client = new \GuzzleHttp\Client();
+            $response = $client->get('https://hris.pralon.co.id/application/API/getAttendance', [
+                'query' => [
+                    'emp_no' => $user->nik,
+                    'startdate' => date('Y-m-d'),
+                    'enddate' => date('Y-m-d'),
+                ]
+            ]);
+    
+            $responseBody = $response->getBody()->getContents();
+            $data = json_decode($responseBody, true);
+            $employee = [];
+            // Check if $data is an array and contains a valid element at index 0
+            if (is_array($data) && isset($data[0]) && isset($data[0]['start_date'])) {
+                $start_date = explode(' ', $data[0]['start_date'])[0];
+                
+                if ($user->nik == $data[0]['emp_no']) {
+                    if($user->start_date != $start_date){
+                        $update = User::where('nik', $user->nik)->update(['start_date' => $start_date]);
+                        if ($update) {
+                            $status = 200;
+                            $message = 'Successfully updated start date';
+                        }
+                    }else{
+                        $post_employee = [
+                            'nik'           => $user->nik,
+                            'start_date'    =>$user->start_date,
+                            'message'       =>'tidak sama'
+                        ];
+                        array_push($post_employee, $employee);
+                    }
+    
+                }else{
+                    $post_employee = [
+                        'nik'   => $user->nik,
+                        'start_date'    =>$user->start_date,
+                        'message'       =>'tidak sama'
+                    ];
+                    array_push($post_employee, $employee);
+                }
+            } else {
+                // Log or handle cases where the API response is not valid
+                $message = "No valid data found for emp_no: {$user->nik}";
+            }
+        }
+    
+        return response()->json([
+            'result'    => $employee,
+            'status' => $status,
+            'message' => $message,
+        ]);
+    }
+    
 }
