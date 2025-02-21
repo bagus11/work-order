@@ -30,6 +30,7 @@ use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VCardController;
 use App\Http\Controllers\WorkOrderController;
 use App\Models\OPX\MasterProductOPX;
 use Illuminate\Support\Facades\Route;
@@ -414,8 +415,15 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('mappingAssetUser', [MasterAssetController::class, 'mappingAssetUser'])->name('mappingAssetUser'); 
         Route::get('mappingAssetChild', [MasterAssetController::class, 'mappingAssetChild'])->name('mappingAssetChild'); 
         Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset'); 
-    
+        
     // Asset
+        
+    // V Card 
+        Route::get('v_card', [VCardController::class, 'index'])->name('v_card'); 
+        Route::get('getCard', [VCardController::class, 'getCard'])->name('getCard'); 
+        Route::get('generateCard/{id}/card', [VCardController::class, 'generateCard'])->name('generateCard'); 
+    
+    // V Card 
 
 
 });

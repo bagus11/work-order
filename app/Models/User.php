@@ -43,4 +43,8 @@ class User extends Authenticatable
     function locationRelation() {
         return $this->hasOne(MasterKantor::class,'id','kode_kantor');
     }
+    public function departmentRelation()
+    {
+        return $this->hasOne(MasterDepartement::class,'id','departement');
+    }
 }

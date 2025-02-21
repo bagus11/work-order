@@ -79,65 +79,57 @@
         $('#master_asset_user').DataTable().clear().destroy();
 
         const tableUser = $('#master_asset_user').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: `getMasterAssetUser`,
-                type: 'GET',
+        rowId: 'id', // Ensure a valid and unique ID exists in your dataset
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: `getMasterAssetUser`,
+            type: 'GET',
+        },
+        columns: [
+            {
+                class: 'dt-control',
+                orderable: false,
+                data: null,
+                defaultContent: ''
             },
-            columns: [
-                {
-                    class: 'dt-control',
-                    orderable: false,
-                    data: null,
-                    defaultContent: ''
-                },
-                { data: 'nik', name: 'nik' },
-                { data: 'user_relation.name', name: 'user_relation.name' },
-                {
-                    data: 'user_relation.departement.name',
-                    name: 'user_relation.departement.name',
-                    render: function (data) {
-                        return data ? data : '-';
-                    }
-                },
-                {
-                    data: 'user_relation.location_relation.name',
-                    name: 'user_relation.location_relation.name',
-                    render: function (data) {
-                        return data ? data : '-';
-                    }
+            { data: 'nik', name: 'nik' },
+            { data: 'user_relation.name', name: 'user_relation.name' },
+            {
+                data: 'user_relation.departement.name',
+                name: 'user_relation.departement.name',
+                render: function (data) {
+                    return data ? data : '-';
                 }
-            ]
-        });
+            },
+            {
+                data: 'user_relation.location_relation.name',
+                name: 'user_relation.location_relation.name',
+                render: function (data) {
+                    return data ? data : '-';
+                }
+            }
+        ]
+    });
+
 
         // Handle click for detail rows
         $('#master_asset_user').on('click', 'td.dt-control', function () {
             let tr = $(this).closest('tr');
             let row = tableUser.row(tr);
-            let idx = detailRows.indexOf(tr[0].id);
 
             if (row.child.isShown()) {
-                // Close the child row
                 tr.removeClass('details');
                 row.child.hide();
-                detailRows.splice(idx, 1);
             } else {
-                // Open the child row
                 tr.addClass('details');
-
                 let nik = row.data().nik;
-
                 $.ajax({
                     url: 'mappingAssetUser',
                     method: 'GET',
                     data: { nik: nik },
                     success: function (response) {
                         row.child(format(response.data)).show();
-
-                        if (idx === -1) {
-                            detailRows.push(tr[0].id);
-                        }
                     },
                     error: function (xhr, status, error) {
                         console.error('Error fetching details:', error);
@@ -146,15 +138,17 @@
             }
         });
 
+
         // Redraw open detail rows after table redraw
         tableUser.on('draw', function () {
             detailRows.forEach(id => {
-                let el = document.querySelector(`#${id} td.dt-control`);
-                if (el) {
-                    el.dispatchEvent(new Event('click', { bubbles: true }));
+                let rowElement = $(`#${CSS.escape(id)}`);
+                if (rowElement.length) {
+                    rowElement.find('td.dt-control').trigger('click');
                 }
             });
         });
+
     });
 
     // Detail Asset Tab 1

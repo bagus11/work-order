@@ -24,6 +24,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use \Mpdf\Mpdf as PDF;
 use Telegram\Bot\Laravel\Facades\Telegram;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class WorkOrderController extends Controller
 {
@@ -118,10 +120,10 @@ class WorkOrderController extends Controller
 
             $data = DB::table('work_orders')
             ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
-            ->join('users','users.id','=','work_orders.user_id')
-            ->join('master_categories','master_categories.id','=','work_orders.category')
-            ->join('master_departements','master_departements.id','=','work_orders.departement_id')
-            ->join('master_kantor','master_kantor.id','=','users.kode_kantor')
+            ->leftJoin('users','users.id','=','work_orders.user_id')
+            ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+            ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
+            ->leftJoin('master_kantor','master_kantor.id','=','users.kode_kantor')
             ->leftJoin('master_priorities','master_priorities.id','work_orders.priority')
             ->where('work_orders.request_for',$requestFor->initial)
             ->where('master_kantor.id','like','%'.$request->officeFilter.'%')
@@ -1354,121 +1356,199 @@ class WorkOrderController extends Controller
     }
     function revisiDuration() {
         // $dataAll = WorkOrderLog::all();
-        $dataAll = WorkOrderLog::where('request_code', '2/RFM/ICT/VII/23')->get();
-        $array = [];
-        $test = [];
-        $totalTime = 0;
-        $test_post = [];
-        $array_duration =[];
+        $dataAll = WorkOrderLog::with('userPICSupport')->where('request_code', '5/RFM/ICT/VII/23')->where('status_approval', 0)->where('assignment', 1)->get();
+      
+        $totalTime = 0; // Initialize total time accumulator
+        $updateCount = []; // Initialize a counter for the number of times totalTime is updated
+    
         foreach ($dataAll as $row) {
-            $totalTime = 0;
-            if ($row->duration > 0) {
-                $log_before = WorkOrderLog::with(['userPICSupport'])
-                    ->where('request_code', $row['request_code'])
-                    ->where('status_approval', 0)
-                    ->orderBy('id', 'desc')
-                    ->skip(1)
-                    ->first();
-                // dd($log_before);
-                if ($log_before === null) {
-                    continue;
-                }
-              
-                $dateBeforePost = $log_before->created_at->format('Y-m-d');
-                $startDateTimePIC = date('Y-m-d H:i:s', strtotime($row['created_at']));
-                $end_date = explode(' ', $startDateTimePIC);
-
-                $client = new \GuzzleHttp\Client();
-                $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance', [
-                    'query' => [
-                        'emp_no' => $row->userPICSupport->nik,
-                        'startdate' => $dateBeforePost,
-                        'enddate' => $end_date[0]
-                    ]
-                ]);
-
-                $response = $api->getBody()->getContents();
-                $data = json_decode($response, true);
-
-                $allDuration = []; // Clear the array for each row
-               
-                foreach ($data as $col) {
-                    if ($col['daytype'] == 'WD') {
-                        $a1 = Carbon::parse($log_before->created_at);
-                        $b1 = Carbon::parse($col['shiftstarttime']);
-                        $c1 = Carbon::parse($row['created_at']);
-                        $b3 = Carbon::parse($col['shiftendtime']);
-
-                        $a = $a1->format('Y-m-d');
-                        $b = $b1->format('Y-m-d');
-                        $c = $c1->format('Y-m-d');
-
-                        $a2 = $a1->format('H:i:s');
-                        $b2 = $b1->format('H:i:s');
-                        $c2 = $c1->format('H:i:s');
-
-                        $totalTime = 0;
-
-                        if ($a === $c) {
-                            if ($c2 >= $b2) {
-                                $totalTime += $a1->diffInMinutes($b3);
-                                $test_post = [
-                                    'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 1 ==> {$a1} => {$c2} => {$b1} => {$b3} => {$b2}",
-                                    'rfm' => $row->request_code,
-                                    'duration_all' => $totalTime,
-                                    'user_id' => $row['user_id_support']
-                                ];
-                               //array_push($all_duration,$totalTime); //
-                            } else {
-                                $totalTime += $a1->diffInMinutes($c1);
-                                $test_post = [
-                                    'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 2 ==> {$a2} => {$c2} => {$b1} => {$b3}",
-                                    'rfm' => $row->request_code,
-                                    'duration_all' => $totalTime,
-                                    'user_id' => $row['user_id_support']
-                                ];
-                               //array_push($all_duration,$totalTime); // Push duration to allDuration
-                            }
-                            // array_push($test,$test_post);
-                        } elseif ($a != $c) {
-                            if ($b !== $c) {
-                                if ($a2 >= $b2) {
-                                    $totalTime += $a1->diffInMinutes($b3);
-                                } elseif ($a === $b) {
-                                    $totalTime += $a1->diffInMinutes($b3);
+            $lastRow = WorkOrderLog::with('userPICSupport')
+                ->where('request_code', $row->request_code)
+                ->where('status_wo', '4')
+                ->where('status_approval', 0)
+                ->first();
+            
+            // Skip rows with status_wo 0 or already approved ones
+            if (($row->status_wo == 0 && $row->assignment == 0) || ($row->status_wo == "4" && $row->status_approval == 1)) {
+                continue;
+            }
+    
+            try {
+                    $before = WorkOrderLog::with('userPICSupport')->where('request_code', $row->request_code)->where('status_approval', 0)->where('assignment', 1)->where('status_wo', 1)->first();
+                    $dateBefore =  Carbon::parse($before->created_at);
+                    $datePost = $row->created_at->format('Y-m-d');
+                    
+                    $startDateTicket = Carbon::parse($row->created_at);
+                    $endTicket = Carbon::parse($lastRow->created_at); // Get the end ticket from last row
+                    
+                    // Check day type from external API
+                    $client = new Client();
+                    $response = $client->get('https://hris.pralon.co.id/application/API/getAttendance', [
+                        'query' => [
+                            'emp_no' => optional($row->userPICSupport)->nik,
+                            'startdate' => $datePost,
+                            'enddate' => $datePost
+                        ]
+                    ]);
+            
+                    $data = json_decode($response->getBody()->getContents(), true);
+            
+                    if ($data[0]['daytype'] == 'WD') {
+                        $startTimePIC = Carbon::parse($data[0]['shiftstarttime']);
+                        $endTimePIC = Carbon::parse($data[0]['shiftendtime']);
+                        if($row->status_wo == 1 ){
+                            $totalTime +=0;
+                            array_push($updateCount, $totalTime);  
+                        }else{
+                            if ($endTicket->format('Y-m-d') == $datePost) {
+                                if ($endTicket->format('H:i:s') > $endTimePIC->format('H:i:s')) {
+                                    $totalTime += $endTicket->diffInMinutes($endTicket); 
+                                    $mssage = "$totalTime = $endTicket -- $endTicket  Logic 1";
+                                    array_push($updateCount, $mssage);  
+                                } else if(($endTicket->format('H:i:s') > $startTimePIC->format('H:i:s') && $endTicket->format('H:i:s') < $endTimePIC->format('H:i:s')) && $endTicket->format('Y-m-d') == $datePost ) {
+                                    $totalTime += $dateBefore->diffInMinutes($endTicket); 
+                                    $mssage = "$totalTime = $dateBefore -- $endTicket Logic 2";
+                                    array_push($updateCount, $mssage);  
+                                   
                                 }
-                               //array_push($all_duration,$totalTime); // Push duration to allDuration
-                                $test_post = [
-                                    'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 3 ==> {$a2} => {$c2} => {$b1}",
-                                    'rfm' => $row->request_code,
-                                    'duration_all' => $totalTime,
-                                    'user_id' => $row['user_id_support']
-                                ];
-                                
-                            } elseif ($b === $c) {
-                                $totalTime += $b1->diffInMinutes($c1);
-                               //array_push($all_duration,$totalTime); // Push duration to allDuration
-                                $test_post = [
-                                    'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 4 ==> {$a2} => {$c2} => {$b1}",
-                                    'rfm' => $row->request_code,
-                                    'duration_all' => $totalTime,
-                                    'user_id' => $row['user_id_support']
-                                ];
+                            }else{
+                                dd('test Logic 2');
                             }
+                           
                         }
+                    }
+            } catch (Exception $e) {
+                Log::error($e->getMessage());
+            }
+        }
+      
+        // Log the total time and the count of updates
+        Log::info("Total time: {$totalTime} minutes");
+        // Log::info("Total updates to totalTime: {$updateCount} times");
+        dd($updateCount);
+    
+        return $totalTime;
+    }
+    
+    
+    
+
+    // function revisiDuration() {
+    //     $dataAll = WorkOrderLog::where('request_code', '31/RFM/ICT/VIII/23')->get();
+    //     $array = [];
+    //     $test = [];
+    //     $totalTime = 0;
+    //     $test_post = [];
+    //     $array_duration =[];
+    //     foreach ($dataAll as $row) {
+    //         $totalTime = 0;
+    //         if ($row->duration > 0) {
+    //             $log_before = WorkOrderLog::with(['userPICSupport'])
+    //                 ->where('request_code', $row['request_code'])
+    //                 ->where('status_approval', 0)
+    //                 ->orderBy('id', 'desc')
+    //                 ->skip(1)
+    //                 ->first();
+    //             // dd($log_before);
+    //             if ($log_before === null) {
+    //                 continue;
+    //             }
+              
+    //             $dateBeforePost = $log_before->created_at->format('Y-m-d');
+    //             $startDateTimePIC = date('Y-m-d H:i:s', strtotime($row['created_at']));
+    //             $end_date = explode(' ', $startDateTimePIC);
+
+    //             $client = new \GuzzleHttp\Client();
+    //             $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance', [
+    //                 'query' => [
+    //                     'emp_no' => $row->userPICSupport->nik,
+    //                     'startdate' => $dateBeforePost,
+    //                     'enddate' => $end_date[0]
+    //                 ]
+    //             ]);
+
+    //             $response = $api->getBody()->getContents();
+    //             $data = json_decode($response, true);
+
+    //             $allDuration = []; // Clear the array for each row
+               
+    //             foreach ($data as $col) {
+    //                 if ($col['daytype'] == 'WD') {
+    //                     $a1 = Carbon::parse($log_before->created_at);
+    //                     $b1 = Carbon::parse($col['shiftstarttime']);
+    //                     $c1 = Carbon::parse($row['created_at']);
+    //                     $b3 = Carbon::parse($col['shiftendtime']);
+
+    //                     $a = $a1->format('Y-m-d');
+    //                     $b = $b1->format('Y-m-d');
+    //                     $c = $c1->format('Y-m-d');
+
+    //                     $a2 = $a1->format('H:i:s');
+    //                     $b2 = $b1->format('H:i:s');
+    //                     $c2 = $c1->format('H:i:s');
+
+    //                     $totalTime = 0;
+
+    //                     if ($a === $c) {
+    //                         if ($c2 >= $b2) {
+    //                             $totalTime += $a1->diffInMinutes($b3);
+    //                             $test_post = [
+    //                                 'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 1 ==> {$a1} => {$c2} => {$b1} => {$b3} => {$b2}",
+    //                                 'rfm' => $row->request_code,
+    //                                 'duration_all' => $totalTime,
+    //                                 'user_id' => $row['user_id_support']
+    //                             ];
+    //                            //array_push($all_duration,$totalTime); //
+    //                         } else {
+    //                             $totalTime += $a1->diffInMinutes($c1);
+    //                             $test_post = [
+    //                                 'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 2 ==> {$a2} => {$c2} => {$b1} => {$b3}",
+    //                                 'rfm' => $row->request_code,
+    //                                 'duration_all' => $totalTime,
+    //                                 'user_id' => $row['user_id_support']
+    //                             ];
+    //                            //array_push($all_duration,$totalTime); // Push duration to allDuration
+    //                         }
+    //                         // array_push($test,$test_post);
+    //                     } elseif ($a != $c) {
+    //                         if ($b !== $c) {
+    //                             if ($a2 >= $b2) {
+    //                                 $totalTime += $a1->diffInMinutes($b3);
+    //                             } elseif ($a === $b) {
+    //                                 $totalTime += $a1->diffInMinutes($b3);
+    //                             }
+    //                            //array_push($all_duration,$totalTime); // Push duration to allDuration
+    //                             $test_post = [
+    //                                 'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 3 ==> {$a2} => {$c2} => {$b1}",
+    //                                 'rfm' => $row->request_code,
+    //                                 'duration_all' => $totalTime,
+    //                                 'user_id' => $row['user_id_support']
+    //                             ];
+                                
+    //                         } elseif ($b === $c) {
+    //                             $totalTime += $b1->diffInMinutes($c1);
+    //                            //array_push($all_duration,$totalTime); // Push duration to allDuration
+    //                             $test_post = [
+    //                                 'duration' => "{$a} == {$c}  ==> {$totalTime} tahap 4 ==> {$a2} => {$c2} => {$b1}",
+    //                                 'rfm' => $row->request_code,
+    //                                 'duration_all' => $totalTime,
+    //                                 'user_id' => $row['user_id_support']
+    //                             ];
+    //                         }
+    //                     }
                       
 
-                        $test[] = $test_post;
-                    }
-                }
-                $postUpdate =[
-                    'duration'  => $totalTime,
-                    'rfm'       => $row->request_code
-                ];
-                array_push($array_duration,$postUpdate);
-            }
-            array_push($test,$test_post);
-        }
-        dd($test);
-    }
+    //                     $test[] = $test_post;
+    //                 }
+    //             }
+    //             $postUpdate =[
+    //                 'duration'  => $totalTime,
+    //                 'rfm'       => $row->request_code
+    //             ];
+    //             array_push($array_duration,$postUpdate);
+    //         }
+    //         array_push($test,$test_post);
+    //     }
+    //     dd($test);
+    // }
 }

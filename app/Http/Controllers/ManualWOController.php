@@ -22,7 +22,7 @@ class ManualWOController extends Controller
         return view('manual_wo.manual_wo-index');
     }
     public function manual_wo(Request $request, StoreManualWORequest $storeManualWORequest){
-        try {
+        // try {
             $storeManualWORequest->validated();
             $request_type = $request->request_type;
             $categories = $request->categories;
@@ -137,22 +137,22 @@ class ManualWOController extends Controller
                 WorkOrderLog::create($post_log2);
                 WONotification::create($userPost);
                 WONotification::create($headPost);
-                $title = "Manual Support Ticket";
-                $subject = 'ON PROGRESS - '.$post['subject'];
-                $to =$headUser->email;
-                $this->sendMail($title,$to,$post,$postEmail,$subject);
+                // $title = "Manual Support Ticket";
+                // $subject = 'ON PROGRESS - '.$post['subject'];
+                // $to =$headUser->email;
+                // $this->sendMail($title,$to,$post,$postEmail,$subject);
             });
             return ResponseFormatter::success(
                 $post,
                 'WO successfully added, please check your email'
             );            
-        } catch (\Throwable $th) {
-            return ResponseFormatter::error(
-                $th,
-                'WO failed to add',
-                500
-            );
-        }
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error(
+        //         $th,
+        //         'WO failed to add',
+        //         500
+        //     );
+        // }
     }
 
     public function sendMail($title,$to,$post,$postEmail,$subject)

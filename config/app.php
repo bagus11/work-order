@@ -177,6 +177,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        
     ],
 
     /*
@@ -233,6 +234,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'NumConvert' => 'HnhDigital\LaravelNumberConverter\Facade',
         'Telegram' => Telegram\Bot\Laravel\Facades\Telegram::class,
+
     ],
 
 ];

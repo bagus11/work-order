@@ -14,6 +14,7 @@
         {{-- <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css"> --}}
         {{-- <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet"> --}}
         <link href="{{ asset('assets/select2/select2.min.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         {{-- <link href="{{ asset('assets/sweetalert2/sweetalert2.css') }}" rel="stylesheet"> --}}
         <link rel="icon" href="{{URL::asset('icon.jpg')}}">
     

@@ -38,15 +38,16 @@ class AssignmentController extends Controller
    }
    public function detail_wo(Request $request)
    {
+   
           $detail = DB::table('work_orders')
                               ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','problem_types.name as problem_type_name')
-                              ->join('users','users.id','=','work_orders.user_id')
-                              ->join('master_categories','master_categories.id','=','work_orders.category')
-                              ->join('problem_types','problem_types.id','=','work_orders.problem_type')
-                              ->join('master_departements','master_departements.id','=','work_orders.departement_id')
+                              ->leftJoin('users','users.id','=','work_orders.user_id')
+                              ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                              ->leftJoin('problem_types','problem_types.id','=','work_orders.problem_type')
+                              ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
                               ->where('work_orders.id',$request->id)
                               ->first();
-          
+                              // dd($detail);
           $data_log = DB::table('work_order_logs')
                               ->select('work_order_logs.*','users.name as username')
                               ->leftJoin('users', 'users.id','=', 'work_order_logs.creator')
