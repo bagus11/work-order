@@ -96,6 +96,7 @@
                 <th>No</th>
                 <th>Created At</th>
                 <th>Request Code</th>
+                <th>Location</th>
                 <th>User</th>
                 <th>Departement</th>
                 <th>Categories</th>
@@ -142,6 +143,7 @@
                         <td style="text-align:center">{{$i+1}}</td>
                         <td style="text-align:center">{{$item->created_at}}</td>
                         <td style="text-align:center">{{$item->request_code}}</td>
+                        <td style="text-align:center">{{$item->location_name}}</td>
                         <td style="text-align:left">{{$item->username}}</td>
                         <td style="text-align:left">{{$item->departement_name}}</td>
                         <td style="text-align:left">{{$item->categories_name}}</td>
@@ -149,14 +151,14 @@
                         <td style="text-align:left">{{$item->add_info}}</td>
                         <td style="text-align:{{$item->picSupportName == null ? 'center': 'left'}}">{{$item->picSupportName == null ? '-' : $item->picSupportName->name}}</td>
                         <td style="text-align:left">{{$statusLabel}}</td>
-                        <td style="text-align:center">{{$item->status_wo == 6 && $item->status_approval == 1 ? $item->updated_at : '' }}</td>
+                        <td style="text-align:center">{{$item->status_wo == '4' && $item->status_approval == 1 ? $item->updated_at : '' }}</td>
                     </tr>
                 @php
                     $i++;
                 @endphp
             @empty
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             Data is empty
                         </td>
                     </tr>

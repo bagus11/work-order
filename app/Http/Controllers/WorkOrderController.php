@@ -949,7 +949,7 @@ class WorkOrderController extends Controller
                 // dd($userId);
                 if($userId !='*'){
                     $reportWO               = WorkOrder::with('picSupportName')
-                                                ->select('work_orders.*', 'users.name as username','finished','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
+                                                ->select('work_orders.*', 'users.name as username','master_kantor.name as location_name','finished','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
                                                 ->leftJoin('users','users.id','=','work_orders.user_id')
                                                 ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
                                                 ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
@@ -1048,7 +1048,7 @@ class WorkOrderController extends Controller
                                                 ->get();
                 }else{
                     $reportWO       = WorkOrder::with('picSupportName')
-                                                ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
+                                                ->select('work_orders.*', 'users.name as username','master_kantor.name as location_name','master_categories.name as categories_name','master_departements.name as departement_name','work_orders.level')
                                                 ->leftJoin('users','users.id','=','work_orders.user_id')
                                                 ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
                                                 ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
