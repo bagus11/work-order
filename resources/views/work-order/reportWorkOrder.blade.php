@@ -97,6 +97,7 @@
                 <th>Created At</th>
                 <th>Request Code</th>
                 <th>Location</th>
+                <th>Level</th>
                 <th>User</th>
                 <th>Departement</th>
                 <th>Categories</th>
@@ -144,6 +145,7 @@
                         <td style="text-align:center">{{$item->created_at}}</td>
                         <td style="text-align:center">{{$item->request_code}}</td>
                         <td style="text-align:center">{{$item->location_name}}</td>
+                        <td style="text-align:center">{{$item->level}}</td>
                         <td style="text-align:left">{{$item->username}}</td>
                         <td style="text-align:left">{{$item->departement_name}}</td>
                         <td style="text-align:left">{{$item->categories_name}}</td>
