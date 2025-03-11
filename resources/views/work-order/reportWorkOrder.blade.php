@@ -149,7 +149,7 @@
                         <td style="text-align:left">{{$item->add_info}}</td>
                         <td style="text-align:{{$item->picSupportName == null ? 'center': 'left'}}">{{$item->picSupportName == null ? '-' : $item->picSupportName->name}}</td>
                         <td style="text-align:left">{{$statusLabel}}</td>
-                        <td style="text-align:center">{{$item->finished}}</td>
+                        <td style="text-align:center">{{$item->status_wo == 6 && $item->status_approval == 1 ? $item->updated_at : '' }}</td>
                     </tr>
                 @php
                     $i++;
