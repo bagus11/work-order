@@ -231,9 +231,17 @@ class WorkOrderController extends Controller
         ]);
     }
     public function getDisscuss(Request $request){
-        $data = ChatRFM::with(['userRelation'])->where('request_code', $request->request_code)->orderBy('id', 'desc')->get();
-        if($data[0]->user_id == auth()->user()->id){
-            ChatRFM::where('request_code', $request->request_code)->update(['status' =>  1,'updated_at' => date("Y-m-d H:i:s")]);
+        $data = ChatRFM::with(['userRelation'])->where('request_code', $request->request_code)->get();
+        $ticket = WorkOrder::where('request_code', $request->request_code)->first();
+        
+        $chat = ChatRFM::where('request_code', $request->request_code)
+                ->where('user_id', '!=', auth()->user()->id)
+                ->first();
+        if ($chat) {
+            $chat->update([
+                'status' => 1,
+                'updated_at' => now()
+            ]);
         }
         return response()->json([
             'data'=>$data
