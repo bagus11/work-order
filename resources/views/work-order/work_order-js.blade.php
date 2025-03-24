@@ -574,6 +574,12 @@
             $('#remark_chat').val('')
         }
     })
+
+    $(document).ready(function () {
+        $('.modal').on('hidden.bs.modal', function () {
+            get_work_order_list_no_swal()
+        })
+    })
     $(document).ready(function () {
     $('#chatModal').on('hidden.bs.modal', function () {
       // var detail_code = $('#detail_code_chat').val()
@@ -901,12 +907,278 @@
                                                      <i class="fas fa-comment"></i>    
                                                 </button> `;
                             }
-                            if(response.data[i].status_wo != 4){
-                                // console.log(response.data[i])
+                            if (response.data[i].status_wo != 4) {
+                                let unreadChats = response.data[i].unread_chats; // Ambil jumlah unread chats
+
+                                chat = `<button title="Discuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm" 
+                                            data-id="${response.data[i]['id']}" 
+                                            data-request="${response.data[i].request_code}" 
+                                            data-toggle="modal" 
+                                            data-target="#chatModal">
+                                            <i class="fas fa-comment"></i>`;
+
+                                // Jika unreadChats > 0, tambahkan badge dengan jumlahnya
+                                if (unreadChats > 0) {
+                                    chat += ` <span class="badge badge-danger">${unreadChats}</span>`;
+                                }
+
+                                chat += `</button>`;
+                            }
+
+                    data += `<tr style="text-align: center;">
+                                @can('priority-work_order_list')
+                                <td class='details-control'></td>
+                                @endcan
+                                <td style="width:11%;text-align:left;">${response.data[i]['created_at']==null?'':response.data[i]['created_at']}</td>
+                                <td style="width:11%;text-align:left;">${response.data[i]['username']==null?'':response.data[i]['username']}</td>
+                                <td style="width:11%;text-align:left;">${response.data[i]['kantor_name']==null?'':response.data[i]['kantor_name']}</td>
+                                <td style="width:11%;text-align:left;" class="request_code">${response.data[i]['request_code']==null?'':response.data[i]['request_code']}</td>
+                                @can('priority-work_order_list')
+                                <td style="width:11%;text-align:center;${priorityColor}">${priorityLabel}</td>
+                                @endcan
+                                <td style="width:11%;text-align:center;">${response.data[i]['departement_name']==null?'':response.data[i]['departement_name']}</td>
+                                <td style="width:11%;text-align:center;">${response.data[i]['categories_name']==null?'':response.data[i]['categories_name']}</td>
+                                <td style="width:11%;text-align:center; color:${status_color}"><b>${response.data[i]['status_wo']==null?'':status_wo}</b></td>
+                                <td style="width:11%;text-align:left">
+                                    ${detailWO}
+                                    ${buttonPrint}
+                                    @can('update-work_order_list')
+                                      ${update_progress}
+                                      ${holdButton}
+                                      ${resumeButton}
+
+                                    @endcan
+                                    @can('manual-work_order_list')
+                                      ${approve_manual}
+                                    @endcan
+                                    @can('rating-work_order_list')
+                                    ${make_sure_done}
+                                    @endcan
+                                    ${chat}
+                                </td>
+                            </tr>
+                            `;
+                }
+                    $('#wo_table > tbody:first').html(data);
+                        var table = $('#wo_table').DataTable({
+                            scrollX  : true,
+                            scrollY: true,
+                            scrollCollapse : true,
+                            autoWidth:true
+                        }).columns.adjust()    
+                        $('#wo_table tbody').off().on('click', 'td.details-control', function (e) {
+                        var tr = $(this).closest("tr");
+                        var row =   table.row( tr );
+                        if ( row.child.isShown() ) {
+                            // This row is already open - close it
+                            row.child.hide();
+                            tr.removeClass( 'shown' );
+                        }
+                        else {
+                            // Open this row
+                            detail_log(row.child,$(this).parents("tr").find('td.request_code').text()) ;
+                            tr.addClass( 'shown' );
+                        }
+                    } );  
+            },
+            error: function(xhr, status, error) {
+                swal.close();
+                toastr['error']('Failed to get data, please contact ICT Developer');
+            }
+        });
+    }
+    function get_work_order_list_no_swal(){
+        $('#wo_table').DataTable().clear();
+        $('#wo_table').DataTable().destroy();
+        $.ajax({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('get_work_order_list')}}",
+            type: "get",
+            dataType: 'json',
+            async: true,
+            data:{
+                'officeFilter':$('#officeFilter').val(),
+                'statusFilter':$('#statusFilter').val(),
+                'from':$('#from').val(),
+                'to':$('#to').val(),
+                'userIdSupportFilter':$('#userIdSupportFilter').val(),
+            },
+            success: function(response) {
+                var data=''
+            
+                for(i = 0; i < response.data.length; i++ )
+                {
+                            const d = new Date(response.data[i].created_at)
+                            const date = d.toISOString().split('T')[0];
+                            const time = d.toTimeString().split(' ')[0];
+                            d2 = new Date (response.data[i].created_at );
+                            d2.setMinutes ( d.getMinutes() + 1 );
+                            var d3 =  d2.toTimeString().split(' ')[0];
+                            var date_now = new Date();
+                            var date_format = date_now.toISOString().split('T')[0];
+                            var time_now = date_now.toTimeString().split(' ')[0];;
+                            var satatus_wo = '';
+                            var status_color = ''
+                            if(response.data[i].transfer_pic == 1){
+                                    status_wo ='TAKE OUT'
+                                    status_color ='red'
+                            }else{
+                                if(response.data[i].status_wo==0){
+                                    status_wo ='NEW'
+                                    status_color ='black'
+                                }else  if(response.data[i].status_wo==1){
+    
+                                    if(response.data[i].hold_progress == 1){
+                                        status_wo ="HOLD Request"
+                                        status_color ='#213555'
+    
+                                    }else if(response.data[i].hold_progress == 2){
+                                        status_wo ="HOLD"
+                                        status_color ='#213555'
+                                    }else{
+                                        status_wo ="On Progress"
+                                        status_color ='#5BC0F8'
+                                    }
+    
+                                }else  if(response.data[i].status_wo==2){
+    
+                                    status_wo ="PENDING"
+                                    status_color ='#FFC93C'
+                                }else  if(response.data[i].status_wo==3){
+    
+                                    if(response.data[i].hold_progress == 1){
+                                        status_wo ="HOLD Request"
+                                        status_color ='#213555'
+    
+                                    }else if(response.data[i].hold_progress == 2){
+                                        status_wo ="HOLD"
+                                        status_color ='#213555'
+                                    }else{
+                                        status_wo ="REVISION"
+                                        status_color ='red'
+                                    }
+    
+                                }else if(response.data[i].status_wo==4){
+    
+                                    if(response.data[i].status_approval == '1'){
+                                        status_wo ="DONE"
+                                        status_color ='green'
+                                    }else{
+                                        status_wo ="CHECKING"
+                                        status_color ='#F0A04B'
+                                    }
+                                
+                                }else{
+                                    status_wo ="REJECT"
+                                    status_color ='red'
+                                }
+                            }
+
+                          var priorityLabel ='-'
+                          var priorityColor =''
+                          var update_progress ='';
+                          var holdButton ='';
+                          var resumeButton ='';
+                          var approve_manual ='';
+                          var make_sure_done ='';
+                          var buttonPrint   = '';
+                          switch(response.data[i].priority){
+                            case 1:
+                                priorityLabel ='Low'
+                                priorityColor ='color:grey'
+                                break
+                            case 2:
+                                    priorityLabel ='Medium'
+                                    priorityColor ='color:black'
+                                break
+                            case 3:
+                                    priorityLabel ='High'
+                                    priorityColor ='color:red;font-weight:bold'
+                                break
+                            case '' :
+                                priorityLabel ='High'
+                                priorityColor ='color:red;font-weight:bold'
+                            break
+                          }
+                         
+                          var auth_id = $('#auth_id').val()
+                            if(response.data[i].status_wo == 1 || response.data[i].status_wo == 2 || response.data[i].status_wo == 3){
+                                if(response.data[i].transfer_pic == 0){
+                                    if(auth_id == response.data[i].user_id_support){
+                                            if(response.data[i].hold_progress == 0 || response.data[i].hold_progress == 4){
+                                                if(response.data[i].hold_progress == 0){
+                                                    holdButton =`<button title="Hold Progress" class="holdRFM btn btn-success rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#holdProgressModal">
+                                                                <i class="fas fa-pause"></i>
+                                                            </button> `;
+                                                }
+                                                update_progress =`<button title="Update Progress" class="updatePIC btn btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#updatePIC">
+                                                    <i class="fas fa-pen"></i>
+                                                </button> `;
+                                            }else{
+                                                status_wo ="HOLD Request"
+                                                status_color ='#213555'
+                                            }
+                                    }
+                                }
+                            }
+                            if( date == date_format){
+                                if(d3 < time_now && response.data[i].status_wo == 0 )
+                                {
+                                    approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
+                                                        <i class="fas fa-user"></i>
+                                                    </button> `;
+                                }
+                            }else if(date < date_format){
+                                if(response.data[i].status_wo == 0){
+                                    approve_manual =`<button title="Manual Assign" class="manualAssign btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#manualAssign">
+                                                        <i class="fas fa-user"></i>
+                                                    </button> `;
+                                }
+                            }
+                            if((response.data[i].status_wo == 4 && response.data[i].status_approval == 0) || (response.data[i].status_approval == 2 && response.data[i].status_wo == 4)){
+                                if(auth_id == response.data[i].user_id){
+                                    make_sure_done =`<button title="Approvement" class="ratingPIC btn btn-sm btn-warning rounded btn-sm"data-id="${response.data[i]['id']}" data-toggle="modal" data-target="#ratingPIC">
+                                                     <i class="fas fa-star"></i>
+                                                </button> `;
+                                }
+                            }
+                            if(response.data[i].status_wo != 0){
+                                var requestDetailTicket = response.data[i].request_code.replace(/\//g, "&*.")
+                                buttonPrint =`
+                                        <a  href="reportDetailWO/${requestDetailTicket}" data-request="${response.data[i].request_code}" class="btn btn-sm btn-success" target="_blank">
+                                            <i class="fa-solid fa-print"></i>
+                                        </a>
+                                `;
+                            }
+                            var detailWO = `<button title="Detail" class="detailWO btn btn-sm btn-primary rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#detailWO">
+                                                 <i class="fas fa-eye"></i>    
+                                            </button> `;
+                            var chat ='';
+                            if(response.data[i].status_wo == 4 && response.data[i].status_approval == 2){
                                 chat = `<button title="Disscuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm"data-id="${response.data[i]['id']}" data-request="${response.data[i].request_code}" data-toggle="modal" data-target="#chatModal">
                                                      <i class="fas fa-comment"></i>    
                                                 </button> `;
                             }
+                            if (response.data[i].status_wo != 4) {
+                                let unreadChats = response.data[i].unread_chats; // Ambil jumlah unread chats
+
+                                chat = `<button title="Discuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm" 
+                                            data-id="${response.data[i]['id']}" 
+                                            data-request="${response.data[i].request_code}" 
+                                            data-toggle="modal" 
+                                            data-target="#chatModal">
+                                            <i class="fas fa-comment"></i>`;
+
+                                // Jika unreadChats > 0, tambahkan badge dengan jumlahnya
+                                if (unreadChats > 0) {
+                                    chat += ` <span class="badge badge-danger">${unreadChats}</span>`;
+                                }
+
+                                chat += `</button>`;
+                            }
+
                     data += `<tr style="text-align: center;">
                                 @can('priority-work_order_list')
                                 <td class='details-control'></td>

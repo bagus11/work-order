@@ -119,7 +119,18 @@ class WorkOrderController extends Controller
  
 
             $data = DB::table('work_orders')
-            ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
+            ->select(
+                'work_orders.*',
+                'users.name as username',
+                'master_categories.name as categories_name',
+                'master_departements.name as departement_name',
+                'master_kantor.name as kantor_name',
+                'master_priorities.name as priorityName',
+                 DB::raw("(SELECT COUNT(*) FROM chat_rfm 
+                  WHERE chat_rfm.request_code = work_orders.request_code 
+                  AND chat_rfm.status = 0 
+                  AND chat_rfm.user_id != " . auth()->user()->id . ") as unread_chats")
+            )
             ->leftJoin('users','users.id','=','work_orders.user_id')
             ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
             ->leftJoin('master_departements','master_departements.id','=','work_orders.departement_id')
@@ -140,7 +151,18 @@ class WorkOrderController extends Controller
             ->get();
         }else if(auth()->user()->hasPermissionTo('get-only_user-work_order_list')){
             $data = DB::table('work_orders')
-            ->select('work_orders.*','master_priorities.name as priorityName' ,'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
+            ->select(
+                'work_orders.*',
+                'users.name as username',
+                'master_categories.name as categories_name',
+                'master_departements.name as departement_name',
+                'master_kantor.name as kantor_name',
+                'master_priorities.name as priorityName',
+                 DB::raw("(SELECT COUNT(*) FROM chat_rfm 
+                  WHERE chat_rfm.request_code = work_orders.request_code 
+                  AND chat_rfm.status = 0 
+                  AND chat_rfm.user_id != " . auth()->user()->id . ") as unread_chats")
+            )
             ->join('users','users.id','=','work_orders.user_id')
             ->join('master_categories','master_categories.id','=','work_orders.category')
             ->join('master_departements','master_departements.id','=','work_orders.departement_id')
@@ -164,7 +186,18 @@ class WorkOrderController extends Controller
         else{
            
             $data = DB::table('work_orders')
-            ->select('work_orders.*','master_priorities.name as priorityName' ,'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name','master_kantor.name as kantor_name')
+            ->select(
+                'work_orders.*',
+                'users.name as username',
+                'master_categories.name as categories_name',
+                'master_departements.name as departement_name',
+                'master_kantor.name as kantor_name',
+                'master_priorities.name as priorityName',
+                 DB::raw("(SELECT COUNT(*) FROM chat_rfm 
+                  WHERE chat_rfm.request_code = work_orders.request_code 
+                  AND chat_rfm.status = 0 
+                  AND chat_rfm.user_id != " . auth()->user()->id . ") as unread_chats")
+            )
             ->join('users','users.id','=','work_orders.user_id')
             ->join('master_categories','master_categories.id','=','work_orders.category')
             ->join('master_departements','master_departements.id','=','work_orders.departement_id')
@@ -198,7 +231,10 @@ class WorkOrderController extends Controller
         ]);
     }
     public function getDisscuss(Request $request){
-        $data = ChatRFM::with(['userRelation'])->where('request_code', $request->request_code)->get();
+        $data = ChatRFM::with(['userRelation'])->where('request_code', $request->request_code)->orderBy('id', 'desc')->get();
+        if($data[0]->user_id == auth()->user()->id){
+            ChatRFM::where('request_code', $request->request_code)->update(['status' =>  1,'updated_at' => date("Y-m-d H:i:s")]);
+        }
         return response()->json([
             'data'=>$data
         ]);
