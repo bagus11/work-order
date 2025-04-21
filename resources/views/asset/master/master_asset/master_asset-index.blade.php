@@ -16,8 +16,12 @@
                             <i class="fas fa-user"></i> User</a>
                     </li>
                 </ul>
+              
             </div>
             <div class="card-body">
+                <button class="btn btn-success btn-sm" id="btn_add_master_asset" style="float: right" data-toggle="modal" data-target="#addMasterAssetModal">
+                    <i class="fas fa-plus"></i>
+                </button>
                 <div class="tab-content" id="custom-tabs-four-tabContent">
                     <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
                         <table class="datatable-bordered nowrap display" id="master_asset">
@@ -58,6 +62,7 @@
 
 
 </div>
+@include('asset.master.master_asset.modal.add-master_asset')
 @include('asset.master.master_asset.modal.detail-master_asset')
 @endsection
 @push('custom-js')

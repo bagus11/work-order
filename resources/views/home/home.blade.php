@@ -470,7 +470,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 @push('custom-js')
 @include('home.home-js')

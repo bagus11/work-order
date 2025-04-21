@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Asset\ApprovalController;
+use App\Http\Controllers\Asset\DistributionAssetController;
 use App\Http\Controllers\Asset\MasterAssetController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HoldRequestController;
@@ -410,11 +412,45 @@ Route::group(['middleware' => ['auth']], function() {
     // Opex
 
     // Asset
-        Route::get('getMasterAsset', [MasterAssetController::class, 'getMasterAsset'])->name('getMasterAsset'); 
-        Route::get('getMasterAssetUser', [MasterAssetController::class, 'getMasterAssetUser'])->name('getMasterAssetUser'); 
-        Route::get('mappingAssetUser', [MasterAssetController::class, 'mappingAssetUser'])->name('mappingAssetUser'); 
-        Route::get('mappingAssetChild', [MasterAssetController::class, 'mappingAssetChild'])->name('mappingAssetChild'); 
-        Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset'); 
+
+        // Master Asset
+            Route::get('getMasterAsset', [MasterAssetController::class, 'getMasterAsset'])->name('getMasterAsset'); 
+            Route::get('getMasterAssetUser', [MasterAssetController::class, 'getMasterAssetUser'])->name('getMasterAssetUser'); 
+            Route::get('mappingAssetUser', [MasterAssetController::class, 'mappingAssetUser'])->name('mappingAssetUser'); 
+            Route::get('mappingAssetChild', [MasterAssetController::class, 'mappingAssetChild'])->name('mappingAssetChild'); 
+            Route::get('getAssetCategory', [MasterAssetController::class, 'getAssetCategory'])->name('getAssetCategory'); 
+            Route::get('getAssetBrand', [MasterAssetController::class, 'getAssetBrand'])->name('getAssetBrand'); 
+            Route::get('getActiveParent', [MasterAssetController::class, 'getActiveParent'])->name('getActiveParent'); 
+            Route::get('getUser', [MasterAssetController::class, 'getUser'])->name('getUser'); 
+            Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset'); 
+            Route::post('addMasterAsset', [MasterAssetController::class, 'addMasterAsset'])->name('addMasterAsset'); 
+        // Master Asset
+
+        // Distribution Asset
+            Route::get('distribution_asset', [DistributionAssetController::class, 'index'])->name('distribution_asset'); 
+            Route::get('getDistributionTicket', [DistributionAssetController::class, 'getDistributionTicket'])->name('getDistributionTicket'); 
+            Route::get('getAssetUser', [DistributionAssetController::class, 'getAssetUser'])->name('getAssetUser'); 
+            Route::get('getInactiveAsset', [DistributionAssetController::class, 'getInactiveAsset'])->name('getInactiveAsset'); 
+            Route::get('getUserLocation', [DistributionAssetController::class, 'getUserLocation'])->name('getUserLocation'); 
+            Route::post('addDistribution', [DistributionAssetController::class, 'addDistribution'])->name('addDistribution'); 
+            Route::get('detailDistributionTicket', [DistributionAssetController::class, 'detailDistributionTicket'])->name('detailDistributionTicket'); 
+            
+            // Approval Notification
+                Route::get('getApprovalAssetNotification', [DistributionAssetController::class, 'getApprovalAssetNotification'])->name('getApprovalAssetNotification'); 
+                Route::post('approvalAssetProgress', [DistributionAssetController::class, 'approvalAssetProgress'])->name('approvalAssetProgress'); 
+            // Approval Notification
+            
+        // Distribution Asset
+
+        // Approval
+            Route::get('approval', [ApprovalController::class, 'index'])->name('approval'); 
+            Route::get('getApproval', [ApprovalController::class, 'getApproval'])->name('getApproval'); 
+            Route::post('addApprovalHeader', [ApprovalController::class, 'addApprovalHeader'])->name('addApprovalHeader'); 
+            Route::get('getStepApproval', [ApprovalController::class, 'getStepApproval'])->name('getStepApproval'); 
+            Route::post('updateApprover', [ApprovalController::class, 'updateApprover'])->name('updateApprover'); 
+            Route::get('detailMasterApproval', [ApprovalController::class, 'detailMasterApproval'])->name('detailMasterApproval'); 
+            Route::post('editMasterApproval', [ApprovalController::class, 'editMasterApproval'])->name('editMasterApproval'); 
+        // Approval
         
     // Asset
         
@@ -422,7 +458,6 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('v_card', [VCardController::class, 'index'])->name('v_card'); 
         Route::get('getCard', [VCardController::class, 'getCard'])->name('getCard'); 
         Route::get('generateCard/{id}/card', [VCardController::class, 'generateCard'])->name('generateCard'); 
-    
     // V Card 
 
 

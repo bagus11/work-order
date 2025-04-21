@@ -455,70 +455,69 @@ var auth_id = $('#auth_id').val()
                 }
             }); 
         }
-        function postAttachment(route,data,withFile,callback){
-        $.ajax({
+        function postAttachment(route, data, withFile, callback) {
+            $.ajax({
                 url: route,
                 type: 'POST',
-                type: "post",
                 dataType: 'json',
                 async: true,
-                processData: withFile,
-                contentType: withFile,
+                processData: false,  // Important: Set to false for file uploads
+                contentType: false,  // Important: Set to false for file uploads
                 data: data,
                 beforeSend: function() {
                     SwalLoading('Please wait ...');
                 },
-                success:callback,
+                success: callback,
                 error: function(response) {
-                    $('.message_error').html('')
+                    $('.message_error').html('');
                     swal.close();
-                    if(response.status == 500){
-                        console.log(response)
+                    if (response.status == 500) {
+                        console.log(response);
                         toastr['error'](response.responseJSON.meta.message);
-                        return false
+                        return false;
                     }
-                    if(response.status === 422){
-                        $.each(response.responseJSON.errors, (key, val) => 
-                            {
-                                $('span.'+key+'_error').text(val)
-                            });
-                    }else{
+                    if (response.status === 422) {
+                        $.each(response.responseJSON.errors, (key, val) => {
+                            $('span.' + key + '_error').text(val);
+                        });
+                    } else {
                         toastr['error']('Failed to get data, please contact ICT Developer');
                     }
                 }
-        });
-    }
-        function postCallback(route,data,callback){
-            $.ajax({
-                url: route,
-                type: "post",
-                dataType: 'json',
-                data:data,
-                async: true,
-                beforeSend: function() {
-                    SwalLoading('Please wait ...');
-                },
-                success:callback,
-                error: function(response) {
-                    $('.message_error').html('')
-                    swal.close();
-                    if(response.status == 500){
-                        console.log(response)
-                        toastr['error'](response.responseJSON.meta.message);
-                        return false
-                    }
-                    if(response.status === 422)
-                    {
-                        $.each(response.responseJSON.errors, (key, val) => 
-                            {
-                                $('span.'+key+'_error').text(val)
-                            });
-                    }else{
-                        toastr['error']('Failed to get data, please contact ICT Developer');
-                    }
-                }
-            });  
+            });
         }
+    function postCallback(route,data,callback){
+        $('.message_error').html('')
+        $.ajax({
+            url: route,
+            type: "post",
+            dataType: 'json',
+            data:data,
+            async: true,
+            beforeSend: function() {
+                SwalLoading('Please wait ...');
+            },
+            success:callback,
+            error: function(response) {
+                $('.message_error').html('')
+                swal.close();
+                if(response.status == 500){
+                    console.log(response)
+                    toastr['error'](response.responseJSON.meta.message);
+                    return false
+                }
+                if(response.status === 422)
+                {
+                    $.each(response.responseJSON.errors, (key, val) => 
+                        {
+                            $('span.'+key+'_error').text(val)
+                        });
+                }else{
+                    toastr['error']('Failed to get data, please contact ICT Developer');
+                }
+            }
+        });  
+    }
         function postCallbackNoSwal(route,data,callback){
             $.ajax({
                 url: route,
@@ -567,11 +566,11 @@ var auth_id = $('#auth_id').val()
                 dataType: 'json',
                 async: true,
                 data : data,
-                beforeSend: function() {
-                    SwalLoading('Please wait ...');
-                },
+                // beforeSend: function() {
+                //     SwalLoading('Please wait ...');
+                // },
                 success: function(response) {
-                swal.close();
+                // swal.close();
                     $('#'+id).empty()
                     $('#'+id).append('<option value ="">Choose '+ name +'</option>');
                     $.each(response.data,function(i,data){
@@ -693,4 +692,317 @@ var auth_id = $('#auth_id').val()
             ).format(money);
         }
  // End Repository Pattern
+ let approvalData = [];
+ $('#asset_notification').on("click", function(){
+    $('#approvalAssetModal').modal('show');
+      approvalData =[];
+      getCallbackNoSwal('getApprovalAssetNotification', null, function(response){
+            const data = response.data;
+            const modalBody = $('#approvalAssetModal .modal-body');
+            modalBody.empty();
+          
+                
+                if (data.length === 1) {
+                    // 1 tiket, tampilkan langsung detailnya
+                    $('#approvalAssetModal').modal('show');
+                    const ticket = data[0];
+                    modalBody.append(generateTicketDetailHtml(ticket));
+                } else if (data.length > 1) {
+                    $('#approvalAssetModal').modal('show');
+                    // Banyak tiket, tampilkan daftar
+                    let listHtml = `<ul class="list-group mx-2 my-2">`;
+                    data.forEach((ticket, index) => {
+                        listHtml += `
+                       <li class="list-group-item border rounded shadow-sm mb-2 px-3 py-2">
+                            <div class="d-flex align-items-center">
+                                <!-- Avatar -->
+                                <div class="me-3">
+                                    <img src="${ticket.user_relation.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(ticket.user_relation.name)}"
+                                        alt="avatar"
+                                        class="rounded-circle"
+                                        width="40"
+                                        height="40"
+                                        style="object-fit: cover;">
+                                </div>
+
+                                <!-- Info -->
+                                <div class="flex-grow-1 ml-2" style="font-size: 11px;">
+                                    <strong style="font-size: 11px;">${ticket.request_code}</strong><br>
+                                    <span style="font-size: 10px;">From: ${ticket.location_relation.name}</span><br>
+                                    <span style="font-size: 10px;">To: ${ticket.des_location_relation.name}</span><br>
+                                    <span style="font-size: 10px;">PIC: ${ticket.user_relation.name}</span>
+                                </div>
+
+                                <!-- View Button -->
+                                <div class="ms-2">
+                                    <button type="button" class="btn btn-sm btn-info view-ticket" data-index="${index}"
+                                        style="font-size: 10px; padding: 3px 8px;">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+
+
+                        `;
+                    });
+                    listHtml += `</ul><div id="ticketDetailContainer" class="mt-3"></div>`;
+                    modalBody.append(listHtml);
+                }
+    
+              
+                $(document).on('click', '.view-ticket', function(e) {
+                    e.preventDefault();
+                    const index = $(this).data('index');
+                    const ticket = response.data[index]; // pastikan ini sesuai scope lo
+        
+                    $('#ticketDetailContainer').html(generateTicketDetailHtml(ticket));
+                });
+        })
+      
+    })
+
+// Approval Asset Notification  
+        function generateTicketDetailHtml(ticket) {
+            let assetDetailsHtml = '';
+            // Loop through the asset details and create a table
+            if (ticket.detail_relation && ticket.detail_relation.length > 0) {
+                assetDetailsHtml = `
+                    <fieldset class="border p-3 rounded shadow-sm mt-3">
+                        <legend class="w-auto px-2" style="font-size: 11px; font-weight: bold;">Asset Details</legend>
+                        <table class="table table-sm table-bordered table-striped" style="font-size: 11px;">
+                            <thead>
+                                <tr>
+                                    <th style="font-size: 11px;">#</th>
+                                    <th style="font-size: 11px;">Asset Code</th>
+                                    <th style="font-size: 11px;">Category</th>
+                                    <th style="font-size: 11px;">Brand</th>
+                                    <th style="font-size: 11px;">Type</th>
+                                    <th style="font-size: 11px;">Condition</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                ticket.detail_relation.forEach((asset, index) => {
+                    var condition = ''
+                    switch(asset.condition) {
+                        case 1: condition = 'Good'; break;
+                        case 2: condition = 'Bad'; break;
+                        case 3: condition = 'Lost'; break;
+                        default: condition = 'Unknown';
+                    }
+                    assetDetailsHtml += `
+                        <tr class="asset-row" data-asset='${JSON.stringify(asset)}' style="cursor:pointer;">
+                            <td style="font-size: 10px;">${index + 1}</td>
+                            <td style="font-size: 10px;">${asset.asset_code}</td>
+                            <td style="font-size: 10px;">${asset.asset_relation?.category_relation?.name || '-'}</td>
+                            <td style="font-size: 10px;">${asset.asset_relation?.brand_relation?.name || '-'}</td>
+                            <td style="font-size: 10px;">${asset.type == 1 ? 'Parent' : 'Child'}</td>
+                            <td style="font-size: 10px;">${condition}</td>
+                        </tr>`;
+                });
+
+                assetDetailsHtml += `
+                            </tbody>
+                        </table>
+                    </fieldset>
+                `;
+            }
+
+            return `
+            <fieldset class="border p-3 rounded shadow-sm">
+                <legend class="w-auto px-2" style="font-size: 11px; font-weight: bold;">Detail Ticket</legend>
+                <fieldset class="border p-3 rounded shadow-sm">
+                    <legend class="w-auto px-2" style="font-size: 11px; font-weight: bold;">General Information</legend>
+                    <div class="row px-2 py-2" style="font-size: 11px;">
+                        <div class="col-md-2 mb-1">
+                            <label style="font-size: 11px;">Request Code</label><br>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <span style="font-size: 10px;"> : ${ticket.request_code}</span>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label style="font-size: 11px;">Type</label><br>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <span style="font-size: 10px;"> : 
+                                ${ticket.request_type == 1 ? 'Distribution' : ticket.request_type == 2 ? 'Hand Over' : 'Return'}
+                            </span>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label style="font-size: 11px;">From</label><br>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <span style="font-size: 10px;"> : ${ticket.location_relation.name}</span>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label style="font-size: 11px;">To</label><br>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <span style="font-size: 10px;"> : ${ticket.des_location_relation.name}</span>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label style="font-size: 11px;">User</label><br>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <span style="font-size: 10px;"> : ${ticket.user_relation.name}</span>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label style="font-size: 11px;">Receiver</label><br>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <span style="font-size: 10px;"> : ${ticket.receiver_relation.name}</span>
+                        </div>
+
+                        ${ticket.attachment ? `
+                        <div class="col-md-2 mt-2">
+                            <label style="font-size: 11px;">Attachment</label><br>
+                        </div>
+                        <div class="col-md-10 mt-2">
+                            <a href="/storage/Asset/Distribution/attachment/${ticket.attachment}" target="_blank"
+                            style="font-size: 10px; color: #007bff;">
+                               :  ${ticket.attachment}
+                            </a>
+                        </div>` : ''}
+                    
+                    </div>
+                </fieldset>
+                    <div class="row">
+                        <div class="col-12">
+                            ${assetDetailsHtml}
+                        </div>
+                        <div class="col-12">
+                            <div id="asset-detail-container" class="mt-3 mb-2"></div>
+                        </div>
+                        <div class="col-2">
+                            <span style="font-size:11px">Notes</span>
+                        </div>
+                        <div class="col-10">
+                          <textarea class="form-control" id="approval_notes" rows="3"></textarea>
+                            <span  style="color:red;" class="message_error text-red block approval_notes_error"></span>
+                        </div>
+                        <div class="col-md-12 mt-3 text-end">
+                            <button class="btn btn-sm btn-success" id="btn_approve_ticket" type="button"
+                                data-request-code="${ticket.request_code}" style="font-size: 10px;float:right">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-sm btn-danger mr-2" id="btn_reject_ticket" type="button"
+                                data-request-code="${ticket.request_code}" style="font-size: 10px;float:right">
+                                <i class="fas fa-xmark"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+            </fieldset>
+        
+            `;
+        }
+        $(document).on('click', '.asset-row', function () {
+            const asset = $(this).data('asset');
+            
+            const conditionLabel = asset.condition == 1 ? 
+                '<span class="badge bg-success">Good</span>' : 
+                asset.condition == 2 ? 
+                '<span class="badge bg-warning text-dark">Bad</span>' : 
+                '<span class="badge bg-danger">Lost</span>';
+            const html = `
+            <fieldset class="border p-3 rounded shadow-sm">
+                <legend class="w-auto px-2" style="font-size: 11px; font-weight: bold;">Detail Asset</legend>
+                <div class="row" style="font-size: 11px;">
+                    <div class="col-md-2 mb-1">
+                        <strong>Asset Code</strong> 
+                    </div>
+                    <div class="col-md-4">
+                        <span>: ${asset.asset_code} </span>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <strong>Category</strong> 
+                    </div>
+                    <div class="col-md-4">
+                        <span>: ${asset.asset_relation?.category_relation?.name || '-'} </span>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <strong>Brand</strong> 
+                    </div>
+                    <div class="col-md-4">
+                        <span> : ${asset.asset_relation?.brand_relation?.name || '-'}</span>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <strong>Type</strong>
+                    </div>
+                        
+                    <div class="col-md-4">
+                         : ${asset.type == 1 ? 'Parent' : 'Child'}
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <strong>Parent Code</strong>
+                    </div>
+                    <div class="col-md-4 mb-1">
+                        <span>  : ${asset.asset_relation?.parent_code || '-'}</span>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <strong>Condition</strong>
+                    </div>
+                    <div class="col-md-4 mb-1">
+                        <span>  : ${conditionLabel}</span>
+                    </div>
+                    <div class="col-md-2 mb-1">
+                        <strong>Location</strong>
+                    </div>
+                    <div class="col-md-4 mb-1">
+                        <span>  :   ${asset.asset_relation?.location_relation?.name || '-'}</span>
+                    </div>
+                   <div class="col-md-2 mb-1">
+                        <strong>Join Date</strong>
+                    </div>
+                    <div class="col-md-4 mb-1">
+                        <span>  :   ${asset.join_date || '-'}</span>
+                    </div>
+                     <div class="col-md-2 mb-1">
+                        <strong>Image</strong>
+                    </div>
+                    <div class="col-md-4 mb-1">
+                        <span>: ${asset.asset_relation?.image ? `<img src="/storage/Asset/${asset.asset_relation.image}" alt="Asset Image" width="50">` : '-'}</span>
+                    </div>
+                     <div class="col-md-2 mb-1">
+                        <strong>QR Code</strong>
+                    </div>
+                    <div class="col-md-4 mb-1">
+                        <span>: ${asset.asset_relation?.qr_code ? `<img src="/storage/Asset/${asset.asset_relation.qr_code}" alt="Asset Image" width="50">` : '-'}</span>
+                    </div>
+                  
+                </div>
+            </fieldset>
+            `;
+
+            $('#asset-detail-container').html(html);
+        });
+
+        $(document).on('click', '#btn_approve_ticket, #btn_reject_ticket', function () {
+            const isApprove = $(this).attr('id') === 'btn_approve_ticket';
+            const request_code = $(this).data('request-code');
+            const approval_notes = $('#approval_notes').val().trim();
+
+            if (approval_notes === '') {
+                $('.approval_notes_error').text('Notes is required');
+                return;
+            } else {
+                $('.approval_notes_error').text('');
+            }
+
+            const data = {
+                request_code,
+                approval_notes,
+                status: isApprove ? 1 : 2
+            };
+
+            $(this).prop('disabled', true);
+
+            postCallback('approvalAssetProgress', data, function (response) {
+                toastr['success'](response.meta.message);
+                $('#approvalAssetModal').modal('hide');
+                $('#btn_approve_ticket, #btn_reject_ticket').prop('disabled', false);
+            });
+        });
+    // Approval Asset Notification
 </script>

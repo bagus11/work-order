@@ -3,6 +3,7 @@
     get_wo_summary()
     problemType()
     $('#level2TableContainer').prop('hidden', true)
+  
     $(document).on('click', '#filter', function (e) {
         e.stopPropagation();
     });
@@ -440,7 +441,6 @@
                         label.push(response.data[i].problemName)
                         color.push(masterColor[i])
                     }
-                    console.log(response.data)
                     $('canvas#percentageChart').remove()
                     $('canvas#percentageChart_container').remove();
                     $('#percentageChart_container').append('<canvas id="percentageChart" style="width:400px !important; height:400px !important" ></canvas>')
@@ -517,7 +517,6 @@
             var data=''
             for(i = 0; i < response.length; i++ )
             {
-                console.log(response[i])
                         picDuration= response[i].duration == 0 ? timeConvert(response[i].duration) : timeConvert(response[i].duration)
                         
                         data += `<tr>
@@ -543,4 +542,68 @@
             "bInfo" : false
         }).columns.adjust()
     }
+    getCallbackNoSwal('getApprovalAssetNotification', null, function(response){
+            const data = response.data;
+            const modalBody = $('#approvalAssetModal .modal-body');
+            modalBody.empty();
+          
+                
+                if (data.length === 1) {
+                    // 1 tiket, tampilkan langsung detailnya
+                    $('#approvalAssetModal').modal('show');
+                    const ticket = data[0];
+                    modalBody.append(generateTicketDetailHtml(ticket));
+                } else if (data.length > 1) {
+                    $('#approvalAssetModal').modal('show');
+                    // Banyak tiket, tampilkan daftar
+                    let listHtml = `<ul class="list-group mx-2 my-2">`;
+                    data.forEach((ticket, index) => {
+                        listHtml += `
+                       <li class="list-group-item border rounded shadow-sm mb-2 px-3 py-2">
+                            <div class="d-flex align-items-center">
+                                <!-- Avatar -->
+                                <div class="me-3">
+                                    <img src="${ticket.user_relation.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(ticket.user_relation.name)}"
+                                        alt="avatar"
+                                        class="rounded-circle"
+                                        width="40"
+                                        height="40"
+                                        style="object-fit: cover;">
+                                </div>
+
+                                <!-- Info -->
+                                <div class="flex-grow-1 ml-2" style="font-size: 11px;">
+                                    <strong style="font-size: 11px;">${ticket.request_code}</strong><br>
+                                    <span style="font-size: 10px;">From: ${ticket.location_relation.name}</span><br>
+                                    <span style="font-size: 10px;">To: ${ticket.des_location_relation.name}</span><br>
+                                    <span style="font-size: 10px;">PIC: ${ticket.user_relation.name}</span>
+                                </div>
+
+                                <!-- View Button -->
+                                <div class="ms-2">
+                                    <button type="button" class="btn btn-sm btn-info view-ticket" data-index="${index}"
+                                        style="font-size: 10px; padding: 3px 8px;">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                        `;
+                    });
+                    listHtml += `</ul><div id="ticketDetailContainer" class="mt-3"></div>`;
+                    modalBody.append(listHtml);
+                }
+    
+              
+                $(document).on('click', '.view-ticket', function(e) {
+                    e.preventDefault();
+                    const index = $(this).data('index');
+                    const ticket = response.data[index]; // pastikan ini sesuai scope lo
+        
+                    $('#ticketDetailContainer').html(generateTicketDetailHtml(ticket));
+                });
+            
+
+
+        })
 </script>

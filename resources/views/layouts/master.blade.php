@@ -40,6 +40,7 @@
             <p>Sidebar content</p>
             </div>
         </aside>
+        @include('home.modal.approval-asset')
         @include('layouts.footer')
         </div>
 
@@ -106,7 +107,7 @@
           }
        
           $(".select2").select2({ width: '300px', dropdownCssClass: "bigdrop" });
-         
+          
        </script>
         @include('RepositoryPattern.repo-js')
         <script>  

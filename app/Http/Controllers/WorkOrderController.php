@@ -77,7 +77,7 @@ class WorkOrderController extends Controller
                             $postNotif = [
                                 'userId'    =>$item->user_id,
                                 'status'    =>0,
-                                'message'   =>'your work order with request code : '.$item->request_code.' has been closed by system',
+                                'message'   =>'your work order ticket with request code : '.$item->request_code.' has been closed by system',
                                 'link'      =>'work_order_list',
                                 'subject'   =>'WO Progress'
     
@@ -85,7 +85,7 @@ class WorkOrderController extends Controller
                             $postNotifUser = [
                                 'userId'    =>$item->user_id_support,
                                 'status'    =>0,
-                                'message'   =>'your work order with request code : '.$item->request_code.' has been closed by system',
+                                'message'   =>'your work order ticket with request code : '.$item->request_code.' has been closed by system',
                                 'link'      =>'work_order_list',
                                 'subject'   =>'WO Progress'
     
@@ -233,7 +233,7 @@ class WorkOrderController extends Controller
     public function getDisscuss(Request $request){
         $data = ChatRFM::with(['userRelation'])->where('request_code', $request->request_code)->get();
         $ticket = WorkOrder::where('request_code', $request->request_code)->first();
-        
+
         $chat = ChatRFM::where('request_code', $request->request_code)
                 ->where('user_id', '!=', auth()->user()->id)
                 ->first();
@@ -1474,9 +1474,6 @@ class WorkOrderController extends Controller
         return $totalTime;
     }
     
-    
-    
-
     // function revisiDuration() {
     //     $dataAll = WorkOrderLog::where('request_code', '31/RFM/ICT/VIII/23')->get();
     //     $array = [];

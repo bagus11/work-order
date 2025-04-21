@@ -1,6 +1,6 @@
 
 <div class="modal fade" id="detailMasterAssetModal">
-    <div class="modal-dialog modal-lg  modal-dialog-centered">
+    <div class="modal-dialog modal-xl  modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-core">
                 <span id="assetTitle"></span>

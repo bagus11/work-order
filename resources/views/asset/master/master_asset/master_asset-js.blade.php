@@ -279,4 +279,79 @@
             return 'No data available.';
         }
     }
+
+
+    $('#btn_add_master_asset').on('click', function(){
+        $('.parent_container').prop('hidden', true)
+        $('#category_id').val('')
+        $('#brand_id').val('')
+        $('#type_id').val('')
+        $('#parent_id').val('')
+        $('#pic_id').val('')
+        $('#select_category').val('').trigger('change')
+        $('#select_brand').val('').trigger('change')
+        $('#select_type').val('').trigger('change')
+        $('#select_parent').val('').trigger('change')
+        $('#select_pic').val('').trigger('change')
+        $('.message_error').html('')
+        getActiveItems('getAssetCategory', null, 'select_category','Category')
+        getActiveItems('get_kantor', null, 'select_location','Location')
+        getActiveItems('getAssetBrand', null, 'select_brand','Brand')
+  
+        getActiveItems('getUser', null, 'select_pic', 'PIC')
+    })
+
+    $('#select_type').on('change', function(){
+        var select_type = $('#select_type').val()
+        if(select_type == 2){
+            getCallbackNoSwal('getActiveParent', null, function(response){
+            $('#select_parent').append(`
+               <option value="">Choose Parent</option>
+            `)
+                    for(i = 0; i < response.data.length; i ++){
+                        $('#select_parent').append( `
+                                <option value="${response.data[i].asset_code}">${response.data[i].asset_code}</option>
+                        `)
+                    }
+        })
+            $('.parent_container').prop('hidden',false)
+
+        }else{
+            $('.parent_container').prop('hidden',true)
+        }
+    })
+    onChange('select_location', 'location_id')
+    onChange('select_category', 'category_id')
+    onChange('select_brand', 'brand_id')
+    onChange('select_type', 'type_id')
+    onChange('select_parent', 'parent_id')
+    onChange('select_pic', 'pic_id')
+    $('#btn_save_master_asset').on('click', function(){
+        var data = {
+            'pic_id' : $('#pic_id').val(),
+            'type_id' : $('#type_id').val(),
+            'category_id' : $('#category_id').val(),
+            'join_date' : $('#join_date').val(),
+            'location_id' : $('#location_id').val(),
+            'brand_id' : $('#brand_id').val(),
+            'parent_id' : $('#parent_id').val(),
+        }
+        postCallback('addMasterAsset', data, function(response){
+            swal.close()
+            toastr['success'](response.meta.message)
+            var type = $('#type_id').val()
+            if(type == 1){
+                Swal.fire({
+                    title: "<strong>Information</strong>",
+                    icon: "info",
+                    html: `
+                        After this, please update Asset Specification<
+                    `,
+                    showCloseButton: true,
+                    focusConfirm: true,
+                });
+            }
+
+        })
+    })
 </script>
