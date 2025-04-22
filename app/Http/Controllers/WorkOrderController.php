@@ -383,7 +383,8 @@ class WorkOrderController extends Controller
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
                     if($request->file('attachment')){
-                        $request->file('attachment')->storeAs('/attachmentUser',$fileName);
+                        $request->file('attachment')->storeAs('attachmentUser', $fileName, 'local');
+
                     }
                     // Send To Telegram Chanel
                       // Set Telegram Message

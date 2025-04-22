@@ -362,4 +362,62 @@ class DistributionAssetController extends Controller
       }
 
     }
+    function progressDistribution(Request $request) {
+        try {
+            $header = DistributionHeader::where('request_code', $request->request_code)->first();
+            $detail = DistributionDetail::where('request_code', $request->request_code)->get();
+            $approval = ApprovalHeader::where('location_id', $header->location_id)->first();
+            $detailApproval = ApprovalDetail::where('approval_code', $approval->approval_code)->get();
+            $currentApproval = ApprovalDetail::where('approval_code', $approval->approval_code)->where('user_id', auth()->user()->id)->first();
+            $nextApproval = 0;
+            $status = $header->status;
+            $post_detail = $detail[0]->status;
+            if($currentApproval->step < $approval->step){
+                $approval = ApprovalDetail::where('approval_code', $approval->approval_code)->where('step', $currentApproval->step + 1)->first();
+                $nextApproval = $approval->user_id;
+                $status = $header->status == 0 ? 1 : $header->status + 1;
+               
+            }else if($currentApproval->step == $approval->step){
+               
+                $nextApproval = 0;  
+                $status = $header ->status + 1;
+                $post_detail = $detail[0]->status +1;
+            }
+            
+            $post_log =[
+                'request_code'      => $request->request_code,
+                'location_id'       => $header->location_id,
+                'des_location_id'   => $header->des_location_id,
+                'request_type'      => $header->request_type,
+                'user_id'           => auth()->user()->id,
+                'pic_id'            => $header->pic_id,
+                'receiver_id'       => $header->receiver_id,
+                'approval_id'       => $nextApproval,
+                'status'            => $status,
+                'notes'             => $header->approval_notes,
+                'attachment'        => '',
+            ];
+            $post = [
+                'status'            => $header->status + 1,
+            ];
+          
+            DB::transaction(function() use($post,$request, $post_log,$post_detail, $currentApproval, $approval ) {
+                DistributionLog::create($post_log);
+                DistributionHeader::where('request_code', $request->request_code)->update($post);
+                if($currentApproval->step == $approval->step){
+                    DistributionDetail::where('request_code', $request->request_code)->update(['status' => $post_detail]);
+                }
+                return ResponseFormatter::success(   
+                    $post,                              
+                    'Approval successfully updated'
+                );            
+            });
+                  } catch (\Throwable $th) {
+              return ResponseFormatter::error(
+                  $th,
+                  'Approval failed to update',
+                  500
+              );
+          }
+    }
 }

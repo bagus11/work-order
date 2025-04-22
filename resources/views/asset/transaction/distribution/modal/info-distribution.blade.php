@@ -26,6 +26,7 @@
                             <legend>General Information</legend>
                             <div class="row">
                                 <div class="col-2"><p>Request Code</p></div>
+                                <input type="hidden" id="request_code_id">
                                 <div class="col-4"><p id="ict_request_code"></p></div>
                                 <div class="col-2"><p>Request Type</p></div>
                                 <div class="col-4"><p id="ict_request_type"></p></div>

@@ -433,6 +433,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('getInactiveAsset', [DistributionAssetController::class, 'getInactiveAsset'])->name('getInactiveAsset'); 
             Route::get('getUserLocation', [DistributionAssetController::class, 'getUserLocation'])->name('getUserLocation'); 
             Route::post('addDistribution', [DistributionAssetController::class, 'addDistribution'])->name('addDistribution'); 
+            Route::post('progressDistribution', [DistributionAssetController::class, 'progressDistribution'])->name('progressDistribution'); 
             Route::get('detailDistributionTicket', [DistributionAssetController::class, 'detailDistributionTicket'])->name('detailDistributionTicket'); 
             
             // Approval Notification

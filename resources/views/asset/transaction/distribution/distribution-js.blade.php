@@ -243,6 +243,7 @@
             }
             getCallback('detailDistributionTicket', data, function(response){
                 swal.close()
+                $('#ict_request_code').val(response.detail.request_code)
                 if(response.detail.status === 2){
                     $('#ict_progress_btn').prop('hidden', false);
                 }else{
@@ -481,6 +482,68 @@
           
         })
     // info
+
+    // Prorgress Button
+    $('#ict_progress_btn').on('click', function () {
+        Swal.fire({
+            title: "Progress Request",
+            html: `
+                <label for="progress_note" class="swal2-form-label">Notes</label>
+                <textarea id="progress_note" class="swal2-textarea" placeholder="Enter your notes here"></textarea>
+            `,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, progress it!",
+            focusConfirm: false,
+            didOpen: () => {
+                document.getElementById('progress_note').focus();
+            },
+            preConfirm: () => {
+                const note = Swal.getPopup().querySelector('#progress_note').value.trim();
+                if (!note) {
+                    Swal.showValidationMessage('Note is required!');
+                    return false;
+                }
+                return note;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const note = result.value;
+
+                Swal.fire({
+                    title: "Processing...",
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                postCallback('progressDistribution', {
+                    request_code: $('#request_code_id').val(),
+                    note: note
+                }, function (response) {
+                    Swal.fire({
+                        title: "Request Progressed",
+                        text: "Your asset request is now in progress.",
+                        icon: "success"
+                    });
+                    $('#detailDistributionModal').modal('hide');
+                    $('#distribution_table').DataTable().ajax.reload();
+                }, function (error) {
+                    Swal.fire({
+                        title: "Failed!",
+                        text: "There was a problem processing the request.",
+                        icon: "error"
+                    });
+                });
+            }
+        });
+    });
+
+
+    // Prorgress Button
 
 // Function
     // Operation 
