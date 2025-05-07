@@ -694,14 +694,15 @@ var auth_id = $('#auth_id').val()
  // End Repository Pattern
  let approvalData = [];
  $('#asset_notification').on("click", function(){
-    $('#approvalAssetModal').modal('show');
+    
       approvalData =[];
       getCallbackNoSwal('getApprovalAssetNotification', null, function(response){
             const data = response.data;
             const modalBody = $('#approvalAssetModal .modal-body');
             modalBody.empty();
-          
-                
+               if(data.length === 0){
+                toastr['info']('No new approval asset notifications.');
+               }
                 if (data.length === 1) {
                     // 1 tiket, tampilkan langsung detailnya
                     $('#approvalAssetModal').modal('show');
@@ -846,7 +847,7 @@ var auth_id = $('#auth_id').val()
                             <label style="font-size: 11px;">User</label><br>
                         </div>
                         <div class="col-md-4 mb-1">
-                            <span style="font-size: 10px;"> : ${ticket.user_relation.name}</span>
+                            <span style="font-size: 10px;"> : ${ticket.user_relation?.name ||'-'}</span>
                         </div>
                         <div class="col-md-2 mb-1">
                             <label style="font-size: 11px;">Receiver</label><br>
@@ -997,8 +998,8 @@ var auth_id = $('#auth_id').val()
             };
 
             $(this).prop('disabled', true);
-
             postCallback('approvalAssetProgress', data, function (response) {
+                swal.close();
                 toastr['success'](response.meta.message);
                 $('#approvalAssetModal').modal('hide');
                 $('#btn_approve_ticket, #btn_reject_ticket').prop('disabled', false);

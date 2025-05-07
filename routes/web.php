@@ -3,6 +3,7 @@
 use App\Http\Controllers\Asset\ApprovalController;
 use App\Http\Controllers\Asset\DistributionAssetController;
 use App\Http\Controllers\Asset\MasterAssetController;
+use App\Http\Controllers\Asset\ServiceAssetController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
@@ -433,13 +434,23 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('getInactiveAsset', [DistributionAssetController::class, 'getInactiveAsset'])->name('getInactiveAsset'); 
             Route::get('getUserLocation', [DistributionAssetController::class, 'getUserLocation'])->name('getUserLocation'); 
             Route::post('addDistribution', [DistributionAssetController::class, 'addDistribution'])->name('addDistribution'); 
-            Route::post('progressDistribution', [DistributionAssetController::class, 'progressDistribution'])->name('progressDistribution'); 
+            Route::post('sendingDistribution', [DistributionAssetController::class, 'sendingDistribution'])->name('sendingDistribution'); 
             Route::get('detailDistributionTicket', [DistributionAssetController::class, 'detailDistributionTicket'])->name('detailDistributionTicket'); 
+            Route::post('/incoming-progress', [DistributionAssetController::class, 'incomingProgress']); 
             
             // Approval Notification
                 Route::get('getApprovalAssetNotification', [DistributionAssetController::class, 'getApprovalAssetNotification'])->name('getApprovalAssetNotification'); 
                 Route::post('approvalAssetProgress', [DistributionAssetController::class, 'approvalAssetProgress'])->name('approvalAssetProgress'); 
             // Approval Notification
+
+        // Service Asset
+        Route::get('service_asset', [ServiceAssetController::class, 'index'])->name('service_asset'); 
+        Route::get('getService', [ServiceAssetController::class, 'getService'])->name('getService'); 
+        Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode'); 
+        Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode'); 
+        Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService'); 
+        
+        // Service Asset
             
         // Distribution Asset
 
@@ -460,6 +471,17 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('getCard', [VCardController::class, 'getCard'])->name('getCard'); 
         Route::get('generateCard/{id}/card', [VCardController::class, 'generateCard'])->name('generateCard'); 
     // V Card 
+
+    // Testing Email
+        Route::get('/test-auth-email', function () {
+            \Illuminate\Support\Facades\Mail::raw('Test email dari Laravel Auth', function ($message) {
+                $message->to('bagus.slamet@pralon.com') // ganti ke Zimbra
+                        ->subject('Laravel Auth Test');
+            });
+        
+            return 'Email auth-style terkirim!';
+        });
+    // Testing Email
 
 
 });

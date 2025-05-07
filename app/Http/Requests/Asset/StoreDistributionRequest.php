@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Asset;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class StoreDistributionRequest extends FormRequest
 {
@@ -21,15 +22,37 @@ class StoreDistributionRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
-        return [
-            'location_id' => 'required',
-            'destination_location_id' => 'required',
-            'receiver_id' => 'required',
-            'request_type' => 'required',
-            'current_user_id' => 'required',
-            'notes' => 'required',
-        ];
+        $post = [];
+        // if($request->request_type == 2){
+        //     $post =[
+        //         'location_id' => 'required',
+        //         'destination_location_id' => 'required',
+        //         'receiver_id' => 'required',
+        //         'request_type' => 'required',                
+        //         'notes' => 'required',
+        //     ];
+        // }else if($request->request_type == 3){
+        //     $post =[
+        //         'location_id' => 'required',
+        //         'request_type' => 'required',                
+        //         'notes' => 'required',
+        //         'current_user'=> 'required',
+        //     ];
+        // }else if($request->request_type == 1){
+        //     $post =[
+        //         'location_id' => 'required',
+        //         'request_type' => 'required', 
+        //         'destination_location_id' => 'required',
+        //         'receiver_id' => 'required',
+        //         'request_type' => 'required',             
+        //         'notes' => 'required',
+        //         'current_user'=> 'required',
+        //     ];
+        // }
+
+        return $post ;
     }
 }
+;

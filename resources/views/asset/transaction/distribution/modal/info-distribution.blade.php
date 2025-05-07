@@ -50,6 +50,9 @@
                                     <button class="btn btn-warning btn-sm" style="float: right;" id="ict_progress_btn">
                                         <i class="fa-solid fa-paper-plane"></i>
                                     </button>
+                                    <button class="btn btn-info btn-sm" style="float: right;" id="ict_incoming_btn">
+                                        <i class="fa-solid fa-dolly"></i>
+                                    </button>
                                 </div>
                             </div>
                         </fieldset>
@@ -81,6 +84,7 @@
                                                 <th>Type</th>
                                                 <th>Condition</th>
                                                 <th>Status</th>
+                                                <th>Attachment</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>

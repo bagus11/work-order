@@ -23,7 +23,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right"
                  style="width: 400px; max-height: 400px; overflow-y: auto;"
-                 id="general_notification_body">
+                 id="notificationBody">
             </div>
         </li>
     

@@ -81,8 +81,11 @@
             $('#detail_item_table').DataTable().clear().destroy();
             $('.destination_location_container').prop('hidden', true);
             $('.receiver_container').prop('hidden', true);
+            $('.user_container').prop('hidden', true);
         } else if(currentVal === '2'){
             var select_location = $('#select_location').val();
+            $('.receiver_container').prop('hidden', false);
+            $('.user_container').prop('hidden', true);
             $('#detail_item_table').DataTable().clear().destroy();
             $('#detail_item_table').DataTable({
                 processing: true,
@@ -132,6 +135,7 @@
             $('#detail_item_table').DataTable().clear().destroy();
             $('.destination_location_container').prop('hidden', false);
             $('.receiver_container').prop('hidden', false);
+            $('.user_container').prop('hidden', false);
         }
     });
     $('#select_current_user').on('change', function () {
@@ -243,11 +247,18 @@
             }
             getCallback('detailDistributionTicket', data, function(response){
                 swal.close()
+               
                 $('#ict_request_code').val(response.detail.request_code)
                 if(response.detail.status === 2){
                     $('#ict_progress_btn').prop('hidden', false);
                 }else{
                     $('#ict_progress_btn').prop('hidden', true);
+                }
+
+                if(response.detail.status === 3){
+                    $('#ict_incoming_btn').prop('hidden', false);
+                }else{
+                    $('#ict_incoming_btn').prop('hidden', true);
                 }
                 switch(response.detail.request_type) {
                     case 1:
@@ -269,13 +280,10 @@
                 $('#ict_receiver_user').text(': ' + response.detail.receiver_relation.name)
                 $('#ict_notes').text(': ' + response.detail.notes)
                 if(response.detail.attachment){
-                    $('#ict_attachment').html(`
-                    <p>:
-                        <a target="_blank" href="{{URL::asset('storage/Asset/Distribution/attachment/${response.detail.attachment}')}}" class="ml-3" style="color:blue;">
-                            <i class="far fa-file" style="color: red;font-size: 20px;"></i>
+                    $('#ict_attachment').html(`:
+                        <a target="_blank" href="{{URL::asset('storage/Asset/Distribution/attachment/${response.detail.attachment}')}}" class="text-primary">
+                            <i class="fa-solid fa-file" style="color: red;font-size: 20px;"></i>
                             ${response.detail.attachment}</a>
-                    </p>
-                            
                             `)
                 }else{
                     $('#ict_attachment').html(`<span>: -<span>`)
@@ -311,11 +319,26 @@
                                     statusLabel = '<span class="badge bg-warning text-white">In Progress</span>';
                                     break;
                                 case 2:
-                                    statusLabel = '<span class="badge bg-success text-dark">DONE</span>';
+                                    statusLabel = '<span class="badge bg-track text-white">Sending Progress</span>';
+                                    break;
+                                case 3:
+                                    statusLabel = '<span class="badge bg-success text-white">DONE</span>';
                                     break;
                                 default:
                                     statusLabel = '<span class="badge bg-secondary">UNKNOWN</span>';
                             }
+
+                             var attachment ='-'
+                             if(asset.status == 3){
+                                    if(asset.attachment !== ''){
+                                        console.log(asset.attachment)
+                                        let attachmentPath = asset.attachment; 
+                                        let fileName = attachmentPath.split('/').pop()
+                                        attachment = `<a target="_blank" href="{{URL::asset('storage/${asset.attachment}')}}" class="text-primary">
+                                                <i class="fa-solid fa-file" style="color: red;font-size: 16px;"></i> ${fileName}
+                                        </a>`
+                                    }
+                             }
                             let row = `
                                 <tr>
                                     <td>${asset.asset_code || '-'}</td>
@@ -325,8 +348,11 @@
                                     <td style="text-align: center !important;">
                                         ${conditionBadge}
                                     </td>
-                                       <td style="text-align: center !important;">
+                                    <td style="text-align: center !important;">
                                         ${statusLabel}
+                                    </td>
+                                    <td style="text-align: center !important;">
+                                        ${attachment}
                                     </td>
                                 </tr>
                             `;
@@ -399,10 +425,92 @@
                         $('#ict_asset_info').html(detailHtml);
                     });
 
+                    $('#ict_asset_incoming_table tbody').empty();
+                
+                    if (response.detail.detail_relation && response.detail.detail_relation.length > 0) {
+                        response.detail.detail_relation.forEach(function(asset) {
+                            let conditionBadge = '';
+                          
+                            $('#ict_info_condition').html(conditionBadge);
+                            var statusLabel =''  
+                            switch(asset.status){
+                                case 0:
+                                    statusLabel = '<span class="badge bg-secondary">Prepare</span>';
+                                    break;
+                                case 1:
+                                    statusLabel = '<span class="badge bg-warning text-white">In Progress</span>';
+                                    break;
+                                case 2:
+                                    statusLabel = '<span class="badge bg-track text-white">Sending Progress</span>';
+                                    break;
+                                case 3:
+                                    statusLabel = '<span class="badge bg-success text-white">DONE</span>';
+                                    break;
+                                default:
+                                    statusLabel = '<span class="badge bg-secondary">UNKNOWN</span>';
+                            }
+                            var check = ''
+                            var attachment =''
+                            if(asset.status == 2){
+                                check = `   <input type="checkbox" id="check" name="check" class="ict_asset_checkbox" style="border-radius: 5px !important;" value="${asset.asset_code}"   data-asset="${asset.asset_code}">`;
+                                attachment =`
+                                    <input type="file" class="form-control attachment-file" id="ict_attachment" name="ict_attachment" accept=".jpg, .jpeg, .png, .pdf" style="width: 100%;">
+                                `
+                                conditionBadge =`
+                                  <select class="form-select condition-select" aria-label="Please Update Condition">
+                                            <option value="0">Open this select menu</option>
+                                            <option value="1">Good</option>
+                                            <option value="2">Partially Good</option>
+                                            <option value="3">Broken</option>
+                                        </select>    
+                                `
+                              
+                            }else if(asset.status == 3){
+                                check = '<span class="badge bg-success text-white">Arrived</span>';
+                                if(asset.attachment !== ''){
+                                    attachment = `<a target="_blank" href="{{URL::asset('storage/Asset/Distribution/attachment/${asset.attachment}')}}" class="text-primary">
+                                            <i class="fa-solid fa-file" style="color: red;font-size: 16px;"></i> ${asset.attachment}
+                                    </a>`
+                                }
+                                switch(asset.condition){
+                                    case 1:
+                                        conditionBadge = '<span class="badge bg-success">Good</span>';
+                                        break;
+                                    case 2:
+                                        conditionBadge = '<span class="badge bg-warning text-dark">Partially Good</span>';
+                                        break;
+                                    case 3:
+                                        conditionBadge = '<span class="badge bg-danger">Broken</span>';
+                                        break;
+                                    default:
+                                        conditionBadge = '<span class="badge bg-secondary">-</span>';
+                                }
+                            }
+                            let row = `
+                                <tr>
+                                    <td style="text-align:center;">
+                                        ${check}
+                                    </td>
+                                    <td>${asset.asset_code || '-'}</td>op
+                                    <td>${asset.asset_relation.category_relation.name || '-'}</td>
+                                    <td>${asset.asset_relation.brand_relation?.name || '-'}</td>
+                                    <td>${asset.type ? 'Parent' : 'Child' || '-'}</td>
+                                    <td style="text-align:center;"> ${conditionBadge}</td>
+                                    <td style="text-align:center;">${statusLabel}</td>
+                                    <td>
+                                        ${attachment}
+                                    </td>
+                                </tr>
+                                `;
+                                $('#ict_asset_incoming_table tbody').append(row);
 
-                    // asset table
+                        });
+                    } else {
+                        $('#ict_asset_incoming_table tbody').append('<tr><td colspan="5" class="text-center">Tidak ada data aset</td></tr>');
+                    }
 
-                    // log Transaction
+                    // Delegasi klik ke tbody
+                 
                      
                     $('#ict_log_list').empty();
 
@@ -420,8 +528,8 @@
                             const createdAt = log.created_at ? moment(log.created_at).format("DD MMMM YYYY, HH:mm:ss") : '-';
 
                             const attachment = log.attachment 
-                                ? `<a target="_blank" href="{{URL::asset('storage/Asset/Distribution/attachment/${log.attachment}')}}" class="text-primary">
-                                        <i class="far fa-file" style="color: red;font-size: 16px;"></i> ${log.attachment}
+                                ? `<a target="_blank" href="{{URL::asset('storage/Asset/Distribution/attachmentLog/${log.attachment}')}}" class="text-primary">
+                                        <i class="fa-solid fa-file" style="color: red;font-size: 16px;"></i> ${log.attachment}
                                 </a>`
                                 : '-';
 
@@ -485,66 +593,112 @@
 
     // Prorgress Button
     $('#ict_progress_btn').on('click', function () {
-        Swal.fire({
-            title: "Progress Request",
-            html: `
-                <label for="progress_note" class="swal2-form-label">Notes</label>
-                <textarea id="progress_note" class="swal2-textarea" placeholder="Enter your notes here"></textarea>
-            `,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, progress it!",
-            focusConfirm: false,
-            didOpen: () => {
-                document.getElementById('progress_note').focus();
-            },
-            preConfirm: () => {
-                const note = Swal.getPopup().querySelector('#progress_note').value.trim();
-                if (!note) {
-                    Swal.showValidationMessage('Note is required!');
-                    return false;
-                }
-                return note;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const note = result.value;
-
-                Swal.fire({
-                    title: "Processing...",
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                postCallback('progressDistribution', {
-                    request_code: $('#request_code_id').val(),
-                    note: note
-                }, function (response) {
-                    Swal.fire({
-                        title: "Request Progressed",
-                        text: "Your asset request is now in progress.",
-                        icon: "success"
-                    });
-                    $('#detailDistributionModal').modal('hide');
-                    $('#distribution_table').DataTable().ajax.reload();
-                }, function (error) {
-                    Swal.fire({
-                        title: "Failed!",
-                        text: "There was a problem processing the request.",
-                        icon: "error"
-                    });
-                });
-            }
+        $('#detailDistributionModal').modal('hide');
+        $('#progressModal').modal('show');
+        $('#progress_form')[0].reset();
+        $('.message_error').text('');
+     
+        $('#progressModal').on('hidden.bs.modal', function () {
+            $('#detailDistributionModal').modal('show');
+        });
+    });
+    
+    $('#ict_incoming_btn').on('click', function () {
+        $('#detailDistributionModal').modal('hide');
+        $('#progress_form')[0].reset();
+        $('.message_error').text('');
+            $('#incomingModal').modal('show');
+        $('#incomingModal').on('hidden.bs.modal', function () {
+            $('#detailDistributionModal').modal('show');
         });
     });
 
+    $('#btn_progress_asset').on('click', function(e){
+        e.preventDefault();
+        const formData = new FormData($('#progress_form')[0]);
+        formData.append('ict_request_code', $('#ict_request_code').val());
+        formData.append('ict_notes_progress', $('#ict_notes_progress').val());
+        var attachment = $('#ict_progress_attachment')[0].files[0];
+        formData.append('ict_progress_attachment', attachment);
+        postAttachment('sendingDistribution', formData, false, function(response){
+            swal.close();
+            $('#progressModal').modal('hide');
+            toastr['success'](response.meta.message);
+            $('#distribution_table').DataTable().ajax.reload();
+        });
+    })
+
+    
 
     // Prorgress Button
 
+    // Incoming Button
+    $('#incoming_btn').on('click', function(e) {
+        e.preventDefault();
+
+        let dataToSend = new FormData();
+        let checkedCount = 0; 
+        $('#ict_asset_incoming_table tbody tr').each(function(index, row) {
+            let $row = $(row);
+            let checkbox = $row.find('.ict_asset_checkbox');
+            if (checkbox.is(':checked')) {
+                let assetCode = checkbox.val();
+                let conditionSelect = $row.find('.condition-select');
+                let conditionVal = parseInt(conditionSelect.val());
+                if (conditionVal === 0 || isNaN(conditionVal)) {
+                    toastr.info(assetCode + ' please set condition');
+                    hasConditionError = true;
+                    return false;
+                }else if (conditionVal !== 0 ||conditionVal !== '0') {
+
+                    checkedCount++;
+                    let fileInput = $row.find('.attachment-file')[0];
+                    let file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
+                    dataToSend.append(`assets[${assetCode}][condition]`, conditionVal);
+                    if (file) {
+                        dataToSend.append(`assets[${assetCode}][attachment]`, file);
+                    }
+                    console.log(`✔️ Asset: ${assetCode}, Condition: ${conditionVal}, File: ${file ? file.name : 'No file'}`);
+                } else {
+                    console.warn(`⚠️ Asset ${assetCode} diabaikan: condition kosong atau nol`);
+                }
+            }
+        });
+        dataToSend.append('ict_request_code', $('#ict_request_code').val());
+        dataToSend.append('ict_incoming_notes', $('#ict_incoming_notes').val());
+        console.log(checkedCount)
+        if (checkedCount === 0) {
+            toastr.warning('Please select at least one asset!');
+            return false;
+        }else{
+            $.ajax({
+                url: '/incoming-progress', // Ganti ke route kamu
+                type: 'POST',
+                data: dataToSend,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                beforeSend: function() {
+                    SwalLoading('Please wait...');
+                },
+                success: function(response) {
+                    swal.close()
+                    console.log(response);
+                    toastr.success('Data uploaded successfully');
+                },
+                error: function(xhr) {
+                    swal.close()
+                    console.log(xhr.responseText);
+                    toastr.error('Upload failed');
+                }
+            });
+        }
+
+    });
+
+    // Incoming Button
 // Function
     // Operation 
     $('#detail_item_table').on('change', '.row-checkbox', function () {

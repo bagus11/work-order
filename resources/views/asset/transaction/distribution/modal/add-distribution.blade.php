@@ -43,10 +43,10 @@
                             <input type="hidden" id="destination_location_id" name="destination_location_id">
                             <span  style="color:red;font-size:9px" class="message_error text-red block destination_location_id_error"></span>
                         </div>
-                        <div class="col-2 mt-2">
+                        <div class="user_container col-2 mt-2">
                             <p>Current User</p>
                         </div>
-                        <div class="col-4">
+                        <div class="user_container col-4">
                             <select class="select2" name="select_current_user" id="select_current_user">
                                 <option value="">Choose Location First</option>
                             </select>
