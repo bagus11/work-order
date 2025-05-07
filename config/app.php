@@ -44,7 +44,7 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Application URL
-    |--------------------------------------------------------------------------
+    |--------------------------------------------------------------------------s
     |
     | This URL is used by the console to properly generate URLs when using
     | the Artisan command line tool. You should set this to the root of
@@ -122,7 +122,9 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-
+    'timezone' => 'Asia/Jakarta',
+    'locale' => 'id',
+    'faker_locale' => 'id_ID',
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -161,7 +163,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        Telegram\Bot\Laravel\TelegramServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -174,7 +176,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        Spatie\Permission\PermissionServiceProvider::class,
+        
     ],
 
     /*
@@ -229,6 +232,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'NumConvert' => 'HnhDigital\LaravelNumberConverter\Facade',
+        'Telegram' => Telegram\Bot\Laravel\Facades\Telegram::class,
 
     ],
 
