@@ -96,6 +96,7 @@
                 <th>No</th>
                 <th>Created At</th>
                 <th>Request Code</th>
+                <th>Priority</th>
                 <th>Location</th>
                 <th>Level</th>
                 <th>User</th>
@@ -138,12 +139,28 @@
                         $statusLabel ='Reject';
                     }
 
+                    $priority = '';
+                    switch ($item->priority) {
+                        case 1:
+                            $priority = 'Low';
+                            break;
+                        case 2:
+                            $priority = 'Medium';
+                            break;
+                        case 3:
+                            $priority = 'High';
+                            break;
+                        default:
+                            $priority = 'Low';
+                            break;
+                    }
                     $subject = explode('_',$item->subject)
                 @endphp
                     <tr>
                         <td style="text-align:center">{{$i+1}}</td>
                         <td style="text-align:center">{{$item->created_at}}</td>
                         <td style="text-align:center">{{$item->request_code}}</td>
+                        <td style="text-align:center">{{$priority}}</td>
                         <td style="text-align:center">{{$item->location_name}}</td>
                         <td style="text-align:center">{{$item->level}}</td>
                         <td style="text-align:left">{{$item->username}}</td>

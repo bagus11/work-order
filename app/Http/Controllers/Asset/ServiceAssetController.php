@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Asset;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Asset\StoreServiveRequest;
+use App\Http\Requests\Asset\UpdateServiceRequest;
 use App\Models\Asset\ServiceLog;
 use App\Models\Asset\ServiceModel;
 use App\Models\MasterAsset;
@@ -14,13 +15,14 @@ use Illuminate\Support\Facades\DB;
 use NumConvert;
 use Yajra\DataTables\Contracts\DataTable;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class ServiceAssetController extends Controller
 {
     function index() {
         return view('asset.transaction.service.service-index');
     }
-    function getService(Request $request)
+    public function getService(Request $request)
     {
         $query = ServiceModel::with([
             'locationRelation',
@@ -30,35 +32,42 @@ class ServiceAssetController extends Controller
             'assetRelation.userRelation',
             'historyRelation',
             'historyRelation.userRelation',
+            'ticketRelation',
+            'ticketRelation.picName',
+            'ticketRelation.categoryName',
+            'ticketRelation.problemTypeName',
         ]);
     
         if (!auth()->user()->hasPermissionTo('get-all-service_asset')) {
             $query->where('user_id', auth()->id());
         }
+    
         if ($request->ajax()) {
             return DataTables::of($query->get())
-                ->addColumn('action', function ($row) {
-                    $editBtn = '<button class="btn btn-sm btn-warning edit" data-id="' . $row->id . '">
-                    <i class="fas fa-edit"></i>
-                    </button>';
-                    $printBtn = '<button class="btn btn-sm btn-success print" data-id="' . $row->id . '">
-                    <i class="fas fa-file"></i>
-                    </button>';
-                    $return =
-                    ' '
-                    .$printBtn ;
-                    return $return;
+                ->addColumn('duration', function ($row) {
+                    if ($row->status == 1 && $row->start_time) {
+                        return null; // biar dihitung real-time di frontend
+                    }
+    
+                    if ($row->start_time && $row->end_time) {
+                        $diff = Carbon::parse($row->start_time)->diff(Carbon::parse($row->end_time));
+                        return sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
+                    }
+    
+                    return '-';
                 })
-                ->rawColumns(['action'])
+                ->addColumn('start_time', function ($row) {
+                    return $row->start_time ? Carbon::parse($row->start_time)->toIso8601String() : null;
+                })
+                ->rawColumns(['action']) // Kalau pakai kolom action tombol, tambahkan di sini
                 ->make(true);
         }
-        return response()->json([
-            'data' => $query->get(),
-        ]);
+    
+        return response()->json(['data' => $query->get()]);
     }
     
     function getRequestCode() {
-        $query = WorkOrder::where('status_wo',2);
+        $query = WorkOrder::where('status_wo',1);
         if (!auth()->user()->hasPermissionTo('get-all-service_asset')) {
             $query->where('user_id_support', auth()->user()->id);
         }
@@ -93,14 +102,13 @@ class ServiceAssetController extends Controller
         if($increment_code ==null){
             $ticket_code = '1/'.'SVC'.'/'.$month_convert.'/'.$year;
         }else{
-            $month_before = explode('/',$increment_code->request_code,-1);
+            $month_before = explode('/',$increment_code->service_code,-1);
             if($month_convert != $month_before[2]){
                 $ticket_code = '1/'.'SVC'.'/'.$month_convert.'/'.$year;
             }else{
                 $ticket_code = $month_before[0] + 1 .'/'.'SVC'.'/'.$month_convert.'/'.$year;
             }   
         }
-  
         $fileName ='';
         if($request->file('attachment')){
             $ticketName = explode("/", $ticket_code);
@@ -116,11 +124,11 @@ class ServiceAssetController extends Controller
             'subject'           => $request->subject,
             'description'       => $request->description,
             'asset_code'        => $request->asset_code,
-            'department_id'        => $request->department_id,
+            'department_id'     => $request->department_id,
             'status'            => 0,
             'user_id'           => auth()->user()->id,
             'duration'          => 0,
-            'attachment'        =>'storage/Asset/Service/attachment'. $fileName,
+            'attachment'        =>'storage/Asset/Service/attachment/'. $fileName,
         ];
 
         $post_log =[
@@ -134,7 +142,7 @@ class ServiceAssetController extends Controller
             'user_id'           => auth()->user()->id,
             'duration'          => 0,
             'department_id'     => $request->department_id,
-            'attachment'        => 'storage/Asset/Service/AttachmentLog'.$fileName,
+            'attachment'        => 'storage/Asset/Service/AttachmentLog/'.$fileName,
         ];
     
        DB::transaction(function() use($post,$request,$fileName, $post_log) {
@@ -157,7 +165,105 @@ class ServiceAssetController extends Controller
     //           500
     //       );
     //   }
-
-        
     }
+
+    function startService(Request $request)
+    {
+        $service = ServiceModel::where('service_code', $request->service_code)->first();
+        $post = [
+            'status'            => 1,
+            'start_date'        => now(),
+        ];
+        $post_log = [
+            'service_code'      => $service->service_code,
+            'location_id'       => $service->location_id,
+            'request_code'      => $service->request_code,
+            'subject'           => $service->subject,
+            'description'       => auth()->user()->name .' has started the service',
+            'asset_code'        => $service->asset_code,
+            'status'            => 1,
+            'user_id'           => auth()->user()->id,
+            'duration'          => 0,
+            'department_id'     => $service->department_id,
+            'attachment'        => '',
+            'start_time'        => now(),
+        ];
+        ServiceModel::where('service_code', $request->service_code)->update($post);
+        ServiceLog::create($post_log);
+        return ResponseFormatter::success(   
+            $post,                              
+            'Service successfully started'
+        );            
+    }
+
+    function updateService(Request $request, UpdateServiceRequest $update_service_request) {
+        try{
+            $update_service_request->validated();
+            $header = ServiceModel::where('service_code', $request->service_code)->first();
+            $status = $header->status;
+            $post =[];
+            $message = '';
+            switch($request->update_service_progress_id){
+                case 1:
+                    $post = [
+                        'status'            => $status,
+                    ];
+                    $message = 'Service successfully updated';
+                    break;
+                case 2:
+                    $post = [
+                        'status'            => $status,
+                    ];
+                    break;
+                case 3:
+                    $post = [
+                        'status'            => $status + 1 ,
+                        'end_date'          => now(),
+                    ];
+                    break;
+            }
+              $fileName ='';
+            if($request->file('update_service_attachment')){
+                $ticketName = explode("/", $request->service_code);
+                $ticketName2 = implode('',$ticketName);
+                $custom_file_name = 'SVC'.'-'.$ticketName2.date('YmdHis');
+                $originalName = $request->file('update_service_attachment')->getClientOriginalExtension();
+                $fileName =$custom_file_name.'.'.$originalName;
+            } 
+            $post_log = [
+                'service_code'      => $header->service_code,
+                'location_id'       => $header->location_id,
+                'request_code'      => $header->request_code,
+                'subject'           => $header->subject,
+                'description'       => $request->udpate_service_description,
+                'asset_code'        => $header->asset_code,
+                'status'            => $request->update_service_progress_id,
+                'user_id'           => auth()->user()->id,
+                'duration'          => 0,
+                'department_id'     => $header->department_id,
+                'attachment'        => $fileName != '' ? 'storage/Asset/Service/AttachmentLog/'.$fileName : '',
+            ];
+            $asset = MasterAsset::where('asset_code', $header->asset_code)->first();
+            $post_asset_log =[
+                'asset_code'    => $asset->asset_code,
+                'category'      => $asset->category,
+                'brand'         => $asset->brand,
+                'type'          => $asset->type,
+                'parent_code'   => $asset->parent_code,
+                'remark'        => $request->udpate_service_description,
+                'user_id'       => auth()->user()->nik,
+                'nik'           => $asset->nik,
+                'created_at'    => date('Y-m-d H:i:s'),
+                'is_active'     => $request->is_active,
+            ];
+            dd($post_asset_log);
+        }catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Service failed to update',
+                500
+            );
+        }
+    }
+
 }

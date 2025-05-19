@@ -449,6 +449,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode'); 
         Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode'); 
         Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService'); 
+        Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService'); 
+        Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService'); 
         
         // Service Asset
             

@@ -1,6 +1,12 @@
 @extends('layouts.master')
 @section('title', 'Service Asset')
 @section('content')
+<style>
+    #service_table tbody tr {
+    cursor: pointer;
+}
+
+</style>
 <div class="row justify-content-center mx-2">
 
     <div class="col-12">
@@ -39,6 +45,8 @@
 
 
 </div>
+@include('asset.transaction.service.modal.detail-service')
+@include('asset.transaction.service.modal.update-service')
 @include('asset.transaction.service.modal.add-service')
 @endsection
 @push('custom-js')

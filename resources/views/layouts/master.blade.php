@@ -118,6 +118,9 @@
 </html>
 
 <style>
+  .message_error {
+    color: red;
+  }
       fieldset {
               border: 1px solid#ddd;
               font-family: Poppins !important;

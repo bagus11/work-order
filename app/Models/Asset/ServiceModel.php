@@ -6,6 +6,7 @@ use App\Models\MasterAsset;
 use App\Models\MasterDepartement;
 use App\Models\MasterKantor;
 use App\Models\User;
+use App\Models\WorkOrder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,5 +34,8 @@ class ServiceModel extends Model
     function departmentRelation()
     {
         return $this->hasOne(MasterDepartement::class, 'id', 'department_id');
+    }
+    function ticketRelation(){
+        return $this->hasOne(WorkOrder::class, 'request_code', 'request_code'); 
     }
 }

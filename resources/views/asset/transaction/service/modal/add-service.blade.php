@@ -17,7 +17,7 @@
                         </div>
                         <div class="col-4">
                             <select class="select2" name="select_request_code" id="select_request_code"></select>
-                            <input type="text" id="request_code_id" name="request_code_id">
+                            <input type="hidden" id="request_code_id" name="request_code_id">
                             <span class="message_error request_code_id_error"></span>
                         </div>
                     </div>
