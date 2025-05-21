@@ -240,6 +240,9 @@ setInterval(function () {
             $('#detail_location').text(': ' + row.location_relation.name);
             $('#detail_department').text(': ' + row.department_relation.name);
             $('#detail_subject').text(': ' + row.subject);
+            $('#update_service_condition_id_error').val(row.asset_relation.condition);
+            $('#select_service_condition').val(row.asset_relation.condition);
+            $('#select_service_condition').select2().trigger('change');
             switch (row.status) {
                 case 0:
                     $('#detail_status').text(': New');
@@ -408,7 +411,7 @@ setInterval(function () {
             e.preventDefault();
             var formData = new FormData($('#form_update_service')[0]);
             formData.append('service_code', $('#service_code').val());
-            formData.append('udpate_service_description', $('#udpate_service_description').val());
+            formData.append('update_service_description', $('#update_service_description').val());
             formData.append('update_service_condition_id', $('#update_service_condition_id').val());
             formData.append('update_service_progress_id', $('#update_service_progress_id').val());
             formData.append('update_service_attachment', $('#update_service_attachment')[0].files[0]);

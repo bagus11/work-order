@@ -461,7 +461,7 @@
                                             <option value="0">Open this select menu</option>
                                             <option value="1">Good</option>
                                             <option value="2">Partially Good</option>
-                                            <option value="3">Broken</option>
+                                            <option value="4">Broken</option>
                                         </select>    
                                 `
                               
@@ -479,7 +479,7 @@
                                     case 2:
                                         conditionBadge = '<span class="badge bg-warning text-dark">Partially Good</span>';
                                         break;
-                                    case 3:
+                                    case 4:
                                         conditionBadge = '<span class="badge bg-danger">Broken</span>';
                                         break;
                                     default:

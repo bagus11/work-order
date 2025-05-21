@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-4">
                             <select name="select_service_progress" class="select2" id="select_service_progress">
-                                <option value="">Choose Condition</option>
+                                <option value="">Choose Progress</option>
                                 <option value="1">In Progress</option>
                                 <option value="2">Pending</option>
                                 <option value="3">Done</option>
@@ -38,14 +38,15 @@
                             <span class="message_error update_service_progress_id_error"></span>
                         </div>
                         <div class="col-2 mt-2">
-                            <p>Progress</p>
+                            <p>Condition</p>
                         </div>
                         <div class="col-4">
                             <select name="select_service_condition" class="select2" id="select_service_condition">
                                 <option value="">Choose Condition</option>
-                                <option value="1">In Progress</option>
-                                <option value="2">Pending</option>
-                                <option value="3">Done</option>
+                                <option value="1">Good</option>
+                                <option value="2">Partially Good</option>
+                                <option value="3">Missing</option>
+                                <option value="4">Disposal</option>
                             </select>
                             <input type="hidden" id="update_service_condition_id" name="update_service_condition_id">
                             <span class="message_error update_service_condition_id_error"></span>
@@ -63,8 +64,8 @@
                             <p>Additional Info</p>
                         </div>
                         <div class="col-10">
-                            <textarea name="udpate_service_description" id="udpate_service_description" class="form-control" rows="10"></textarea>
-                            <span class="message_error udpate_service_description_error"></span>
+                            <textarea name="update_service_description" id="update_service_description" class="form-control" rows="10"></textarea>
+                            <span class="message_error update_service_description_error"></span>
                         </div>
                     </div>
                     <div class="row justify-content-end my-2 mx-1">

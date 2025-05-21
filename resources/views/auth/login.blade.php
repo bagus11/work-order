@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-header bg-core">{{ __('Login') }}
                 <div class="card-tools">
-                    <a target="_blank" href="{{asset('storage/manualBook/DokumentasiAlurSistemUser.pdf')}}" class="btn btn-success" title="Download manual book here">
+                    <a target="_blank" href="{{asset('DokumentasiAlurSistemUser.pdf')}}" class="btn btn-success" title="Download manual book here">
                         <i class="fas fa-book"></i>
                     </a>
                 </div>

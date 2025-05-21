@@ -230,12 +230,15 @@ class ServiceAssetController extends Controller
                 $originalName = $request->file('update_service_attachment')->getClientOriginalExtension();
                 $fileName =$custom_file_name.'.'.$originalName;
             } 
+            $post_asset =[
+                'condition'       => $request->update_service_condition_id
+            ];
             $post_log = [
                 'service_code'      => $header->service_code,
                 'location_id'       => $header->location_id,
                 'request_code'      => $header->request_code,
                 'subject'           => $header->subject,
-                'description'       => $request->udpate_service_description,
+                'description'       => $request->update_service_description,
                 'asset_code'        => $header->asset_code,
                 'status'            => $request->update_service_progress_id,
                 'user_id'           => auth()->user()->id,
@@ -250,13 +253,14 @@ class ServiceAssetController extends Controller
                 'brand'         => $asset->brand,
                 'type'          => $asset->type,
                 'parent_code'   => $asset->parent_code,
-                'remark'        => $request->udpate_service_description,
+                'remark'        => $request->update_service_description,
                 'user_id'       => auth()->user()->nik,
                 'nik'           => $asset->nik,
                 'created_at'    => date('Y-m-d H:i:s'),
                 'is_active'     => $request->is_active,
             ];
-            dd($post_asset_log);
+            
+            
         }catch (\Throwable $th) {
             return ResponseFormatter::error(
                 $th,
