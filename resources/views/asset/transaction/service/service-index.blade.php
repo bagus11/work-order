@@ -5,6 +5,14 @@
     #service_table tbody tr {
     cursor: pointer;
 }
+.list-group-item:nth-child(odd) {
+    background-color: #f9f9f9;  /* warna terang */
+}
+
+.list-group-item:nth-child(even) {
+    background-color: #e9ecef;  /* warna agak gelap */
+}
+
 
 </style>
 <div class="row justify-content-center mx-2">

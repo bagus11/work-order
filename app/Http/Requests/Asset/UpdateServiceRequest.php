@@ -24,7 +24,7 @@ class UpdateServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'udpate_service_description'    => 'required|string',
+            'update_service_description'    => 'required|string',
             'update_service_condition_id'    => 'required|integer',
             
         ];

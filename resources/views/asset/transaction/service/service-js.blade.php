@@ -2,52 +2,53 @@
      $(document).ready(function () {
    
         let table = $('#service_table').DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-        url: `getService`,
-        type: 'GET',
-    },
-    columns: [
-        {
-            className: 'text-center detail',
-            orderable: false,
-            data: null,
-            defaultContent: '<i class="fas fa-plus-circle text-primary" style="cursor: pointer;"></i>',
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: `getService`,
+            type: 'GET',
         },
-        { data: 'service_code', name: 'service_code' },
-        { data: 'request_code', name: 'request_code' },
-        { data: 'asset_code', name: 'asset_code' },
-        { data: 'location_relation.name', name: 'location_relation.name' },
-        { data: 'user_relation.name', name: 'user_relation.name' },
-        { data: 'department_relation.name', name: 'department_relation.name' },
-        {
-            data: 'status',
-            name: 'status',
-            render: function (data) {
-                let badgeClass = 'badge fs-5 d-block text-center fw-bold px-2 py-1 mx-2';
-                switch (data) {
-                    case 0: return `<span class="${badgeClass} bg-secondary text-white">New</span>`;
-                    case 1: return `<span class="${badgeClass} bg-info text-white">IN PROGRESS</span>`;
-                    case 2: return `<span class="${badgeClass} bg-danger text-white">PENDING</span>`;
-                    case 3: return `<span class="${badgeClass} bg-primary text-white">DONE</span>`;
-                    default: return `<span class="${badgeClass} bg-secondary text-white">UNKNOWN</span>`;
+        columns: [
+            {
+                className: 'text-center detail',
+                orderable: false,
+                data: null,
+                defaultContent: '<i class="fas fa-plus-circle text-primary" style="cursor: pointer;"></i>',
+            },
+            { data: 'service_code', name: 'service_code' },
+            { data: 'request_code', name: 'request_code' },
+            { data: 'asset_code', name: 'asset_code' },
+            { data: 'location_relation.name', name: 'location_relation.name' },
+            { data: 'user_relation.name', name: 'user_relation.name' },
+            { data: 'department_relation.name', name: 'department_relation.name' },
+            {
+                data: 'status',
+                name: 'status',
+                render: function (data) {
+                    let badgeClass = 'badge fs-5 d-block text-center fw-bold px-2 py-1 mx-2';
+                    switch (data) {
+                        case 0: return `<span class="${badgeClass} bg-secondary text-white">New</span>`;
+                        case 1: return `<span class="${badgeClass} bg-info text-white">IN PROGRESS</span>`;
+                        case 2: return `<span class="${badgeClass} bg-danger text-white">PENDING</span>`;
+                        case 3: return `<span class="${badgeClass} bg-success text-white">DONE</span>`;
+                        default: return `<span class="${badgeClass} bg-secondary text-white">UNKNOWN</span>`;
+                    }
+                }
+            },
+            {
+                data: 'duration',
+                name: 'duration',
+                render: function (data, type, row, meta) {
+                    console.log(data)
+                    if (data.status === 1 && data.start_time) {
+                        // alert('test')
+                        return `<span class="live-duration" data-start="${row.start_time}" data-row="${meta.row}">Loading...</span>`;
+                    }
+                    return data ?? '-';
                 }
             }
-        },
-        {
-            data: 'duration',
-            name: 'duration',
-            render: function (data, type, row, meta) {
-                if (row.status === 1 && row.start_time) {
-                    alert('test')
-                    return `<span class="live-duration" data-start="${row.start_time}" data-row="${meta.row}">Loading...</span>`;
-                }
-                return data ?? '-';
-            }
-        }
-    ]
-});
+        ]
+    });
 
 // Interval timer untuk update live duration setiap detik
 setInterval(function () {
@@ -176,6 +177,7 @@ setInterval(function () {
         function mappingTableAsset(response) {
             $('#array_table_asset tbody').empty();
             var data = '';
+            console.log(response)
             for(i = 0 ; i < response.length ; i++){
                 data += `
                     <tr>
@@ -225,7 +227,7 @@ setInterval(function () {
             if(row.status !== 0){
                 $('#btn_start_service').prop('hidden', true);
                 $('#btn_update_service').prop('hidden', true);
-                if(row.status == 1){
+                if(row.status == 1 || row.status == 2){
                     $('#btn_update_service').prop('hidden', false);
                 }
             }
@@ -270,18 +272,27 @@ setInterval(function () {
             // Log Transaction
                 // Clear isi sebelumnya
                 $('#detail_history_log').html('');
-
+                function formatDuration(minutes) {
+                    const jam = Math.floor(minutes / 60);
+                    const menit = minutes % 60;
+                    return `${jam} jam ${menit} menit`;
+                }
                 if (row.history_relation && row.history_relation.length > 0) {
                     let html = '<ul class="list-group p-0">';
+                        var x = 0;
                         row.history_relation.forEach(function (log) {
+                            ++x
+                           
                             const date = new Date(log.created_at);
-                            const formattedDate = date.toLocaleDateString('id-ID', {
+                            const formattedDate = date.toLocaleDateString('en-EN', {
                                 day: '2-digit',
                                 month: 'long',
-                                year: 'numeric'
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
                             });
-
-                            const statusText = getStatusText(log.status);
+                            const statusText = x == 2 ? '<span class="badge bg-success">Start</span>' : getStatusText(log.status);
                             const userName = log.user_relation?.name || 'Unknown';
                             const description = log.description || '-';
 
@@ -303,21 +314,21 @@ setInterval(function () {
                             }
 
                             html += `
-                                <li class="list-group-item p-0" style="font-size: 10px;">
-                                    <div class="row mx-4">
-                                        <div class="col-7 d-flex align-items-center">
-                                              <div class="d-flex align-items-start">
-                                                   ${formattedDate}<br>
-                                                    By: ${userName}<br>
-                                                    Status: ${statusText}<br>
-                                                    Description: ${description}
-                                              </div>
+                              <li class="list-group-item border-0 py-2 px-3" style="font-size: 10px;">
+                                    <div class="row gx-2">
+                                        <div class="col-7 d-flex flex-column justify-content-center">
+                                            <p class="mb-1"><b>${formattedDate}</b></p>
+                                            <p class="mb-1">By: <span class="text-primary">${userName}</span></p>
+                                            <p class="mb-1">Status: ${statusText}</p>
+                                            <p class="mb-1">Duration: ${log.duration == 0 ? '-' :formatDuration(log.duration)}</p>
+                                            <p class="mb-0">Description: <span class="text-muted">${description}</span></p>
                                         </div>
-                                        <div class="col-5">
+                                        <div class="col-5 d-flex align-items-center justify-content-end">
                                             ${attachmentHTML}
                                         </div>
                                     </div>
                                 </li>
+
                             `;
                         });
                     html += '</ul>';
@@ -326,15 +337,21 @@ setInterval(function () {
                     $('#detail_history_log').html('<p class="text-muted">: No history log available.</p>');
                 }
 
-                function getStatusText(status) {
+              function getStatusText(status) {
                     switch (status) {
-                        case 0: return 'New';
-                        case 1: return 'In Progress';
-                        case 2: return 'Pending';
-                        case 3: return 'Done';
-                        default: return 'Unknown';
+                        case 0:
+                            return '<span class="badge bg-secondary">New</span>';
+                        case 1:
+                            return '<span class="badge bg-info text-white">In Progress</span>';
+                        case 2:
+                            return '<span class="badge bg-warning text-white">Pending</span>';
+                        case 3:
+                            return '<span class="badge bg-success">Done</span>';
+                        default:
+                            return '<span class="badge bg-white">Unknown</span>';
                     }
                 }
+
                 function isImageFile(filename) {
                     return (/\.(jpg|jpeg|png|gif|webp)$/i).test(filename);
                 }
@@ -417,7 +434,7 @@ setInterval(function () {
             formData.append('update_service_attachment', $('#update_service_attachment')[0].files[0]);
             postAttachment('updateService', formData, false, function(response){
                 swal.close();
-                $('#detailServiceModal').modal('hide');
+                $('#updateServiceModal', '#detailServiceModal').modal('hide');
                 toastr['success'](response.meta.message)
                 $('#service_table').DataTable().ajax.reload(null, false);
             });

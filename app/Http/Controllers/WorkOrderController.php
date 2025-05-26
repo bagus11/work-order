@@ -561,7 +561,6 @@ class WorkOrderController extends Controller
                     // Setup Duration
                     // checking if status wo before is pending, cant change level 
                    if($log_wo->level == 2){
-
                             $post         =[
                                                'status_wo'=>$status_wo,
                                                'status_approval'=>2,
