@@ -188,7 +188,6 @@ class ServiceAssetController extends Controller
             'duration'          => 0,
             'department_id'     => $service->department_id,
             'attachment'        => '',
-            'start_time'        => now(),
         ];
           DB::transaction(function() use($post,$request, $post_log) {
               ServiceModel::where('service_code', $request->service_code)->update($post);
@@ -224,11 +223,25 @@ class ServiceAssetController extends Controller
                             $start = \Carbon\Carbon::parse($row['shiftstarttime']);
                             $end = \Carbon\Carbon::parse($row['shiftendtime']);
                              $startToday = \Carbon\Carbon::parse($workOrder->created_at);
+                            $validation = '';
                             if($end->isToday()){
-                                $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
-                            }else{
-                                $minutes = $start->diffInMinutes($end);
-                            }
+                                if( $workOrder->created_at->format('Y-m-d') == date('Y-m-d')){
+                                        $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $validation = '1';
+                                    }else{
+                                        $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $validation = '1 1';
+
+                                    }
+                                }else{
+                                    if($start < $startToday){
+                                        $minutes = $startToday->diffInMinutes($end); 
+                                        $validation = '2 1';
+                                    }else{
+                                        $validation = '2';
+                                        $minutes = $start->diffInMinutes($end);
+                                    }
+                                }
                             $finalDuration += $minutes;
                                 $durations[] = [
                                     'date' => $row['date'] ?? $start->toDateString(),
@@ -236,11 +249,12 @@ class ServiceAssetController extends Controller
                                     'end' => $end->format('H:i'),
                                     'minutes' => $minutes,
                                     'total' => $finalDuration,
+                                    'validation'=> $validation
                                 ];
                                 
                         }
                     }
-                        $service = ServiceLog::where('service_code', $request->service_code)->orderBy('id', 'desc')->first();
+                    $service = ServiceLog::where('service_code', $request->service_code)->orderBy('id', 'desc')->first();
                         $api_1 = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . auth()->user()->nik . '&startdate=' . $service->created_at->format('Y-m-d') . '&enddate=' . $dateNow);
                         $response_1 = $api_1->getBody()->getContents();
                         $data_1 = json_decode($response_1, true);
@@ -248,22 +262,41 @@ class ServiceAssetController extends Controller
                         $durations_1 = [];
                         $finalDuration_1 = 0; 
                         foreach ($data_1 as $row) {
+                        
                             if ($row['daytype'] == 'WD') {
                                 $start = \Carbon\Carbon::parse($row['shiftstarttime']);
                                 $end = \Carbon\Carbon::parse($row['shiftendtime']);
                                 $startToday = \Carbon\Carbon::parse($service->created_at);
+                                $validation = '';
                                 if($end->isToday()){
-                                    $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                    if( $service->created_at->format('Y-m-d') == date('Y-m-d')){
+                                        $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $validation = '1';
+                                    }else{
+                                        $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+                                        // dd($start->format('H:i'), now()->format('H:i'), $minutes);
+                                        $validation = '1 1';
+
+                                    }
                                 }else{
-                                    $minutes = $start->diffInMinutes($end);
+                                    if($start < $startToday){
+                                        $minutes = $startToday->diffInMinutes($end); 
+                                        $validation = '2 1';
+                                    }else{
+                                        $validation = '2';
+                                        $minutes = $start->diffInMinutes($end);
+                                    }
                                 }
                                 $finalDuration_1 += $minutes;
-                                    $durations[] = [
+                                    $durations_1[] = [
                                         'date' => $row['date'] ?? $start->toDateString(),
                                         'start' => $start->format('H:i'),
                                         'end' => $end->format('H:i'),
                                         'minutes' => $minutes,
                                         'total' => $finalDuration_1,
+                                        'start_time'=>  $service->created_at->format('H:i:s'),
+                                        'start_time 2'=>  $startToday->format('H:i:s'),
+                                        'validation' => $validation,
                                     ];
                                     
                             }
@@ -272,24 +305,7 @@ class ServiceAssetController extends Controller
                 }
             // Counting Duration
 
-            switch($request->update_service_progress_id){
-                case 1:
-                    $post = [
-                        'status'            => $request->update_service_progress_id,
-                    ];
-                    break;
-                case 2:
-                    $post = [
-                        'status'            => $request->update_service_progress_id,
-                    ];
-                    break;
-                case 3:
-                    $post = [
-                        'status'            => $request->update_service_progress_id,
-                        'end_date'          => now(),
-                    ];
-                    break;
-            }
+          
             
               $fileName ='';
             if($request->file('update_service_attachment')){
@@ -349,10 +365,31 @@ class ServiceAssetController extends Controller
                 'creator'           =>auth()->user()->id,
                 'duration'          =>$workOrder->level == 2 ? 0 : $finalDuration  ,
             ];
-          
+            // dd($durations_1);
                 DB::transaction(function() use($post,$request, $post_log, $post_asset_log, $post_asset, $fileName, $header,$post_log_request, $workOrder) {
-                    ServiceModel::where('service_code', $header->service_code)->update($post);
                     ServiceLog::create($post_log);
+                      switch($request->update_service_progress_id){
+                        case 1:
+                            $post = [
+                                'status'            => $request->update_service_progress_id,
+                            ];
+                            break;
+                        case 2:
+                            $post = [
+                                'status'            => $request->update_service_progress_id,
+                            ];
+                            break;
+                        case 3:
+                        $totalDuration = ServiceLog::where('service_code', $request->service_code)->sum('duration');
+                            $post = [
+                                'status'            => $request->update_service_progress_id,
+                                'end_date'          => now(),
+                                'duration'          => $totalDuration,
+                            ];
+                            break;
+                    }
+                    ServiceModel::where('service_code', $header->service_code)->update($post);
+                    
                     MasterAsset::where('asset_code', $request->asset_code)->update($post_asset);
                     MasterAssetLog::create($post_asset_log);
                     $post_request= [];
@@ -380,7 +417,7 @@ class ServiceAssetController extends Controller
                     }
                 });
                 return ResponseFormatter::success(   
-                    $post,                              
+                    $finalDuration,                              
                     'Service asset successfully updated'
                 );
             

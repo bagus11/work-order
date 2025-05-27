@@ -39,12 +39,15 @@
                 data: 'duration',
                 name: 'duration',
                 render: function (data, type, row, meta) {
-                    console.log(data)
-                    if (data.status === 1 && data.start_time) {
-                        // alert('test')
-                        return `<span class="live-duration" data-start="${row.start_time}" data-row="${meta.row}">Loading...</span>`;
-                    }
-                    return data ?? '-';
+                    // console.log(data)
+                    // if (data.status === 1 && data.start_time) {
+                    //     // alert('test')
+                    //     return `<span class="live-duration" data-start="${row.start_time}" data-row="${meta.row}">Loading...</span>`;
+                    // }
+                    // return data ?? '-';
+                     const jam = Math.floor(data / 60);
+                        const menit = data % 60;
+                        return `${jam} jam ${menit} menit`;
                 }
             }
         ]
@@ -224,12 +227,16 @@ setInterval(function () {
             }
             const row = table.row(this).data();
             
-            if(row.status !== 0){
+            if(row.status == 0){
+                $('#btn_start_service').prop('hidden', false);
+                $('#btn_update_service').prop('hidden', true);
+                
+            }else if (row.status == 1 || row.status == 2){
+                $('#btn_start_service').prop('hidden', true);
+                $('#btn_update_service').prop('hidden', false);
+            }else{
                 $('#btn_start_service').prop('hidden', true);
                 $('#btn_update_service').prop('hidden', true);
-                if(row.status == 1 || row.status == 2){
-                    $('#btn_update_service').prop('hidden', false);
-                }
             }
             $('#detailServiceModal').modal('show');
             $('#detail_service_code').text(': ' + row.service_code);
