@@ -314,10 +314,49 @@ class ServiceAssetController extends Controller
                 $custom_file_name = 'SVC'.'-'.$ticketName2.date('YmdHis');
                 $originalName = $request->file('update_service_attachment')->getClientOriginalExtension();
                 $fileName =$custom_file_name.'.'.$originalName;
-            } 
-            $post_asset =[
-                'condition'       => $request->update_service_condition_id
-            ];
+            }    
+            $asset = MasterAsset::where('asset_code', $header->asset_code)->first();
+            $post_asset =[];
+            if($request->update_service_condition_id == 3){
+                $post_asset = [
+                    'condition'         => $request->update_service_condition_id,
+                    'is_active'         => 0,
+                    'nik'               => 0,
+                ];
+
+                $post_asset_log =[
+                    'asset_code'        => $asset->asset_code,
+                    'category'          => $asset->category,
+                    'brand'             => $asset->brand,
+                    'type'              => $asset->type,
+                    'parent_code'       => $asset->parent_code,
+                    'remark'            => $request->update_service_description,
+                    'user_id'           => auth()->user()->nik,
+                    'nik'               => 0,
+                    'join_date'         => $asset->join_date,
+                    'created_at'        => date('Y-m-d H:i:s'),
+                     'is_active'         => 0,
+                     'condition'         => $request->update_service_condition_id,
+                ];      
+            }else{
+                $post_asset =[
+                    'condition'       => $request->update_service_condition_id
+                ];
+                $post_asset_log =[
+                    'asset_code'        => $asset->asset_code,
+                    'category'          => $asset->category,
+                    'brand'             => $asset->brand,
+                    'type'              => $asset->type,
+                    'parent_code'       => $asset->parent_code,
+                    'remark'            => $request->update_service_description,
+                    'user_id'           => auth()->user()->nik,
+                    'nik'               => $asset->nik,
+                    'join_date'         => $asset->join_date,
+                    'created_at'        => date('Y-m-d H:i:s'),
+                    'is_active'         => $asset->is_active,
+                     'condition'         => $request->update_service_condition_id,
+                ];      
+            }
             $post_log = [
                 'service_code'      => $header->service_code,
                 'location_id'       => $header->location_id,
@@ -331,21 +370,7 @@ class ServiceAssetController extends Controller
                 'department_id'     => $header->department_id,
                 'attachment'        => $fileName != '' ? 'storage/Asset/Service/AttachmentLog/'.$fileName : '',
             ];
-            $asset = MasterAsset::where('asset_code', $header->asset_code)->first();
-            $post_asset_log =[
-                'asset_code'        => $asset->asset_code,
-                'category'          => $asset->category,
-                'brand'             => $asset->brand,
-                'type'              => $asset->type,
-                'parent_code'       => $asset->parent_code,
-                'remark'            => $request->update_service_description,
-                'user_id'           => auth()->user()->nik,
-                'nik'               => $asset->nik,
-                'join_date'         => $asset->join_date,
-                'created_at'        => date('Y-m-d H:i:s'),
-                'is_active'         => $asset->is_active,
-            ];      
-           
+         
              $post_log_request = [
                 'request_code'      =>$workOrder->request_code,
                 'request_type'      =>$workOrder->request_type,
@@ -389,8 +414,8 @@ class ServiceAssetController extends Controller
                             break;
                     }
                     ServiceModel::where('service_code', $header->service_code)->update($post);
-                    
-                    MasterAsset::where('asset_code', $request->asset_code)->update($post_asset);
+                    // dd($header->asset_code);
+                    MasterAsset::where('asset_code', $header->asset_code)->update($post_asset);
                     MasterAssetLog::create($post_asset_log);
                     $post_request= [];
                     if($request->update_service_progress_id == 2){

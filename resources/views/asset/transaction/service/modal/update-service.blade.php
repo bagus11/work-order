@@ -45,8 +45,7 @@
                                 <option value="">Choose Condition</option>
                                 <option value="1">Good</option>
                                 <option value="2">Partially Good</option>
-                                <option value="3">Missing</option>
-                                <option value="4">Disposal</option>
+                                <option value="3">Broken</option>
                             </select>
                             <input type="hidden" id="update_service_condition_id" name="update_service_condition_id">
                             <span class="message_error update_service_condition_id_error"></span>

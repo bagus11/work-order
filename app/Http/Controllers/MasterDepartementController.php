@@ -92,7 +92,7 @@ class MasterDepartementController extends Controller
     }
     public function get_departement_name_ict()
     {
-        $data = MasterDepartement::where('flg_aktif',1)->whereIn('initial',['ICT'])->get();
+        $data = MasterDepartement::where('flg_aktif',1)->whereIn('initial',['ICT','PCS'])->get();
         // $data = MasterDepartement::where('flg_aktif',1)->whereIn('initial',['ICT','HRGA','MAIN'])->get();
         return response()->json([
             'data'=>$data

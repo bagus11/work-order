@@ -15,7 +15,7 @@
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
-                    return `<input type="checkbox" class="row-checkbox" ${row.is_active == 1 ?'checked' :''} value="${row.asset_code}">`;
+                    return `${row.is_active == 1 ?'Active' :'Inactive'}`;
                 }
             },
             { data: 'asset_code', name: 'asset_code' },

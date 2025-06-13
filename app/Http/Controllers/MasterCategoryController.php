@@ -25,6 +25,7 @@ class MasterCategoryController extends Controller
    public function get_categories_id(Request $request)
    {
         $id = MasterDepartement::where('initial', $request->initial)->first();
+        // dd($id);
         $data = MasterCategory::with('departement')->where('departement_id', $id->id)->where('type',1)->get();
         return response()->json([
             'data'=>$data

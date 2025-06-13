@@ -174,9 +174,14 @@ class DistributionAssetController extends Controller
             $originalName = $request->file('attachment')->getClientOriginalExtension();
             $fileName =$custom_file_name.'.'.$originalName;
         } 
-        $selectedAssets = json_decode($request->selected_assets, true); // pastiin ini array
+        $selectedAssets = [];
+        if($request->request_type == 3){
+            $selectedAssets = MasterAsset::where('nik', auth()->user()->nik)->get();
+        }else{
+            $selectedAssets = json_decode($request->selected_assets, true); // pastiin ini array
+        }
         $post_array = [];
-      
+        $owner =0;
 
         foreach ($selectedAssets as $index => $asset) {
             $condition = MasterAsset::where('asset_code', $asset['asset_code'])->first();   
@@ -194,16 +199,19 @@ class DistributionAssetController extends Controller
                 'created_at'        => date('Y-m-d H:i:s'),
                 'finish_date'       => null,
             ];
+            $owner =$condition->owner_id;
+           
         }
-
+        $owner_location = User::find($owner);
+       
         $post = [
             'request_code'      => $ticket_code,
             'location_id'       => $request->location_id,
-            'des_location_id'   => $request->destination_location_id,
+            'des_location_id'   => $request->request_type == 3 ? auth()->user()->kode_kantor : $request->destination_location_id,
             'request_type'      => $request->request_type,
             'user_id'           => auth()->user()->id,
             'pic_id'            => $request->current_user_id ? $request->current_user_id : 0,
-            'receiver_id'       => $request->receiver_id,
+            'receiver_id'       =>  $request->request_type == 3 ? 0 : $request->receiver_id,
             'approval_id'       => $approvalDetail->user_id,
             'status'            => 0,
             'notes'             => $request->notes,
@@ -213,11 +221,11 @@ class DistributionAssetController extends Controller
         $post_log =[
             'request_code'      => $ticket_code,
             'location_id'       => $request->location_id,
-            'des_location_id'   => $request->destination_location_id,
+            'des_location_id'   => $request->request_type == 3 ? auth()->user()->kode_kantor : $request->destination_location_id,
             'request_type'      => $request->request_type,
             'user_id'           => auth()->user()->id,
             'pic_id'            => $request->current_user_id ? $request->current_user_id : 0,
-            'receiver_id'       => $request->receiver_id,
+            'receiver_id'       =>  $request->request_type == 3 ? 0 : $request->receiver_id,
             'approval_id'       => $approvalDetail->user_id,
             'status'            => 0,
             'notes'             => $request->notes,
@@ -463,17 +471,17 @@ class DistributionAssetController extends Controller
                     'status' => $asset->status + 1,
                     'finish_date' => date('Y-m-d H:i:s'),
                 ];
-
+                $nik = User::where('id', $header->receiver_id)->first();
                 if($header->request_type == 1){
                     $postMaster = [
                         'location_id' => $header->des_location_id,
-                        'nik' => $header->receiver_id,
+                        'nik' =>$nik->nik,
                         'condition' => $asset->condition,
                     ];
                 }else if($header->request_type == 2){   
                     $postMaster = [
                         'location_id' => $header->des_location_id,
-                        'nik' => $header->receiver_id,
+                        'nik' =>$nik->nik,
                         'condition' => $asset->condition,
                         'is_active' => 1,
                     ];
@@ -485,7 +493,7 @@ class DistributionAssetController extends Controller
                         'condition' => $asset->condition,
                     ];   
                 }
-
+                // dd($postMaster);
                 if (isset($data['attachment'])) {
                     $path = $file->storeAs('Asset/Distribution/attachmentDetail/', $fileName, 'public');
                 }

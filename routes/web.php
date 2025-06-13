@@ -30,7 +30,9 @@ use App\Http\Controllers\ReportKPIController;
 use App\Http\Controllers\RFP\RFPDetailProjectController;
 use App\Http\Controllers\RFPController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\Setting\MasterRoomController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VCardController;
@@ -123,6 +125,9 @@ Route::group(['middleware' => ['auth']], function() {
     });
     Route::group(['middleware' => ['permission:view-master_asset']], function () {
         Route::get('master_asset', [MasterAssetController::class, 'index'])->name('master_product_opex');
+    });
+    Route::group(['middleware' => ['permission:view-master_room']], function () {
+        Route::get('master_room', [MasterRoomController::class, 'index'])->name('master_room');
     });
     // Menus
     Route::post('save_menus', [MenusController::class, 'save_menus'])->name('save_menus');
@@ -485,6 +490,19 @@ Route::group(['middleware' => ['auth']], function() {
         });
     // Testing Email
 
+
+    // Master Room
+        Route::get('getRoom', [MasterRoomController::class, 'getRoom'])->name('getRoom');
+        Route::post('addRoom', [MasterRoomController::class, 'addRoom'])->name('addRoom');
+        Route::post('updateRoom', [MasterRoomController::class, 'updateRoom'])->name('updateRoom');
+    // Master Room
+
+    // Stock Opname
+        Route::get('stock_opname', [StockOpnameController::class, 'index'])->name('stock_opname');
+        Route::get('getStockOpname', [StockOpnameController::class, 'getStockOpname'])->name('getStockOpname');
+        Route::post('addStockOpname', [StockOpnameController::class, 'addStockOpname'])->name('addStockOpname');
+        Route::post('updateStockOpname', [StockOpnameController::class, 'updateStockOpname'])->name('updateStockOpname');
+    // Stock Opname
 
 });
 

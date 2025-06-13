@@ -21,6 +21,7 @@ class AssignmentController extends Controller
    }
    public function get_assignment()
    {
+       $initial = MasterDepartement::find(auth()->user()->departement)->initial;
         $data = DB::table('work_orders')
         ->select('work_orders.*', 'users.name as username','master_categories.name as categories_name','master_departements.name as departement_name')
         ->join('users','users.id','=','work_orders.user_id')
@@ -29,6 +30,7 @@ class AssignmentController extends Controller
         ->whereNull('work_orders.priority')
         ->where('status_wo','!=','5')
         ->where('transfer_pic',0)
+        ->where('request_for', $initial)
         ->orderBy('work_orders.status_wo','asc')
         ->get();
         return response()->json([

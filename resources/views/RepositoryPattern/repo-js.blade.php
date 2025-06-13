@@ -853,7 +853,7 @@ var auth_id = $('#auth_id').val()
                             <label style="font-size: 11px;">Receiver</label><br>
                         </div>
                         <div class="col-md-4 mb-1">
-                            <span style="font-size: 10px;"> : ${ticket.receiver_relation.name}</span>
+                            <span style="font-size: 10px;"> : ${ticket.receiver_relation?.name || '-'}</span>
                         </div>
 
                         ${ticket.attachment ? `

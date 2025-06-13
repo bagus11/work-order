@@ -69,11 +69,11 @@
                                 </div>
                             </div>
                         </div>
-                        @can('create-work_order_list')
+                        {{-- @can('create-work_order_list') --}}
                             <button id="add_wo" type="button" class="btn btn-sm btn-success " style="float:right"  data-toggle="modal" data-target="#addMasterKantor">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
-                        @endcan
+                        {{-- @endcan --}}
                     <button id="refresh" title="Refresh" style="float:right" class="btn btn-sm btn-info mr-2">
                         <i class="fas fa-refresh"></i>
                     </button>

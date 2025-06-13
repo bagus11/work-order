@@ -74,6 +74,8 @@
         onChange('select_destination_location', 'destination_location_id');
         onChange('select_current_user', 'current_user_id');
         onChange('select_receiver', 'receiver_id');
+           $('#item_container').prop('hidden', true);
+            $('#array_container').prop('hidden', true);
     });
     $("#select_request_type").on('change', function () {
         const currentVal = $(this).val();
@@ -82,7 +84,12 @@
             $('.destination_location_container').prop('hidden', true);
             $('.receiver_container').prop('hidden', true);
             $('.user_container').prop('hidden', true);
+           
+             $('#item_container').prop('hidden', true);
+            $('#array_container').prop('hidden', true);
         } else if(currentVal === '2'){
+             $('#item_container').prop('hidden', false);
+             $('#array_container').prop('hidden', false);
             var select_location = $('#select_location').val();
             $('.receiver_container').prop('hidden', false);
             $('.user_container').prop('hidden', true);
@@ -136,6 +143,8 @@
             $('.destination_location_container').prop('hidden', false);
             $('.receiver_container').prop('hidden', false);
             $('.user_container').prop('hidden', false);
+             $('#item_container').prop('hidden', false);
+            $('#array_container').prop('hidden', false);
         }
     });
     $('#select_current_user').on('change', function () {
@@ -209,11 +218,15 @@
   
     $('#btn_save_distributuibn').on('click', function(e) {
         e.preventDefault();
-
-        // Validasi asset kosong
-        if (selectedAssets.length === 0) {
-            toastr['warning']('Please select at least one asset before submitting.');
-            return;
+        var request_type = $('#select_request_type').val();
+        alert(request_type)
+        if(request_type == 3){
+            return
+        }else{
+             if (selectedAssets.length === 0) {
+                toastr['warning']('Please select at least one asset before submitting.');
+                return;
+            }
         }
 
         const formData = new FormData($('#form_serialize')[0]);
@@ -277,7 +290,8 @@
                 $('#ict_current_location').text(': ' + response.detail.location_relation.name)
                 $('#ict_destination_location').text(': ' + response.detail.des_location_relation.name)
                 $('#ict_current_user').text(': ' + response.detail.user_relation.name)
-                $('#ict_receiver_user').text(': ' + response.detail.receiver_relation.name)
+               $('#ict_receiver_user').text(': ' + (response.detail.receiver_relation?.name || '-'));
+
                 $('#ict_notes').text(': ' + response.detail.notes)
                 if(response.detail.attachment){
                     $('#ict_attachment').html(`:
@@ -304,7 +318,7 @@
                                     conditionBadge = '<span class="badge bg-warning text-dark">Partially Good</span>';
                                     break;
                                 case 3:
-                                    conditionBadge = '<span class="badge bg-danger">Broken</span>';
+                                    conditionBadge = '<span class="badge bg-danger">Damaged</span>';
                                     break;
                                 default:
                                     conditionBadge = '<span class="badge bg-secondary">-</span>';
@@ -342,7 +356,7 @@
                             let row = `
                                 <tr>
                                     <td>${asset.asset_code || '-'}</td>
-                                    <td>${asset.asset_relation.category_relation.name || '-'}</td>
+                                    <td>${asset.asset_relation.category_relation?.name || '-'}</td>
                                     <td>${asset.asset_relation.brand_relation?.name || '-'}</td>
                                     <td>${asset.type ? 'Parent' : 'Child' || '-'}</td>
                                     <td style="text-align: center !important;">
@@ -461,7 +475,7 @@
                                             <option value="0">Open this select menu</option>
                                             <option value="1">Good</option>
                                             <option value="2">Partially Good</option>
-                                            <option value="4">Broken</option>
+                                            <option value="4">Damaged</option>
                                         </select>    
                                 `
                               
@@ -492,7 +506,7 @@
                                         ${check}
                                     </td>
                                     <td>${asset.asset_code || '-'}</td>op
-                                    <td>${asset.asset_relation.category_relation.name || '-'}</td>
+                                    <td>${asset.asset_relation?.category_relation?.name || '-'}</td>
                                     <td>${asset.asset_relation.brand_relation?.name || '-'}</td>
                                     <td>${asset.type ? 'Parent' : 'Child' || '-'}</td>
                                     <td style="text-align:center;"> ${conditionBadge}</td>
@@ -667,33 +681,39 @@
         dataToSend.append('ict_request_code', $('#ict_request_code').val());
         dataToSend.append('ict_incoming_notes', $('#ict_incoming_notes').val());
         console.log(checkedCount)
-        if (checkedCount === 0) {
-            toastr.warning('Please select at least one asset!');
-            return false;
+        var request_type = $('#select_request_type').val();
+        alert(request_type)
+        if(request_type == 3){
+            console.log('test')
         }else{
-            $.ajax({
-                url: '/incoming-progress', // Ganti ke route kamu
-                type: 'POST',
-                data: dataToSend,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                beforeSend: function() {
-                    SwalLoading('Please wait...');
-                },
-                success: function(response) {
-                    swal.close()
-                    console.log(response);
-                    toastr.success('Data uploaded successfully');
-                },
-                error: function(xhr) {
-                    swal.close()
-                    console.log(xhr.responseText);
-                    toastr.error('Upload failed');
-                }
-            });
+            if (checkedCount === 0) {
+                toastr.warning('Please select at least one asset!');
+                return false;
+            }else{
+                $.ajax({
+                    url: '/incoming-progress', // Ganti ke route kamu
+                    type: 'POST',
+                    data: dataToSend,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    beforeSend: function() {
+                        SwalLoading('Please wait...');
+                    },
+                    success: function(response) {
+                        swal.close()
+                        console.log(response);
+                        toastr.success('Data uploaded successfully');
+                    },
+                    error: function(xhr) {
+                        swal.close()
+                        console.log(xhr.responseText);
+                        toastr.error('Upload failed');
+                    }
+                });
+            }
         }
 
     });
