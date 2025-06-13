@@ -113,11 +113,10 @@ class WorkOrderController extends Controller
             $transferPIC     = 0;
         }
         // dd($request->userIdSupportFilter);
-        $initial = MasterDepartement::find(auth()->user()->departement)->initial;
+        // $initial = MasterDepartement::find(auth()->user()->departement)->initial;
         if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
         {
             $requestFor     = MasterDepartement::find(auth()->user()->departement);
-
             $data = DB::table('work_orders')
             ->select(
                 'work_orders.*',
@@ -143,7 +142,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.status_approval','like','%'.$statusApproval.'%')
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
-            ->where('work_orders.request_for',$initial)
+            // ->where('work_orders.request_for',$initial)
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->orderBy('status_wo', 'asc')
             ->orderBy('work_orders.status_approval','desc')
@@ -151,6 +150,7 @@ class WorkOrderController extends Controller
             ->orderBy('id','desc')
             ->get();
         }else if(auth()->user()->hasPermissionTo('get-only_user-work_order_list')){
+            // dd('text');
             $data = DB::table('work_orders')
             ->select(
                 'work_orders.*',
@@ -178,7 +178,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where('user_id', auth()->user()->id) 
-            ->where('work_orders.request_for',$initial)
+            // ->where('work_orders.request_for',$initial)
             ->orderBy('status_wo', 'asc')
             ->orderBy('work_orders.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
@@ -211,7 +211,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.status_approval','like','%'.$statusApproval.'%')
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
-            ->where('work_orders.request_for',$initial)
+            // ->where('work_orders.request_for',$initial)
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where(function($query){
                 $query->where('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
