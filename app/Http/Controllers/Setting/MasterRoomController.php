@@ -16,7 +16,7 @@ class MasterRoomController extends Controller
     }
 
     function getRoom() {
-        $data = MasterRoom::with('locationRelation')->get();
+        $data = MasterRoom::with('locationRelation')->orderBy('location_id', 'asc')->get();
         return response()->json([
             'data' => $data
         ]);
