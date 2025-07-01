@@ -10,15 +10,20 @@
             $('#btn_add_approver').on('click', function(){
                 $('.message_error').html('')
                 getActiveItems('get_kantor',null,'select_location','Location')
+                getActiveItems('get_departement',null,'select_department','Department')
                 $('#step').val('')
                 $('#location_id').val('')
+                $('#department_id').val('')
             })
             onChange('select_location','location_id')
+            onChange('select_department','department_id')
 
             $('#btn_save_approval').on('click', function(){
                 var data ={
                     'step':$('#step').val(),
                     'location_id':$('#location_id').val(),
+                    'link':$('#link').val(),
+                    'department_id':$('#department_id').val(),
                 }
                 postCallback('addApprovalHeader',data, function(response){
                     swal.close()
@@ -128,7 +133,9 @@
                         data += `<tr style="text-align: center;">
                                 <td style="">${i + 1}</td>
                                 <td style="text-align:center;">${response[i].approval_code}</td>
+                                <td style="text-align:left;">${response[i].link}</td>
                                 <td style="text-align:center;">${response[i].location_relation.name}</td>
+                                <td style="text-align:center;">${response[i].department_relation.name}</td>
                                 <td style="text-align:center;">${response[i].step} step</td>
                                 <td style="">
                                         <button title="Detail Master Approver" class="detail btn btn-sm btn-info rounded"   data-id="${response[i]['id']}" data-toggle="modal" data-target="#editApprover">

@@ -209,16 +209,19 @@ class HomeController extends Controller
         ]);
     }
     public function getNotification(){
-        $data  = WONotification::select((DB::raw('DATE_FORMAT(created_at, "%H:%i") as time')),(DB::raw('DATE_FORMAT(created_at, "%d %M") as date')),'link','subject','message','status')
+        $data  = WONotification::select((DB::raw('DATE_FORMAT(created_at, "%H:%i") as time')),(DB::raw('DATE_FORMAT(created_at, "%d %M") as date')),'link','subject','message','status','type','table_name','request_code')
                                 ->where('userId',auth()->user()->id)
                                 ->limit(10)
                                 ->orderBy('id', 'desc')
                                 ->get();
         $countStatus  = WONotification::select(DB::raw('COUNT(id) as new'))->where('userId',auth()->user()->id)->where('status',0)->first();
-      
+        $countNotification = WONotification::select(DB::raw('COUNT(id) as count'))->where('userId',auth()->user()->id)->where('status', 0)->where('type', 1)->first();
+        $countApproval = WONotification::select(DB::raw('COUNT(id) as count'))->where('userId',auth()->user()->id)->where('status', 0)->where('type', 2)->first();
         return response()->json([
             'data'=>$data,
             'countStatus'=>$countStatus,
+            'countNotification'=>$countNotification,
+            'countApproval'=>$countApproval,
         ]);
     }
     public function updateNotif()
@@ -226,7 +229,7 @@ class HomeController extends Controller
         $post=[
             'status'=>1
         ];
-        $data = WONotification::where('userId',auth()->user()->id)->update($post);
+        $data = WONotification::where('userId',auth()->user()->id)->where('type', 1)->update($post);
 
         return response()->json([
             'data'=>$data,

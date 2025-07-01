@@ -22,6 +22,7 @@ class ApprovalController extends Controller
     function getApproval() {
         $data = ApprovalHeader::with([
             'locationRelation',
+            'departmentRelation',
             'detailRelation',
             'detailRelation.userRelation',
          ])->get();
@@ -31,7 +32,7 @@ class ApprovalController extends Controller
     }
 
     function addApprovalHeader(Request $request, StoreApprovalRequest $storeMasterApproverRequest) {
-        try {
+        // try {
             $storeMasterApproverRequest->validated();
     
             $location = MasterKantor::find($request->location_id);
@@ -39,32 +40,32 @@ class ApprovalController extends Controller
             $month = (int)date('m');
             $year = (int)date('y');
             $month_romawi = NumConvert::roman($month);
-    
+            
             // Ambil approval terakhir sesuai lokasi & bulan & tahun
-            $lastApproval = ApprovalHeader::where('location_id', $request->location_id)
-                ->orderBy('id', 'desc')
+            $lastApproval = ApprovalHeader::
+                orderBy('id', 'desc')
                 ->first();
-    
             $increment = 1;
             if ($lastApproval) {
-                $lastCode = explode('/', $lastApproval->approval_id);
+                $lastCode = explode('/', $lastApproval->approval_code);
                 $increment = (int)$lastCode[0] + 1;
             }
+            // dd($increment);
     
-            $ticket = $increment . '/' . $location->inital . '/' . $month_romawi . '/' . $year;
-    
+            $ticket = $increment . '/' . $location->initial . '/' . $month_romawi . '/' . $year;
             $post = [
                 'step'              => $request->step,
+                'link'              => $request->link,
                 'location_id'       => $request->location_id,
-                'approval_code'       => $ticket
-            ];
-    
+                'department'        => $request->department_id,
+                'approval_code'     => $ticket
+            ]; 
             ApprovalHeader::create($post);
     
             return ResponseFormatter::success($post, 'Master Approver successfully added');
-        } catch (\Throwable $th) {
-            return ResponseFormatter::error($th, 'Master Approver failed to add', 500);
-        }
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error($th, 'Master Approver failed to add', 500);
+        // }
     }
 
     function getStepApproval(Request $request) {

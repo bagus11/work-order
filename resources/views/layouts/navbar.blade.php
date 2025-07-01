@@ -16,16 +16,41 @@
         </li>
     
         <!-- General Notification -->
-        <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#" id="notifikasi">
-                <ion-icon name="notifications-sharp"></ion-icon>
-                <span class="badge badge-danger navbar-badge" id="notificationCount" style="font-size: 9px;"></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right"
-                 style="width: 400px; max-height: 400px; overflow-y: auto;"
-                 id="notificationBody">
+     <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#" id="notifikasi">
+            <ion-icon name="notifications-sharp"></ion-icon>
+            <span class="badge badge-danger navbar-badge" id="notificationCount" style="font-size: 9px;"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="width: 400px; max-height: 500px;" id="notificationDropdown">
+
+            <!-- Tabs Nav -->
+            <ul class="nav nav-tabs" id="notificationTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active d-flex justify-content-between align-items-center" id="notif-tab" data-toggle="tab" href="#notifContent" role="tab">
+                        Notification
+                        <span class="badge badge-danger ml-2" id="notifTabCount">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex justify-content-between align-items-center" id="approval-tab" data-toggle="tab" href="#approvalContent" role="tab">
+                        Approval
+                        <span class="badge badge-danger ml-2" id="approvalTabCount">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content" style="max-height: 400px; overflow-y: auto;">
+                <div class="tab-pane fade show active" id="notifContent" role="tabpanel">
+                    <div class="mb-2" id="notificationBody"></div>
+                </div>
+                <div class="tab-pane fade" id="approvalContent" role="tabpanel">
+                     <div class="mb-2" id="approvalBody"></div>
+                </div>
             </div>
-        </li>
+        </div>
+    </li>
+
     
         <!-- User Profile -->
         <li class="nav-item dropdown">

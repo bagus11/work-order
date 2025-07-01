@@ -13,7 +13,20 @@
                 <fieldset class="mx-2 my-2">
                     <legend>General Transaction</legend>
                     <div class="row mx-2 my-2">
-                       
+                        <div class="col-2 mt-2">
+                            <p>Asset type</p>
+                        </div>
+                        <div class="col-4">
+                            <select name="select_asset_type" class="select2" id="select_asset_type">
+                                <option value="">Choose Asset Type</option>
+                                <option value="1">ICT</option>
+                                <option value="9">HRGA</option>
+                                <option value="7">Maintenace</option>
+                                <option value="8">Productioon</option>
+                                 <input type="hidden" id="asset_type" name="asset_type">
+                            <span  style="color:red;font-size:9px" class="message_error text-red block asset_type_error"></span>
+                            </select>
+                        </div>
                         <div class="col-2 mt-2">
                             <p>Location</p>
                         </div>

@@ -141,9 +141,10 @@ class AssignmentController extends Controller
                                    'userId'=>$user_pic,
                                    'created_at'=>date('Y-m-d H:i:s')
                               ];
-                              DB::transaction(function() use($post,$request, $post_log,$userPost,$picPost) {
+                              DB::transaction(function() use($post,$request, $post_log,$userPost,$picPost,$log_wo) {
                                    WorkOrder::find($request->id)->update($post);
                                    WorkOrderLog::create($post_log);
+                                   WONotification::where('request_code', $log_wo->request_code)->where('type', 2)->update(['status' =>  1]);
                                    WONotification::create($userPost);
                                    WONotification::create($picPost);
                     

@@ -6,27 +6,28 @@
             <div class="card card-dark">
                 <div class="card-header">
                     
-                    @can('import_user-user_setting')
                     <div class="card-tools">
-                        <button class="btn btn-sm btn-success" title="Import User HRIS" id="btnImportUser">
-                            <i class="fa-solid fa-user-secret"></i>
+                        <button class="btn btn-sm btn-primary" title="Refresh Data" id="btn_refresh_stock_opname">
+                            <i class="fa-solid fa-rotate"></i>
                         </button>
-                        <button class="btn btn-sm btn-primary" title="Import User HRIS" id="btnUpdateStartDate">
-                            <i class="fa-solid fa-user-secret"></i>
+                    @can('import_user-user_setting')
+                        <button class="btn btn-sm btn-success" title="Import User HRIS" id="btn_add_stock_opname" data-toggle="modal" data-target="#addStockOpnameModal">
+                            <i class="fa-solid fa-plus"></i>
                         </button>
-                    </div>
                     @endcan
+                       
+                    </div>
                 </div>
                 <div class="card-body">
-                    <table class="datatable-bordered" id="user_table" style="width: 100%">
+                    <table class="datatable-bordered" id="stock_opname_table" style="width: 100%">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>Status</th>
-                                <th>Name</th>
-                                <th>NIK</th>
-                                <th>Email</th>
-                                <th>Action</th>
+                              <th>Ticket Code</th>
+                              <th>Status</th>
+                              <th>Start Date</th>
+                              <th>Subject</th>
+                              <th>Location</th>
+                              <th>Department</th>
                             </tr>
                         </thead>
                     </table>
@@ -34,8 +35,9 @@
             </div>
       </div>
     </div>
-@include('user.edit-user')
+@include('stock_opname.modal.add-stock-opname')
+@include('stock_opname.modal.info-so')
 @endsection
 @push('custom-js')
-@include('user.user-js')
+@include('stock_opname.stock_opname-js')
 @endpush

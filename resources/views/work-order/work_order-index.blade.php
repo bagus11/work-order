@@ -75,7 +75,7 @@
                             </button>
                         {{-- @endcan --}}
                     <button id="refresh" title="Refresh" style="float:right" class="btn btn-sm btn-info mr-2">
-                        <i class="fas fa-refresh"></i>
+                    <i class="fas fa-refresh"></i>
                     </button>
                       
                     </div>

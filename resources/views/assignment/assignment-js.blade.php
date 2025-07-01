@@ -21,6 +21,7 @@ get_assignment()
                 },
                 success: function(response) {
                 swal.close();
+                $('#editAssignment').modal('show')
                 $('#select_request_type').html(': '+response.detail.request_type)
                 $('#select_categories').html(': '+response.detail.categories_name)
                 $('#select_problem_type').html(': '+response.detail.problem_type_name)

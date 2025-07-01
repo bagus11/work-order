@@ -18,6 +18,21 @@
                         <span  style="color:red;font-size:9px;" class="message_error text-red block location_id_error"></span>
                     </div>
                     <div class="col-md-4 mt-2">
+                        <p>Department</p>
+                    </div>
+                    <div class="col-md-8">
+                        <select name="select_department" class="select2" id="select_department"></select>
+                        <input type="hidden" class="form-control" id="department_id">
+                        <span  style="color:red;font-size:9px;" class="message_error text-red block department_id_error"></span>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <p>Link</p>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="link">
+                        <span  style="color:red;font-size:9px;" class="message_error text-red block link_error"></span>
+                    </div>
+                    <div class="col-md-4 mt-2">
                         <p>Step Approval</p>
                     </div>
                     <div class="col-md-4">

@@ -26,24 +26,20 @@
         <div class="wrapper">
         @include('layouts.navbar')
         @include('layouts.sidebar')
+         @php
+            $currentPath = Request::path();
+        @endphp
+        <input type="hidden" id="currentPath" value="{{$currentPath}}">
         <input type="hidden" class="form-control" id="auth_id" value="{{auth()->user()->id}}">
         <div class="content-wrapper py-4">
             <input type="hidden" id="authId" value="{{auth()->user()->id}}">
             @yield('content')
         </div>
-
-
-        <aside class="control-sidebar control-sidebar-dark overflow-auto">
-
-            <div class="p-3">
-            <h5>Title</h5>
-            <p>Sidebar content</p>
-            </div>
-        </aside>
         @include('home.modal.approval-asset')
+        @include('assignment.edit-assignment')
         @include('layouts.footer')
         </div>
-
+        @include('modal.approval-stock-opname')
         <script src="{{asset('js/app.js')}}"></script>
         {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
         <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
@@ -70,8 +66,11 @@
 
         <!--Tempusdominus CSS CDN-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
-        <script>
-            
+        <script>  
+          $(document).on('click', '.dropdown-menu .nav-link', function (e) {
+              e.stopPropagation();
+          });
+            var currentPath = document.getElementById('currentPath').value;
             function zoom() {
                 document.body.style.zoom = "80%" 
             }

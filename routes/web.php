@@ -500,8 +500,11 @@ Route::group(['middleware' => ['auth']], function() {
     // Stock Opname
         Route::get('stock_opname', [StockOpnameController::class, 'index'])->name('stock_opname');
         Route::get('getStockOpname', [StockOpnameController::class, 'getStockOpname'])->name('getStockOpname');
+        Route::get('getApprovalStockOpname', [StockOpnameController::class, 'getApprovalStockOpname'])->name('getApprovalStockOpname');
+        Route::get('detailWO', [WorkOrderController::class, 'detailWO'])->name('detailWO');
         Route::post('addStockOpname', [StockOpnameController::class, 'addStockOpname'])->name('addStockOpname');
         Route::post('updateStockOpname', [StockOpnameController::class, 'updateStockOpname'])->name('updateStockOpname');
+        Route::post('approveSO', [StockOpnameController::class, 'approveSO'])->name('approveSO');
     // Stock Opname
 
 });

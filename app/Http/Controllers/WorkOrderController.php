@@ -113,7 +113,7 @@ class WorkOrderController extends Controller
             $transferPIC     = 0;
         }
         // dd($request->userIdSupportFilter);
-        // $initial = MasterDepartement::find(auth()->user()->departement)->initial;
+        $initial = MasterDepartement::find(auth()->user()->departement)->initial;
         if(auth()->user()->hasPermissionTo('get-all-work_order_list'))
         {
             $requestFor     = MasterDepartement::find(auth()->user()->departement);
@@ -178,7 +178,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where('user_id', auth()->user()->id) 
-            // ->where('work_orders.request_for',$initial)
+            
             ->orderBy('status_wo', 'asc')
             ->orderBy('work_orders.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
@@ -211,7 +211,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.status_approval','like','%'.$statusApproval.'%')
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
-            // ->where('work_orders.request_for',$initial)
+            ->where('work_orders.request_for',$initial)
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where(function($query){
                 $query->where('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
@@ -372,6 +372,8 @@ class WorkOrderController extends Controller
                         'message'=>auth()->user()->name.' has created new work order transaction',
                         'subject'=>'New Work Order',
                         'status'=>0,
+                        'type'=>$row->jabatan == $headDeptLocation->id ? 2 :1,
+                        'request_code'=>$ticket_code,
                         'link'=>$row->jabatan == $headDeptLocation->id ?'work_order_assignment':'work_order_list',
                         'userId'=>$row->id,
                         'created_at'=>date('Y-m-d H:i:s')
@@ -446,6 +448,12 @@ class WorkOrderController extends Controller
         $log_data = WorkOrderLog::select(DB::raw('DATE_FORMAT(work_order_logs.created_at, "%d %b %Y, %H:%i") as date'), 'work_order_logs.*')->with(['userPIC','userPICSupport','priority','creatorRelation'])->where('request_code', $request->request_code)->orderBy('created_at','asc')->get();
         return response()->json([
             'log_data'=>$log_data,
+        ]);
+    }
+    function detailWO(Request $request){
+        $detail = WorkOrder::where('request_code', $request->request_code)->first();
+        return response()->json([
+            'detail'=>$detail
         ]);
     }
     public function approve_assignment_pic(Request $request)

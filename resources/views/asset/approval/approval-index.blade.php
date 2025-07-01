@@ -19,7 +19,9 @@
                                 <tr>
                                     <th  style="text-align: center">No</th>
                                     <th  style="text-align: center">Approval ID</th>
+                                    <th  style="text-align: center">Link</th>
                                     <th  style="text-align: center">Location</th>
+                                    <th  style="text-align: center">Department</th>
                                     <th  style="text-align: center">Step Approval</th>
                                     <th  style="text-align: center">Action</th>
                                 </tr>

@@ -15,50 +15,50 @@
             <div class="modal-body">
                <div class="container">
                 <div class="form-group row">
-                    <div class="col-5 col-sm-4 col-md-2 mt-2">
+                    <div class="col-5 col-sm-4 col-md-2">
                         <p for="">Request Type</p>
                     </div>
-                    <div class="col-7 col-sm-8 col-md-4  mt-1">
-                        <span id="select_request_type"></span>
+                    <div class="col-7 col-sm-8 col-md-4">
+                        <p id="select_request_type"></p>
                     </div>
                 </div>
-                    <div class="form-group row" style="margin-top:-20px">
-                        <div class="col-5 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group row">
+                        <div class="col-5 col-sm-4 col-md-2">
                             <p for="">Request By</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-1">
+                        <div class="col-7 col-sm-8 col-md-4 ">
                             <input type="hidden" class="form-control" id="wo_id" readonly>
-                            <span id="username"></span>
+                            <p id="username"></p>
                         </div>
-                        <div class="col-5 col-sm-4 col-md-2 mt-2">
+                        <div class="col-5 col-sm-4 col-md-2">
                             <p for="">Request Code</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-1">
-                            <span id="request_code"></span>
+                        <div class="col-7 col-sm-8 col-md-4 ">
+                            <p id="request_code"></p>
                         </div>
-                        <div class="col-5 col-sm-4 col-md-2 mt-2">
+                        <div class="col-5 col-sm-4 col-md-2">
                             <p for="">Categories</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-1">
-                          <span id="select_categories"></span>
+                        <div class="col-7 col-sm-8 col-md-4 ">
+                          <p id="select_categories"></p>
                         </div>
-                        <div class="col-5 col-sm-4 col-md-2 mt-2">
+                        <div class="col-5 col-sm-4 col-md-2">
                             <p for="">Problem Type</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-4  mt-1">
-                          <span id="select_problem_type"></span>
+                        <div class="col-7 col-sm-8 col-md-4 ">
+                          <p id="select_problem_type"></p>
                         </div>
-                        <div class="col-5 col-sm-4 col-md-2 mt-2">
+                        <div class="col-5 col-sm-4 col-md-2">
                             <p for="">Subject</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-10  mt-2">
-                           <span id="subject"></span>
+                        <div class="col-7 col-sm-8 col-md-10 ">
+                           <p id="subject"></p>
                         </div>
-                        <div class="col-5 col-sm-4 col-md-2 mt-2">
+                        <div class="col-5 col-sm-4 col-md-2">
                             <p for="">Additional Info</p>
                         </div>
-                        <div class="col-7 col-sm-8 col-md-10 mt-2">
-                           <span id="add_info"></span>
+                        <div class="col-7 col-sm-8 col-md-10">
+                           <p id="add_info"></p>
                         </div>
                     </div>
                     <div class="form-group row">

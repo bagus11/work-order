@@ -12,7 +12,7 @@
         "hnhdigital-os/laravel-number-converter": "^1.5",
         "irazasyed/telegram-bot-sdk": "*",
         "laravel/framework": "^8.75",
-        "laravel/sanctum": "^2.11",
+        "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.5",
         "laravel/ui": "3.2",
         "maatwebsite/excel": "^3.1",

@@ -162,10 +162,9 @@ class DistributionAssetController extends Controller
                 $ticket_code = $month_before[0] + 1 .'/'.$typeString.'/'.$month_convert.'/'.$year;
             }   
         }
-
-        $approval = ApprovalHeader::where('location_id', $request->location_id)->first();
-        $approvalDetail = ApprovalDetail::where('step', 1 )->where('approval_code', $approval->approval_code)->first();
         
+        $approval = ApprovalHeader::where('location_id', $request->location_id)->where('department', $request->asset_type)->where('link', $request->currentPath)->first();
+        $approvalDetail = ApprovalDetail::where('step', 1 )->where('approval_code', $approval->approval_code)->first();
         $fileName ='';
         if($request->file('attachment')){
             $ticketName = explode("/", $ticket_code);

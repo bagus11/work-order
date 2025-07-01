@@ -246,10 +246,10 @@
         $('#categories').val(select_categories)
         get_problem_type_name()
     })
-    $('#select_departement').on('change', function(){
-        var select_departement = $('#select_departement').val()
-        $('#departement_for').val(select_departement)
-    })
+    // $('#select_departement').on('change', function(){
+    //     var select_departement = $('#select_departement').val()
+    //     $('#departement_for').val(select_departement)
+    // })
     $('#select_problem_type').on('change', function(){
         var select_problem_type = $('#select_problem_type').val()
         $('#problem_type').val(select_problem_type)
@@ -908,7 +908,7 @@
                                                      <i class="fas fa-comment"></i>    
                                                 </button> `;
                             }
-                            if (response.data[i].status_wo != 4) {
+                            if (response.data[i].status_wo != 0) {
                                 let unreadChats = response.data[i].unread_chats; // Ambil jumlah unread chats
 
                                 chat = `<button title="Discuss about this ticket" class="chat btn btn-sm btn-info rounded btn-sm" 
@@ -1556,7 +1556,11 @@
                 }
             });
     }
+    $(document).ready(function(){
+        $('#select_departement').select2();
+    });
     function get_departement_name(){
+        
         $.ajax({
             headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

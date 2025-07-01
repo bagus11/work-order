@@ -16,7 +16,7 @@ class CreateApprovalHeadersTable extends Migration
         Schema::create('approval_headers', function (Blueprint $table) {
             $table->id();
             $table->string('approval_code')->unique();
-            $table->integer('type');
+            $table->string('link');
             $table->integer('location_id')->nullable();
             $table->integer('department');
             $table->integer('status');

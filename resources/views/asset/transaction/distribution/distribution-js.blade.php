@@ -71,6 +71,7 @@
         getActiveItems('get_kantor', null, 'select_location','Location');
         getActiveItems('get_kantor', null,'select_destination_location','Des Location');
         onChange('select_location', 'location_id');
+        onChange('select_asset_type', 'asset_type');
         onChange('select_destination_location', 'destination_location_id');
         onChange('select_current_user', 'current_user_id');
         onChange('select_receiver', 'receiver_id');
@@ -219,7 +220,6 @@
     $('#btn_save_distributuibn').on('click', function(e) {
         e.preventDefault();
         var request_type = $('#select_request_type').val();
-        alert(request_type)
         if(request_type == 3){
             return
         }else{
@@ -231,7 +231,8 @@
 
         const formData = new FormData($('#form_serialize')[0]);
         formData.append('selected_assets', JSON.stringify(selectedAssets));
-        formData.append('request_type', $('#select_request_type').val());
+        formData.append('asset_type', $('#select_asset_type').val());
+        formData.append('currentPath', $('#currentPath').val());
         formData.append('location_id', $('#location_id').val());
         formData.append('destination_location_id', $('#destination_location_id').val());
         formData.append('current_user_id', $('#current_user_id').val());

@@ -172,7 +172,6 @@ var auth_id = $('#auth_id').val()
             dataType: 'json',
             async: true,
             success: function(response) {
-             
               if(response.data.length == 0){
                 $('#notifikasi').hide()
               }else{
@@ -184,7 +183,21 @@ var auth_id = $('#auth_id').val()
                         $('#notificationCount').show()
                     }
                     var data =''
+                    var data_approval =''
                     $('#notificationCount').html(response.countStatus.new)
+                    if(response.countNotification.count == 0){
+                        $('#notifTabCount').hide()  
+                    }else{
+                        $('#notifTabCount').show()
+                        $('#notifTabCount').html(response.countNotification.count)
+                    }
+                    if(response.countApproval.count == 0){
+                        $('#approvalTabCount').hide()
+                    }else{
+                        $('#approvalTabCount').show()
+                        $('#approvalTabCount').html(response.countApproval.count)
+                    }
+                   
                     for(i = 0; i < response.data.length; i++ )
                     {
                         var status = '';
@@ -193,25 +206,43 @@ var auth_id = $('#auth_id').val()
                         }else{
                             status ="white";
                         }
-                        data += `
-                        <a href="${response.data[i].link}" class="dropdown-item"  style="background:${status}">
-
-                        <div class="media">
-                            
-                            <div class="media-body">
-                                <strong style="font-size:12px;color:#85CDFD" class="dropdown-item-title">
-                                ${response.data[i].subject} </strong>
-                            
-                                <p  style="font-size:11px">${response.data[i].message}</p>
-                                <p class="text-muted" style="font-size:9px"><i class="far fa-clock mr-1"></i>${response.data[i].date}, ${response.data[i].time}</p>
-                            </div>
-                        </div>
-
-                        </a>
-                        <div class="dropdown-divider"></div>
-                                                   `;
+                        if(response.data[i].type == 1){
+                            data += `
+                            <a href="${response.data[i].link}" class="dropdown-item"  style="background:${status}">
+                                <div class="media">
+                                    
+                                    <div class="media-body">
+                                        <strong style="font-size:12px;color:#85CDFD" class="dropdown-item-title">
+                                        ${response.data[i].subject} </strong>
+                                    
+                                        <p  style="font-size:11px">${response.data[i].message}</p>
+                                        <p class="text-muted" style="font-size:9px"><i class="far fa-clock mr-1"></i>${response.data[i].date}, ${response.data[i].time}</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                                                       `;
+                        }else if(response.data[i].type == 2){
+                            if(response.data[i].status == 0){
+                                data_approval += `<div data-request="${response.data[i].request_code}" class="dropdown-item approvalList" data-link="${response.data[i].link}"  style="background:${status}">
+                                    <div class="media">
+                                        
+                                        <div class="media-body">
+                                            <strong style="font-size:12px;color:#85CDFD" class="dropdown-item-title">
+                                            ${response.data[i].subject} </strong>
+                                        
+                                            <p  style="font-size:11px">${response.data[i].message}</p>
+                                            <p class="text-muted" style="font-size:9px"><i class="far fa-clock mr-1"></i>${response.data[i].date}, ${response.data[i].time}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                `
+                            }
+                        }
                     }
                     $('#notificationBody').html(data)
+                    $('#approvalBody').html(data_approval)
               }
             },
             error: function(xhr, status, error) {
@@ -517,6 +548,7 @@ var auth_id = $('#auth_id').val()
                 }
             }
         });  
+        getNotification()
     }
         function postCallbackNoSwal(route,data,callback){
             $.ajax({
@@ -545,6 +577,7 @@ var auth_id = $('#auth_id').val()
                     }
                 }
             });  
+            getNotification()
         }
         function getCallbackNoSwal(route,data,callback){
             $.ajax({
@@ -708,7 +741,9 @@ var auth_id = $('#auth_id').val()
                     $('#approvalAssetModal').modal('show');
                     const ticket = data[0];
                     modalBody.append(generateTicketDetailHtml(ticket));
+                   
                 } else if (data.length > 1) {
+                    
                     $('#approvalAssetModal').modal('show');
                     // Banyak tiket, tampilkan daftar
                     let listHtml = `<ul class="list-group mx-2 my-2">`;
@@ -1006,4 +1041,138 @@ var auth_id = $('#auth_id').val()
             });
         });
     // Approval Asset Notification
+
+    $(document).on('click', '.approvalList', function() {
+        var link = $(this).data('link');
+        var request = $(this).data('request');
+        $(link).modal('show');
+        if(link == "#stockOpnameApproval"){
+            getCallback('getApprovalStockOpname', {'ticket_code': request}, function(response){
+                swal.close();
+                $('#approval_so_ticket_code_label').html(': ' + response.detail.ticket_code);
+                $('#approval_so_created_by_label').html(': ' + response.detail.user_relation.name);
+                $('#approval_so_location_label').html(': ' + response.detail.location_relation.name)
+                $('#approval_so_department_label').html(': ' + response.detail.department_relation.name)
+                $('#approval_so_subject_label').html(': ' + response.detail.subject)
+                $('#approval_so_description_label').html(': ' + response.detail.description)
+                $('#approval_so_ticket_code').val(response.detail.ticket_code)
+                console.log(response.detail)
+                onChange('approval_so_select_status','approval_so_status')
+                $('#btn_update_so').on('click', function(){
+                    var data = {
+                        'approval_so_status' : $('#approval_so_status').val(),
+                        'approval_so_start_date' : $('#approval_so_start_date').val(),
+                        'approval_so_description' : $('#approval_so_description').val(),
+                        'approval_so_ticket_code' : $('#approval_so_ticket_code').val(),
+                    }
+                    postCallback('approveSO', data, function(response){
+                        swal.close()
+                        toastr['success'](response.meta.message)
+                        $('#stockOpnameApproval').modal('hide')
+                        getNotification()
+                    })
+                })
+            });
+        }else if(link =='work_order_list' || link =="work_order_assignment"){
+            getCallbackNoSwal("detailWO", {'request_code' : request}, function(response){
+                var id = response.detail.id
+                getCallback('detail_wo', {'id': id}, function(response){
+                    swal.close();
+                    $('#editAssignment').modal('show');
+                    $('#select_request_type').html(': '+response.detail.request_type)
+                    $('#select_categories').html(': '+response.detail.categories_name)
+                    $('#select_problem_type').html(': '+response.detail.problem_type_name)
+                    $('#request_type').html(': '+response.detail.request_type)
+                    $('#subject').html(': '+response.detail.subject)
+                    $('#add_info').html(': '+response.detail.add_info)
+                    $('#request_code').html(': '+response.detail.request_code)
+                    $('#username').html(': '+response.detail.username)
+                    $('#wo_id').val(id)
+                    $('#select_user').empty()
+                    $('#select_user').append('<option value="">Choose PIC</option>')
+                    // $('#selectPriority').append('<option value="">Choose Level</option>')
+                    $.each(response.data,function(i,data){
+                        $('#select_user').append('<option value="'+data.id+'">' + data.name +'</option>');
+                    });
+                    // $.each(response.priority,function(i,data){
+                    //     $('#selectPriority').append('<option value="'+data.id+'">' + data.name +'</option>');
+                    // });
+                });
+            });
+
+               $('#select_user').on('change', function(){
+                    var select_user = $('#select_user').val()
+                    $('#user_pic').val(select_user)
+                })
+                $('#selectPriority').on('change', function(){
+                    var selectPriority = $('#selectPriority').val()
+                    $('#priority').val(selectPriority)
+                })
+
+                 $('#btn_approve_assign').on('click', function(){
+                    var data ={
+                        'user_pic': $('#user_pic').val(),
+                        'priority': $('#priority').val(),
+                        'note': $('#note').val(),
+                        'id':$('#wo_id').val(),
+                        'approve':1
+                    }
+                    if($('#user_pic').val() == '' || $('#user_pic').val()==null){
+                            toastr['error']('Belum memilih PIC');
+                    }else{
+                        approve_assignment(data)
+                    }
+                })
+                    $('#btn_reject_assign').on('click', function(){
+                        var data ={
+                            'user_pic': $('#user_pic').val(),
+                            'priority': $('#priority').val(),
+                            'note': $('#note').val(),
+                            'id':$('#wo_id').val(),
+                            'approve':2
+                        }
+                        approve_assignment(data)
+                    })
+
+                    function approve_assignment(data)
+                    {
+                        $.ajax({
+                            headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: "{{route('approve_assignment')}}",
+                            type: "post",
+                            dataType: 'json',
+                            async: true,
+                            data: data,
+                            beforeSend: function() {
+                                SwalLoading('Please wait ...');
+                            },
+                            success: function(response) {
+                                swal.close();
+                                $('.message_error').html('')
+                                if(response.status==422)
+                                {
+                                    $.each(response.message, (key, val) => 
+                                    {
+                                    $('span.'+key+'_error').text(val[0])
+                                    });
+                                    $('#save').prop('disabled', false);
+                                    return false;
+                                }else if(response.status == 500){
+                                    toastr['warning'](response.message);
+                                }
+                                else{
+                                    toastr['success'](response.message);
+                                    window.location = "{{route('work_order_assignment')}}";
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                swal.close();
+                                toastr['error']('Failed to get data, please contact ICT Developer');
+                            }
+                        });
+                    }
+        }
+    });
 </script>
