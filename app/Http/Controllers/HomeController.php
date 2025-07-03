@@ -23,6 +23,7 @@ class HomeController extends Controller
         $from_date = $request->from_date;
         $end_date = $request->end_date;
         $userDepartement = MasterDepartement::find(auth()->user()->departement);
+        // dd(auth()->user()->name);N
         if(auth()->user()->hasPermissionTo('get-all-dashboard'))
         {
             $status_new             = WorkOrder::select(DB::raw('COUNT(id) as status_new'))

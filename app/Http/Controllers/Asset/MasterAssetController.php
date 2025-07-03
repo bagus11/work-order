@@ -219,5 +219,16 @@ class MasterAssetController extends Controller
     // }
       
     }
+
+    public function summaryAsset(){
+        $category = MasterAsset::select(
+            'category',
+            DB::raw('COUNT(*) as total'),
+        )->groupBy('category')
+        ->get();
+        return response()->json([
+            'category' => $category,
+        ]);
+    }
   
 }
