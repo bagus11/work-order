@@ -492,84 +492,85 @@ class WorkOrderController extends Controller
                     $workOrderStatus    =   WorkOrderLog::where('request_code', $log_wo->request_code)
                                             ->orderBy('created_at','desc')
                                             ->first();
-                    // Setup Duration
-                        $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
-                        $dateNow            =   date('Y-m-d');
+                    // // Setup Duration
+                    //     $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
+                    //     $dateNow            =   date('Y-m-d');
 
-                        $client = new \GuzzleHttp\Client();
-                        $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
-                        $response = $api->getBody()->getContents();
-                        $data =json_decode($response, true);
-                        $totalTime =0;
-                        $test =[];
-                        // dd($workOrderStatus);
-                        foreach($data as $row){
-                            if($row['daytype'] =='WD'){
+                    //     $client = new \GuzzleHttp\Client();
+                    //     $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
+                    //     $response = $api->getBody()->getContents();
+                    //     $data =json_decode($response, true);
+                    //     $totalTime =0;
+                    //     $test =[];
+                    //     // dd($workOrderStatus);
+                    //     foreach($data as $row){
+                    //         if($row['daytype'] =='WD'){
 
-                            // Initialing Date && Time
-                                $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
-                                $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
-                                $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
-                                $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
+                    //         // Initialing Date && Time
+                    //             $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
+                    //             $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
+                    //             $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
+                    //             $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
 
-                                $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
-                                $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
-                                $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
+                    //             $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
+                    //             $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
+                    //             $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
 
-                                $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
-                                $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
-                                $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
+                    //             $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
+                    //             $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
+                    //             $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
 
-                                $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
-                                $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
-                                $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
-                                $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+                    //             $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
+                    //             $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
+                    //             $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
+                    //             $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
                               
-                            // Initialing Date && Time
+                    //         // Initialing Date && Time
 
-                            // Validation Date
-                                if($startDatePIC == $shiftstartDate)
-                                {
-                                    if($startTimePIC >=$shiftendTime){
-                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime); 
-                                        $test_post =[
-                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime
-                                        ];        
-                                    }else{
-                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
-                                        $test_post =[
-                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 1'
-                                        ];  
-                                    }
-                                    array_push($test,$test_post);
+                    //         // Validation Date
+                    //             if($startDatePIC == $shiftstartDate)
+                    //             {
+                    //                 if($startTimePIC >=$shiftendTime){
+                    //                     $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime); 
+                    //                     $test_post =[
+                    //                         'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime
+                    //                     ];        
+                    //                 }else{
+                    //                     $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
+                    //                     $test_post =[
+                    //                         'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 1'
+                    //                     ];  
+                    //                 }
+                    //                 array_push($test,$test_post);
                                 
-                                }else{
-                                    if($shiftendDate == $dateNow){
-                                        if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
-                                            $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
-                                            $test_post =[
-                                                'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 2'
-                                            ];  
-                                        }else{
-                                            $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
-                                            $test_post =[
-                                                'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 3'
-                                            ];  
+                    //             }else{
+                    //                 if($shiftendDate == $dateNow){
+                    //                     if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
+                    //                         $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                    //                         $test_post =[
+                    //                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 2'
+                    //                         ];  
+                    //                     }else{
+                    //                         $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                    //                         $test_post =[
+                    //                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 3'
+                    //                         ];  
                                         
-                                        }
-                                    }else{
-                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime) - 60;
-                                        $test_post =[
-                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 4'
-                                        ];  
-                                    }
-                                    array_push($test,$test_post);
-                                }
-                            // Validation Date
-                            }
-                        }
-                        // dd($test);
-                    // Setup Duration
+                    //                     }
+                    //                 }else{
+                    //                     $totalTime += $shiftstarttime->diffInMinutes($shiftendtime) - 60;
+                    //                     $test_post =[
+                    //                         'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 4'
+                    //                     ];  
+                    //                 }
+                    //                 array_push($test,$test_post);
+                    //             }
+                    //         // Validation Date
+                    //         }
+                    //     }
+                    //     // dd($test);
+                    // // Setup Duration
+                    $totalTime = 0;
                     // checking if status wo before is pending, cant change level 
                    if($log_wo->level == 2){
                             $post         =[
@@ -1603,4 +1604,36 @@ class WorkOrderController extends Controller
     //     }
     //     dd($test);
     // }
+        public function woInProgress() {
+  
+        if(auth()->user()->hasPermissionTo('get-all-work_order_list')){
+            $initial = MasterDepartement::where('id', auth()->user()->departement)->first();
+            $data = WorkOrder::with([
+                'departementName',
+                'categoryName',
+                'problemTypeName',
+            ])
+            ->where('request_for', $initial->initial)
+            ->whereIn('status_wo',[0,1])->get();
+        }else if(auth()->user()->hasPermission('get-only_user-work_order_list')){
+            $data = WorkOrder::with([
+                 'departementName',
+                'categoryName',
+                'problemTypeName',
+            ])
+            ->where('user_id', auth()->user()->id)
+            ->whereIn('status_wo', [0,1])->get();
+        }else{
+            $data = WorkOrder::with([
+                 'departementName',
+                'categoryName',
+                'problemTypeName',
+            ])
+            ->where('user_id_support', auth()->user()->id)
+            ->whereIn('status_wo', [0,1])->get();
+        }
+          return response()->json([
+             'data'=>$data,
+         ]);
+    }
 }

@@ -222,12 +222,23 @@ class MasterAssetController extends Controller
 
     public function summaryAsset(){
         $category = MasterAsset::select(
-            'category',
-            DB::raw('COUNT(*) as total'),
-        )->groupBy('category')
-        ->get();
+                        'category',
+                        DB::raw('COUNT(*) as total'),
+                    )->groupBy('category')
+                    ->get();
+        $condition = MasterAsset::select(
+                        'condition',
+                        DB::raw('COUNT(*) as total'),
+                    )->groupBy('condition',)
+                    ->get();
+       $available = MasterAsset::selectRaw("
+                        COUNT(CASE WHEN nik = 0 THEN 1 END) as count_user_id_zero,
+                        COUNT(CASE WHEN nik IS NOT NULL AND nik != 0 THEN 1 END) as count_user_assigned
+                    ")->first();
         return response()->json([
             'category' => $category,
+            'condition' => $condition,
+            'available' => $available,
         ]);
     }
   

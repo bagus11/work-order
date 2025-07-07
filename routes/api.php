@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Asset\MasterAssetController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\WorkOrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,5 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('get_wo_summary', [HomeController::class, 'get_wo_summary']);
     Route::get('summaryAsset', [MasterAssetController::class, 'summaryAsset']);
+    Route::get('woInProgress', [WorkOrderController::class, 'woInProgress']);
 
 });
