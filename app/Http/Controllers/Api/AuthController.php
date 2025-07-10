@@ -16,7 +16,11 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('nik', $request->nik)->first();
+        $user = User::with([
+            'departmentRelation',
+            'locationRelation',
+            'Jabatan',
+        ])->where('nik', $request->nik)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([

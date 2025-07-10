@@ -1604,36 +1604,63 @@ class WorkOrderController extends Controller
     //     }
     //     dd($test);
     // }
-        public function woInProgress() {
-  
-        if(auth()->user()->hasPermissionTo('get-all-work_order_list')){
+     public function woInProgress()
+    {
+        if (auth()->user()->hasPermissionTo('get-all-work_order_list')) {
             $initial = MasterDepartement::where('id', auth()->user()->departement)->first();
             $data = WorkOrder::with([
                 'departementName',
                 'categoryName',
+                'picName',
+                'picName.locationRelation',
                 'problemTypeName',
             ])
             ->where('request_for', $initial->initial)
-            ->whereIn('status_wo',[0,1])->get();
-        }else if(auth()->user()->hasPermission('get-only_user-work_order_list')){
+            ->whereIn('status_wo', [0,1])
+            ->get();
+        } else if (auth()->user()->hasPermissionTo('get-only_user-work_order_list')) {
             $data = WorkOrder::with([
-                 'departementName',
+                'departementName',
                 'categoryName',
+                'picName',
+                'picName.locationRelation',
                 'problemTypeName',
             ])
             ->where('user_id', auth()->user()->id)
-            ->whereIn('status_wo', [0,1])->get();
-        }else{
+            ->whereIn('status_wo', [0,1])
+            ->get();
+        } else {
             $data = WorkOrder::with([
-                 'departementName',
+                'departementName',
                 'categoryName',
+                'picName',
+                'picName.locationRelation',
                 'problemTypeName',
             ])
             ->where('user_id_support', auth()->user()->id)
-            ->whereIn('status_wo', [0,1])->get();
+            ->whereIn('status_wo', [0,1])
+            ->get();
         }
-          return response()->json([
-             'data'=>$data,
-         ]);
+
+        return response()->json([
+            'data' => $data,
+        ]);
     }
+    public function showById($id)
+    {
+     
+        $data = WorkOrder::with([
+            'departementName',
+            'categoryName',
+            'problemTypeName',
+            'picSupportName.locationRelation.regencyRelation',
+            'picName.locationRelation.regencyRelation',
+            'detailWORelation.creatorRelation'
+        ])->find($id);
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
 }
