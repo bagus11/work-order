@@ -283,6 +283,7 @@ function getDetailOPX(id) {
                             <td>${item.category_relation?.name || '-'}</td>
                             <td>${item.location_relation?.name || '-'}</td>
                             <td>${item.product_relation?.name || '-'}</td>
+                            <td>${item.note}</td>
                             <td>Rp ${price.toLocaleString('id-ID')}</td>
                             <td>Rp ${ppn.toLocaleString('id-ID')}</td>
                             <td>Rp ${dph.toLocaleString('id-ID')}</td>

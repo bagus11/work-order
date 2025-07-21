@@ -39,6 +39,7 @@
                             <th>Category</th>
                             <th>Location</th>
                             <th>Product</th>
+                            <th>Description</th>
                             <th>Price</th>
                             <th>PPN</th>
                             <th>DPH</th>
