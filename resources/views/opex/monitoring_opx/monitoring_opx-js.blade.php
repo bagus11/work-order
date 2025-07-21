@@ -1,11 +1,45 @@
 <script>
-    getCallback('getOPX',null, function(response){
-        swal.close()
-        mapping(response.data)
-    })
-     $(document).on('click', '.dropdown-menu', function (e) {
-        e.stopPropagation();
+   // Fungsi ambil parameter filter
+function getFilterParams() {
+    let location = $('#location_filter').val() || '';
+    let period   = $('#year_filter').val() || ''; // Format: YYYY-MM
+
+    let year = '';
+    let month = '';
+
+    if (period) {
+        let parts = period.split('-'); // [YYYY, MM]
+        year = parts[0];
+        month = parts[1];
+    }
+
+    return { location: location, year: year, month: month };
+}
+
+// Load pertama kali dengan filter awal
+$(document).ready(function() {
+    let params = getFilterParams();
+    getCallback('getOPX', params, function(response) {
+        swal.close();
+        mapping(response.data);
     });
+});
+
+// Supaya klik di dalam dropdown tidak menutup menu
+$(document).on('click', '.dropdown-menu', function (e) {
+    e.stopPropagation();
+});
+
+// Event klik tombol Filter
+$('#btn_filter').off().on('click', function () {
+    let params = getFilterParams();
+
+    getCallback('getOPX', params, function (response) {
+        swal.close();
+        mapping(response.data); // Update tabel OPX
+    });
+});
+
     getActiveItems('get_kantor', null, 'location_filter','Location')
     $('#btn_add_opx').on('click', function(){
         getActiveItems('getActiveCategoryOPX', null, 'select_category','category')

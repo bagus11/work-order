@@ -18,23 +18,36 @@ class MonitoringOPXController extends Controller
     function index() {
         return view('opex.monitoring_opx.monitoring_opx-index');
     }
-    function getOPX() {
-        $data = MonitoringOPX::select(
-            DB::raw('SUM(price) as sumPrice'),
-            'category',
-            'id',
-            'location'
-        )
-        ->with([
-            'categoryRelation',
-            'locationRelation',
-        ])
-        ->groupBy('category', 'location')
-        ->get();
+    function getOPX(Request $request) {
+        $query = MonitoringOPX::select(
+                DB::raw('SUM(price) as sumPrice'),
+                'category',
+                'id',
+                'location'
+            )
+            ->with([
+                'categoryRelation',
+                'locationRelation',
+            ]);
+
+        // Filter tanggal created_at
+        if (!empty($request->month) && !empty($request->year)) {
+                $query->whereMonth('created_at', $request->month)
+                ->whereYear('created_at', $request->year);
+        }
+        if (!empty($request->location)) {
+            $query->where('location', $request->location);
+        }
+
+
+        // Group By
+        $data = $query->groupBy('category', 'location')->get();
+
         return response()->json([
-            'data'=>$data
+            'data' => $data
         ]);
     }
+
     function detailOPX(Request $request) {
            $detail = MonitoringOPX::with([
                 'categoryRelation',
