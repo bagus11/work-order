@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
+use App\Http\Requests\API\WorkOrder\UpdateWORequest;
 use App\Http\Requests\UpdateHHoldProgressRequest;
 use App\Models\MasterCategory;
 use App\Models\MasterDepartement;
@@ -1661,6 +1662,68 @@ class WorkOrderController extends Controller
         return response()->json([
             'data' => $data,
         ]);
+    }
+    public function updateWO(Request $request, UpdateWORequest $updateWorkOrderRequest)
+    {
+        // try {
+            $updateWorkOrderRequest->validated();
+            $header = WorkOrder::where('request_code', $request->input('request_code'))->first();
+            $lastLog = WorkOrderLog::where('request_code', $request->input('request_code'))
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+            $finalDuration = 0; 
+            $dateNow = Carbon::now()->format('Y-m-d');
+            $dateBeforePost = Carbon::parse($lastLog->created_at)->format('Y-m-d');
+            // $client = new \GuzzleHttp\Client();
+            // $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . auth()->user()->nik . '&startdate=' . $dateBeforePost . '&enddate=' . $dateNow);
+            // $response = $api->getBody()->getContents();
+            // $data = json_decode($response, true);
+            // $durations = [];
+            // foreach ($data as $row) {
+            //     if ($row['daytype'] == 'WD') {
+            //         $start = \Carbon\Carbon::parse($row['shiftstarttime']);
+            //         $end = \Carbon\Carbon::parse($row['shiftendtime']);
+            //             $startToday = \Carbon\Carbon::parse($lastLog->created_at);
+            //         $validation = '';
+            //         if($end->isToday()){
+            //             if( $lastLog->created_at->format('Y-m-d') == date('Y-m-d')){
+            //                     $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+            //                     $validation = '1';
+            //                 }else{
+            //                     $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+            //                     $validation = '1 1';
+
+            //                 }
+            //             }else{
+            //                 if($start < $startToday){
+            //                     $minutes = $startToday->diffInMinutes($end); 
+            //                     $validation = '2 1';
+            //                 }else{
+            //                     $validation = '2';
+            //                     $minutes = $start->diffInMinutes($end);
+            //                 }
+            //             }
+            //         $finalDuration += $minutes;
+            //             $durations[] = [
+            //                 'date' => $row['date'] ?? $start->toDateString(),
+            //                 'start' => $start->format('H:i'),
+            //                 'end' => $end->format('H:i'),
+            //                 'minutes' => $minutes,
+            //                 'total' => $finalDuration,
+            //                 'validation'=> $validation
+            //             ];
+                        
+            //     }
+            // }
+                    dd($finalDuration);
+            
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error(
+        //         $th,
+        //         'Failed to update Work Order',
+        //         500
+        //     );
+        // }
     }
 
 }

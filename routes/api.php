@@ -27,5 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('summaryAsset', [MasterAssetController::class, 'summaryAsset']);
     Route::get('woInProgress', [WorkOrderController::class, 'woInProgress']);
     Route::get('/woDetailById/{id}', [WorkOrderController::class, 'showById']);
+    Route::post('/updateWO', [WorkOrderController::class, 'updateWO']);
 
 });

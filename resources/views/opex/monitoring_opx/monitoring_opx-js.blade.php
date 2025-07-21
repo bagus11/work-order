@@ -3,6 +3,10 @@
         swal.close()
         mapping(response.data)
     })
+     $(document).on('click', '.dropdown-menu', function (e) {
+        e.stopPropagation();
+    });
+    getActiveItems('get_kantor', null, 'location_filter','Location')
     $('#btn_add_opx').on('click', function(){
         getActiveItems('getActiveCategoryOPX', null, 'select_category','category')
         getActiveItems('get_kantor', null, 'select_location','Location')
@@ -189,11 +193,13 @@ function mapping(response) {
     var data = '';
     $('#opx_table').DataTable().clear();
     $('#opx_table').DataTable().destroy();
+
     for (i = 0; i < response.length; i++) {
         var extend = response[i].category == 1 ? 'details-control' : '';
-        var buttonPO = response[i].category == 1 ? '' : `  <button type="button" class="btn editPO btn-sm btn-warning" data-toggle="modal" data-target="#POModal" title="Edit PO" data-name="${response[i].name}" data-id="${response[i].id}" data-type="${response[i].type}">
-                        <i class="fas fa-edit"></i>
-                    </button>`
+        var buttonPO = response[i].category == 1 ? '' : 
+            `<button type="button" class="btn editPO btn-sm btn-warning" data-toggle="modal" data-target="#POModal" title="Edit PO" data-name="${response[i].name}" data-id="${response[i].id}" data-type="${response[i].type}">
+                <i class="fas fa-edit"></i>
+            </button>`;
 
         data += `
             <tr>
@@ -202,22 +208,25 @@ function mapping(response) {
                 <td style="text-align:left">${response[i].location_relation.name}</td>
                 <td style="text-align:right">${formatRupiah(response[i].sumPrice)}</td>
                 <td style="text-align:center">
-                    <button type="button" class="btn edit btn-sm btn-info" data-toggle="modal" data-target="#editCategoryModal" data-name="${response[i].name}" data-id="${response[i].id}" data-type="${response[i].type}">
+                    <button type="button" class="btn edit btn-sm btn-info info" data-id="${response[i].id}">
                         <i class="fas fa-eye"></i>
                     </button>
-                ${buttonPO}
+                    ${buttonPO}
                 </td>
             </tr>`;
     }
+
     $('#opx_table > tbody:first').html(data);
-    table = $('#opx_table').DataTable({
+
+    var table = $('#opx_table').DataTable({
         scrollX: true,
         scrollY: true,
         scrollCollapse: true,
         autoWidth: true
     }).columns.adjust();
 
-    $('#opx_table tbody').off().on('click', 'td.details-control', function (e) {
+    // Event untuk detail-control
+    $('#opx_table tbody').off('click', 'td.details-control').on('click', 'td.details-control', function () {
         var tr = $(this).closest("tr");
         var row = table.row(tr);
         var id = $(this).data('id');
@@ -229,8 +238,141 @@ function mapping(response) {
             tr.addClass('shown');
         }
     });
+
+    // Event untuk .info
+    $('#opx_table tbody').off('click', '.info').on('click', '.info', function () {
+        var id = $(this).data('id');
+        console.log("Klik info dengan ID:", id); // Debug
+        getDetailOPX(id);
+    });
 }
 
+function getDetailOPX(id) {
+    getCallback('detailOPX', { 'id': id }, function (response) {
+        swal.close();
+        if (response.detail) {
+            $('#opx_category').text(response.detail.category_relation?.name || '-');
+            $('#opx_location').text(response.detail.location_relation?.name || '-');
+            $('#opx_created_by').text(response.detail.user?.name || '-');
+            $('#opx_created').text(formatDate(response.detail.created_at));
+            $('#opx_sum_price').text(
+                response.detail.sumPrice 
+                    ? `Rp ${parseInt(response.detail.sumPrice).toLocaleString('id-ID')}` 
+                    : 'Rp 0'
+            );
+
+            // Isi log table
+            var logRows = '';
+            var totalLogPrice = 0, totalPPN = 0, totalDPH = 0, totalPPH = 0;
+
+            if (response.log && response.log.length > 0) {
+                $.each(response.log, function (index, item) {
+                    let price = parseInt(item.price || 0);
+                    let ppn   = parseInt(item.ppn || 0);
+                    let dph   = parseInt(item.dph || 0);
+                    let pph   = parseInt(item.pph || 0);
+
+                    totalLogPrice += price;
+                    totalPPN += ppn;
+                    totalDPH += dph;
+                    totalPPH += pph;
+
+                    logRows += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.category_relation?.name || '-'}</td>
+                            <td>${item.location_relation?.name || '-'}</td>
+                            <td>${item.product_relation?.name || '-'}</td>
+                            <td>Rp ${price.toLocaleString('id-ID')}</td>
+                            <td>Rp ${ppn.toLocaleString('id-ID')}</td>
+                            <td>Rp ${dph.toLocaleString('id-ID')}</td>
+                            <td>Rp ${pph.toLocaleString('id-ID')}</td>
+                            <td>${formatDate(item.created_at)}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                logRows = `<tr><td colspan="9" class="text-center">No Data</td></tr>`;
+            }
+
+            $('#opx_log_table tbody').html(logRows);
+            $('#opx_log_total_price').text(`Rp ${totalLogPrice.toLocaleString('id-ID')}`);
+            $('#opx_log_total_ppn').text(`Rp ${totalPPN.toLocaleString('id-ID')}`);
+            $('#opx_log_total_dph').text(`Rp ${totalDPH.toLocaleString('id-ID')}`);
+            $('#opx_log_total_pph').text(`Rp ${totalPPH.toLocaleString('id-ID')}`);
+
+            $('#infoOPXModal').modal('show');
+        } else {
+            toastr.error('Data not found');
+        }
+    });
+}
+
+ $('#opx_table tbody').off().on('click', '.info', function () {
+    alert('test')
+        var id = $(this).data('id');
+        getCallback('detailOPX', { 'id': id }, function (response) {
+            swal.close()
+            if (response.detail) {
+                $('#opx_category').text(response.detail.category_relation?.name || '-');
+                $('#opx_location').text(response.detail.location_relation?.name || '-');
+                $('#opx_created_by').text(response.detail.user?.name || '-');
+                $('#opx_created').text(formatDate(response.detail.created_at));
+                $('#opx_sum_price').text(
+                    response.detail.sumPrice 
+                        ? `Rp ${parseInt(response.detail.sumPrice).toLocaleString('id-ID')}` 
+                        : 'Rp 0'
+                );
+
+                // Log Table
+                var logRows = '';
+                var totalLogPrice = 0;
+                var totalPPN = 0, totalDPH = 0, totalPPH = 0;
+
+                if (response.log && response.log.length > 0) {
+                    $.each(response.log, function (index, item) {
+                        let price = parseInt(item.price || 0);
+                        let ppn   = parseInt(item.ppn || 0);
+                        let dph   = parseInt(item.dph || 0);
+                        let pph   = parseInt(item.pph || 0);
+
+                        totalLogPrice += price;
+                        totalPPN += ppn;
+                        totalDPH += dph;
+                        totalPPH += pph;
+
+                        logRows += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.category_relation?.name || '-'}</td>
+                                <td>${item.location_relation?.name || '-'}</td>
+                                <td>${item.product_relation?.name || '-'}</td>
+                                <td>Rp ${price.toLocaleString('id-ID')}</td>
+                                <td>Rp ${ppn.toLocaleString('id-ID')}</td>
+                                <td>Rp ${dph.toLocaleString('id-ID')}</td>
+                                <td>Rp ${pph.toLocaleString('id-ID')}</td>
+                                <td>${formatDate(item.created_at)}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    logRows = `<tr><td colspan="9" class="text-center">No Data</td></tr>`;
+                }
+
+                // Set Data ke Tabel dan Total
+                $('#opx_log_table tbody').html(logRows);
+                $('#opx_log_total_price').text(`Rp ${totalLogPrice.toLocaleString('id-ID')}`);
+                $('#opx_log_total_ppn').text(`Rp ${totalPPN.toLocaleString('id-ID')}`);
+                $('#opx_log_total_dph').text(`Rp ${totalDPH.toLocaleString('id-ID')}`);
+                $('#opx_log_total_pph').text(`Rp ${totalPPH.toLocaleString('id-ID')}`);
+
+                // Show Modal
+                $('#infoOPXModal').modal('show');
+            } else {
+                toastr.error('Data not found');
+            }
+        });
+    });
 function mappingPOTable(response){
     var data =''
         $('#po_table').DataTable().clear();
@@ -242,8 +384,8 @@ function mappingPOTable(response){
             data += `
                 <tr>
                     <td style="text-align:center">${date} ${time}</td>
-                    <td><input type="text" class="pr_change form-control" data-id="${response[i].id}" value="${response[i].pr}"></td>
-                      <td><input type="text" class="po_change form-control" data-id="${response[i].id}" value="${response[i].po}"></td>
+                    <td><input type="text" style="font-size:10px" class="pr_change form-control" data-id="${response[i].id}" value="${response[i].pr}"></td>
+                      <td><input type="text" style="font-size:10px" class="po_change form-control" data-id="${response[i].id}" value="${response[i].po}"></td>
                     <td>${response[i].user_relation.name}</td>
                     <td style="text-align:center">
                         <button  type="button" class="btn addIS btn-sm btn-info" data-toggle="modal" data-target="#editISModal" data-id="${response[i].id}">

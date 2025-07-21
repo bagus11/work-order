@@ -405,6 +405,7 @@ Route::group(['middleware' => ['auth']], function() {
         // Monitoring OPEX
             Route::get('getOPX', [MonitoringOPXController::class, 'getOPX'])->name('getOPX'); 
             Route::get('getDetervative', [MonitoringOPXController::class, 'getDetervative'])->name('getDetervative'); 
+            Route::get('detailOPX', [MonitoringOPXController::class, 'detailOPX'])->name('detailOPX'); 
             Route::get('getPOOPX', [MonitoringOPXController::class, 'getPOOPX'])->name('getPOOPX'); 
             Route::get('getISOPX', [MonitoringOPXController::class, 'getISOPX'])->name('getISOPX'); 
             Route::post('addOPX', [MonitoringOPXController::class, 'addOPX'])->name('addOPX'); 

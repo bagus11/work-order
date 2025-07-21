@@ -9,6 +9,7 @@ use App\Http\Requests\StoreOPXRequest;
 use App\Models\OPX\MonitoringOPX;
 use App\Models\OPX\OPXIS;
 use App\Models\OPX\OPXPO;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +34,53 @@ class MonitoringOPXController extends Controller
         return response()->json([
             'data'=>$data
         ]);
+    }
+    function detailOPX(Request $request) {
+           $detail = MonitoringOPX::with([
+                'categoryRelation',
+                'locationRelation',
+                'productRelation',
+                'userRelation'
+            ])->find($request->id);
+
+            if (!$detail) {
+                return response()->json(['error' => 'Data not found'], 404);
+            }
+
+            // Ambil tanggal created_at dari detail
+            $createdAt = Carbon::parse($detail->created_at);
+            $startOfMonth = $createdAt->copy()->startOfMonth()->startOfDay();
+            $endOfMonth   = $createdAt->copy()->endOfMonth()->endOfDay();
+
+            // Hitung total price (sum) dan tambahkan ke $detail
+            $sumPrice = MonitoringOPX::where([
+                'location' => $detail->location,
+                'category' => $detail->category,
+            ])
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->select(DB::raw('SUM(price) as sumPrice'))
+            ->value('sumPrice');
+
+            $detail->sumPrice = $sumPrice ?? 0; // Tambahkan properti sumPrice ke object $detail
+
+            // Ambil log detail
+            $log = MonitoringOPX::with([
+                'categoryRelation',
+                'locationRelation',
+                'productRelation'
+            ])
+            ->where([
+                'location' => $detail->location,
+                'category' => $detail->category,
+            ])
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->get();
+
+            return response()->json([
+                'detail' => $detail,
+                'log'    => $log
+            ]);
+
     }
     function getDetervative(Request $request) {
         $head = MonitoringOPX::find($request->id);

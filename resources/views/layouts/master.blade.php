@@ -120,16 +120,23 @@
   .message_error {
     color: red;
   }
-      fieldset {
-              border: 1px solid#ddd;
-              font-family: Poppins !important;
-              padding: 10px;
-          }
+  fieldset {
+        border: 1px groove #ddd !important;
+        padding: 0 1.5em 1.5em 1.5em !important;
+        margin: 0 0 1.5em 0 !important;
+        -webkit-box-shadow:  0px 0px 0px 0px #000;
+        box-shadow:  0px 0px 0px 0px #000;
+      }
+  legend {
+        font-size: 12px !important;
+        font-weight: bold !important;
+        font-family: Poppins !important;
+        text-align: left !important;
+  } 
+
+    legend.scheduler-border {
        
-          legend {
-              font-size: 14px;
-              padding: 0 10px;
-          } 
+    }
     .selectOption2{
     font-size:9px;
   }
