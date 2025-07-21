@@ -234,7 +234,10 @@ function mapping(response) {
             `<button type="button" class="btn editPO btn-sm btn-warning" data-toggle="modal" data-target="#POModal" title="Edit PO" data-name="${response[i].name}" data-id="${response[i].id}" data-type="${response[i].type}">
                 <i class="fas fa-edit"></i>
             </button>`;
-
+        var buttonInfo = response[i].category == 1 ? 
+            `<button type="button" class="btn info btn-sm btn-info" data-id="${response[i].id}" title="Detail OPX">
+                <i class="fas fa-info-circle"></i>
+            </button>` : '';
         data += `
             <tr>
                 <td class=${extend} data-id="${response[i].id}"></td>
@@ -242,9 +245,7 @@ function mapping(response) {
                 <td style="text-align:left">${response[i].location_relation.name}</td>
                 <td style="text-align:right">${formatRupiah(response[i].sumPrice)}</td>
                 <td style="text-align:center">
-                    <button type="button" class="btn edit btn-sm btn-info info" data-id="${response[i].id}">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                    ${buttonInfo}
                     ${buttonPO}
                 </td>
             </tr>`;
@@ -276,7 +277,6 @@ function mapping(response) {
     // Event untuk .info
     $('#opx_table tbody').off('click', '.info').on('click', '.info', function () {
         var id = $(this).data('id');
-        console.log("Klik info dengan ID:", id); // Debug
         getDetailOPX(id);
     });
 }
@@ -485,8 +485,8 @@ function detail_log(id, table) {
                 <tr class="table-light">
                     <td style="text-align:center">${i + 1}</td>
                     <td style="text-align:center">${response.data[i].start_date}</td>
-                    <td style="text-align:center;">${response.data[i].product_relation.name}</td>
-                    <td style="text-align:center;">${formatRupiah(response.data[i].price)}</td>
+                    <td style="text-align:center;">${response.data[i].product_name}</td>
+                    <td style="text-align:center;">${formatRupiah(response.data[i].sumPrice)}</td>
                     <td style="text-align:center">
                         <button class="btn btn-sm btn-info" type="button" data-id="${response.data[i].id}">
                             <i class="fas fa-eye"></i>

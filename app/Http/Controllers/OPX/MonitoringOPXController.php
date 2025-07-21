@@ -32,8 +32,8 @@ class MonitoringOPXController extends Controller
 
         // Filter tanggal created_at
         if (!empty($request->month) && !empty($request->year)) {
-                $query->whereMonth('created_at', $request->month)
-                ->whereYear('created_at', $request->year);
+                $query->whereMonth('start_date', $request->month)
+                ->whereYear('start_date', $request->year);
         }
         if (!empty($request->location)) {
             $query->where('location', $request->location);
@@ -60,23 +60,18 @@ class MonitoringOPXController extends Controller
                 return response()->json(['error' => 'Data not found'], 404);
             }
 
-            // Ambil tanggal created_at dari detail
-            $createdAt = Carbon::parse($detail->created_at);
+            $createdAt = Carbon::parse($detail->start_date);
             $startOfMonth = $createdAt->copy()->startOfMonth()->startOfDay();
             $endOfMonth   = $createdAt->copy()->endOfMonth()->endOfDay();
-
-            // Hitung total price (sum) dan tambahkan ke $detail
             $sumPrice = MonitoringOPX::where([
                 'location' => $detail->location,
                 'category' => $detail->category,
             ])
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->whereBetween('start_date', [$startOfMonth, $endOfMonth])
             ->select(DB::raw('SUM(price) as sumPrice'))
             ->value('sumPrice');
 
-            $detail->sumPrice = $sumPrice ?? 0; // Tambahkan properti sumPrice ke object $detail
-
-            // Ambil log detail
+            $detail->sumPrice = $sumPrice ?? 0;
             $log = MonitoringOPX::with([
                 'categoryRelation',
                 'locationRelation',
@@ -86,9 +81,12 @@ class MonitoringOPXController extends Controller
                 'location' => $detail->location,
                 'category' => $detail->category,
             ])
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-            ->get();
-
+            ->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
+            if($detail->product !== 0){
+                $log->where('product', $detail->product);
+            }
+            $log = $log->get();
+            
             return response()->json([
                 'detail' => $detail,
                 'log'    => $log
@@ -97,13 +95,24 @@ class MonitoringOPXController extends Controller
     }
     function getDetervative(Request $request) {
         $head = MonitoringOPX::find($request->id);
-        $data = MonitoringOPX::with([
-            'productRelation'
-        ])->where([
-            'category' => $head->category,
-            'location' => $head->location,
+        $createdAt = Carbon::parse($head->start_date);
+        $startOfMonth = $createdAt->copy()->startOfMonth()->startOfDay();
+        $endOfMonth   = $createdAt->copy()->endOfMonth()->endOfDay();
+       $data = MonitoringOPX::select(
+                DB::raw('SUM(monitoring_opx.price) as sumPrice'),
+                'monitoring_opx.category',
+                'master_product_opx.name as product_name',
+                'monitoring_opx.location',
+                'monitoring_opx.start_date',
+                'monitoring_opx.price',
+            )
+            ->join('master_product_opx', 'master_product_opx.id', '=', 'monitoring_opx.product')
+            ->where('monitoring_opx.category', $head->category)
+            ->where('monitoring_opx.location', $head->location)
+            ->whereBetween('monitoring_opx.created_at', [$startOfMonth, $endOfMonth])
+            ->groupBy('monitoring_opx.category', 'master_product_opx.name', 'monitoring_opx.location')
+            ->get();
 
-        ])->get();
         return response()->json([
             'data'=>$data
         ]);
