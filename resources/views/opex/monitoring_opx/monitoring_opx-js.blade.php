@@ -620,21 +620,26 @@ $(document).on('click', '.detervative', function() {
     var id = $(this).data('id');
     getChildOPX(id);
 });
-$('#btn_export_excel').off().on('click', function() {
+$('#btn_export_excel').off().on('click', function () {
     let location = $('#location_filter').val() || '';
     let period   = $('#year_filter').val(); // Format YYYY-MM
+
     let year = '', month = '';
     if (period) {
         let parts = period.split('-');
         year = parts[0];
         month = parts[1];
     }
-    let base = window.location.origin;
+
+    // Ambil base URL dari Laravel (dinamis, aman di lokal/server)
+    let base = "{{ url('/') }}"; 
     alert(base);
-    return false;
+    return false
     let url = `${base}/export-excel?location=${location}&year=${year}&month=${month}`;
+    console.log('Exporting to:', url);
     window.location.href = url;
 });
+
 
 
 </script>
