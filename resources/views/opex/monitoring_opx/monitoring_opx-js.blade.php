@@ -633,8 +633,6 @@ $('#btn_export_excel').off().on('click', function () {
 
     // Ambil base URL dari Laravel (dinamis, aman di lokal/server)
     let base = "{{ url('/') }}"; 
-    alert(base);
-    return false
     let url = `${base}/export-excel?location=${location}&year=${year}&month=${month}`;
     console.log('Exporting to:', url);
     window.location.href = url;
