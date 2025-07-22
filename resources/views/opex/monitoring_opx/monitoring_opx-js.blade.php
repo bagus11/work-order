@@ -630,6 +630,8 @@ $('#btn_export_excel').off().on('click', function() {
         month = parts[1];
     }
     let base = window.location.origin;
+    alert(base);
+    return false;
     let url = `${base}/export-excel?location=${location}&year=${year}&month=${month}`;
     window.location.href = url;
 });
