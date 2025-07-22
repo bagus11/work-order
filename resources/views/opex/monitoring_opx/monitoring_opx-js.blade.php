@@ -42,23 +42,57 @@ $('#btn_filter').off().on('click', function () {
 
     getActiveItems('get_kantor', null, 'location_filter','Location')
     $('#btn_add_opx').on('click', function(){
+        Swal.fire({
+            title: "<strong>Peringatan</strong>",
+            icon: "info",
+            html: `
+                Nilai Harus diinputkan manual, untuk menghindari error pada saat inputkan nilai, silahkan gunakan format angka dengan benar
+            `,
+            showCloseButton: true,
+            showCancelButton: false,
+            focusConfirm: false,
+            confirmButtonText: `
+                <i class="fa fa-check"></i>
+            `,
+            confirmButtonAriaLabel: false,
+
+            });
         getActiveItems('getActiveCategoryOPX', null, 'select_category','category')
         getActiveItems('get_kantor', null, 'select_location','Location')
-        $('#product_label').prop('hidden', true)
+        $('.product_label').prop('hidden', true)
     })
+    $('#price').on('keydown', function (e) {
+        if (e.ctrlKey && (e.key === 'v' || e.key === 'V')) {
+            e.preventDefault();
+            toastr.warning('Paste tidak diizinkan pada field ini!');
+        }
+    });
+    $('#pph').on('keydown', function (e) {
+        if (e.ctrlKey && (e.key === 'v' || e.key === 'V')) {
+            e.preventDefault();
+            toastr.warning('Paste tidak diizinkan pada field ini!');
+        }
+    });
+    $('#ppn').on('keydown', function (e) {
+        if (e.ctrlKey && (e.key === 'v' || e.key === 'V')) {
+            e.preventDefault();
+            toastr.warning('Paste tidak diizinkan pada field ini!');
+        }
+    });
+
     onChange('select_category','category')
     onChange('select_product','product')
     onChange('select_location','location')
     $('#select_category').on('change', function(){
         var select_category = $('#select_category').val()
         if(select_category == 1){
-            $('#product_label').prop('hidden', false)
+            $('.product_label').prop('hidden', false)
             var data ={
                 'category' : select_category
             }
             getActiveItems('getProductFilter',data,'select_product','Product')
         }else{
-            $('#product_label').prop('hidden', true)
+            $('.product_label').prop('hidden', true)
         }
     })
     $('#editISModal').on('hidden.bs.modal', function () {
@@ -101,6 +135,10 @@ $('#btn_filter').off().on('click', function () {
             $('#pph').val('')
             $('#ppn').val('')
             toastr['success'](response.meta.message)
+               var params = getFilterParams();
+                getCallbackNoSwal('getOPX', params, function(response) {
+                    mapping(response.data);
+                });
         })
 
     })
@@ -122,8 +160,10 @@ $('#btn_filter').off().on('click', function () {
             'pr' : $('#pr').val(),
             'id' : $('#po_id').val(),
         }
+        $('#btn_add_po').prop('disabled', true);
         postCallbackNoSwal('addPOOPX', data,function(response){
             toastr['success'](response.meta.message)
+            $('#btn_add_po').prop('disabled', false);
             $('#po').val('')
             $('#pr').val('')
             var data_test = {
@@ -234,7 +274,7 @@ function mapping(response) {
             `<button type="button" class="btn editPO btn-sm btn-warning" data-toggle="modal" data-target="#POModal" title="Edit PO" data-name="${response[i].name}" data-id="${response[i].id}" data-type="${response[i].type}">
                 <i class="fas fa-edit"></i>
             </button>`;
-        var buttonInfo = response[i].category == 1 ? 
+        var buttonInfo = response[i].category != 0 ? 
             `<button type="button" class="btn info btn-sm btn-info" data-id="${response[i].id}" title="Detail OPX">
                 <i class="fas fa-info-circle"></i>
             </button>` : '';
@@ -282,132 +322,172 @@ function mapping(response) {
 }
 
 function getDetailOPX(id) {
+    $('#opx_log_table').DataTable().clear();
+    $('#opx_log_table').DataTable().destroy();
     getCallback('detailOPX', { 'id': id }, function (response) {
-        swal.close();
-        if (response.detail) {
-            $('#opx_category').text(response.detail.category_relation?.name || '-');
-            $('#opx_location').text(response.detail.location_relation?.name || '-');
-            $('#opx_created_by').text(response.detail.user?.name || '-');
-            $('#opx_created').text(formatDate(response.detail.created_at));
-            $('#opx_sum_price').text(
-                response.detail.sumPrice 
-                    ? `Rp ${parseInt(response.detail.sumPrice).toLocaleString('id-ID')}` 
-                    : 'Rp 0'
-            );
+       swal.close();
+    if (response.detail) {
+        $('#opx_category').text(response.detail.category_relation?.name || '-');
+        $('#opx_location').text(response.detail.location_relation?.name || '-');
+        $('#opx_created_by').text(response.detail.user?.name || '-');
+        $('#opx_created').text(formatDate(response.detail.start_date));
 
-            // Isi log table
-            var logRows = '';
-            var totalLogPrice = 0, totalPPN = 0, totalDPH = 0, totalPPH = 0;
+        // Isi log table
+        var logRows = '';
+        var totalLogPrice = 0, totalPPN = 0, totalDPH = 0, totalPPH = 0;
 
-            if (response.log && response.log.length > 0) {
-                $.each(response.log, function (index, item) {
-                    let price = parseInt(item.price || 0);
-                    let ppn   = parseInt(item.ppn || 0);
-                    let dph   = parseInt(item.dph || 0);
-                    let pph   = parseInt(item.pph || 0);
+        if (response.log && response.log.length > 0) {
+            $.each(response.log, function (index, item) {
+                let price = parseInt(item.price || 0);
+                let ppn   = parseInt(item.ppn || 0);
+                let dph   = parseInt(item.dph || 0);
+                let pph   = parseInt(item.pph || 0);
 
-                    totalLogPrice += price;
-                    totalPPN += ppn;
-                    totalDPH += dph;
-                    totalPPH += pph;
+                totalLogPrice += price;
+                totalPPN += ppn;
+                totalDPH += dph;
+                totalPPH += pph;
 
-                    logRows += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${item.category_relation?.name || '-'}</td>
-                            <td>${item.location_relation?.name || '-'}</td>
-                            <td>${item.product_relation?.name || '-'}</td>
-                            <td>${item.note}</td>
-                            <td>Rp ${price.toLocaleString('id-ID')}</td>
-                            <td>Rp ${ppn.toLocaleString('id-ID')}</td>
-                            <td>Rp ${dph.toLocaleString('id-ID')}</td>
-                            <td>Rp ${pph.toLocaleString('id-ID')}</td>
-                            <td>${formatDate(item.created_at)}</td>
-                        </tr>
-                    `;
-                });
-            } else {
-                logRows = `<tr><td colspan="9" class="text-center">No Data</td></tr>`;
-            }
+                logRows += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.category_relation?.name || '-'}</td>
+                        <td>${item.product_relation?.name || '-'}</td>
+                        <td>${item.note || '-'}</td>
+                        <td>Rp ${price.toLocaleString('id-ID')}</td>
+                        <td>Rp ${ppn.toLocaleString('id-ID')}</td>
+                        <td>Rp ${dph.toLocaleString('id-ID')}</td>
+                        <td>Rp ${pph.toLocaleString('id-ID')}</td>
+                        <td>${formatDate(item.start_date)}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            logRows = `<tr><td colspan="9" class="text-center">No Data</td></tr>`;
+        }
 
-            $('#opx_log_table tbody').html(logRows);
-            $('#opx_log_total_price').text(`Rp ${totalLogPrice.toLocaleString('id-ID')}`);
-            $('#opx_log_total_ppn').text(`Rp ${totalPPN.toLocaleString('id-ID')}`);
-            $('#opx_log_total_dph').text(`Rp ${totalDPH.toLocaleString('id-ID')}`);
-            $('#opx_log_total_pph').text(`Rp ${totalPPH.toLocaleString('id-ID')}`);
+        $('#opx_log_table tbody').html(logRows);
+        // Inisialisasi DataTable dengan scroll horizontal
+        $('#opx_log_table').DataTable({
+            scrollX: true,
+            autoWidth: false,
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            columnDefs: [
+                { width: "40px", targets: 0 },  // Kolom #
+                { width: "150px", targets: 1 }, // Category
+                { width: "150px", targets: 2 }, // Product
+                { width: "150px", targets: 3 }, // Description
+                { width: "120px", targets: 4 }, // Price
+                { width: "80px", targets: 5 },  // PPN
+                { width: "80px", targets: 6 },  // DPH
+                { width: "80px", targets: 7 },  // PPH
+                { width: "130px", targets: 8 }, // Created At
+            ]
+        }).columns.adjust();
 
-            $('#infoOPXModal').modal('show');
+        $('#opx_log_total_price').text(`Rp ${totalLogPrice.toLocaleString('id-ID')}`);
+        $('#opx_log_total_ppn').text(`Rp ${totalPPN.toLocaleString('id-ID')}`);
+        $('#opx_log_total_dph').text(`Rp ${totalDPH.toLocaleString('id-ID')}`);
+        $('#opx_log_total_pph').text(`Rp ${totalPPH.toLocaleString('id-ID')}`);
+
+        $('#infoOPXModal').modal('show');
         } else {
             toastr.error('Data not found');
         }
     });
 }
+$('#infoOPXModal').on('shown.bs.modal', function () {
+     
+    $('#opx_log_table').DataTable().columns.adjust();
+});
 
- $('#opx_table tbody').off().on('click', '.info', function () {
-    alert('test')
-        var id = $(this).data('id');
-        getCallback('detailOPX', { 'id': id }, function (response) {
-            swal.close()
-            if (response.detail) {
-                $('#opx_category').text(response.detail.category_relation?.name || '-');
-                $('#opx_location').text(response.detail.location_relation?.name || '-');
-                $('#opx_created_by').text(response.detail.user?.name || '-');
-                $('#opx_created').text(formatDate(response.detail.created_at));
-                $('#opx_sum_price').text(
-                    response.detail.sumPrice 
-                        ? `Rp ${parseInt(response.detail.sumPrice).toLocaleString('id-ID')}` 
-                        : 'Rp 0'
-                );
+function getChildOPX(id) {
+    $('#opx_log_table').DataTable().clear();
+    $('#opx_log_table').DataTable().destroy();
+   getCallback('childOPXDetail', { 'id': id }, function (response) {
+    swal.close();
+    if (response.detail) {
+        $('#opx_category').text(response.detail.category_relation?.name || '-');
+        $('#opx_location').text(response.detail.location_relation?.name || '-');
+        $('#opx_created_by').text(response.detail.user?.name || '-');
+        $('#opx_created').text(formatDate(response.detail.start_date));
 
-                // Log Table
-                var logRows = '';
-                var totalLogPrice = 0;
-                var totalPPN = 0, totalDPH = 0, totalPPH = 0;
+        // Isi log table
+        var logRows = '';
+        var totalLogPrice = 0, totalPPN = 0, totalDPH = 0, totalPPH = 0;
 
-                if (response.log && response.log.length > 0) {
-                    $.each(response.log, function (index, item) {
-                        let price = parseInt(item.price || 0);
-                        let ppn   = parseInt(item.ppn || 0);
-                        let dph   = parseInt(item.dph || 0);
-                        let pph   = parseInt(item.pph || 0);
+        if (response.log && response.log.length > 0) {
+            $.each(response.log, function (index, item) {
+                let price = parseInt(item.price || 0);
+                let ppn   = parseInt(item.ppn || 0);
+                let dph   = parseInt(item.dph || 0);
+                let pph   = parseInt(item.pph || 0);
 
-                        totalLogPrice += price;
-                        totalPPN += ppn;
-                        totalDPH += dph;
-                        totalPPH += pph;
+                totalLogPrice += price;
+                totalPPN += ppn;
+                totalDPH += dph;
+                totalPPH += pph;
 
-                        logRows += `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${item.category_relation?.name || '-'}</td>
-                                <td>${item.location_relation?.name || '-'}</td>
-                                <td>${item.product_relation?.name || '-'}</td>
-                                <td>Rp ${price.toLocaleString('id-ID')}</td>
-                                <td>Rp ${ppn.toLocaleString('id-ID')}</td>
-                                <td>Rp ${dph.toLocaleString('id-ID')}</td>
-                                <td>Rp ${pph.toLocaleString('id-ID')}</td>
-                                <td>${formatDate(item.created_at)}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    logRows = `<tr><td colspan="9" class="text-center">No Data</td></tr>`;
-                }
+                logRows += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.category_relation?.name || '-'}</td>
+                        <td>${item.product_relation?.name || '-'}</td>
+                        <td>${item.note || '-'}</td>
+                        <td>Rp ${price.toLocaleString('id-ID')}</td>
+                        <td>Rp ${ppn.toLocaleString('id-ID')}</td>
+                        <td>Rp ${dph.toLocaleString('id-ID')}</td>
+                        <td>Rp ${pph.toLocaleString('id-ID')}</td>
+                        <td>${formatDate(item.start_date)}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            logRows = `<tr><td colspan="9" class="text-center">No Data</td></tr>`;
+        }
 
-                // Set Data ke Tabel dan Total
-                $('#opx_log_table tbody').html(logRows);
-                $('#opx_log_total_price').text(`Rp ${totalLogPrice.toLocaleString('id-ID')}`);
-                $('#opx_log_total_ppn').text(`Rp ${totalPPN.toLocaleString('id-ID')}`);
-                $('#opx_log_total_dph').text(`Rp ${totalDPH.toLocaleString('id-ID')}`);
-                $('#opx_log_total_pph').text(`Rp ${totalPPH.toLocaleString('id-ID')}`);
+        $('#opx_log_table tbody').html(logRows);
 
-                // Show Modal
-                $('#infoOPXModal').modal('show');
-            } else {
-                toastr.error('Data not found');
-            }
-        });
-    });
+        // Destroy DataTable jika sudah ada
+       // Destroy DataTable jika sudah ada
+        // Inisialisasi DataTable dengan scroll horizontal
+        $('#opx_log_table').DataTable({
+            scrollX: true,
+            autoWidth: false,
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            columnDefs: [
+              { width: "40px", targets: 0 },  // Kolom #
+                { width: "150px", targets: 1 }, // Category
+                { width: "150px", targets: 2 }, // Product
+                { width: "150px", targets: 3 }, // Description
+                { width: "120px", targets: 4 }, // Price
+                { width: "80px", targets: 5 },  // PPN
+                { width: "80px", targets: 6 },  // DPH
+                { width: "80px", targets: 7 },  // PPH
+                { width: "130px", targets: 8 }, // Created At
+            ]
+        }).columns.adjust();
+
+
+        $('#opx_log_total_price').text(`Rp ${totalLogPrice.toLocaleString('id-ID')}`);
+        $('#opx_log_total_ppn').text(`Rp ${totalPPN.toLocaleString('id-ID')}`);
+        $('#opx_log_total_dph').text(`Rp ${totalDPH.toLocaleString('id-ID')}`);
+        $('#opx_log_total_pph').text(`Rp ${totalPPH.toLocaleString('id-ID')}`);
+
+        $('#infoOPXModal').modal('show');
+    } else {
+        toastr.error('Data not found');
+    }
+});
+
+}
+
 function mappingPOTable(response){
     var data =''
         $('#po_table').DataTable().clear();
@@ -419,8 +499,8 @@ function mappingPOTable(response){
             data += `
                 <tr>
                     <td style="text-align:center">${date} ${time}</td>
-                    <td><input type="text" style="font-size:10px" class="pr_change form-control" data-id="${response[i].id}" value="${response[i].pr}"></td>
-                      <td><input type="text" style="font-size:10px" class="po_change form-control" data-id="${response[i].id}" value="${response[i].po}"></td>
+                    <td style="width:20% !important"><input type="text" style="font-size:10px" class="pr_change form-control" data-id="${response[i].id}" value="${response[i].pr}"></td>
+                      <td style="width:20% !important"><input type="text" style="font-size:10px" class="po_change form-control" data-id="${response[i].id}" value="${response[i].po}"></td>
                     <td>${response[i].user_relation.name}</td>
                     <td style="text-align:center">
                         <button  type="button" class="btn addIS btn-sm btn-info" data-toggle="modal" data-target="#editISModal" data-id="${response[i].id}">
@@ -454,7 +534,7 @@ function mappingISTable(response){
                 const time = d.toTimeString().split(' ')[0];
             data += `
                 <tr>
-                    <td><input class="form-control is_change" data-is="${response[i].is}" data-id="${response[i].id}" value="${response[i].is}" ></td>
+                    <td style="width : 40% !important"><input style="font-size:10px !important" class="form-control is_change" data-is="${response[i].is}" data-id="${response[i].id}" value="${response[i].is}" ></td>
                     <td>${response[i].user_relation.name}</td>
                     
                 </tr>
@@ -488,7 +568,7 @@ function detail_log(id, table) {
                     <td style="text-align:center;">${response.data[i].product_name}</td>
                     <td style="text-align:center;">${formatRupiah(response.data[i].sumPrice)}</td>
                     <td style="text-align:center">
-                        <button class="btn btn-sm btn-info" type="button" data-id="${response.data[i].id}">
+                        <button class="btn btn-sm btn-info detervative" type="button" data-id="${response.data[i].id}">
                             <i class="fas fa-eye"></i>
                         </button>
                         <button type="button" class="btn editPO btn-sm btn-warning" data-toggle="modal" data-target="#POModal" title="Edit PO" data-name="${response.data[i].name}" data-id="${response.data[i].id}">
@@ -535,5 +615,23 @@ function detail_log(id, table) {
         });
     });
 }
+$(document).on('click', '.detervative', function() {
+
+    var id = $(this).data('id');
+    getChildOPX(id);
+});
+$('#btn_export_excel').off().on('click', function() {
+    let location = $('#location_filter').val() || '';
+    let period   = $('#year_filter').val(); // Format YYYY-MM
+    let year = '', month = '';
+    if (period) {
+        let parts = period.split('-');
+        year = parts[0];
+        month = parts[1];
+    }
+    let url = `/export-excel?location=${location}&year=${year}&month=${month}`;
+    window.location.href = url;
+});
+
 
 </script>

@@ -106,7 +106,15 @@
             </div>
       </div>
     </div>
+<style>
+    #opx_log_table th, 
+    #opx_log_table td {
+        white-space: nowrap;   /* Supaya tidak wrap ke bawah */
+        text-align: center;    /* Tengah semua kolom */
+        vertical-align: middle;
+    }
 
+</style>
 @include('work-order.chat-work_order')
 @include('work-order.add-work_order')
 @include('work-order.edit-work_order')

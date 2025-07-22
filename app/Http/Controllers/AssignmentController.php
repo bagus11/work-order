@@ -129,6 +129,7 @@ class AssignmentController extends Controller
                                    'message'=>$picName->name.' has assign work order transaction with request code :'.$log_wo->request_code,
                                    'subject'=>'Assignment WO',
                                    'status'=>0,
+                                   'type'=>1,
                                    'link'=>'work_order_list',
                                    'userId'=>$log_wo->user_id,
                                    'created_at'=>date('Y-m-d H:i:s')
@@ -137,6 +138,7 @@ class AssignmentController extends Controller
                                    'message'=>auth()->user()->name.' has assign work order transaction with request code :'.$log_wo->request_code.' to you',
                                    'subject'=>'Assignment WO',
                                    'status'=>0,
+                                   'type'=>1,
                                    'link'=>'work_order_list',
                                    'userId'=>$user_pic,
                                    'created_at'=>date('Y-m-d H:i:s')

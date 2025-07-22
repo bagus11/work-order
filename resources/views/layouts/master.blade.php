@@ -120,6 +120,12 @@
   .message_error {
     color: red;
   }
+  #infoOPXModal .modal-body {
+    overflow-x: auto;
+}
+.dataTables_info{
+  font-size: 9px !important;
+}
   fieldset {
         border: 1px groove #ddd !important;
         padding: 0 1.5em 1.5em 1.5em !important;

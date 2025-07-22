@@ -748,6 +748,7 @@ class WorkOrderController extends Controller
                         'message'=>$userMessage,
                         'subject'=>'Manual Assign',
                         'status'=>0,
+                        'type'=>1,
                         'link'=>'work_order_list',
                         'userId'=>$log_wo->user_id,
                         'created_at'=>date('Y-m-d H:i:s')
@@ -756,6 +757,7 @@ class WorkOrderController extends Controller
                         'message'=>$userMessage,
                         'subject'=>'Manual Assign',
                         'status'=>0,
+                        'type'=>1,
                         'link'=>'work_order_list',
                         'userId'=>$log_wo->user_id,
                         'created_at'=>date('Y-m-d H:i:s')

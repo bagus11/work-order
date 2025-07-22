@@ -14,29 +14,34 @@
       <div class="modal-body p-0">
         <!-- Form Input -->
         <div class="row mx-2 my-2">
-          <fieldset class="w-100">
+          <div class="col-6">
+            <fieldset class="w-100">
             <legend class="text-left">Add PO</legend>
             <input type="hidden" id="po_id">
             <div class="row">
               <div class="col-1 mt-2">
                 <p for="pr" class="mb-0">PR</p>
               </div>
-              <div class="col-4">
+              <div class="col-10 mb-2">
                 <input type="text" class="form-control" id="pr">
               </div>
               <div class="col-1 mt-2">
                 <p for="po" class="mb-0">PO</p>
               </div>
-              <div class="col-4">
+              <div class="col-10 mb-2">
                 <input type="text" class="form-control" id="po">
               </div>
-              <div class="col-1">
-                <button class="btn btn-sm btn-success" id="btn_add_po">
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <button class="btn btn-sm btn-success" id="btn_add_po" style="float: right">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
             </div>
           </fieldset>
+          </div>
+          
         </div>
 
         <!-- Table -->

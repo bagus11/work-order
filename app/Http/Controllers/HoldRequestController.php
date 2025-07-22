@@ -314,6 +314,7 @@ class HoldRequestController extends Controller
                 'message'=>'your WO transaction with request code : '.$request->requestCode.' has been taken over to '.$userName->name,
                 'subject'=>'Hold Request',
                 'status'=>0,
+                'type'=>1,
                 'link'=>'work_order_list',
                 'userId'=>$requestCodeOld->user_id,
                 'created_at'=>date('Y-m-d H:i:s')
@@ -322,6 +323,7 @@ class HoldRequestController extends Controller
                 'message'=>'your WO transaction with request code : '.$request->requestCode.' has been taken over to '.$userName->name,
                 'subject'=>'Hold Request',
                 'status'=>0,
+                'type'=>1,
                 'link'=>'work_order_list',
                 'userId'=>$requestCodeOld->user_id_support,
                 'created_at'=>date('Y-m-d H:i:s')
@@ -331,6 +333,7 @@ class HoldRequestController extends Controller
                 'message'=>auth()->user()->name.' has assign work order transaction with request code :'.$ticket_code.' to you',
                 'subject'=>'Hold Request',
                 'status'=>0,
+                'type'=>1,
                 'link'=>'work_order_list',
                 'userId'=>$request->picId,
                 'created_at'=>date('Y-m-d H:i:s')

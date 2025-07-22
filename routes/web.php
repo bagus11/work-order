@@ -408,12 +408,13 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('detailOPX', [MonitoringOPXController::class, 'detailOPX'])->name('detailOPX'); 
             Route::get('getPOOPX', [MonitoringOPXController::class, 'getPOOPX'])->name('getPOOPX'); 
             Route::get('getISOPX', [MonitoringOPXController::class, 'getISOPX'])->name('getISOPX'); 
+            Route::get('childOPXDetail', [MonitoringOPXController::class, 'childOPXDetail'])->name('childOPXDetail'); 
             Route::post('addOPX', [MonitoringOPXController::class, 'addOPX'])->name('addOPX'); 
             Route::post('addPOOPX', [MonitoringOPXController::class, 'addPOOPX'])->name('addPOOPX'); 
             Route::post('updateISOPX', [MonitoringOPXController::class, 'updateISOPX'])->name('updateISOPX'); 
             Route::post('addISOPX', [MonitoringOPXController::class, 'addISOPX'])->name('addISOPX'); 
             Route::post('updatePOOPX', [MonitoringOPXController::class, 'updatePOOPX'])->name('updatePOOPX'); 
-            Route::post('updatePROPX', [MonitoringOPXController::class, 'updatePROPX'])->name('updatePROPX'); 
+            Route::get('/export-excel', [MonitoringOPXController::class, 'exportPivot'])->name('opx.export.excel');
         // Monitoring OPEX
         
     // Opex

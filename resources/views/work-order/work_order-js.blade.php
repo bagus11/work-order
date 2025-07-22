@@ -756,7 +756,6 @@
             
                 for(i = 0; i < response.data.length; i++ )
                 {
-                    console.log(response)
                             const d = new Date(response.data[i].created_at)
                             const date = d.toISOString().split('T')[0];
                             const time = d.toTimeString().split(' ')[0];

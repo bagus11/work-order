@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\OPX;
 
+use App\Exports\OPXPivotExport;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddPOOPXRequest;
@@ -12,6 +13,7 @@ use App\Models\OPX\OPXPO;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MonitoringOPXController extends Controller
 {
@@ -82,39 +84,84 @@ class MonitoringOPXController extends Controller
                 'category' => $detail->category,
             ])
             ->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
-            if($detail->product !== 0){
-                $log->where('product', $detail->product);
-            }
+            // if($detail->product !== 0){
+            //     $log->where('product', $detail->product);
+            // }
+            // dd(vsprintf(str_replace('?', '%s', $log->toSql()), collect($log->getBindings())->map(fn($b) => is_numeric($b) ? $b : "'$b'")->toArray()));
+
             $log = $log->get();
             
             return response()->json([
                 'detail' => $detail,
                 'log'    => $log
             ]);
+    }
+function childOPXDetail(Request $request) {
+          $detail = MonitoringOPX::with([
+                'categoryRelation',
+                'locationRelation',
+                'productRelation',
+                'userRelation'
+            ])->find($request->id);
 
+            if (!$detail) {
+                return response()->json(['error' => 'Data not found'], 404);
+            }
+
+            $createdAt = Carbon::parse($detail->start_date);
+            $startOfMonth = $createdAt->copy()->startOfMonth()->startOfDay();
+            $endOfMonth   = $createdAt->copy()->endOfMonth()->endOfDay();
+            $sumPrice = MonitoringOPX::where([
+                'location' => $detail->location,
+                'category' => $detail->category,
+            ])
+            ->whereBetween('start_date', [$startOfMonth, $endOfMonth])
+            ->select(DB::raw('SUM(price) as sumPrice'))
+            ->value('sumPrice');
+
+            $detail->sumPrice = $sumPrice ?? 0;
+            $log = MonitoringOPX::with([
+                'categoryRelation',
+                'locationRelation',
+                'productRelation'
+            ])
+            ->where([
+                'location' => $detail->location,
+                'category' => $detail->category,
+            ])
+            ->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
+            $log->where('product', $detail->product);
+            $log = $log->get();
+            
+            return response()->json([
+                'detail' => $detail,
+                'log'    => $log
+            ]);
     }
     function getDetervative(Request $request) {
         $head = MonitoringOPX::find($request->id);
         $createdAt = Carbon::parse($head->start_date);
         $startOfMonth = $createdAt->copy()->startOfMonth()->startOfDay();
         $endOfMonth   = $createdAt->copy()->endOfMonth()->endOfDay();
-       $data = MonitoringOPX::select(
+        $query = MonitoringOPX::select(
+                'monitoring_opx.id',
                 DB::raw('SUM(monitoring_opx.price) as sumPrice'),
                 'monitoring_opx.category',
                 'master_product_opx.name as product_name',
                 'monitoring_opx.location',
                 'monitoring_opx.start_date',
-                'monitoring_opx.price',
+                'monitoring_opx.price'
             )
             ->join('master_product_opx', 'master_product_opx.id', '=', 'monitoring_opx.product')
             ->where('monitoring_opx.category', $head->category)
             ->where('monitoring_opx.location', $head->location)
-            ->whereBetween('monitoring_opx.created_at', [$startOfMonth, $endOfMonth])
-            ->groupBy('monitoring_opx.category', 'master_product_opx.name', 'monitoring_opx.location')
-            ->get();
+            ->whereBetween('monitoring_opx.start_date', [$startOfMonth, $endOfMonth])
+            ->groupBy('monitoring_opx.category', 'master_product_opx.name', 'monitoring_opx.location')->get();
 
+        // Lihat raw SQL dengan bindings
+        
         return response()->json([
-            'data'=>$data
+            'data'=>$query
         ]);
     }
     function getPOOPX(Request $request) {
@@ -274,5 +321,70 @@ class MonitoringOPXController extends Controller
             'status'=>$status,
             'message'=>$message,
         ]);
+    }
+     public function exportPivot(Request $request)
+    {
+        $location = $request->location;
+        $year     = $request->year ?? date('Y');
+        $endMonth = $request->month ?? date('n');
+
+        // Generate bulan dinamis (Jan - bulan filter)
+        $months = [];
+        for ($m = 1; $m <= $endMonth; $m++) {
+            $months[] = date('M', mktime(0, 0, 0, $m, 1));
+        }
+
+        // Query data Monitoring OPX dengan relasi kategori & produk
+        $query = MonitoringOPX::select(
+                'monitoring_opx.category',
+                'monitoring_opx.product',
+                DB::raw('MONTH(monitoring_opx.start_date) as month'),
+                DB::raw('SUM(monitoring_opx.price) as total_price')
+            )
+            ->with(['categoryRelation:id,name', 'productRelation:id,name'])
+            ->whereYear('monitoring_opx.start_date', $year)
+            ->whereMonth('monitoring_opx.start_date', '<=', $endMonth);
+
+        // Filter lokasi jika ada
+        if (!empty($location)) {
+            $query->where('monitoring_opx.location', $location);
+        }
+
+        $opx = $query
+            ->groupBy('monitoring_opx.category', 'monitoring_opx.product', DB::raw('MONTH(monitoring_opx.start_date)'))
+            ->orderBy('monitoring_opx.category')
+            ->orderBy('monitoring_opx.product')
+            ->get();
+
+        // Bentuk data pivot
+        $pivotData = [];
+        foreach ($opx as $row) {
+            $category = $row->categoryRelation->name ?? '-';
+            $product  = $row->productRelation->name ?? '-';
+            $month    = date('M', mktime(0, 0, 0, $row->month, 1));
+
+            $key = "{$category}_{$product}";
+            if (!isset($pivotData[$key])) {
+                $pivotData[$key] = [
+                    'category' => $category,
+                    'product'  => $product
+                ];
+            }
+
+            $pivotData[$key][$month] = $row->total_price;
+        }
+
+        // Isi 0 jika ada bulan yang kosong
+        foreach ($pivotData as &$item) {
+            foreach ($months as $m) {
+                if (!isset($item[$m])) {
+                    $item[$m] = 0;
+                }
+            }
+        }
+        unset($item);
+
+        // Download file Excel
+        return Excel::download(new OPXPivotExport($pivotData, $months), "opx_report_{$year}.xlsx");
     }
 }
