@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\OPX;
 
+use App\Exports\OPXExport;
 use App\Exports\OPXPivotExport;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddPOOPXRequest;
 use App\Http\Requests\StoreOPXRequest;
+use App\Models\MasterKantor;
 use App\Models\OPX\MonitoringOPX;
 use App\Models\OPX\OPXIS;
 use App\Models\OPX\OPXPO;
@@ -322,45 +324,63 @@ function childOPXDetail(Request $request) {
             'message'=>$message,
         ]);
     }
-     public function exportPivot(Request $request)
+ public function exportPivot(Request $request)
+{
+    $location = $request->location;
+    $year     = $request->year ?? date('Y');
+    $endMonth = $request->month ?? date('n');
+
+    $locations = ['HO', 'CMG', 'KRW'];
+    $months = [];
+    for ($m = 1; $m <= $endMonth; $m++) {
+        $months[] = [
+            'name'   => date('M', mktime(0, 0, 0, $m, 1)),
+            'number' => $m,
+        ];
+    }
+
+    // Data pivot
+    $pivotData = $this->getPivotData($location, $year, $endMonth, $locations, $months);
+
+    // Data amount source
+    $amountSourceData = $this->getAmountSourceData($location, $year, $endMonth);
+    
+    return Excel::download(
+        new OPXExport($pivotData, $amountSourceData, $months, $locations),
+        'opx_report.xlsx'
+    );
+}
+
+
+    private function getPivotData($location, $year, $endMonth, $locations, $months)
     {
-        $location = $request->location;
-        $year     = $request->year ?? date('Y');
-        $endMonth = $request->month ?? date('n');
-
-        // Generate bulan dinamis (Jan - bulan filter)
-        $months = [];
-        for ($m = 1; $m <= $endMonth; $m++) {
-            $months[] = date('M', mktime(0, 0, 0, $m, 1));
-        }
-
-        // Query data Monitoring OPX dengan relasi kategori & produk
         $query = MonitoringOPX::select(
                 'monitoring_opx.category',
                 'monitoring_opx.product',
+                'monitoring_opx.location',
                 DB::raw('MONTH(monitoring_opx.start_date) as month'),
                 DB::raw('SUM(monitoring_opx.price) as total_price')
             )
-            ->with(['categoryRelation:id,name', 'productRelation:id,name'])
+            ->with(['categoryRelation:id,name', 'productRelation:id,name', 'locationRelation:id,initial'])
             ->whereYear('monitoring_opx.start_date', $year)
             ->whereMonth('monitoring_opx.start_date', '<=', $endMonth);
 
-        // Filter lokasi jika ada
         if (!empty($location)) {
             $query->where('monitoring_opx.location', $location);
         }
 
         $opx = $query
-            ->groupBy('monitoring_opx.category', 'monitoring_opx.product', DB::raw('MONTH(monitoring_opx.start_date)'))
+            ->groupBy('monitoring_opx.category', 'monitoring_opx.product', 'monitoring_opx.location', DB::raw('MONTH(monitoring_opx.start_date)'))
             ->orderBy('monitoring_opx.category')
             ->orderBy('monitoring_opx.product')
             ->get();
 
-        // Bentuk data pivot
+        // Bentuk pivotData (sama seperti sebelumnya)
         $pivotData = [];
         foreach ($opx as $row) {
-            $category = $row->categoryRelation->name ?? '-';
-            $product  = $row->productRelation->name ?? '-';
+            $category = $row->categoryRelation->name ?? '';
+            $product  = $row->productRelation->name ?? '';
+            $loc      = $row->locationRelation->initial ?? '';
             $month    = date('M', mktime(0, 0, 0, $row->month, 1));
 
             $key = "{$category}_{$product}";
@@ -369,22 +389,135 @@ function childOPXDetail(Request $request) {
                     'category' => $category,
                     'product'  => $product
                 ];
-            }
-
-            $pivotData[$key][$month] = $row->total_price;
-        }
-
-        // Isi 0 jika ada bulan yang kosong
-        foreach ($pivotData as &$item) {
-            foreach ($months as $m) {
-                if (!isset($item[$m])) {
-                    $item[$m] = 0;
+                foreach ($months as $m) {
+                    foreach ($locations as $locKey) {
+                        $pivotData[$key]["{$m['name']}_{$locKey}"] = 0;
+                    }
+                    $pivotData[$key]["{$m['name']}_Total"] = 0;
                 }
             }
-        }
-        unset($item);
 
-        // Download file Excel
-        return Excel::download(new OPXPivotExport($pivotData, $months), "opx_report_{$year}.xlsx");
+            if (in_array($loc, $locations)) {
+                $pivotData[$key]["{$month}_{$loc}"] += $row->total_price;
+            }
+        }
+
+        foreach ($pivotData as &$row) {
+            foreach ($months as $m) {
+                $month = $m['name'];
+                $row["{$month}_Total"] = array_sum(array_intersect_key(
+                    $row,
+                    array_flip(array_map(fn($loc) => "{$month}_{$loc}", $locations))
+                ));
+            }
+        }
+        unset($row);
+
+        return $pivotData;
     }
+
+    private function getAmountSourceData($location, $year, $endMonth)
+    {
+        $queries = [];
+
+        // === PR ===
+        $queries[] = DB::table('monitoring_opx as mo')
+            ->leftJoin('opxpo as po', 'mo.id', '=', 'po.opx_id')
+            ->leftJoin('master_product_opx as mpo', 'mo.product', '=', 'mpo.id')
+            ->leftJoin('master_category_opx as mco', 'mo.category', '=', 'mco.id')
+            ->leftJoin('master_kantor as mk', 'mo.location', '=', 'mk.id')
+            ->select(
+                'mpo.name as product',
+                'mco.name as category',
+                DB::raw('MONTH(mo.start_date) as month'),
+                'mk.initial as location',
+                DB::raw('"PR" as type'),
+                'po.pr as amount'
+            )
+            ->whereYear('mo.start_date', $year)
+            ->whereMonth('mo.start_date', '<=', $endMonth)
+            ->when($location, fn($q) => $q->where('mo.location', $location));
+
+        // === PO ===
+        $queries[] = DB::table('monitoring_opx as mo')
+            ->leftJoin('opxpo as po', 'mo.id', '=', 'po.opx_id')
+            ->leftJoin('master_product_opx as mpo', 'mo.product', '=', 'mpo.id')
+            ->leftJoin('master_category_opx as mco', 'mo.category', '=', 'mco.id')
+            ->leftJoin('master_kantor as mk', 'mo.location', '=', 'mk.id')
+            ->select(
+                'mpo.name as product',
+                'mco.name as category',
+                DB::raw('MONTH(mo.start_date) as month'),
+                'mk.initial as location',
+                DB::raw('"PO" as type'),
+                'po.po as amount'
+            )
+            ->whereYear('mo.start_date', $year)
+            ->whereMonth('mo.start_date', '<=', $endMonth)
+            ->when($location, fn($q) => $q->where('mo.location', $location));
+
+        // === IS ===
+        $queries[] = DB::table('monitoring_opx as mo')
+            ->leftJoin('opxpo as po', 'mo.id', '=', 'po.opx_id')
+            ->leftJoin('opxis as is', 'po.id', '=', 'is.po_id')
+            ->leftJoin('master_product_opx as mpo', 'mo.product', '=', 'mpo.id')
+            ->leftJoin('master_category_opx as mco', 'mo.category', '=', 'mco.id')
+            ->leftJoin('master_kantor as mk', 'mo.location', '=', 'mk.id')
+            ->select(
+                'mpo.name as product',
+                'mco.name as category',
+                DB::raw('MONTH(mo.start_date) as month'),
+                'mk.initial as location',
+                DB::raw('"IS" as type'),
+                'is.is as amount'
+            )
+            ->whereYear('mo.start_date', $year)
+            ->whereMonth('mo.start_date', '<=', $endMonth)
+            ->when($location, fn($q) => $q->where('mo.location', $location));
+
+        // Ambil data mentah
+        $rawData = $queries[0]
+            ->unionAll($queries[1])
+            ->unionAll($queries[2])
+            ->get()
+            ->map(fn($item) => [
+                'category' => $item->category,
+                'product'  => $item->product,
+                'month'    => date('M', mktime(0, 0, 0, $item->month, 1)),
+                'location' => $item->location,
+                'type'     => $item->type,
+                'amount'   => $item->amount ?? '',
+            ])
+            ->toArray();
+
+        // === GROUPING (Gabung \n) ===
+        $groupedData = [];
+        foreach ($rawData as $item) {
+            $key    = "{$item['category']}_{$item['product']}";
+            $colKey = "{$item['month']}_{$item['location']}_{$item['type']}";
+
+            if (!isset($groupedData[$key])) {
+                $groupedData[$key] = [
+                    'category' => $item['category'],
+                    'product'  => $item['product'],
+                ];
+            }
+
+            if (!empty($groupedData[$key][$colKey])) {
+                $groupedData[$key][$colKey] .= "\n" . $item['amount'];
+            } else {
+                $groupedData[$key][$colKey] = $item['amount'];
+            }
+        }
+
+        return array_values($groupedData);
+    }
+
+
+
+
+
+
+
+
 }
