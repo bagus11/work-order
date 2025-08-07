@@ -494,81 +494,81 @@ class WorkOrderController extends Controller
                                             ->orderBy('created_at','desc')
                                             ->first();
                     // // Setup Duration
-                    //     $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
-                    //     $dateNow            =   date('Y-m-d');
+                        $dateBeforePost     =   $workOrderStatus->created_at->format('Y-m-d');
+                        $dateNow            =   date('Y-m-d');
 
-                    //     $client = new \GuzzleHttp\Client();
-                    //     $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
-                    //     $response = $api->getBody()->getContents();
-                    //     $data =json_decode($response, true);
-                    //     $totalTime =0;
-                    //     $test =[];
-                    //     // dd($workOrderStatus);
-                    //     foreach($data as $row){
-                    //         if($row['daytype'] =='WD'){
+                        $client = new \GuzzleHttp\Client();
+                        $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no='.auth()->user()->nik.'&startdate='.$dateBeforePost.'&enddate='.$dateNow.'');
+                        $response = $api->getBody()->getContents();
+                        $data =json_decode($response, true);
+                        $totalTime =0;
+                        $test =[];
+                        // dd($workOrderStatus);
+                        foreach($data as $row){
+                            if($row['daytype'] =='WD'){
 
-                    //         // Initialing Date && Time
-                    //             $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
-                    //             $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
-                    //             $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
-                    //             $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
+                            // Initialing Date && Time
+                                $startDateTimePIC           =   date('Y-m-d H:i:s', strtotime($workOrderStatus->created_at));
+                                $startDatePIC               =   date('Y-m-d', strtotime($workOrderStatus->created_at));
+                                $startTimePIC               =   date('H:i:s', strtotime($workOrderStatus->created_at));
+                                $shiftTimePIC               =   Carbon::createFromFormat('Y-m-d H:i:s', $startDateTimePIC);
 
-                    //             $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
-                    //             $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
-                    //             $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
+                                $shiftstartDatetime         =   date('Y-m-d H:i:s', strtotime($row['shiftstarttime']));
+                                $shiftstartDate             =   date('Y-m-d', strtotime($row['shiftstarttime']));
+                                $shiftstarttime             =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftstartDatetime);
 
-                    //             $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
-                    //             $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
-                    //             $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
+                                $dateTimeSystem             =   date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
+                                $timeSystem                 =   date('H:i:s', strtotime($dateTimeSystem));
+                                $endTimeSystem              =   Carbon::createFromFormat('Y-m-d H:i:s', $dateTimeSystem);
 
-                    //             $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
-                    //             $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
-                    //             $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
-                    //             $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
+                                $shiftendDatetime           =   date('Y-m-d H:i:s', strtotime($row['shiftendtime']));
+                                $shiftendDate               =   date('Y-m-d', strtotime($row['shiftendtime']));
+                                $shiftendTime               =   date('H:i:s', strtotime($row['shiftendtime']));
+                                $shiftendtime               =   Carbon::createFromFormat('Y-m-d H:i:s', $shiftendDatetime);
                               
-                    //         // Initialing Date && Time
+                            // Initialing Date && Time
 
-                    //         // Validation Date
-                    //             if($startDatePIC == $shiftstartDate)
-                    //             {
-                    //                 if($startTimePIC >=$shiftendTime){
-                    //                     $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime); 
-                    //                     $test_post =[
-                    //                         'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime
-                    //                     ];        
-                    //                 }else{
-                    //                     $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
-                    //                     $test_post =[
-                    //                         'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 1'
-                    //                     ];  
-                    //                 }
-                    //                 array_push($test,$test_post);
+                            // Validation Date
+                                if($startDatePIC == $shiftstartDate)
+                                {
+                                    if($startTimePIC >=$shiftendTime){
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime); 
+                                        $test_post =[
+                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime
+                                        ];        
+                                    }else{
+                                        $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
+                                        $test_post =[
+                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 1'
+                                        ];  
+                                    }
+                                    array_push($test,$test_post);
                                 
-                    //             }else{
-                    //                 if($shiftendDate == $dateNow){
-                    //                     if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
-                    //                         $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
-                    //                         $test_post =[
-                    //                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 2'
-                    //                         ];  
-                    //                     }else{
-                    //                         $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
-                    //                         $test_post =[
-                    //                             'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 3'
-                    //                         ];  
+                                }else{
+                                    if($shiftendDate == $dateNow){
+                                        if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
+                                            $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
+                                            $test_post =[
+                                                'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 2'
+                                            ];  
+                                        }else{
+                                            $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
+                                            $test_post =[
+                                                'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 3'
+                                            ];  
                                         
-                    //                     }
-                    //                 }else{
-                    //                     $totalTime += $shiftstarttime->diffInMinutes($shiftendtime) - 60;
-                    //                     $test_post =[
-                    //                         'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 4'
-                    //                     ];  
-                    //                 }
-                    //                 array_push($test,$test_post);
-                    //             }
-                    //         // Validation Date
-                    //         }
-                    //     }
+                                        }
+                                    }else{
+                                        $totalTime += $shiftstarttime->diffInMinutes($shiftendtime) - 60;
+                                        $test_post =[
+                                            'duration' =>   $startDatePIC . ' == '.$shiftstartDate.'  ==> '.$totalTime.' tahap 4'
+                                        ];  
+                                    }
+                                    array_push($test,$test_post);
+                                }
+                            // Validation Date
+                            }
+                        }
                     //     // dd($test);
                     // // Setup Duration
                     $totalTime = 0;
@@ -608,6 +608,7 @@ class WorkOrderController extends Controller
                                             'level'=>$status_wo
 
                                         ];
+
 
                             }else{
                                 $post               =[
@@ -1667,7 +1668,7 @@ class WorkOrderController extends Controller
     }
     public function updateWO(Request $request, UpdateWORequest $updateWorkOrderRequest)
     {
-        // try {
+        try {
             $updateWorkOrderRequest->validated();
             $header = WorkOrder::where('request_code', $request->input('request_code'))->first();
             $lastLog = WorkOrderLog::where('request_code', $request->input('request_code'))
@@ -1676,56 +1677,57 @@ class WorkOrderController extends Controller
             $finalDuration = 0; 
             $dateNow = Carbon::now()->format('Y-m-d');
             $dateBeforePost = Carbon::parse($lastLog->created_at)->format('Y-m-d');
-            // $client = new \GuzzleHttp\Client();
-            // $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . auth()->user()->nik . '&startdate=' . $dateBeforePost . '&enddate=' . $dateNow);
-            // $response = $api->getBody()->getContents();
-            // $data = json_decode($response, true);
-            // $durations = [];
-            // foreach ($data as $row) {
-            //     if ($row['daytype'] == 'WD') {
-            //         $start = \Carbon\Carbon::parse($row['shiftstarttime']);
-            //         $end = \Carbon\Carbon::parse($row['shiftendtime']);
-            //             $startToday = \Carbon\Carbon::parse($lastLog->created_at);
-            //         $validation = '';
-            //         if($end->isToday()){
-            //             if( $lastLog->created_at->format('Y-m-d') == date('Y-m-d')){
-            //                     $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
-            //                     $validation = '1';
-            //                 }else{
-            //                     $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
-            //                     $validation = '1 1';
+            $client = new \GuzzleHttp\Client();
+            $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . auth()->user()->nik . '&startdate=' . $dateBeforePost . '&enddate=' . $dateNow);
+            $response = $api->getBody()->getContents();
+            $data = json_decode($response, true);
+            $durations = [];
+            foreach ($data as $row) {
+                if ($row['daytype'] == 'WD') {
+                    $start = \Carbon\Carbon::parse($row['shiftstarttime']);
+                    $end = \Carbon\Carbon::parse($row['shiftendtime']);
+                        $startToday = \Carbon\Carbon::parse($lastLog->created_at);
+                    $validation = '';
+                    if($end->isToday()){
+                        if( $lastLog->created_at->format('Y-m-d') == date('Y-m-d')){
+                                $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                $validation = '1';
+                            }else{
+                                $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+                                $validation = '1 1';
 
-            //                 }
-            //             }else{
-            //                 if($start < $startToday){
-            //                     $minutes = $startToday->diffInMinutes($end); 
-            //                     $validation = '2 1';
-            //                 }else{
-            //                     $validation = '2';
-            //                     $minutes = $start->diffInMinutes($end);
-            //                 }
-            //             }
-            //         $finalDuration += $minutes;
-            //             $durations[] = [
-            //                 'date' => $row['date'] ?? $start->toDateString(),
-            //                 'start' => $start->format('H:i'),
-            //                 'end' => $end->format('H:i'),
-            //                 'minutes' => $minutes,
-            //                 'total' => $finalDuration,
-            //                 'validation'=> $validation
-            //             ];
+                            }
+                        }else{
+                            if($start < $startToday){
+                                $minutes = $startToday->diffInMinutes($end); 
+                                $validation = '2 1';
+                            }else{
+                                $validation = '2';
+                                $minutes = $start->diffInMinutes($end);
+                            }
+                        }
+                    $finalDuration += $minutes;
+                        $durations[] = [
+                            'date' => $row['date'] ?? $start->toDateString(),
+                            'start' => $start->format('H:i'),
+                            'end' => $end->format('H:i'),
+                            'minutes' => $minutes,
+                            'total' => $finalDuration,
+                            'validation'=> $validation
+                        ];
                         
-            //     }
-            // }
-                    dd($finalDuration);
+                }
+            }
             
-        // } catch (\Throwable $th) {
-        //     return ResponseFormatter::error(
-        //         $th,
-        //         'Failed to update Work Order',
-        //         500
-        //     );
-        // }
+                    
+            
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                $th,
+                'Failed to update Work Order',
+                500
+            );
+        }
     }
 
 }

@@ -87,7 +87,7 @@
                         <div class="col-2 mt-2">
                             <p>Subject</p>
                         </div>
-                        <div class="col-4">
+                        <div class="col-4 mb-2">
                             <input type="text" id="subject" name="subject" class="form-control">
                             <input type="hidden" id="location_id" name="location_id" class="form-control">
                             <input type="hidden" id="department_id" name="department_id" class="form-control">
@@ -97,8 +97,8 @@
                         <div class="col-2 mt-2">
                             <p>Attachment</p>
                         </div>
-                        <div class="col-4">
-                            <input type="file" id="attachment" name="attachment" class="form-control" 
+                        <div class="col-4 mb-2">
+                            <input type="file" style="font-size: 12px" id="attachment" name="attachment" class="form-control" 
                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png">
                             <span class="message_error attachment_error"></span>
                         </div>

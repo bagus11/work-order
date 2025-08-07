@@ -234,6 +234,7 @@
         formData.append('asset_type', $('#select_asset_type').val());
         formData.append('currentPath', $('#currentPath').val());
         formData.append('location_id', $('#location_id').val());
+        formData.append('request_type', request_type);
         formData.append('destination_location_id', $('#destination_location_id').val());
         formData.append('current_user_id', $('#current_user_id').val());
         formData.append('receiver_id', $('#receiver_id').val());

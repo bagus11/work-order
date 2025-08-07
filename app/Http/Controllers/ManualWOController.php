@@ -117,6 +117,8 @@ class ManualWOController extends Controller
                 'message'=>auth()->user()->name.' has create your ticket transaction with request code : '.$ticket_code,
                 'subject'=>'Manual Ticket',
                 'status'=>0,
+                'type'=>1,
+                'request_code'=>$ticket_code,
                 'link'=>'work_order_list',
                 'userId'=>$request->username,
                 'created_at'=>date('Y-m-d H:i:s')
@@ -127,6 +129,8 @@ class ManualWOController extends Controller
                 'message'=>auth()->user()->name.' has create manual ticket transaction with request code : '.$ticket_code,
                 'subject'=>'Manual Ticket',
                 'status'=>0,
+                'type'=>1,
+                'request_code'=>$ticket_code,
                 'link'=>'work_order_list',
                 'userId'=>$headUser->id,
                 'created_at'=>date('Y-m-d H:i:s')
