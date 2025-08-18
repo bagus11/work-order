@@ -232,7 +232,6 @@ class HomeController extends Controller
             foreach($validation as $row){
                 if($row->link == 'work_order_list' || $row->link == 'work_order_assignment'){
                     $step1 = WorkOrder::where('request_code', $row->request_code)->first();
-                    dd(auth()->user()->id);
                     if($step1){
                         if($step1->status_wo != 0){
                             $post=[

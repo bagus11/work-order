@@ -13,11 +13,14 @@ use App\Http\Controllers\inv\Master\MasterCategoryInvController;
 use App\Http\Controllers\inv\Master\MasterProductInvController;
 use App\Http\Controllers\Inv\Master\MasterTypeInvController;
 use App\Http\Controllers\ManualWOController;
+use App\Http\Controllers\MasterAspekController;
 use App\Http\Controllers\MasterCategoryController;
 use App\Http\Controllers\MasterDepartementController;
 use App\Http\Controllers\MasterJabatanController;
 use App\Http\Controllers\MasterKantorController;
+use App\Http\Controllers\MasterModuleController;
 use App\Http\Controllers\MasterPriorityController;
+use App\Http\Controllers\MasterSystemController;
 use App\Http\Controllers\MasterTeamController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\Opex\Setting\OpexTeamController;
@@ -33,6 +36,7 @@ use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Setting\MasterRoomController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StockOpnameController;
+use App\Http\Controllers\UpdateSystemController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VCardController;
@@ -450,16 +454,15 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::post('approvalAssetProgress', [DistributionAssetController::class, 'approvalAssetProgress'])->name('approvalAssetProgress'); 
             // Approval Notification
 
-        // Service Asset
-        Route::get('service_asset', [ServiceAssetController::class, 'index'])->name('service_asset'); 
-        Route::get('getService', [ServiceAssetController::class, 'getService'])->name('getService'); 
-        Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode'); 
-        Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode'); 
-        Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService'); 
-        Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService'); 
-        Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService'); 
-        
-        // Service Asset
+            // Service Asset
+                Route::get('service_asset', [ServiceAssetController::class, 'index'])->name('service_asset'); 
+                Route::get('getService', [ServiceAssetController::class, 'getService'])->name('getService'); 
+                Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode'); 
+                Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode'); 
+                Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService'); 
+                Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService'); 
+                Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService'); 
+            // Service Asset
             
         // Distribution Asset
 
@@ -498,6 +501,12 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('addRoom', [MasterRoomController::class, 'addRoom'])->name('addRoom');
         Route::post('updateRoom', [MasterRoomController::class, 'updateRoom'])->name('updateRoom');
     // Master Room
+    // Master Aspek
+        Route::get('master_aspek', [MasterAspekController::class, 'index'])->name('master_aspek');
+        Route::get('getAspek', [MasterAspekController::class, 'getAspek'])->name('getAspek');
+        Route::post('addAspek', [MasterAspekController::class, 'addAspek'])->name('addAspek');
+        Route::post('updateAspek', [MasterAspekController::class, 'updateAspek'])->name('updateAspek');
+    // Master Aspek
 
     // Stock Opname
         Route::get('stock_opname', [StockOpnameController::class, 'index'])->name('stock_opname');
@@ -509,5 +518,27 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('approveSO', [StockOpnameController::class, 'approveSO'])->name('approveSO');
     // Stock Opname
 
+    // Master Module
+         Route::get('master_module', [MasterModuleController::class, 'index'])->name('master_module');
+         Route::get('getModule', [MasterModuleController::class, 'getModule'])->name('getModule');
+         Route::get('moduleFilter', [MasterModuleController::class, 'moduleFilter'])->name('moduleFilter');
+         Route::post('addModule', [MasterModuleController::class, 'addModule'])->name('addModule');
+         Route::post('updateModule', [MasterModuleController::class, 'updateModule'])->name('updateModule');
+    // Master Module
+
+
+    // Master System
+         Route::get('master_system', [MasterSystemController::class, 'index'])->name('master_system');
+         Route::get('getSystem', [MasterSystemController::class, 'getSystem'])->name('getSystem');
+         Route::get('systemFilter', [MasterSystemController::class, 'systemFilter'])->name('systemFilter');
+         Route::post('addSystem', [MasterSystemController::class, 'addSystem'])->name('addSystem');
+         Route::post('updateSystem', [MasterSystemController::class, 'updateSystem'])->name('updateSystem');
+    // Master System
+
+    // UpdateSystemm
+        Route::get('update_system', [UpdateSystemController::class, 'index'])->name('update_system');
+        Route::post('upload-image', [UpdateSystemController::class, 'uploadImage'])->name('upload-image');
+        Route::post('delete-image', [UpdateSystemController::class, 'deleteImage'])->name('delete-image');
+    // UpdateSystemm
 });
 
