@@ -253,4 +253,11 @@
             toastr['success'](response.meta.message)
         })
     })
+
+    $('#btn_revisi').on('click', function(){
+        postCallback('durationRevision', null, function(response){
+            swal.close()
+            toastr['success'](response.meta.message)
+        })
+    })
 </script>

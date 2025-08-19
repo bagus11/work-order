@@ -36,6 +36,11 @@
       </div>
     </div>
 </div>
+<div class="row mx-3">
+    <button class="btn btn-sm btn-danger" id="btn_revisi">
+        <i class="fas fa-refresh"></i>
+    </button>
+</div>
 @include('user.edit-user')
 @endsection
 @push('custom-js')
