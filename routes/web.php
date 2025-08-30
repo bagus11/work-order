@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApprovalMaatrixController;
 use App\Http\Controllers\Asset\ApprovalController;
 use App\Http\Controllers\Asset\DistributionAssetController;
 use App\Http\Controllers\Asset\MasterAssetController;
@@ -538,8 +539,22 @@ Route::group(['middleware' => ['auth']], function() {
 
     // UpdateSystemm
         Route::get('update_system', [UpdateSystemController::class, 'index'])->name('update_system');
+        Route::get('getTicketSystem', [UpdateSystemController::class, 'getTicketSystem'])->name('getTicketSystem');
+        Route::get('getDetailERP', [UpdateSystemController::class, 'getDetailERP'])->name('getDetailERP');
         Route::post('upload-image', [UpdateSystemController::class, 'uploadImage'])->name('upload-image');
         Route::post('delete-image', [UpdateSystemController::class, 'deleteImage'])->name('delete-image');
-    // UpdateSystemm
+        Route::post('addSystemTicket', [UpdateSystemController::class, 'addSystemTicket'])->name('addSystemTicket');
+        Route::post('approvalERP', [UpdateSystemController::class, 'approvalERP'])->name('approvalERP');
+        Route::post('finishTask', [UpdateSystemController::class, 'finishTask'])->name('finishTask');
+        // UpdateSystemm
+        
+    // Approval Matrix
+        Route::get('approval_matrix', [ApprovalMaatrixController::class, 'index'])->name('approval_matrix');
+        Route::get('getApprovalMatrix', [ApprovalMaatrixController::class, 'getApprovalMatrix'])->name('getApprovalMatrix');
+        Route::get('getApproverDetail', [ApprovalMaatrixController::class, 'getApproverDetail'])->name('getApproverDetail');
+        Route::post('addApprovalMatrix', [ApprovalMaatrixController::class, 'addApprovalMatrix'])->name('addApprovalMatrix');
+        Route::post('updateApproverMatrixDetail', [ApprovalMaatrixController::class, 'updateApproverMatrixDetail'])->name('updateApproverMatrixDetail');
+        
+    // Approval Matrix
 });
 

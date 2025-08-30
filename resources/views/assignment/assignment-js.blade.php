@@ -84,9 +84,14 @@ get_assignment()
                     toastr['error']('Failed to get data, please contact ICT Developer');
                 }
             });
-    
     });
+     $(document).ready(function() {
+        $('#select_request_type_priority').select2()
+        $('#select_categories_priority').select2()
+        $('#select_problem_type_priority').select2()
+     })
     $('#btn_approve_assign').on('click', function(){
+
         var data ={
         'user_pic': $('#user_pic').val(),
         'priority': $('#priority').val(),

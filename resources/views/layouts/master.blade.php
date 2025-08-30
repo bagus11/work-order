@@ -37,6 +37,7 @@
             @yield('content')
         </div>
         @include('home.modal.approval-asset')
+        @include('home.modal.approval-erp')
         @include('assignment.edit-assignment')
         @include('layouts.footer')
         </div>
@@ -126,6 +127,22 @@
 }
 .dataTables_info{
   font-size: 9px !important;
+}
+input[type=text]{
+  font-size: 10px !important;
+}
+input[type=datetime]{
+  font-size: 10px !important;
+}
+input[type=date]{
+  font-size: 10px !important;
+}
+input[type=number]{
+  font-size: 10px !important;
+}
+
+.form-control{
+  font-size: 10px !important;
 }
   fieldset {
         border: 1px groove #ddd !important;

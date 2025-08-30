@@ -192,97 +192,97 @@ class UserController extends Controller
     }
 
     function durationRevision() {
-    $header = WorkOrder::whereBetween('created_at', [
-            Carbon::create(2024, 1, 1),
-            // Carbon::create(2024, 8, 31)
-             Carbon::now()
-        ])
-        ->where('status_wo', 4)
-        ->where('status_approval', 1)
-        ->where('level',1)
-        ->get();
-
-    foreach ($header as $row) {
-        $pic = User::find($row->user_id_support);
-
-        $start_wo = WorkOrderLog::where('request_code', $row->request_code)
-            ->where('status_wo', 1)
-            ->first();
-
-        $end_wo = WorkOrderLog::where('request_code', $row->request_code)
+        $header = WorkOrder::whereBetween('created_at', [
+                Carbon::create(2024, 1, 1),
+                // Carbon::create(2024, 8, 31)
+                Carbon::now()
+            ])
             ->where('status_wo', 4)
-            ->first();
+            ->where('status_approval', 1)
+            ->where('level',1)
+            ->get();
 
-        if (! $start_wo || ! $end_wo || ! $pic) {
-            continue; // skip kalau data ga lengkap
-        }
+        foreach ($header as $row) {
+            $pic = User::find($row->user_id_support);
 
-        $client = new \GuzzleHttp\Client();
-        $api = $client->get(
-            'https://hris.pralon.co.id/application/API/getAttendance?emp_no='
-            . $pic->nik
-            . '&startdate=' . $start_wo->created_at->format('Y-m-d')
-            . '&enddate=' . $end_wo->created_at->format('Y-m-d')
-        );
-        $response = $api->getBody()->getContents();
-        $data = json_decode($response, true);
+            $start_wo = WorkOrderLog::where('request_code', $row->request_code)
+                ->where('status_wo', 1)
+                ->first();
 
-        $durations = [];
-        $finalDuration = 0;
+            $end_wo = WorkOrderLog::where('request_code', $row->request_code)
+                ->where('status_wo', 4)
+                ->first();
 
-        foreach ($data as $att) {
-          if ($att['daytype'] == 'WD') {
-            $start = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
-            $end   = Carbon::parse($att['shiftendtime']);    // jam shift selesai
-            $startWO = Carbon::parse($start_wo->created_at); // jam WO mulai
-            $endWO   = Carbon::parse($end_wo->created_at);   // jam WO selesai
-
-            $minutes = 0;
-            $validation = '';
-
-            // ✅ kalau start_wo & end_wo di tanggal yang sama
-            if ($startWO->isSameDay($endWO)) {
-                $minutes = $startWO->diffInMinutes($endWO);
-                $validation = 'same-day';
-            } else {
-                // ambil interval aktif WO dalam hari ini
-                $activeStart = $startWO->greaterThan($start) ? $startWO : $start;
-                $activeEnd   = $endWO->lessThan($end) ? $endWO : $end;
-
-                // hitung hanya kalau masih ada sisa waktu valid
-                if ($activeEnd > $activeStart) {
-                    $minutes = $activeStart->diffInMinutes($activeEnd);
-                    $validation = 'valid';
-                } else {
-                    $minutes = 0; // kalau WO di luar jam shift
-                    $validation = 'skip';
-                }
+            if (! $start_wo || ! $end_wo || ! $pic) {
+                continue; // skip kalau data ga lengkap
             }
 
-            $finalDuration += $minutes;
+            $client = new \GuzzleHttp\Client();
+            $api = $client->get(
+                'https://hris.pralon.co.id/application/API/getAttendance?emp_no='
+                . $pic->nik
+                . '&startdate=' . $start_wo->created_at->format('Y-m-d')
+                . '&enddate=' . $end_wo->created_at->format('Y-m-d')
+            );
+            $response = $api->getBody()->getContents();
+            $data = json_decode($response, true);
 
-            $durations[] = [
-                'date'       => $att['date'] ?? $start->toDateString(),
-                'start'      => $start->format('H:i'),
-                'end'        => $end->format('H:i'),
-                'minutes'    => $minutes,
-                'total'      => $finalDuration,
-                'validation' => $validation,
-                'request_code'=>$row->request_code
-            ];
-        }
-        // dd($durations);
+            $durations = [];
+            $finalDuration = 0;
 
-            // WorkOrderLog::where('request_code', $row->request_code)
-            //     ->where('status_wo', 4)
-            //     ->where('status_approval', 1)
-            //     ->limit(1)
-            //     ->update(['duration' => $finalDuration]);
+            foreach ($data as $att) {
+            if ($att['daytype'] == 'WD') {
+                $start = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
+                $end   = Carbon::parse($att['shiftendtime']);    // jam shift selesai
+                $startWO = Carbon::parse($start_wo->created_at); // jam WO mulai
+                $endWO   = Carbon::parse($end_wo->created_at);   // jam WO selesai
 
-            WorkOrder::where('request_code', $row->request_code)->update([
-                'duration' =>$finalDuration
-            ]);
-        }
+                $minutes = 0;
+                $validation = '';
+
+                // ✅ kalau start_wo & end_wo di tanggal yang sama
+                if ($startWO->isSameDay($endWO)) {
+                    $minutes = $startWO->diffInMinutes($endWO);
+                    $validation = 'same-day';
+                } else {
+                    // ambil interval aktif WO dalam hari ini
+                    $activeStart = $startWO->greaterThan($start) ? $startWO : $start;
+                    $activeEnd   = $endWO->lessThan($end) ? $endWO : $end;
+
+                    // hitung hanya kalau masih ada sisa waktu valid
+                    if ($activeEnd > $activeStart) {
+                        $minutes = $activeStart->diffInMinutes($activeEnd);
+                        $validation = 'valid';
+                    } else {
+                        $minutes = 0; // kalau WO di luar jam shift
+                        $validation = 'skip';
+                    }
+                }
+
+                $finalDuration += $minutes;
+
+                $durations[] = [
+                    'date'       => $att['date'] ?? $start->toDateString(),
+                    'start'      => $start->format('H:i'),
+                    'end'        => $end->format('H:i'),
+                    'minutes'    => $minutes,
+                    'total'      => $finalDuration,
+                    'validation' => $validation,
+                    'request_code'=>$row->request_code
+                ];
+            }
+            // dd($durations);
+
+                // WorkOrderLog::where('request_code', $row->request_code)
+                //     ->where('status_wo', 4)
+                //     ->where('status_approval', 1)
+                //     ->limit(1)
+                //     ->update(['duration' => $finalDuration]);
+
+                WorkOrder::where('request_code', $row->request_code)->update([
+                    'duration' =>$finalDuration
+                ]);
+            }
         
     }
 }

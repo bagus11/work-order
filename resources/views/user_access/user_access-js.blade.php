@@ -2,6 +2,10 @@
       
       get_role_user()
       get_role()
+     $(document).ready(function() {
+        $('#select_user').select2();
+    });
+
       $('#select_user').on('change', function(){
         var select_user = $('#select_user').val()
         $('#user_id').val(select_user)

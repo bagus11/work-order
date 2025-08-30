@@ -517,39 +517,39 @@ var auth_id = $('#auth_id').val()
                 }
             });
         }
-    function postCallback(route,data,callback){
-        $('.message_error').html('')
-        $.ajax({
-            url: route,
-            type: "post",
-            dataType: 'json',
-            data:data,
-            async: true,
-            beforeSend: function() {
-                SwalLoading('Please wait ...');
-            },
-            success:callback,
-            error: function(response) {
-                $('.message_error').html('')
-                swal.close();
-                if(response.status == 500){
-                    console.log(response)
-                    toastr['error'](response.responseJSON.meta.message);
-                    return false
+        function postCallback(route,data,callback){
+            $('.message_error').html('')
+            $.ajax({
+                url: route,
+                type: "post",
+                dataType: 'json',
+                data:data,
+                async: true,
+                beforeSend: function() {
+                    SwalLoading('Please wait ...');
+                },
+                success:callback,
+                error: function(response) {
+                    $('.message_error').html('')
+                    swal.close();
+                    if(response.status == 500){
+                        console.log(response)
+                        toastr['error'](response.responseJSON.meta.message);
+                        return false
+                    }
+                    if(response.status === 422)
+                    {
+                        $.each(response.responseJSON.errors, (key, val) => 
+                            {
+                                $('span.'+key+'_error').text(val)
+                            });
+                    }else{
+                        toastr['error']('Failed to get data, please contact ICT Developer');
+                    }
                 }
-                if(response.status === 422)
-                {
-                    $.each(response.responseJSON.errors, (key, val) => 
-                        {
-                            $('span.'+key+'_error').text(val)
-                        });
-                }else{
-                    toastr['error']('Failed to get data, please contact ICT Developer');
-                }
-            }
-        });  
-        getNotification()
-    }
+            });  
+            getNotification()
+        }
         function postCallbackNoSwal(route,data,callback){
             $.ajax({
                 url: route,
@@ -1041,8 +1041,9 @@ var auth_id = $('#auth_id').val()
             });
         });
     // Approval Asset Notification
-
+    
     $(document).on('click', '.approvalList', function() {
+        $('#approvalERPModal').modal({backdrop: 'static', keyboard: false})  
         var link = $(this).data('link');
         var request = $(this).data('request');
         $(link).modal('show');
@@ -1173,8 +1174,127 @@ var auth_id = $('#auth_id').val()
                             }
                         });
                     }
+        }else if(link == 'update_system'){
+            $('#approvalERPModal').modal('show')
+             $('#erp_pic, #erp_approval, #erp_select_approval').val('')
+            $('#erp_select_approval').select2().trigger('change')
+         getCallback('getDetailERP', { 'ticket_code': request }, function (response) {
+            swal.close();
+            if(response.data.step > 1){
+                $('.erp_pic_container').prop('hidden', true);
+            }else{
+                $('.erp_pic_container').prop('hidden', false);
+            }
+            // --- HEADER
+            let remarkRaw = response.data.remark ?? null;
+            let remark = remarkRaw 
+                ? remarkRaw.replace(/<[^>]*>/g, '').trim() || '-' 
+                : '-';
+
+            console.log("Remark cleaned:", remark);
+
+            $("#erp_ticket_code").html(': ' + (response.data.ticket_code ?? '-'));
+            $("#erp_subject").html(': ' + (response.data.subject ?? '-'));
+            $("#erp_created_at").html(': ' + (formatDateTime(response.data.created_at) ?? '-'));
+            $("#erp_created_by").html(': ' + (response.data.user_relation?.name ?? '-'));
+            $("#erp_additional_info").html(': ' + remark);
+           
+            // --- DETAIL
+            let details = response.data.detail_relation ?? [];
+            let html = '';
+
+            if (details.length > 0) {
+                html += `<ul class="list-group">`;
+                details.forEach((item, i) => {
+                    let cleanRemark = item.remark ? item.remark.replace(/<[^>]*>/g, '').trim() : '-';
+                html += `
+                        <li class="list-group-item border-0 p-0 mb-2">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition">
+                                <!-- Body -->
+                                <div class="card-body px-2 py-2 bg-light">
+                                    <div class="row align-items-center">
+                                        <!-- Keterangan -->
+                                        <div class="col-md-6">
+                                            <div class="mb-1">
+                                                <small class="text-muted d-block">Aspect</small>
+                                                <span class="fw-semibold text-dark">${item.aspect_relation?.name ?? '-'}</span>
+                                            </div>
+
+                                            <div class="mb-0">
+                                                <small class="text-muted d-block">Module</small>
+                                                <span class="fw-semibold text-dark">${item.module_relation?.name ?? '-'}</span>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <small class="text-muted d-block">Data Type</small>
+                                                <span class="fw-semibold text-dark">${item.data_type_relation?.name ?? '-'}</span>
+                                            </div>
+
+                                            <div class="mb-1">
+                                                <small class="text-muted d-block">Remark</small>
+                                                <span class="fw-semibold text-dark"> ${item.subject || '-'}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Gambar -->
+                                        ${item.attachment 
+                                            ? `<div class="col-md-6 text-center">
+                                                    <img src="${item.attachment}" 
+                                                        class="img-fluid rounded-6 shadow-sm border" 
+                                                        style="max-height:220px; object-fit:contain"/>
+                                            </div>` 
+                                            : ''}
+                                    </div>
+                                </div>
+
+                                <!-- Footer -->
+                            <div class="card-footer bg-white px-2 py-2 border-0 border-top">
+                                <small class="text-muted">
+                                    👤 <span class="fw-semibold">${item.user_relation?.name ?? '-'}</span>
+                                </small>
+                                <small class="text-muted" style="float:right !important">
+                                    🕒 ${formatDateTime(item.created_at) ?? '-'}
+                                </small>
+                            </div>
+
+                            </div>
+                        </li>
+                        `;
+                        });
+                html += `</ul>`;
+            } else {
+                html = `<div class="alert alert-warning">Tidak ada detail</div>`;
+            }
+            $("#erp_detail_relation").html(html);
+            getActiveItems('getUser', null, 'erp_select_pic', 'PIC')
+              
+        });
+        onChange('erp_select_pic','erp_pic')
+        onChange('erp_select_approval','erp_approval')
+            $(document).ready(function () {
+                $('#approvalERPModal').on('shown.bs.modal', function () {
+                    $('#erp_select_pic').select2({
+                        dropdownParent: $('#approvalERPModal'),
+                        width: '100%'
+                    });
+                });
+            })
         }
     });
+    $('#erp_approval_btn').on('click', function(){
+        var data ={
+            'erp_pic' : $('#erp_pic').val(),
+            'erp_approval' : $('#erp_approval').val(),
+            'erp_remark' : $('#erp_remark').val(),
+            'erp_ticket_code' : $('#erp_ticket_code').text().replace(': ','')
+        }
+        postCallback('approvalERP', data, function(response){
+            swal.close()
+            toastr['success'](response.meta.message)
+            $('#approvalERPModal').modal('hide')
+            getNotification()
+        })
+    })
     function formatDate(dateString) {
         if (!dateString) return '-';
         const months = [
@@ -1187,6 +1307,21 @@ var auth_id = $('#auth_id').val()
         const year = date.getFullYear();
         return `${day} ${month} ${year}`;
     }
+function formatDateTime(datetime) {
+    if (!datetime) return '-';
+
+    let date = new Date(datetime);
+    if (isNaN(date)) return datetime; // kalau bukan format date valid, balikin apa adanya
+
+    let year    = date.getFullYear();
+    let month   = ('0' + (date.getMonth() + 1)).slice(-2);
+    let day     = ('0' + date.getDate()).slice(-2);
+    let hours   = ('0' + date.getHours()).slice(-2);
+    let minutes = ('0' + date.getMinutes()).slice(-2);
+    let seconds = ('0' + date.getSeconds()).slice(-2);
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 
 </script>

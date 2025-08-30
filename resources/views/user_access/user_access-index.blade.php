@@ -1,6 +1,7 @@
 @extends('layouts.master')
 @section('title', 'User Access')
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <div class="container">
     <div class="row justify-content-center">
           <div class="col">
@@ -61,5 +62,6 @@
 @include('user_access.edit-permission_modal')
 @endsection
 @push('custom-js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @include('user_access.user_access-js')
 @endpush
