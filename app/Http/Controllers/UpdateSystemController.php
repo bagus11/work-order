@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
+use App\Http\Requests\FinalizeTicketRequest;
 use App\Http\Requests\UpdateSystemRequest;
 use App\Models\ApprovalMatrix;
 use App\Models\ApprovalMatrixDetail;
@@ -457,5 +458,15 @@ class UpdateSystemController extends Controller
                 500
             );
         }
+    }
+    function finalizeERP(Request $request, FinalizeTicketRequest $finalizeTicketRequest) {
+        $finalizeTicketRequest->validated();
+        $status  = $request->erp_result == '1' ? 3 : 4;
+        $post = [
+            'status'     => $status,
+            'updated_at' => now(),
+            'remark'     => $request->erp_remark_result,
+        ];
+        dd($request->all());
     }
 }

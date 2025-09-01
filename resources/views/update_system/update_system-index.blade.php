@@ -35,6 +35,7 @@
     </div>
 
 @include('update_system.modal.check-update_system')
+@include('update_system.modal.checking-update_system')
 @include('update_system.modal.edit-update_system')
 @include('update_system.modal.add-update_system')
 

@@ -347,11 +347,140 @@
         })
         $('#checkModal').on('hidden.bs.modal', function () {
             $('#editSystemModal').modal('show');
-        });
-      
-
-        
+        }); 
     // Edit Ticket 
+
+    // Checking Ticket 
+        $('#update_system_table').on('click', '.checking', function(){           
+            var ticket_code = $(this).data('ticket')
+            var statusHeader = $(this).data('status')
+            $('#finalizeERPModal').modal({backdrop: 'static', keyboard: false})
+            $('#finalizeERPModal').modal('show');
+            $('#finalizeERPModal').modal('show');
+            $('#check_ticket_code').val(ticket_code)
+
+            var data ={
+                'ticket_code' : ticket_code
+            }
+            getCallbackNoSwal('getDetailERP', data, function(response){
+                swal.close()
+                $("#check_subject").val(response.data.subject)
+                var datetime = formatDateTime(response.data.created_at)
+                var date = datetime.split(' ')[0]; 
+                $('#check_created_at').val(datetime)
+                $('#check_created_by').val(response.data.user_relation.name)
+                $('#check_add_info').val(response.data.remark)
+                $("#detail_ticket_container_check").empty();
+                let details = response.data.detail_relation ?? [];
+                let html = '';
+                if (details.length > 0) {
+                    html += `<ul class="list-group p-0">`;
+                    details.forEach((item, i) => {
+                        let cleanRemark = item.remark ? item.remark.replace(/<[^>]*>/g, '').trim() : '-';
+                        var status = item.status
+                        var color = ''
+                        var icon = ''
+                        switch (status) {
+                            case 0:
+                                color = 'warning';
+                                status = 'IN PROGRESS';
+                                icon = '<i class="fa-solid fa-hourglass"></i>';
+                                break;
+                            case 1:
+                                color = 'info';
+                                status = 'CHECKED BY PIC';
+                                icon = '<i class="fas fa-check"></i>';
+                                break;
+                            case 2:
+                                color = 'success';
+                                status = 'DONE';
+                                icon = '<i class="fa-solid fa-check-double"></i>';
+                                break;
+                            case 3:
+                                color = 'danger';
+                                status = 'REVISE';
+                                icon = '<i class="fa-solid fa-rotate-left"></i>';
+                                break;
+                            default:
+                                color = 'secondary';z
+                                status = 'UNKNOWN';
+                        }
+
+                    html += `
+                            <li class="list-group-item border-0 p-0 mb-2">
+                              <div class="card border-0 shadow-sm rounded-8 overflow-hidden hover-shadow transition">
+                                    <!-- Body -->
+                                    <div class="card-body py-2 bg-light">
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <span class="badge badge-${color}">
+                                                ${icon} ${status}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center">
+                                            <!-- Keterangan -->
+                                            <div class="col-md-7">
+                                                <div class="row mb-2">
+                                                    <div class="col-3">
+                                                        <small class="text-muted d-block">Aspect</small>
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <span class="fw-semibold text-dark">${item.aspect_relation?.name ?? '-'}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-3">
+                                                        <small class="text-muted d-block">Module</small>
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <span class="fw-semibold text-dark">${item.module_relation?.name ?? '-'}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-3">
+                                                        <small class="text-muted d-block">Data Type</small>
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <span class="fw-semibold text-dark">${item.data_type_relation?.name ?? '-'}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-3">
+                                                        <small class="text-muted d-block">Remark</small>
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <span class="fw-semibold text-dark">${cleanRemark}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                             <!-- Gambar -->
+                                        ${item.attachment 
+                                            ? `
+                                            <div class="col-md-5 text-center">
+                                                <img src="${item.attachment}" 
+                                                    class="img-fluid rounded-6 shadow-sm border" 
+                                                    style="max-height:220px; object-fit:contain"/>
+                                            </div>
+                                            `
+                                            : '' }
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                    `;
+                });
+                html += `</ul>`;
+            } else {
+                html = `<div class="alert alert-secondary text-center mb-0">No details available</div>`;
+            }
+
+            $("#detail_ticket_container_check").html(html);
+        });
+    });
+
+                                        
 // Operation
 
 // Function
@@ -449,6 +578,7 @@
             var data=''
                   for (i = 0; i < response.length; i++) {
                     var status = '';
+                    var btnCheck = '';
                     switch (response[i].status) {
                         case 0:
                             status = '<span style="font-size:9px !important" class="badge badge-info px-3 py-2"><i class="fas fa-users"></i> WAITING FOR APPROVAL</span>';
@@ -458,6 +588,18 @@
                             break;
                         case 2:
                             status = '<span style="font-size:9px !important" class="badge badge-primary px-3 py-2">CHECKED BY USER</span>';
+                            var btnCheck = `
+                                <button title="Check Task" 
+                                        class="checking btn btn-sm btn-dark rounded"  
+                                        data-ticket="${response[i].ticket_code}"  
+                                        data-name="${response[i].name}" 
+                                        data-location="${response[i].location_id}" 
+                                        data-system="${response[i].aspek}"  
+                                        data-id="${response[i]['id']}" 
+                                        data-status="${response[i]['status']}">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                </button>
+                            `;
                             break;
                         case 3:
                             status = '<span style="font-size:9px !important" class="badge badge-success px-3 py-2">DONE</span>';
@@ -488,6 +630,7 @@
                                         data-target="#editModuleModal">
                                     <i class="fas fa-solid fa-edit"></i>
                                 </button>
+                                ${btnCheck}
                             </td>
                         </tr>
                     `;

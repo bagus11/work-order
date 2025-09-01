@@ -546,6 +546,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('addSystemTicket', [UpdateSystemController::class, 'addSystemTicket'])->name('addSystemTicket');
         Route::post('approvalERP', [UpdateSystemController::class, 'approvalERP'])->name('approvalERP');
         Route::post('finishTask', [UpdateSystemController::class, 'finishTask'])->name('finishTask');
+        Route::post('finalizeERP', [UpdateSystemController::class, 'finalizeERP'])->name('finalizeERP');
         // UpdateSystemm
         
     // Approval Matrix

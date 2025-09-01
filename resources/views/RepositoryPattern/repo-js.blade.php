@@ -1323,5 +1323,20 @@ function formatDateTime(datetime) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+onChange('erp_select_result','erp_result')
+$('#btn_erp_finish').on('click', function(){
+    var data ={
+        'erp_result' : $('#erp_result').val(),
+        'erp_remark_result' : $('#erp_remark_result').val(),
+        'erp_ticket_code' : $('#check_ticket_code').val()
+    }
+    postCallback('finalizeERP', data, function(response){
+        swal.close()
+        toastr['success'](response.meta.message)
+        $('#checkingERPModal').modal('hide')
+        getNotification()
+        
+    })
 
+})
 </script>
