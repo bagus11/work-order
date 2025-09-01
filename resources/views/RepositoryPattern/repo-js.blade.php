@@ -1334,9 +1334,32 @@ $('#btn_erp_finish').on('click', function(){
         swal.close()
         toastr['success'](response.meta.message)
         $('#checkingERPModal').modal('hide')
+        let path = window.location.pathname; // hasil: "/work_order"
+        let segment = path.split("/")[1];    // hasil: "work_order"
+        console.log(segment);
+        if(segment == 'update_system'){
+            getCallbackNoSwal('getTicketSystem', null, function(response){
+                mappingTable(response.data, 'update_system_table')
+            })
+        }
         getNotification()
         
     })
 
 })
+function formatDuration(minutes) {
+    if (!minutes || minutes <= 0) return "-";
+    const hrs = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hrs > 0 ? hrs + " hour " : ""}${mins > 0 ? mins + " minutes" : ""}`.trim();
+}
+const BASE_URL = "{{ url('/') }}";
+
+$(document).on('click','.preview-image', function(){
+     const imageUrl = $(this).data('url');
+        console.log("Image URL:", imageUrl);
+        $('#imagePreviewModal img').attr('src', imageUrl);
+        $('#imagePreviewModal').modal('show');
+})
+
 </script>

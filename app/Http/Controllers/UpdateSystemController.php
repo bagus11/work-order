@@ -47,10 +47,14 @@ class UpdateSystemController extends Controller
             'userRelation.departmentRelation',
             'userRelation.locationRelation',
             'detailRelation',
+            'detailRelation.historyRelation',
+            'detailRelation.historyRelation.userRelation',
             'detailRelation.aspectRelation',
             'detailRelation.moduleRelation',
             'detailRelation.dataTypeRelation',
             'detailRelation.userRelation',
+            'historyRelation',
+            'historyRelation.userRelation',
         ])->where('ticket_code', $request->ticket_code)->first();
         return response()->json([
             'data' => $data
@@ -274,6 +278,7 @@ class UpdateSystemController extends Controller
         $post =[
             'step'          =>  $result, 
             'status'        => count($nextApproval) > 0 ? 0 : 1,
+            'pic'           => $currentApproval->step == 1 ? $request->erp_pic : $header->pic, 
             'updated_at'    => now(),
         ];
         $post_log =[
@@ -338,6 +343,66 @@ class UpdateSystemController extends Controller
                 $path = 'public/updateSystem/task/' . $filename;
             }
 
+            // Perhitungan Duration Detail System
+                  // Duration 
+                    $detailLogTicket = DetailSystemLog::where('ticket_code', $header->ticket_code)->orderBy('id','desc')->first();
+                        $client = new \GuzzleHttp\Client();
+                        $api = $client->get(
+                            'https://hris.pralon.co.id/application/API/getAttendance?emp_no='
+                            . auth()->user()->nik
+                            . '&startdate=' . $detailLogTicket->created_at->format('Y-m-d')
+                            . '&enddate=' . date('Y-m-d H:i:s')
+                        );
+                        $response = $api->getBody()->getContents();
+                        $data = json_decode($response, true);
+                        $durations = [];
+                        $finalDuration = 0;
+                        
+                        foreach ($data as $att) {
+                        if ($att['daytype'] == 'WD') {
+                            $start = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
+                            $end   = Carbon::parse($att['shiftendtime']);    // jam shift selesai
+                            $startTicket = Carbon::parse($detailLogTicket->created_at); // jam WO mulai
+                            $endTiccket   = Carbon::now();   // jam WO selesai
+
+                            $minutes = 0;
+                            $validation = '';
+
+                            // ✅ kalau start_wo & end_wo di tanggal yang sama
+                            if ($startTicket->isSameDay($endTiccket)) {
+                                $minutes = $startTicket->diffInMinutes($endTiccket);
+                                $validation = 'same-day';
+                            } else {
+                                // ambil interval aktif WO dalam hari ini
+                                $activeStart = $startTicket->greaterThan($start) ? $startTicket : $start;
+                                $activeEnd   = $endTiccket->lessThan($end) ? $endTiccket : $end;
+
+                                // hitung hanya kalau masih ada sisa waktu valid
+                                if ($activeEnd > $activeStart) {
+                                    $minutes = $activeStart->diffInMinutes($activeEnd);
+                                    $validation = 'valid';
+                                } else {
+                                    $minutes = 0; // kalau WO di luar jam shift
+                                    $validation = 'skip';
+                                }
+                            }
+
+                            $finalDuration += $minutes;
+
+                            $durations[] = [
+                                'date'       => $att['date'] ?? $start->toDateString(),
+                                'start'      => $start->format('H:i'),
+                                'end'        => $end->format('H:i'),
+                                'minutes'    => $minutes,
+                                'total'      => $finalDuration,
+                                'validation' => $validation,
+                                'request_code'=>$logTicket->request_code
+                            ];
+                        }
+                    }
+                // Duration 
+            // Perhitungan Duration Detail System
+
             $post = [
                 'status'        => 1,
                 'remark'        => $request->finish_remark,
@@ -351,6 +416,7 @@ class UpdateSystemController extends Controller
                 'user_id'       => auth()->user()->id,
                 'remark'        => $request->finish_remark,
                 'status'        => 1,
+                'attachment'    => $path,
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ];
@@ -361,9 +427,9 @@ class UpdateSystemController extends Controller
             DetailSystemLog::create($post_log);
             $header->update($post);
             $checkPending = DetailSystem::where('ticket_code', $ticket->ticket_code)
-                ->where('status', 0)
-                ->count();
-           
+            ->whereIn('status', [0, 2])
+            ->count();
+       
             if ($checkPending == 0) {
                 // Duration 
                     $logTicket = UpdateSystemLog::where('ticket_code', $header->ticket_code)->orderBy('id','desc')->first();
@@ -437,7 +503,18 @@ class UpdateSystemController extends Controller
                         'updated_at'    => now(),
                     ];
                     // dd($postLogSystem);
-                 $testTerakhir =   UpdateSystemLog::create($postLogSystem);
+                 UpdateSystemLog::create($postLogSystem);
+                  $post_notif =[
+                        'message'      => auth()->user()->name.' has completed all tasks, please verify and close the ticket',
+                        'subject'      => 'Update Data Request',
+                        'status'       => 0,
+                        'type'         => 2,
+                        'request_code' => $header->ticket_code,
+                        'link'         => 'update_system',
+                        'userId'       => $header->user_id,
+                        'created_at'   => now()
+                ];
+                WONotification::create($post_notif);
             }  
             
             DB::commit();
@@ -459,14 +536,89 @@ class UpdateSystemController extends Controller
             );
         }
     }
-    function finalizeERP(Request $request, FinalizeTicketRequest $finalizeTicketRequest) {
+  function finalizeERP(Request $request, FinalizeTicketRequest $finalizeTicketRequest)
+    {
         $finalizeTicketRequest->validated();
-        $status  = $request->erp_result == '1' ? 3 : 4;
-        $post = [
-            'status'     => $status,
-            'updated_at' => now(),
-            'remark'     => $request->erp_remark_result,
-        ];
-        dd($request->all());
+
+        DB::beginTransaction();
+
+        try {
+            $status  = $request->erp_result == '1' ? 4 : 3;
+            $header = UpdateSystem::where('ticket_code', $request->erp_ticket_code)->first();
+            $detail  = DetailSystem::where('ticket_code', $request->erp_ticket_code)->first();
+            $duration  = $status == 4 
+                ? UpdateSystemLog::where('ticket_code', $request->erp_ticket_code)->sum('duration') 
+                : 0;
+            $message = $status == 4 
+                ? 'has finalized the ticket as DONE' 
+                : 'has finalized the ticket as REVISE';
+
+            // data buat update UpdateSystem
+            $post = [
+                'status'     => $status,
+                'updated_at' => now(),
+                'remark'     => $request->erp_remark_result,
+                'duration'   => $duration,
+            ];
+            // update UpdateSystem
+            $header->update($post);
+            // log ke UpdateSystemLog
+            $postLogSystem = [
+                'ticket_code'   => $header->ticket_code,
+                'user_id'       => auth()->user()->id,
+                'approval_code' => $header->approval_code,
+                'duration'      => $duration,
+                'step'          => 0,
+                'status'        => $status,
+                'remark'        => auth()->user()->name . $message,
+                'created_at'    => now(),
+                'updated_at'    => now(),
+            ];
+            UpdateSystemLog::create($postLogSystem);
+            foreach (DetailSystem::where('ticket_code', $header->ticket_code)->get() as $item) {
+                // log ke DetailSystemLog
+                $postLogDetail = [
+                    'ticket_code'   => $item->ticket_code,
+                    'detail_code'   => $item->detail_code,
+                    'user_id'       => auth()->user()->id,
+                    'remark'        => $request->erp_remark_result,
+                    'status'        => $status,
+                    'created_at'    => now(),
+                    'updated_at'    => now(),
+                ];
+                DetailSystemLog::create($postLogDetail);
+                if ($status == 3) {
+                    // kalau direvisi, balikin status detail ke 0 (open)
+                    $item->update([
+                        'status'    => 2,
+                        'end_date'  => '0000-00-00',
+                    ]);
+                }
+            }
+
+            // notifikasi
+            $post_notif = [
+                'message'      => auth()->user()->name . $message,
+                'subject'      => 'Update Data Request',
+                'status'       => 0,
+                'type'         => 1,
+                'request_code' => $header->ticket_code,
+                'link'         => 'update_system',
+                'userId'       => $header->user_id,
+                'created_at'   => now()
+            ];
+            WONotification::create($post_notif);
+
+            // commit kalau semua sukses
+            DB::commit();
+
+            return ResponseFormatter::success($post, 'Ticket finalized successfully');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseFormatter::error([
+                'error' => $th->getMessage()
+            ], 'Failed to finalize ticket', 500);
+        }
     }
 }

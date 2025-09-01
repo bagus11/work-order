@@ -17,5 +17,8 @@ class UpdateSystemLog extends Model
         'duration',
         'remark',
     ];
+    function userRelation() {
+        return $this->hasOne(User::class,'id','user_id'); 
+    }
     
 }

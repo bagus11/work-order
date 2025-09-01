@@ -25,5 +25,8 @@ class DetailSystem extends Model
     function userRelation() {
         return $this->belongsTo(User::class,'user_id','id');
     }
+    function historyRelation(){
+        return $this->hasMany(DetailSystemLog::class,'detail_code','detail_code');
+    }
 
 }

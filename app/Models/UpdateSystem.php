@@ -19,5 +19,8 @@ class UpdateSystem extends Model
     function detailRelation() {
         return $this->hasMany(DetailSystem::class,'ticket_code','ticket_code');
     }
+    function historyRelation(){
+        return $this->hasMany(UpdateSystemLog::class,'ticket_code','ticket_code');
+    }
 
 }

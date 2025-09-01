@@ -36,6 +36,8 @@
             <input type="hidden" id="authId" value="{{auth()->user()->id}}">
             @yield('content')
         </div>
+      
+        @include('home.modal.image-preview')
         @include('home.modal.approval-asset')
         @include('home.modal.approval-erp')
         @include('assignment.edit-assignment')
@@ -68,7 +70,8 @@
 
         <!--Tempusdominus CSS CDN-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
-        <script>  
+        <script> 
+       
           $(document).on('click', '.dropdown-menu .nav-link', function (e) {
               e.stopPropagation();
           });
@@ -379,4 +382,9 @@ tr.shown td.subdetails-click {
     background-color: #FF9149; 
     color: white
    }
+   .badge-status {
+    display: inline-block;
+    min-width: 130px;   /* semua minimal 150px */
+    text-align: center; /* biar text/icon di tengah */
+}
 </style>
