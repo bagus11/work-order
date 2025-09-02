@@ -82,36 +82,16 @@
       </div>
 
       <!-- Footer -->
-      <div class="modal-footer p-2">
+      {{-- <div class="modal-footer p-2">
         <button type="button" class="btn btn-secondary rounded-pill px-3" data-dismiss="modal">
           <i class="fas fa-times"></i> Close
         </button>
-      </div>
+      </div> --}}
     </div>
   </div>
 </div>
 
 <style>
 /* Nav Tabs modern style */
-.nav-tabs .nav-link {
-  background: #f8f9fa;
-  color: #495057;
-  border: none;
-  transition: all 0.3s ease;
-}
-.nav-tabs .nav-link:hover {
-  background: #e9ecef;
-  color: #212529;
-}
-.nav-tabs .nav-link.active {
-  background: #212529;
-  color: #fff !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
 
-/* Limit modal height for scroll */
-.modal-dialog-scrollable .modal-body {
-  max-height: calc(100vh - 180px);
-  overflow-y: auto;
-}
 </style>

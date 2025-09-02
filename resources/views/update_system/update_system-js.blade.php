@@ -169,34 +169,41 @@
                         var status = item.status;
                         var color = '';
                         var icon = '';
-                        switch (status) {
-                            case 0:
-                                color = 'warning';
-                                status = 'IN PROGRESS';
-                                icon = '<i class="fa-solid fa-hourglass"></i>';
-                                break;
-                            case 1:
-                                color = 'info';
-                                status = 'CHECKED BY PIC';
-                                icon = '<i class="fas fa-check"></i>';
-                                break;
-                            case 2:
-                                color = 'danger';
-                                status = 'REVISE';
-                                icon = '<i class="fa-solid fa-rotate-left"></i>';
-                                break;
-                            case 3:
-                                color = 'success';
-                                status = 'DONE';
-                                icon = '<i class="fa-solid fa-check-double"></i>';
-                                break;
-                            default:
-                                color = 'secondary';
-                                status = 'UNKNOWN';
-                        }
+                     switch (status) {
+                        case 0:
+                            color = 'info';
+                            status = 'WAITING FOR APPROVAL';
+                            icon = '<i class="fa-solid fa-users"></i>'; // bisa ganti icon sesuai selera
+                            break;
+                        case 1:
+                            color = 'warning';
+                            status = 'IN PROGRESS';
+                            icon = '<i class="fa-solid fa-hourglass"></i>';
+                            break;
+                        case 2:
+                            color = 'primary';
+                            status = 'CHECKED BY PIC';
+                            icon = '<i class="fas fa-check"></i>';
+                            break;
+                        case 3:
+                            color = 'danger';
+                            status = 'REVISE';
+                            icon = '<i class="fa-solid fa-rotate-left"></i>';
+                            break;
+                        case 4:
+                            color = 'success';
+                            status = 'DONE';
+                            icon = '<i class="fa-solid fa-check-double"></i>';
+                            break;
+                        default:
+                            color = 'secondary';
+                            status = 'UNKNOWN';
+                            icon = '<i class="fa-solid fa-circle-question"></i>';
+                    }
+
                         var btn_task = '';
                         if(statusHeader == 1 || statusHeader == 3){
-                            if(item.status == 0 || item.status == 2){
+                            if(item.status == 0 || item.status == 3){
                                 if(auth_id == item.user_id)
                                 btn_task =`
                                     <button class="btn ml-2 btn-sm btn-success check float-right" 
@@ -379,58 +386,72 @@
                                 let statusIcon = '';
                                 let badgeColor = '';
 
-                                switch (log.status) {
-                                    case 0:
-                                        statusText = 'WAITING FOR APPROVAL';
-                                        statusIcon = '<i class="fas fa-users"></i>';
-                                        badgeColor = 'info';
-                                        break;
-                                    case 1:
-                                        statusText = 'IN PROGRESS';
-                                        statusIcon = '<i class="fas fa-spinner"></i>';
-                                        badgeColor = 'warning';
-                                        break;
-                                    case 2:
-                                        statusText = 'REVISE';
-                                        statusIcon = '<i class="fas fa-edit"></i>';
-                                        badgeColor = 'danger';
-                                        break;
-                                    case 3:
-                                        statusText = 'DONE';
-                                        statusIcon = '<i class="fas fa-check-double"></i>';
-                                        badgeColor = 'success';
-                                        break;
-                                    default:
-                                        statusText = 'UNKNOWN';
-                                        statusIcon = '<i class="fas fa-question"></i>';
-                                        badgeColor = 'secondary';
-                                }
+                             switch (log.status) {
+                                case 0:
+                                    statusText = 'WAITING FOR APPROVAL';
+                                    statusIcon = '<i class="fas fa-users"></i>';
+                                    badgeColor = 'info';
+                                    break;
+                                case 1:
+                                    statusText = 'IN PROGRESS';
+                                    statusIcon = '<i class="fas fa-spinner fa-spin"></i>'; // kasih animasi biar kelihatan jalan
+                                    badgeColor = 'warning';
+                                    break;
+                                case 2:
+                                    statusText = 'CHECKED BY PIC';
+                                    statusIcon = '<i class="fas fa-check"></i>';
+                                    badgeColor = 'primary';
+                                    break;
+                                case 3:
+                                    statusText = 'REVISE';
+                                    statusIcon = '<i class="fas fa-edit"></i>';
+                                    badgeColor = 'danger';
+                                    break;
+                                case 4:
+                                    statusText = 'DONE';
+                                    statusIcon = '<i class="fas fa-check-double"></i>';
+                                    badgeColor = 'success';
+                                    break;
+                                default:
+                                    statusText = 'UNKNOWN';
+                                    statusIcon = '<i class="fas fa-question"></i>';
+                                    badgeColor = 'secondary';
+                            }
+
 
                              logHtml += `
-                             <li class="timeline-item mb-4 position-relative ps-4">
-                                    <span class="timeline-icon position-absolute top-0 start-0 translate-middle bg-${badgeColor} text-white rounded-circle d-flex align-items-center justify-content-center shadow" style="width:35px;height:35px;">
-                                        ${statusIcon}
-                                    </span>
-                                    <div class="card border-0 shadow-sm" style="border-radius:30px;">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex justify-content-between">
-                                                <span class="badge bg-${badgeColor}">${statusText}</span>
-                                                <small class="text-muted">🕒 ${formatDateTime(log.created_at) ?? '-'}</small>
-                                            </div>
-                                            <p class="mt-2 mb-1 text-dark">${log.remark || '-'}</p>
+                              <li class="timeline-item mb-4 position-relative ps-5">
+                                <!-- ICON -->
+                                <span class="timeline-icon position-absolute top-0 start-0 translate-middle 
+                                    bg-${badgeColor} text-white rounded-circle d-flex align-items-center 
+                                    justify-content-center shadow" 
+                                    style="width:35px;height:35px; z-index:2;margin-left:20px !important;">
+                                    ${statusIcon}
+                                </span>
 
-                                            ${log.duration !== 0 
-                                                ? `<small class="d-block text-info fw-bold">⏳ Duration: ${formatDuration(log.duration)}</small>` 
-                                                : ''}
-
-                                            ${log.status == 0 && log.step 
-                                                ? `<small class="d-block text-warning fw-bold">📌 Step Approval: ${log.step}</small>` 
-                                                : ''}
-
-                                            <small class="text-muted d-block">👤 ${log.user_relation?.name ?? '-'}</small>
+                                <!-- CARD -->
+                                <div class="card border-0 shadow-sm" style="border-radius:30px;margin-left:40px !important; z-index:1; position:relative;">
+                                    <div class="card-body ps-6 p-3" style="padding-left:30px !important"> <!-- dinaikin jadi ps-6 biar gak ketiban -->
+                                        <div class="d-flex justify-content-between">
+                                            <span class="badge bg-${badgeColor}">${statusText}</span>
+                                            <small class="text-muted">🕒 ${formatDateTime(log.created_at) ?? '-'}</small>
                                         </div>
+                                        <p class="mt-2 mb-1 text-dark">${log.remark || '-'}</p>
+                                      ${(log.status == 4) 
+                                            ? `<small class="d-block text-success fw-bold">⏳ Total Duration: ${formatDuration(log.duration)}</small>` 
+                                            : (log.duration !== 0 
+                                                ? `<small class="d-block text-info fw-bold">⏳ Duration: ${formatDuration(log.duration)}</small>` 
+                                                : ''
+                                            )
+                                        }
+                                        ${log.status == 0 && log.step 
+                                            ? `<small class="d-block text-warning fw-bold">📌 Step Approval: ${log.step}</small>` 
+                                            : ''}
+
+                                        <small class="text-muted d-block">👤 ${log.user_relation?.name ?? '-'}</small>
                                     </div>
-                                </li>
+                                </div>
+                            </li>
 
                                 `
 
@@ -447,32 +468,32 @@
                
         });
         // Update Task
-                $(document).on('click', '#finish_task', function () {
-                    let remark = $('#finish_remark').val();
-                    let attachment = $('#finish_attachment')[0].files[0];
-                    let detailCode = $('.detail_code').text(); // misalnya buat kirim ID task
+            $(document).on('click', '#finish_task', function () {
+                let remark = $('#finish_remark').val();
+                let attachment = $('#finish_attachment')[0].files[0];
+                let detailCode = $('.detail_code').text(); // misalnya buat kirim ID task
 
-                    // bikin formData biar bisa kirim file
-                    let formData = new FormData();
-                    formData.append('finish_remark', remark);
-                    formData.append('finish_attachment', attachment);
-                    formData.append('detail_code', detailCode); // kalau perlu kirim task id/code
+                // bikin formData biar bisa kirim file
+                let formData = new FormData();
+                formData.append('finish_remark', remark);
+                formData.append('finish_attachment', attachment);
+                formData.append('detail_code', detailCode); // kalau perlu kirim task id/code
 
-                    // panggil function yang udah lo bikin
-                    postAttachment('finishTask', formData, true, function (response) {
-                        swal.close();
-                        if (response.meta && response.meta.code == 200) {
-                            toastr['success'](response.meta.message);
-                            $('#checkModal').modal('hide');
-                            // refresh table / list
-                            if (typeof table !== 'undefined') {
-                                table.ajax.reload(null, false);
-                            }
-                        } else {
-                            toastr['error'](response.meta.message || 'Something went wrong');
+                // panggil function yang udah lo bikin
+                postAttachment('finishTask', formData, true, function (response) {
+                    swal.close();
+                    if (response.meta && response.meta.code == 200) {
+                        toastr['success'](response.meta.message);
+                        $('#checkModal').modal('hide');
+                        // refresh table / list
+                        if (typeof table !== 'undefined') {
+                            table.ajax.reload(null, false);
                         }
-                    });
+                    } else {
+                        toastr['error'](response.meta.message || 'Something went wrong');
+                    }
                 });
+            });
         // Update Task
         $(document).on('click', '.check', function(){
             var detail = $(this).data('detail')
@@ -625,7 +646,13 @@
         });
     });
 
-                                        
+    //Export to PDF
+        $('#update_system_table').on('click','.report', function(){
+            var ticket_code = $(this).data('ticket')
+            let result = ticket_code.replaceAll("/", "_");
+            window.open('/report_system_ticket/'+result, '_blank');
+        })
+    //Export to PDF  
 // Operation
 
 // Function
@@ -724,6 +751,7 @@
                   for (i = 0; i < response.length; i++) {
                     var status = '';
                     var btnCheck = '';
+                    var btnReport = '';
                    switch (response[i].status) {
                         case 0:
                             status = `
@@ -775,6 +803,18 @@
                                     class="badge  badge-status badge-success px-3 py-2">
                                     <i class="fas fa-check-circle"></i> DONE
                                 </span>`;
+
+                            btnReport = `<button title="Report Task" 
+                                        class="report btn btn-sm btn-success rounded"  
+                                        data-ticket="${response[i].ticket_code}"  
+                                        data-name="${response[i].name}" 
+                                        data-location="${response[i].location_id}" 
+                                        data-system="${response[i].aspek}"  
+                                        data-id="${response[i]['id']}" 
+                                        data-status="${response[i]['status']}" 
+                                        >
+                                    <i class="fas fa-file-alt"></i>
+                                </button>`;
                             break;
                     }
 
@@ -801,6 +841,7 @@
                                     <i class="fas fa-solid fa-edit"></i>
                                 </button>
                                 ${btnCheck}
+                                ${btnReport}
                             </td>
                         </tr>
                     `;

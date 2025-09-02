@@ -547,6 +547,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('approvalERP', [UpdateSystemController::class, 'approvalERP'])->name('approvalERP');
         Route::post('finishTask', [UpdateSystemController::class, 'finishTask'])->name('finishTask');
         Route::post('finalizeERP', [UpdateSystemController::class, 'finalizeERP'])->name('finalizeERP');
+        Route::get('report_system_ticket/{id}',[UpdateSystemController::class, 'printERP']);
         // UpdateSystemm
         
     // Approval Matrix

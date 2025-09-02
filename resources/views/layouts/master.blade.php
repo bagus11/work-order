@@ -387,4 +387,29 @@ tr.shown td.subdetails-click {
     min-width: 130px;   /* semua minimal 150px */
     text-align: center; /* biar text/icon di tengah */
 }
+
+/* test */
+
+.nav-tabs .nav-link {
+  background: #f8f9fa;
+  color: #495057;
+  border: none;
+  transition: all 0.3s ease;
+}
+.nav-tabs .nav-link:hover {
+  background: #e9ecef;
+  color: #212529;
+}
+.nav-tabs .nav-link.active {
+  background: #212529;
+  color: #fff !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Limit modal height for scroll */
+.modal-dialog-scrollable .modal-body {
+  max-height: calc(300vh - 180px);
+  overflow-y: auto;
+}
+/* test */
 </style>

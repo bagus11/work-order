@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\FileUpload\InputFile;
+use \Mpdf\Mpdf as PDF;
 
 class UpdateSystemController extends Controller
 {
@@ -122,6 +123,7 @@ class UpdateSystemController extends Controller
                     'remark'            => $request->add_info,
                     'attachment'        =>''
                 ];
+                // dd($post);
                 UpdateSystem::create($post);
 
                 // loop items untuk bikin detail
@@ -157,7 +159,9 @@ class UpdateSystemController extends Controller
                 $creator = auth()->user()->name;
                 $headerText = "<b>📌 New Update Data Request</b>\n";
                 $headerText .= "👤 <b>From:</b> {$creator}\n";
-                $headerText .= "📝 <b>Ticket:</b> {$ticket_code}\n\n";
+                $headerText .= "📝 <b>Ticket:</b> {$ticket_code}\n";
+                $headerText .= "<b>Subject:</b> {$request->subject}\n";
+                $headerText .= "<b>Additional Info:</b> {$request->add_info}\n\n";
 
                 $details = "";
                 $firstImage = null;
@@ -186,22 +190,22 @@ class UpdateSystemController extends Controller
 
                 $finalText = $headerText . $details;
 
-                if($firstImage){
-                    // kirim sekali dengan gambar
-                    Telegram::sendPhoto([
-                        'chat_id'    => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
-                        'photo'      => InputFile::create($firstImage), // <- disini
-                        'caption'    => $finalText,
-                        'parse_mode' => 'HTML'
-                    ]);
-                } else {
-                    // kirim sekali tanpa gambar
-                    Telegram::sendMessage([
-                        'chat_id'    => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
-                        'text'       => $finalText,
-                        'parse_mode' => 'HTML'
-                    ]);
-                }
+                // if($firstImage){
+                //     // kirim sekali dengan gambar
+                //     Telegram::sendPhoto([
+                //         'chat_id'    => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
+                //         'photo'      => InputFile::create($firstImage), // <- disini
+                //         'caption'    => $finalText,
+                //         'parse_mode' => 'HTML'
+                //     ]);
+                // } else {
+                //     // kirim sekali tanpa gambar
+                //     Telegram::sendMessage([
+                //         'chat_id'    => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
+                //         'text'       => $finalText,
+                //         'parse_mode' => 'HTML'
+                //     ]);
+                // }
 
                 // simpan notifikasi ke DB untuk tiap approval
                 foreach($approval_id as $row){
@@ -286,7 +290,7 @@ class UpdateSystemController extends Controller
             'user_id'       => auth()->user()->id,
             'approval_code' => $header->approval_code,
             'step'          => $currentApproval->step,
-             'status'       => count($nextApproval) > 0 ? 0 : 1,
+            'status'       => count($nextApproval) > 0 ? 0 : 0,
             'remark'        => $request->erp_remark ?? '',
             'created_at'    => now(),
             'updated_at'    => now(),
@@ -304,26 +308,44 @@ class UpdateSystemController extends Controller
             if(count($array_approval) > 0){
                 WONotification::insert($array_approval);
             }
+          
             UpdateSystemLog::create($post_log);
-            if($currentApproval->step == $approval->step){
-                $post_notif =[
-                        'message'      => auth()->user()->name.' has approve your request. Please contact PIC to inform the completion of the request',
-                        'subject'      => 'Update Data Request',
-                        'status'       => 0,
-                        'type'         => 1,
-                        'request_code' => $request->erp_ticket_code,
-                        'link'         => 'update_system',
-                        'userId'       => $header->user_id,
-                        'created_at'   => now()
-                ];
-                WONotification::create($post_notif);
-                DetailSystem::where('ticket_code', $request->erp_ticket_code)
-                    ->update(['start_date' => date('Y-m-d H:i:s')]);
-                    return ResponseFormatter::success(
-                        $postDetail,
-                        'System successfully updated'
-                    );
-            }
+            // If last approval, notify creator to start task
+                if($currentApproval->step == $approval->step){
+                    $map = DetailSystem::where('ticket_code', $request->erp_ticket_code)->get();
+                    foreach($map as $item) {
+                        $postLogDetail = [
+                            'ticket_code'   => $item->ticket_code,
+                            'detail_code'   => $item->detail_code,
+                            'user_id'       => auth()->user()->id,
+                            'remark'        => 'Request has been approved. Please start the task',
+                            'status'        => 0,
+                            'duration'        => 0,
+                            'created_at'    => now(),
+                            'updated_at'    => now(),
+                        ];
+                        DetailSystemLog::create($postLogDetail);
+                    }
+                    $post_notif =[
+                            'message'      => auth()->user()->name.' has approve your request. Please contact PIC to inform the completion of the request',
+                            'subject'      => 'Update Data Request',
+                            'status'       => 0,
+                            'type'         => 1,
+                            'request_code' => $request->erp_ticket_code,
+                            'link'         => 'update_system',
+                            'userId'       => $header->user_id,
+                            'created_at'   => now()
+                    ];
+                    WONotification::create($post_notif);
+                    DetailSystem::where('ticket_code', $request->erp_ticket_code)
+                        ->update(['start_date' => date('Y-m-d H:i:s')]);
+                        return ResponseFormatter::success(
+                            $postDetail,
+                            'System successfully updated'
+                        );
+                   
+                }
+            // If last approval, notify creator to start task
         });
     }
     public function finishTask(Request $request, UpdateSystemRequest $updateSystemRequest) {
@@ -353,50 +375,50 @@ class UpdateSystemController extends Controller
                             . '&startdate=' . $detailLogTicket->created_at->format('Y-m-d')
                             . '&enddate=' . date('Y-m-d H:i:s')
                         );
-                        $response = $api->getBody()->getContents();
-                        $data = json_decode($response, true);
-                        $durations = [];
-                        $finalDuration = 0;
+                        $responseDetail = $api->getBody()->getContents();
+                        $dataDetail = json_decode($responseDetail, true);
+                        $durationDetails = [];
+                        $finalDurationDetails = 0;
                         
-                        foreach ($data as $att) {
+                        foreach ($dataDetail as $att) {
                         if ($att['daytype'] == 'WD') {
-                            $start = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
-                            $end   = Carbon::parse($att['shiftendtime']);    // jam shift selesai
-                            $startTicket = Carbon::parse($detailLogTicket->created_at); // jam WO mulai
-                            $endTiccket   = Carbon::now();   // jam WO selesai
+                            $startDetail = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
+                            $endDetails   = Carbon::parse($att['shiftendtime']);    // jam shift selesai
+                            $startTicketDetails = Carbon::parse($detailLogTicket->created_at); // jam WO mulai
+                            $endTicketDetails   = Carbon::now();   // jam WO selesai
 
-                            $minutes = 0;
-                            $validation = '';
+                            $minuteDetails = 0;
+                            $validationDetails = '';
 
                             // ✅ kalau start_wo & end_wo di tanggal yang sama
-                            if ($startTicket->isSameDay($endTiccket)) {
-                                $minutes = $startTicket->diffInMinutes($endTiccket);
-                                $validation = 'same-day';
+                            if ($startTicketDetails->isSameDay($endTicketDetails)) {
+                                $minuteDetails = $startTicketDetails->diffInMinutes($endTicketDetails);
+                                $validationDetails = 'same-day';
                             } else {
                                 // ambil interval aktif WO dalam hari ini
-                                $activeStart = $startTicket->greaterThan($start) ? $startTicket : $start;
-                                $activeEnd   = $endTiccket->lessThan($end) ? $endTiccket : $end;
+                                $activeStartDetails = $startTicketDetails->greaterThan($startDetail) ? $startTicketDetails : $startDetail;
+                                $activeEndDetails   = $endTicketDetails->lessThan($endDetails) ? $endTicketDetails : $endDetails;
 
                                 // hitung hanya kalau masih ada sisa waktu valid
-                                if ($activeEnd > $activeStart) {
-                                    $minutes = $activeStart->diffInMinutes($activeEnd);
-                                    $validation = 'valid';
+                                if ($activeEndDetails > $activeStartDetails) {
+                                    $minuteDetails = $activeStartDetails->diffInMinutes($activeEndDetails);
+                                    $validationDetails = 'valid';
                                 } else {
-                                    $minutes = 0; // kalau WO di luar jam shift
-                                    $validation = 'skip';
+                                    $minuteDetails = 0; // kalau WO di luar jam shift
+                                    $validationDetails = 'skip';
                                 }
                             }
 
-                            $finalDuration += $minutes;
+                            $finalDurationDetails += $minuteDetails;
 
-                            $durations[] = [
-                                'date'       => $att['date'] ?? $start->toDateString(),
-                                'start'      => $start->format('H:i'),
-                                'end'        => $end->format('H:i'),
-                                'minutes'    => $minutes,
-                                'total'      => $finalDuration,
-                                'validation' => $validation,
-                                'request_code'=>$logTicket->request_code
+                            $durationDetails[] = [
+                                'date'       => $att['date'] ?? $startDetail->toDateString(),
+                                'start'      => $startDetail->format('H:i'),
+                                'end'        => $endDetails->format('H:i'),
+                                'minutes'    => $minuteDetails,
+                                'total'      => $finalDurationDetails,
+                                'validation' => $validationDetails,
+                                'request_code'=>$detailLogTicket->request_code
                             ];
                         }
                     }
@@ -404,7 +426,7 @@ class UpdateSystemController extends Controller
             // Perhitungan Duration Detail System
 
             $post = [
-                'status'        => 1,
+                'status'        => 2,
                 'remark'        => $request->finish_remark,
                 'end_date'      => now(),
                 'attachment_pic'=> $path,
@@ -416,20 +438,19 @@ class UpdateSystemController extends Controller
                 'user_id'       => auth()->user()->id,
                 'remark'        => $request->finish_remark,
                 'status'        => 1,
+                'duration'      => $finalDurationDetails,
                 'attachment'    => $path,
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ];
-          
             if ($request->hasFile('finish_attachment')) {
                 $file->storeAs('public/updateSystem/task', $filename);
             }
             DetailSystemLog::create($post_log);
             $header->update($post);
             $checkPending = DetailSystem::where('ticket_code', $ticket->ticket_code)
-            ->whereIn('status', [0, 2])
+            ->whereIn('status', [0, 3])
             ->count();
-       
             if ($checkPending == 0) {
                 // Duration 
                     $logTicket = UpdateSystemLog::where('ticket_code', $header->ticket_code)->orderBy('id','desc')->first();
@@ -497,7 +518,7 @@ class UpdateSystemController extends Controller
                         'approval_code' => $ticket->approval_code,
                         'duration'      => $finalDuration,
                         'step'          => 0,
-                        'status'        => 2,
+                        'status'        => 1,
                         'remark'        => auth()->user()->name . ' has completed all tasks, please verify and close the ticket',
                         'created_at'    => now(),
                         'updated_at'    => now(),
@@ -550,8 +571,8 @@ class UpdateSystemController extends Controller
                 ? UpdateSystemLog::where('ticket_code', $request->erp_ticket_code)->sum('duration') 
                 : 0;
             $message = $status == 4 
-                ? 'has finalized the ticket as DONE' 
-                : 'has finalized the ticket as REVISE';
+                ? ' has finalized the ticket as DONE' 
+                : ' has finalized the ticket as REVISE ';
 
             // data buat update UpdateSystem
             $post = [
@@ -576,6 +597,11 @@ class UpdateSystemController extends Controller
             ];
             UpdateSystemLog::create($postLogSystem);
             foreach (DetailSystem::where('ticket_code', $header->ticket_code)->get() as $item) {
+                $durationDetails  = $status == 4 
+                    ? DetailSystemLog::where('ticket_code', $item->ticket_code)
+                        ->where('detail_code', $item->detail_code)
+                        ->sum('duration') 
+                    : 0;
                 // log ke DetailSystemLog
                 $postLogDetail = [
                     'ticket_code'   => $item->ticket_code,
@@ -592,6 +618,14 @@ class UpdateSystemController extends Controller
                     $item->update([
                         'status'    => 2,
                         'end_date'  => '0000-00-00',
+                    ]);
+                }
+                if($status == 4){
+                    // kalau done, pastiin semua detail udah done
+                    $item->update([
+                        'status'    => 4,
+                        'end_date'  => now(),
+                        'duration'  => $durationDetails,
                     ]);
                 }
             }
@@ -620,5 +654,78 @@ class UpdateSystemController extends Controller
                 'error' => $th->getMessage()
             ], 'Failed to finalize ticket', 500);
         }
+    }
+
+    public function printERP($id)
+    {
+        $ticket_code = str_replace("_", "/", $id);
+        $data = UpdateSystem::with([
+            'approverRelation',
+            'userRelation',
+            'userRelation.departmentRelation',
+            'userRelation.locationRelation',
+            'detailRelation',
+            'detailRelation.historyRelation',
+            'detailRelation.historyRelation.userRelation',
+            'detailRelation.aspectRelation',
+            'detailRelation.moduleRelation',
+            'detailRelation.dataTypeRelation',
+            'detailRelation.userRelation',
+            'historyRelation',
+            'historyRelation.userRelation',
+        ])->where('ticket_code', $ticket_code)->first();
+
+        // Render blade jadi HTML
+        $html = view('report.report-erp', compact('data'))->render();
+        $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
+        $header             = '';
+        $header             .= '<table width="100%">
+                                    <tr>
+                                        <td style="padding-left:10px;">
+                                            <span style="font-size: 16px; font-weight: bold;"> PT PRALON</span>
+                                            <br>
+                                            <span style="font-size:9px;">Synergy Building #08-08 Tangerang 15143 - Indonesia +62 21 304 38808</span>
+                                        </td>
+                                        <td style="width:33%"></td>
+                                            <td style="width: 50px; text-align:right;">'.$imageLogo.'
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+                                <hr>';
+        
+        $footer             = '<hr>
+                                <table width="100%" style="font-size: 10px;">
+                                    <tr>
+                                        <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                                        <td width="10%" style="text-align: right;"> {PAGENO}</td>
+                                    </tr>
+                                </table>';
+
+            
+            $mpdf           = new PDF();
+            $mpdf->SetHTMLHeader($header);
+            $mpdf->SetHTMLFooter($footer);
+            $mpdf->AddPage(
+                'P', // L - landscape, P - portrait 
+                '',
+                '',
+                '',
+                '',
+                5, // margin_left
+                5, // margin right
+                25, // margin top
+                20, // margin bottom
+                5, // margin header
+                5
+            ); // margin footer
+            $mpdf->WriteHTML($html);
+            // Output a PDF file directly to the browser
+            ob_clean();
+            $mpdf->Output('Report Wo'.'('.date('Y-m-d').').pdf', 'I');
+    
+        // // Output langsung ke browser
+        // return response($mpdf->Output("ERP-Report-{$ticket_code}.pdf", 'I'))
+        //     ->header('Content-Type', 'application/pdf');
     }
 }
