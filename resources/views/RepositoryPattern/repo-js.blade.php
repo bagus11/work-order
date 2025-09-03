@@ -1190,9 +1190,6 @@ var auth_id = $('#auth_id').val()
             let remark = remarkRaw 
                 ? remarkRaw.replace(/<[^>]*>/g, '').trim() || '-' 
                 : '-';
-
-            console.log("Remark cleaned:", remark);
-
             $("#erp_ticket_code").html(': ' + (response.data.ticket_code ?? '-'));
             $("#erp_subject").html(': ' + (response.data.subject ?? '-'));
             $("#erp_created_at").html(': ' + (formatDateTime(response.data.created_at) ?? '-'));
@@ -1208,61 +1205,64 @@ var auth_id = $('#auth_id').val()
                 details.forEach((item, i) => {
                     let cleanRemark = item.remark ? item.remark.replace(/<[^>]*>/g, '').trim() : '-';
                 html += `
-                        <li class="list-group-item border-0 p-0 mb-2">
+                       <li class="list-group-item border-0 p-0 mb-2">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition">
+                                
                                 <!-- Body -->
                                 <div class="card-body px-2 py-2 bg-light">
-                                    <div class="row align-items-center">
-                                        <!-- Keterangan -->
-                                        <div class="col-md-6">
-                                            <div class="mb-1">
-                                                <small class="text-muted d-block">Aspect</small>
-                                                <span class="fw-semibold text-dark">${item.aspect_relation?.name ?? '-'}</span>
-                                            </div>
-
-                                            <div class="mb-0">
-                                                <small class="text-muted d-block">Module</small>
-                                                <span class="fw-semibold text-dark">${item.module_relation?.name ?? '-'}</span>
-                                            </div>
-
-                                            <div class="mb-1">
-                                                <small class="text-muted d-block">Data Type</small>
-                                                <span class="fw-semibold text-dark">${item.data_type_relation?.name ?? '-'}</span>
-                                            </div>
-
-                                            <div class="mb-1">
-                                                <small class="text-muted d-block">Remark</small>
-                                                <span class="fw-semibold text-dark"> ${item.subject || '-'}</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Gambar -->
-                                        ${item.attachment 
-                                            ? `<div class="col-md-6 text-center">
-                                                    <img src="${item.attachment}" 
-                                                        class="img-fluid rounded-6 shadow-sm border" 
-                                                        style="max-height:220px; object-fit:contain"/>
-                                            </div>` 
-                                            : ''}
+                                <div class="row align-items-center">
+                                    
+                                    <!-- Keterangan -->
+                                    <div class="col-md-6">
+                                    <div class="mb-1">
+                                        <small class="text-muted d-block">Aspect</small>
+                                        <span class="fw-semibold text-dark">${item.aspect_relation?.name ?? '-'}</span>
                                     </div>
+                                    <div class="mb-1">
+                                        <small class="text-muted d-block">Module</small>
+                                        <span class="fw-semibold text-dark">${item.module_relation?.name ?? '-'}</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <small class="text-muted d-block">Data Type</small>
+                                        <span class="fw-semibold text-dark">${item.data_type_relation?.name ?? '-'}</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <small class="text-muted d-block">Remark</small>
+                                        <span class="fw-semibold text-dark text-truncate">${item.subject || '-'}</span>
+                                    </div>
+                                    </div>
+
+                                    <!-- Gambar -->
+                                    ${item.attachment 
+                                    ? `
+                                    <div class="col-md-6 text-center">
+                                        <img src="${item.attachment}" 
+                                            class="img-fluid rounded-3 shadow-sm border preview-image" 
+                                            alt="${item.subject || 'Attachment Preview'}"
+                                            style="max-height:220px; width:100%; object-fit:contain; cursor:pointer"/>
+                                    </div>
+                                    ` 
+                                    : ''
+                                    }
+
+                                </div>
                                 </div>
 
                                 <!-- Footer -->
-                            <div class="card-footer bg-white px-2 py-2 border-0 border-top">
-                                <small class="text-muted">
-                                    👤 <span class="fw-semibold">${item.user_relation?.name ?? '-'}</span>
-                                </small>
-                                <small class="text-muted" style="float:right !important">
-                                    🕒 ${formatDateTime(item.created_at) ?? '-'}
-                                </small>
-                            </div>
+                                <div class="card-footer bg-white px-2 py-2 border-0 border-top d-flex justify-content-between">
+                                <small class="text-muted">👤 <span class="fw-semibold">${item.user_relation?.name ?? '-'}</span></small>
+                                <small class="text-muted">🕒 ${formatDateTime(item.created_at) ?? '-'}</small>
+                                </div>
 
                             </div>
-                        </li>
+                            </li>
+
                         `;
                         });
                 html += `</ul>`;
-            } else {
+            } else if(link == 'update_system_check'){
+                alert('test')
+            }else {
                 html = `<div class="alert alert-warning">Tidak ada detail</div>`;
             }
             $("#erp_detail_relation").html(html);
@@ -1336,7 +1336,6 @@ $('#btn_erp_finish').on('click', function(){
         $('#checkingERPModal').modal('hide')
         let path = window.location.pathname; // hasil: "/work_order"
         let segment = path.split("/")[1];    // hasil: "work_order"
-        console.log(segment);
         if(segment == 'update_system'){
             getCallbackNoSwal('getTicketSystem', null, function(response){
                 mappingTable(response.data, 'update_system_table')

@@ -1,7 +1,7 @@
 
 
 <div class="modal fade" id="addSystemModal" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-scroll">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h5 class="modal-title">Form Request</h5>

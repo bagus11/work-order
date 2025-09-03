@@ -50,7 +50,43 @@
 
                 <fieldset class="mx-2">
                     <legend>Detail Task</legend>
-                    <div id="detail_ticket_container_check"></div>
+                      <ul class="nav nav-tabs border-0" id="ticketTabCheck" role="tablist" style="gap:6px;">
+                        <li class="nav-item">
+                            <a class="nav-link active px-4 rounded-pill shadow-sm" style="font-size:12px;"
+                                id="task-tab-check"
+                                data-toggle="tab"
+                                href="#task-check"
+                                role="tab"
+                                aria-controls="task"
+                                aria-selected="true">
+                                <i class="fas fa-tasks me-1"></i> Task
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link px-4 rounded-pill shadow-sm" style="font-size:12px;"
+                            id="log-tab-check"
+                            data-toggle="tab"
+                            href="#log-task-check"
+                            role="tab"
+                            aria-controls="log-task"
+                            aria-selected="false">
+                            <i class="fas fa-history me-1"></i> Log Task
+                        </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content mt-3 p-3 rounded-3 shadow-sm bg-light" id="ticketTabCheckContent">
+                        <!-- Task -->
+                        <div class="tab-pane fade show active" id="task-check" role="tabpanel" aria-labelledby="task-tab-check">
+                        <div id="detail_ticket_container_check"></div>
+                        </div>
+
+                        <!-- Log Task -->
+                        <div class="tab-pane fade" id="log-task-check" role="tabpanel" aria-labelledby="log-tab-check">
+                        <div id="log_task_container_check"></div>
+                        </div>
+                    </div>
                 </fieldset>
 
                 <fieldset class="mx-2">

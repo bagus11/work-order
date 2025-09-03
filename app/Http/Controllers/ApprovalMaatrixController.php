@@ -25,7 +25,13 @@ class ApprovalMaatrixController extends Controller
     
     }
     function getApproverDetail(Request $request) {
-        $data = ApprovalMatrixDetail::where('approval_code', $request->approval_code)->get();
+        $data = ApprovalMatrixDetail::with(
+            [
+                'userRelation',
+                'userRelation.departmentRelation',
+
+            ]
+        )->where('approval_code', $request->approval_code)->get();
         return response()->json([
             'data'=>$data,
         ]);

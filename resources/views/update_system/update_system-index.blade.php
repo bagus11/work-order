@@ -13,6 +13,9 @@
                             <i class="fas fa-plus"></i>
                         </button>
                         @endcan
+                        <button id="btn_refresh" type="button" class="btn btn-sm btn-info mr-2" style="float:right">
+                            <i class="fas fa-refresh"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -35,6 +38,7 @@
     </div>
 
 @include('update_system.modal.check-update_system')
+@include('update_system.modal.approval-update_system')
 @include('update_system.modal.checking-update_system')
 @include('update_system.modal.edit-update_system')
 @include('update_system.modal.add-update_system')

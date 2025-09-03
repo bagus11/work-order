@@ -411,5 +411,39 @@ tr.shown td.subdetails-click {
   max-height: calc(300vh - 180px);
   overflow-y: auto;
 }
+.step-wrapper {
+    position: relative;
+    padding-bottom: 40px; /* ruang buat garis */
+}
+
+.step-wrapper:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 40px;
+    background: #6c757d; /* warna garis abu-abu */
+}
+.step-title {
+    display: inline-block;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.step-title:hover {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+}
+
 /* test */
 </style>

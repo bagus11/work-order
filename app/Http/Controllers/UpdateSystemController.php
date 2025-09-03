@@ -32,10 +32,19 @@ class UpdateSystemController extends Controller
 
     function getTicketSystem() {
         $data = UpdateSystem:: with([
-            'approverRelation',
+              'approverRelation',
             'userRelation',
             'userRelation.departmentRelation',
             'userRelation.locationRelation',
+            'detailRelation',
+            'detailRelation.historyRelation',
+            'detailRelation.historyRelation.userRelation',
+            'detailRelation.aspectRelation',
+            'detailRelation.moduleRelation',
+            'detailRelation.dataTypeRelation',
+            'detailRelation.userRelation',
+            'historyRelation',
+            'historyRelation.userRelation',
         ])->get();
         return response()->json([
             'data' => $data
@@ -531,7 +540,7 @@ class UpdateSystemController extends Controller
                         'status'       => 0,
                         'type'         => 2,
                         'request_code' => $header->ticket_code,
-                        'link'         => 'update_system',
+                        'link'         => 'update_system_check',
                         'userId'       => $header->user_id,
                         'created_at'   => now()
                 ];
@@ -616,15 +625,15 @@ class UpdateSystemController extends Controller
                 if ($status == 3) {
                     // kalau direvisi, balikin status detail ke 0 (open)
                     $item->update([
-                        'status'    => 2,
+                        'status'    => 3,
                         'end_date'  => '0000-00-00',
                     ]);
                 }
                 if($status == 4){
+
                     // kalau done, pastiin semua detail udah done
                     $item->update([
                         'status'    => 4,
-                        'end_date'  => now(),
                         'duration'  => $durationDetails,
                     ]);
                 }

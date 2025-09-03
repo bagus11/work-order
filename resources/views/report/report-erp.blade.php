@@ -69,14 +69,37 @@
 @endphp
 
 {{-- Ticket Data --}}
-<table style="width:40%; border-collapse: collapse; margin-bottom: 20px;">
-    <tr><td style="width:30%; font-weight:bold; border:none;">Ticket Code</td><td style="border:none;">: {{ $data->ticket_code }}</td></tr>
-    <tr><td style="font-weight:bold; border:none;">Created By</td><td style="border:none;">: {{ $data->userRelation->name ?? '-' }}</td></tr>
-    <tr><td style="font-weight:bold; border:none;">Department</td><td style="border:none;">: {{ $data->userRelation->departmentRelation->name ?? '-' }}</td></tr>
-    <tr><td style="font-weight:bold; border:none;">Employee ID</td><td style="border:none;">: {{ $data->userRelation->nik ?? '-' }}</td></tr>
-    <tr><td style="font-weight:bold; border:none;">Subject</td><td style="border:none;">: {{ $data->subject ?? '-' }}</td></tr>
-    <tr><td style="font-weight:bold; border:none;">Remark</td><td style="border:none;">: {{ $data->remark ?? '-' }}</td></tr>
+<table style="width:90%; border-collapse: collapse; margin: 0 auto 20px;">
+    <tr>
+        <td style="width:25%; font-weight:bold; border:none;">Ticket Code</td>
+        <td colspan="3" style="border:none;">: {{ $data->ticket_code }}</td>
+    </tr>
+    <tr>
+        <td style="font-weight:bold; border:none;">Created At</td>
+        <td style="border:none;">: {{ date_format($data->created_at, 'd F Y H:i:s') }}</td>
+        <td style="font-weight:bold; border:none;">Finished At</td>
+        <td style="border:none;">: {{ date_format($data->updated_at, 'd F Y H:i:s') }}</td>
+    </tr>
+    <tr>
+        <td style="font-weight:bold; border:none;">Created By</td>
+        <td style="border:none;">: {{ $data->userRelation->name ?? '-' }}</td>
+        <td style="font-weight:bold; border:none;">Employee ID</td>
+        <td style="border:none;">: {{ $data->userRelation->nik ?? '-' }}</td>
+    </tr>
+    <tr>
+        <td style="font-weight:bold; border:none;">Department</td>
+        <td colspan="3" style="border:none;">: {{ $data->userRelation->departmentRelation->name ?? '-' }}</td>
+    </tr>
+    <tr>
+        <td style="font-weight:bold; border:none;">Subject</td>
+        <td colspan="3" style="border:none;">: {{ $data->subject ?? '-' }}</td>
+    </tr>
+    <tr>
+        <td style="font-weight:bold; border:none;">Remark</td>
+        <td colspan="3" style="border:none;">: {{ $data->remark ?? '-' }}</td>
+    </tr>
 </table>
+
 
 {{-- Request Information --}}
 <div class="section-title">Request Information</div>
