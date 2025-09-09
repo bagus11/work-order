@@ -3,8 +3,24 @@
         swal.close();
         mappingTable(response.data,'master_system_table')
     })
-    getActiveItems('getModule','null','select_module', 'Module')
-    getActiveItems('getModule','null','edit_select_module', 'Module')
+    getCallbackNoSwal('getModule', null, function(response){
+        $('#select_module').empty()
+        $('#edit_select_module').empty()
+        $('#select_module').append('<option value=""> Choose Module</option>')
+        for( i = 0; i< response.data.length; i ++ ){
+            console.log(response.data)
+            $('#select_module').append(
+                `
+                <option value="${response.data[i].id}">${response.data[i].aspek_relation.name} - ${response.data[i].name}</option>
+                `
+            )
+            $('#edit_select_module').append(
+                `
+                <option value="${response.data[i].id}">${response.data[i].aspek_relation.name} - ${response.data[i].name}</option>
+                `
+            )
+        }
+    })
 
     onChange('select_module','module')
     onChange('edit_select_module','edit_module')
