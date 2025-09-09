@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <b class="detail_code"></b>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" id="btn_close_check_modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>

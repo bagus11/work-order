@@ -50,7 +50,7 @@
 <body>
 @php
     function formatDuration($minutes) {
-        if (!$minutes) return '-';
+        if (!$minutes) return '0 minutes';
         $hours = floor($minutes / 60);
         $mins = $minutes % 60;
         return ($hours > 0 ? $hours . ' hours ' : '') . ($mins > 0 ? $mins . ' minutes' : '');
@@ -67,9 +67,14 @@
         }
     }
 @endphp
+{{-- Title --}}
+    <h3 style="text-align: center">Ticketing Support</h3>
+    <br>
+    <br>
 
+{{-- Title --}}
 {{-- Ticket Data --}}
-<table style="width:90%; border-collapse: collapse; margin: 0 auto 20px;">
+<table style="width:100%; border-collapse: collapse; margin: 0 auto 20px;">
     <tr>
         <td style="width:25%; font-weight:bold; border:none;">Ticket Code</td>
         <td colspan="3" style="border:none;">: {{ $data->ticket_code }}</td>
@@ -105,11 +110,11 @@
 <div class="section-title">Request Information</div>
 @if($data->detailRelation->count() > 0)
     @php $firstDetail = $data->detailRelation->first(); @endphp
-    <table style="width:100%; border-collapse: collapse; margin-bottom: 15px; margin-left:20px;">
-        <tr><td style="width:20%; font-weight:bold; border:none;">System</td><td style="border:none;">{{ $firstDetail->aspectRelation->name ?? '-' }}</td></tr>
-        <tr><td style="font-weight:bold; border:none;">Module</td><td style="border:none;">{{ $firstDetail->moduleRelation->name ?? '-' }}</td></tr>
-        <tr><td style="font-weight:bold; border:none;">Data Type</td><td style="border:none;">{{ $firstDetail->dataTypeRelation->name ?? '-' }}</td></tr>
-        <tr><td style="font-weight:bold; border:none;">Details</td><td style="border:none;">:</td></tr>
+    <table style="width:100%; border-collapse: collapse; margin-bottom: 15px; margin-left:10px;">
+        <tr><td style="width:20%; font-weight:bold; border:none;">System</td><td style="border:none;">: {{ $firstDetail->aspectRelation->name ?? '-' }}</td></tr>
+        <tr><td style="font-weight:bold; border:none;">Module</td><td style="border:none;">: {{ $firstDetail->moduleRelation->name ?? '-' }}</td></tr>
+        <tr><td style="font-weight:bold; border:none;">Data Type</td><td style="border:none;">: {{ $firstDetail->dataTypeRelation->name ?? '-' }}</td></tr>
+        <tr><td style="font-weight:bold; border:none;">Details</td><td style="border:none;">: </td></tr>
     </table>
 @endif
 
@@ -171,7 +176,7 @@
                 {{ $data->detailRelation->first()->userRelation->name ?? '-' }} <br>
                 <small>{{ $data->detailRelation->first()->userRelation->departmentRelation->name ?? '-' }}</small>
             </td>
-            @foreach($approvals->reverse()->values() as $approval)
+            @foreach($approvals->values() as $approval)
                 <td>
                     <br><br><br><br><br>
                     {{ $approval->userRelation->name ?? '-' }} <br>

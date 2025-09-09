@@ -30,9 +30,12 @@ class UpdateSystemController extends Controller
         return view('update_system.update_system-index');
     }
 
-    function getTicketSystem() {
-        $data = UpdateSystem:: with([
-              'approverRelation',
+    function getTicketSystem()
+    {
+        $user = auth()->user();
+
+        $query = UpdateSystem::with([
+            'approverRelation',
             'userRelation',
             'userRelation.departmentRelation',
             'userRelation.locationRelation',
@@ -45,11 +48,23 @@ class UpdateSystemController extends Controller
             'detailRelation.userRelation',
             'historyRelation',
             'historyRelation.userRelation',
-        ])->get();
+        ]);
+
+        // Kalau bukan developer, filter tiket
+       if (!$user->hasRole('Developer') && !$user->hasRole('Head') ) {
+            $query->where('status', 0)
+                ->orWhereHas('detailRelation', function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                });
+        }
+
+        $data = $query->get();
+
         return response()->json([
             'data' => $data
         ]);
     }
+
     function getDetailERP(Request $request) {
         $data = UpdateSystem:: with([
             'approverRelation',
@@ -261,11 +276,21 @@ class UpdateSystemController extends Controller
         $nextApproval = ApprovalMatrixDetail::where('approval_code', $header->approval_code)
                             ->where('step', $currentApproval->step + 1)
                             ->get();
+        $statusHeader = 0;
+        $statusMessage = '';
+        if($request->erp_approval == 2){
+            $status = 5;
+            $statusMessage = 'rejected';
+            $statusHeader = 5; 
+        }else{
+            $status = 0 ;
+            $statusHeader = count($nextApproval) > 0 ? 0 : 1;
+        }
         foreach($nextApproval as $row){
             $postNotification = [
-                'message'      => auth()->user()->name.' has approved your Update Data Request',
+                'message'      => auth()->user()->name.' has '.$statusMessage.' your Update Data Request',
                 'subject'      => 'Update Data Request Approved',
-                'status'       => 0,
+                'status'       => $status,
                 'type'         => 2,
                 'request_code' => $request->erp_ticket_code,
                 'link'         => 'update_system',
@@ -288,37 +313,48 @@ class UpdateSystemController extends Controller
         } else {
             $result = 0;
         }
+     
         $post =[
             'step'          =>  $result, 
-            'status'        => count($nextApproval) > 0 ? 0 : 1,
+            'status'        => $statusHeader,
             'pic'           => $currentApproval->step == 1 ? $request->erp_pic : $header->pic, 
             'updated_at'    => now(),
         ];
+     
         $post_log =[
             'ticket_code'   => $request->erp_ticket_code,
             'user_id'       => auth()->user()->id,
             'approval_code' => $header->approval_code,
             'step'          => $currentApproval->step,
-            'status'       => count($nextApproval) > 0 ? 0 : 0,
+            'status'       => $status,
             'remark'        => $request->erp_remark ?? '',
             'created_at'    => now(),
             'updated_at'    => now(),
         ];
         // dd($post);
-        DB::transaction(function() use($request, $post, $postDetail, $header, $array_approval, $status, $post_log, $currentApproval, $approval) {
+        DB::transaction(function() use($request, $post, $postDetail, $statusMessage,$header, $array_approval, $status, $post_log, $currentApproval, $approval) {
             WONotification::where('request_code', $request->erp_ticket_code)
                 ->update(['status' => 1]);
             UpdateSystem::where('ticket_code', $request->erp_ticket_code)
                 ->update($post);
             if($currentApproval->step == 1){
-                DetailSystem::where('ticket_code', $request->erp_ticket_code)
-                    ->update($postDetail);
+                // if approval result == reject
+                    if($status == 5 ){
+                        DetailSystem::where('ticket_code', $request->erp_ticket_code)
+                                    ->update([
+                                        'status'  => $status
+                                    ]);
+                    }else{
+                        DetailSystem::where('ticket_code', $request->erp_ticket_code)
+                                    ->update($postDetail);
+                    }
+                // if approval result == reject
             }
             if(count($array_approval) > 0){
                 WONotification::insert($array_approval);
             }
-          
             UpdateSystemLog::create($post_log);
+
             // If last approval, notify creator to start task
                 if($currentApproval->step == $approval->step){
                     $map = DetailSystem::where('ticket_code', $request->erp_ticket_code)->get();
@@ -327,8 +363,8 @@ class UpdateSystemController extends Controller
                             'ticket_code'   => $item->ticket_code,
                             'detail_code'   => $item->detail_code,
                             'user_id'       => auth()->user()->id,
-                            'remark'        => 'Request has been approved. Please start the task',
-                            'status'        => 0,
+                            'remark'        => 'Request has been '.$statusMessage.'. Please start the task',
+                            'status'        => $status,
                             'duration'        => 0,
                             'created_at'    => now(),
                             'updated_at'    => now(),
@@ -336,9 +372,9 @@ class UpdateSystemController extends Controller
                         DetailSystemLog::create($postLogDetail);
                     }
                     $post_notif =[
-                            'message'      => auth()->user()->name.' has approve your request. Please contact PIC to inform the completion of the request',
+                            'message'      => auth()->user()->name.' has '.$statusMessage.' your request. Please contact PIC to inform the completion of the request',
                             'subject'      => 'Update Data Request',
-                            'status'       => 0,
+                            'status'       => $status,
                             'type'         => 1,
                             'request_code' => $request->erp_ticket_code,
                             'link'         => 'update_system',
@@ -354,8 +390,16 @@ class UpdateSystemController extends Controller
                         );
                    
                 }
+                    return ResponseFormatter::success(
+                            $postDetail,
+                            'System successfully updated'
+                        );
             // If last approval, notify creator to start task
         });
+            return ResponseFormatter::success(
+                            $postDetail,
+                            'System successfully updated'
+                        );
     }
     public function finishTask(Request $request, UpdateSystemRequest $updateSystemRequest) {
         $updateSystemRequest->validated();

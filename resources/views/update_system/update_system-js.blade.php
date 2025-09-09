@@ -204,10 +204,16 @@
                             status = 'DONE';
                             icon = '<i class="fa-solid fa-check-double"></i>';
                             break;
+                        case 5:
+                            status  = 'REJECT'
+                            color   = 'dark'
+                            icon    ='<i class="fa-solid fa-circle-xmark"></i>'
+                        break;
                         default:
                             color = 'secondary';
                             status = 'UNKNOWN';
                             icon = '<i class="fa-solid fa-circle-question"></i>';
+
                     }
 
                         var btn_task = '';
@@ -421,6 +427,11 @@
                                     statusIcon = '<i class="fas fa-check-double"></i>';
                                     badgeColor = 'success';
                                     break;
+                                case 5:
+                                    statusText = 'REJECT';
+                                    statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
+                                    badgeColor = 'dark';
+                                    break;
                                 default:
                                     statusText = 'UNKNOWN';
                                     statusIcon = '<i class="fas fa-question"></i>';
@@ -497,7 +508,10 @@
                         $('#editSystemModal').modal('hide');
                         // refresh table / list
                         if (typeof table !== 'undefined') {
-                            table.ajax.reload(null, false);
+                             getCallback('getTicketSystem', null, function(response){
+                                swal.close()
+                                mappingTable(response.data, 'update_system_table')
+                            })
                         }
                     } else {
                         toastr['error'](response.meta.message || 'Something went wrong');
@@ -521,9 +535,12 @@
             $('#finish_remark').val('')
             $('.detail_code').text('Detail Code : '+ detail)
         })
-        $('#checkModal').on('hidden.bs.modal', function () {
+        $('#btn_close_check_modal').on('click', function(){
             $('#editSystemModal').modal('show');
-        }); 
+
+        })
+        // $('#checkModal').on('hidden.bs.modal', function () {
+        // }); 
     // Edit Ticket 
 
     // Checking Ticket 
@@ -581,6 +598,11 @@
                                     color = 'success';
                                     status = 'DONE';
                                     icon = '<i class="fa-solid fa-check-double"></i>';
+                                    break;
+                                case 5:
+                                    color = 'dark';
+                                    status = 'REJECT';
+                                    icon = '<i class="fa-solid fa-circle-xmark"></i>';
                                     break;
                                 default:
                                     color = 'secondary';
@@ -803,6 +825,13 @@
                                             statusIcon = '<i class="fas fa-check-double"></i>';
                                             badgeColor = 'success';
                                             break;
+                                        
+                                        case 5:
+                                            statusText = 'REJECT';
+                                            statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
+                                            badgeColor = 'dark';
+                                            break;
+                                        
                                         default:
                                             statusText = 'UNKNOWN';
                                             statusIcon = '<i class="fas fa-question"></i>';
@@ -1166,6 +1195,13 @@
                                     <i class="fas fa-file-alt"></i>
                                 </button>`;
                             break;
+                        case 5:
+                        status = `
+                            <span style="font-size:9px !important; border-radius:20px !important" 
+                                class="badge  badge-status badge-dark px-3 py-2">
+                               <i class="fa-solid fa-circle-xmark"></i>  REJECT
+                            </span>`;
+                        break;
                     }
 
 
