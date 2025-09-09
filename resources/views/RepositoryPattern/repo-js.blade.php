@@ -1043,11 +1043,10 @@ var auth_id = $('#auth_id').val()
     // Approval Asset Notification
     
     $(document).on('click', '.approvalList', function() {
-        $('#approvalERPModal').modal({backdrop: 'static', keyboard: false})  
         var link = $(this).data('link');
-        var request = $(this).data('request');
-        $(link).modal('show');
+        var request = $(this).data('request');       
         if(link == "#stockOpnameApproval"){
+            $(link).modal('show');
             getCallback('getApprovalStockOpname', {'ticket_code': request}, function(response){
                 swal.close();
                 $('#approval_so_ticket_code_label').html(': ' + response.detail.ticket_code);
@@ -1075,6 +1074,7 @@ var auth_id = $('#auth_id').val()
                 })
             });
         }else if(link =='work_order_list' || link =="work_order_assignment"){
+            $(link).modal('show');
             getCallbackNoSwal("detailWO", {'request_code' : request}, function(response){
                 var id = response.detail.id
                 getCallback('detail_wo', {'id': id}, function(response){
@@ -1175,6 +1175,7 @@ var auth_id = $('#auth_id').val()
                         });
                     }
         }else if(link == 'update_system'){
+             $('#approvalERPModal').modal({backdrop: 'static', keyboard: false})  
             $('#approvalERPModal').modal('show')
              $('#erp_pic, #erp_approval, #erp_select_approval').val('')
             $('#erp_select_approval').select2().trigger('change')
@@ -1260,25 +1261,17 @@ var auth_id = $('#auth_id').val()
                         `;
                         });
                 html += `</ul>`;
-            } else if(link == 'update_system_check'){
-                alert('test')
-            }else {
-                html = `<div class="alert alert-warning">Tidak ada detail</div>`;
-            }
+        }else {
+            html = `<div class="alert alert-warning">Tidak ada detail</div>`;
+        }
             $("#erp_detail_relation").html(html);
             getActiveItems('getUser', null, 'erp_select_pic', 'PIC')
               
         });
         onChange('erp_select_pic','erp_pic')
         onChange('erp_select_approval','erp_approval')
-            $(document).ready(function () {
-                $('#approvalERPModal').on('shown.bs.modal', function () {
-                    $('#erp_select_pic').select2({
-                        dropdownParent: $('#approvalERPModal'),
-                        width: '100%'
-                    });
-                });
-            })
+        }else if(link === 'update_system_check'){
+            alert('test')
         }
     });
     $('#erp_approval_btn').on('click', function(){
@@ -1333,7 +1326,7 @@ $('#btn_erp_finish').on('click', function(){
     postCallback('finalizeERP', data, function(response){
         swal.close()
         toastr['success'](response.meta.message)
-        $('#checkingERPModal').modal('hide')
+        $('#finalizeERPModal').modal('hide')
         let path = window.location.pathname; // hasil: "/work_order"
         let segment = path.split("/")[1];    // hasil: "work_order"
         if(segment == 'update_system'){
@@ -1360,5 +1353,13 @@ $(document).on('click','.preview-image', function(){
         $('#imagePreviewModal img').attr('src', imageUrl);
         $('#imagePreviewModal').modal('show');
 })
+$(document).ready(function () {
+    $('#approvalERPModal').on('shown.bs.modal', function () {
+        $('#erp_select_pic').select2({
+            dropdownParent: $('#approvalERPModal'),
+            width: '100%'
+        });
+    });
+    })
 
 </script>

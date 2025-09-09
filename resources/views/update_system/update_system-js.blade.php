@@ -494,6 +494,7 @@
                     if (response.meta && response.meta.code == 200) {
                         toastr['success'](response.meta.message);
                         $('#checkModal').modal('hide');
+                        $('#editSystemModal').modal('hide');
                         // refresh table / list
                         if (typeof table !== 'undefined') {
                             table.ajax.reload(null, false);
@@ -517,7 +518,7 @@
             $('#finish_aspect').val(aspect)
             $('#finish_module').val(module)
             $('#finish_data_type').val(type)
-            $('#finish_task').val(remark)
+            $('#finish_remark').val('')
             $('.detail_code').text('Detail Code : '+ detail)
         })
         $('#checkModal').on('hidden.bs.modal', function () {

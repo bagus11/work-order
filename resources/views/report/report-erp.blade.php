@@ -160,7 +160,7 @@
     <table class="ttd-table">
         <tr>
             <th>EXECUTOR</th>
-            @foreach($approvals as $i => $approval)
+            @foreach($approvals->reverse()->values() as $i => $approval)
                 <th>APPROVAL <br> Layer {{ $i+1 }}</th>
             @endforeach
             <th>REQUESTER</th>
@@ -171,7 +171,7 @@
                 {{ $data->detailRelation->first()->userRelation->name ?? '-' }} <br>
                 <small>{{ $data->detailRelation->first()->userRelation->departmentRelation->name ?? '-' }}</small>
             </td>
-            @foreach($approvals as $approval)
+            @foreach($approvals->reverse()->values() as $approval)
                 <td>
                     <br><br><br><br><br>
                     {{ $approval->userRelation->name ?? '-' }} <br>
@@ -186,6 +186,7 @@
         </tr>
     </table>
 </div>
+
 
 {{-- Footer --}}
 <div class="footer">
