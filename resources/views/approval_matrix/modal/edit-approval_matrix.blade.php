@@ -48,7 +48,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" id="btn_save_approval" class="btn btn-success">
+          <button type="button" id="btn_save_approver" class="btn btn-success">
             <i class="fas fa-check"></i>
           </button>
         </div>
