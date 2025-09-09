@@ -19,7 +19,8 @@
                     <table class="datatable-bordered nowrap display" id="master_system_table" >
                         <thead>
                             <tr>
-                                <th style="text-align:center">Aspek</th>
+                                <th style="text-align:center">Aspect</th>
+                                <th style="text-align:center">Module</th>
                                 <th style="text-align:center">Name</th>
                                 <th style="text-align:center">Action</th>
                             </tr>

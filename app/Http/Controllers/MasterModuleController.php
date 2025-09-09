@@ -13,7 +13,7 @@ class MasterModuleController extends Controller
     }
      function getModule(){
         $data = masterModule::with([
-            'aspekRelation'
+            'aspekRelation',
         ])->get();
         return response()->json([
             'status' => true,

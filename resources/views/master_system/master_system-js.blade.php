@@ -81,8 +81,9 @@
                     for(i = 0; i < response.length; i++ )
                     {
                         data += `<tr style="text-align: center;">
-                                <td style="width:75%;text-align:left">${response[i].module_relation?.name || '-'}</td>
-                                <td style="width:75%;text-align:left">${response[i].name}</td>
+                                <td style="width:25%;text-align:left">${response[i].module_relation.aspek_relation?.name || '-'}</td>
+                                <td style="width:25%;text-align:left">${response[i].module_relation?.name || '-'}</td>
+                                <td style="width:25%;text-align:left">${response[i].name}</td>
                                 <td style="width:25%;text-align:center">
                                         <button title="Edit Category" class="edit btn btn-sm btn-info rounded" data-module="${response[i].module_id}"  data-description="${response[i].description}"  data-name="${response[i].name}" data-location="${response[i].location_id}"  data-id="${response[i]['id']}" data-toggle="modal" data-target="#editSystemModal">
                                             <i class="fas fa-solid fa-edit"></i>

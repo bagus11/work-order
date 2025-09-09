@@ -14,7 +14,8 @@ class MasterSystemController extends Controller
     }
     function getSystem(){
         $data = MasterSystem::with([
-            'moduleRelation'
+            'moduleRelation',
+            'moduleRelation.aspekRelation',
         ])->get();
         return response()->json([
             'status' => true,
