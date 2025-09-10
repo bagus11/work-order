@@ -49,10 +49,10 @@ class UpdateSystemController extends Controller
             'historyRelation',
             'historyRelation.userRelation',
         ]);
-
         // Kalau bukan developer, filter tiket
        if (!$user->hasRole('Developer') && !$user->hasRole('Head') ) {
             $query->where('status', 0)
+                ->orWhere('user_id', auth()->user()->id)
                 ->orWhereHas('detailRelation', function ($q) use ($user) {
                     $q->where('user_id', $user->id);
                 });
