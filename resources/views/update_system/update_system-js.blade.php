@@ -1050,24 +1050,27 @@
             });
         }
 
-        function uploadImage(file) {
-            let data = new FormData();
-            data.append("file", file);
-            data.append("_token", $('meta[name="csrf-token"]').attr('content'));
-            postCallbackNoSwal("{{ url('upload-image') }}", data, function(response) {
-                // Ambil URL dari response JSON
-                let url = response.url;  
+       function uploadImage(file) {
+        let data = new FormData();
+        data.append("file", file);
+        data.append("_token", $('meta[name="csrf-token"]').attr('content'));
 
-                // Masukin ke Summernote
-                $('#remark').summernote("insertImage", url);
+        postCallbackNoSwal("{{ url('upload-image') }}", data, function(response) {
+            // cek dulu response nya
+            console.log("Response upload:", response);
 
-                // Update hidden input
-                let currentImages = $("#uploaded_images").val();
-                let imageArray = currentImages ? currentImages.split(",") : [];
-                imageArray.push(url);
-                $("#uploaded_images").val(imageArray.join(","));
-            });
-        }
+            // Kalau server balikin { "url": "xxx" }
+            let url = response.url;  
+
+            $('#remark').summernote("insertImage", url);
+
+            let currentImages = $("#uploaded_images").val();
+            let imageArray = currentImages ? currentImages.split(",") : [];
+            imageArray.push(url);
+            $("#uploaded_images").val(imageArray.join(","));
+        });
+    }
+
 
         function deleteImage(src) {
             $.ajax({
