@@ -57,7 +57,7 @@ class UpdateSystemController extends Controller
                     $q->where('user_id', $user->id);
                 });
         }
-
+        $query->orderBy('status', 'asc');
         $data = $query->get();
 
         return response()->json([
