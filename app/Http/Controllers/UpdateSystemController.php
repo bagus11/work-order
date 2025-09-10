@@ -89,13 +89,14 @@ class UpdateSystemController extends Controller
     {
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $path = $file->store('public/summernote'); // nyimpen di storage/app/public/summernote
-            $url = asset('storage/' . $path); // langsung tambahin storage/ di depan
-           response()->json(['success' => $url], 200);
-        }
-        return response()->json(['error' => 'No file uploaded'], 400);
-    }
+            $path = $file->store('public/summernote'); 
+            $url = asset(str_replace('public/', 'storage/', $path)); // mapping public -> storage
 
+            return response()->json(['url' => $url], 200); // 🔑 key jadi 'url'
+        } else {
+            return response()->json(['error' => 'No file uploaded'], 400);
+        }
+    }
     public function deleteImage(Request $request)
     {
         $src = $request->input('src');
