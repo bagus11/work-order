@@ -77,7 +77,7 @@ class ApprovalMaatrixController extends Controller
             $post =[
                 'step'              =>$request->edit_step,
             ];
-            ApprovalMatrix::where('approval_code', $request->approval_code)->update($postw);
+            ApprovalMatrix::where('approval_code', $request->approval_code)->update($post);
             return ResponseFormatter::success(
                 $post,
                 'Incident successfully update'
