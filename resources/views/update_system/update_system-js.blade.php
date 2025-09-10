@@ -1004,7 +1004,9 @@
         $('#update_system_table').on('click','.report', function(){
             var ticket_code = $(this).data('ticket')
             let result = ticket_code.replaceAll("/", "_");
-            window.open('/report_system_ticket/'+result, '_blank');
+            let baseUrl = window.location.origin + '/work-order';
+            window.open(baseUrl + '/report_system_ticket/' + result, "_blank");
+
         })
     //Export to PDF  
 // Operation
