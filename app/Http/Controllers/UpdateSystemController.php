@@ -91,7 +91,7 @@ class UpdateSystemController extends Controller
             $file = $request->file('file');
             $path = $file->store('public/summernote'); // nyimpen di storage/app/public/summernote
             $url = asset('storage/' . $path); // langsung tambahin storage/ di depan
-            return $url;
+           response()->json(['success' => $url], 200);
         }
         return response()->json(['error' => 'No file uploaded'], 400);
     }
