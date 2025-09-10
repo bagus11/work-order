@@ -747,7 +747,7 @@ class UpdateSystemController extends Controller
                                     
                                 </table>
                                 <hr>';
-        
+         
         $footer             = '<hr>
                                 <table width="100%" style="font-size: 10px;">
                                     <tr>

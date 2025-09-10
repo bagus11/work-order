@@ -17,7 +17,7 @@ class DetailSystem extends Model
         return $this->belongsTo(MasterAspek::class,'aspect','id');
     }
     function moduleRelation() {
-        return $this->belongsTo(MasterModule::class,'module','id');
+        return $this->belongsTo(masterModule::class,'module','id');
     }
     function dataTypeRelation() {
         return $this->belongsTo(MasterSystem::class,'data_type','id');
