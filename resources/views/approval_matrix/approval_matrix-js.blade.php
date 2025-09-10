@@ -39,6 +39,23 @@
             $('#edit_step').val(step)
             $('#approval_code').val(approval)
         })
+
+        $('#btn_save_approver').on('click', function(){
+            var data ={
+                'approval_code' : $('#approval_code').val(),
+                'edit_step' : $('#edit_step').val(),
+            }
+            postCallback('updateApprovalMatrix', data, function(response){
+                swal.close()
+                toastr['success'](response.meta.message)
+                $('#editApprovalModal').modal('hide')
+                 getCallbackNoSwal('getApprovalMatrix', null, function(response){
+                    swal.close()
+                    mappingTable(response.data,'approval_table')
+                })
+
+            })
+        })
     // Edit Approval
 
     // Edit Approver

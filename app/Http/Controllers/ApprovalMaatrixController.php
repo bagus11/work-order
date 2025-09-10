@@ -72,6 +72,24 @@ class ApprovalMaatrixController extends Controller
         //     );
         // }
     }
+    function updateApprovalMatrix(Request $request) {
+        // try {
+            $post =[
+                'step'              =>$request->edit_step,
+            ];
+            ApprovalMatrix::where('approval_code', $request->approval_code)->update($postw);
+            return ResponseFormatter::success(
+                $post,
+                'Incident successfully update'
+            );            
+        // } catch (\Throwable $th) {
+        //     return ResponseFormatter::error(
+        //         $th,
+        //         'Incident failed to add',
+        //         500
+        //     );
+        // }
+    }
 
     function updateApproverMatrixDetail(Request $request) {
       // try {

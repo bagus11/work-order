@@ -556,6 +556,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('getApproverDetail', [ApprovalMaatrixController::class, 'getApproverDetail'])->name('getApproverDetail');
         Route::post('addApprovalMatrix', [ApprovalMaatrixController::class, 'addApprovalMatrix'])->name('addApprovalMatrix');
         Route::post('updateApproverMatrixDetail', [ApprovalMaatrixController::class, 'updateApproverMatrixDetail'])->name('updateApproverMatrixDetail');
+        Route::post('updateApprovalMatrix', [ApprovalMaatrixController::class, 'updateApprovalMatrix'])->name('updateApprovalMatrix');
         
     // Approval Matrix
 });
