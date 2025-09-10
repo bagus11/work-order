@@ -10,7 +10,7 @@ use App\Models\ApprovalMatrixDetail;
 use App\Models\DetailSystem;
 use App\Models\DetailSystemLog;
 use App\Models\MasterAspek;
-use App\Models\Mastermodule;
+use App\Models\masterModule;
 use App\Models\MasterDepartement;
 use App\Models\MasterSystem;
 use App\Models\UpdateSystem;
