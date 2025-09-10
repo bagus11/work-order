@@ -157,7 +157,7 @@ class UpdateSystemController extends Controller
                     // format detail_code => increment/ticket_code
                     $detail_code = $detailIncrement . '/' . $ticket_code;
                     $aspect = MasterAspek::where('name', $row['aspect'])->value('id');
-                    $module = Mastermodule::where('name', $row['module'])->where('aspek',$aspect)->value('id');
+                    $module = masterModule::where('name', $row['module'])->where('aspek',$aspect)->value('id');
                     $data_type = MasterSystem::where('name', $row['data_type'])->where('module_id',$module)->value('id');
                     $type = $row['data_type'] == 'Adding Data' ? 1 :2 ;
                     DetailSystem::create([
