@@ -1054,18 +1054,19 @@
             let data = new FormData();
             data.append("file", file);
             data.append("_token", $('meta[name="csrf-token"]').attr('content'));
-            postCallbackNoSwal('upload-image',data,function(response){
-                 $('#remark').summernote("insertImage", url);
+            postCallbackNoSwal("{{ url('upload-image') }}", data, function(response) {
+                // Ambil URL dari response JSON
+                let url = response.url;  
 
-                    // Ambil isi hidden input sekarang
-                    let currentImages = $("#uploaded_images").val();
-                    let imageArray = currentImages ? currentImages.split(",") : [];
-                    // Tambah URL baru
-                    imageArray.push(url);
-                    // Simpan kembali ke hidden input
-                    $("#uploaded_images").val(imageArray.join(","));         
-            })
-       
+                // Masukin ke Summernote
+                $('#remark').summernote("insertImage", url);
+
+                // Update hidden input
+                let currentImages = $("#uploaded_images").val();
+                let imageArray = currentImages ? currentImages.split(",") : [];
+                imageArray.push(url);
+                $("#uploaded_images").val(imageArray.join(","));
+            });
         }
 
         function deleteImage(src) {
