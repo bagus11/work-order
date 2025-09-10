@@ -93,6 +93,9 @@ class ApprovalMaatrixController extends Controller
 
     function updateApproverMatrixDetail(Request $request) {
       // try {
+            ApprovalMatrixDetail::where([
+                 'approval_code' => $request->approval_code,
+            ])->delete();
             foreach($request->step as $row){
               $post =[
                 'approval_code' => $request->approval_code,
