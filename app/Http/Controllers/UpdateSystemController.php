@@ -90,7 +90,7 @@ class UpdateSystemController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->store('public/summernote'); 
-            $url = asset(str_replace('public/', 'storage/', $path)); // mapping public -> storage
+            $url = asset(str_replace('public/', 'storage/public/', $path)); // mapping public -> storage
 
             return response()->json(['url' => $url], 200); // 🔑 key jadi 'url'
         } else {
