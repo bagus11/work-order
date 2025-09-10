@@ -280,11 +280,12 @@ class UpdateSystemController extends Controller
         $statusMessage = '';
         if($request->erp_approval == 2){
             $status = 5;
-            $statusMessage = 'rejected';
+            $statusMessage = 'reject';
             $statusHeader = 5; 
         }else{
             $status = 0 ;
             $statusHeader = count($nextApproval) > 0 ? 0 : 1;
+            $statusMessage = 'approve';
         }
         foreach($nextApproval as $row){
             $postNotification = [
