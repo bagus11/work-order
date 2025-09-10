@@ -1054,7 +1054,7 @@
             let data = new FormData();
             data.append("file", file);
             data.append("_token", $('meta[name="csrf-token"]').attr('content'));
-            postCallbackNoSwal('upload-image',data, false,function(response){
+            postCallbackNoSwal('upload-image',data,function(response){
                  $('#remark').summernote("insertImage", url);
 
                     // Ambil isi hidden input sekarang
