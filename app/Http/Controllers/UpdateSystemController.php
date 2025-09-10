@@ -133,8 +133,7 @@ class UpdateSystemController extends Controller
 
             $ticket_code = $increment . '/' . $department . '/' . $romanMonth . '/' . $year;
             DB::transaction(function() use($request, $ticket_code) {
-                $dataType = MasterSystem::where('name', $request->items[0]['data_type'])->value('id');
-                $approval_code  = ApprovalMatrix::where('data_type', $dataType)->first();
+                $approval_code  = ApprovalMatrix::where('data_type', $request->data_type)->first();
                 $approval_id    = ApprovalMatrixDetail::where('approval_code', $approval_code->approval_code)->where('step',1)->get();
                $post =[
                     'ticket_code'       => $ticket_code,

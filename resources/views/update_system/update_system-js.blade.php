@@ -126,6 +126,9 @@
                     var data = {
                         add_info : $('#add_info').val(),
                         remark   : $('#remark').val(),
+                        aspect   : $('#aspect').val(),
+                        module   : $('#module').val(),
+                        data_type   : $('#data_type').val(),
                         subject   : $('#subject').val(),
                         items    : tableData
                     };
