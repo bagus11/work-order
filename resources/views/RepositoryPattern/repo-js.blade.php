@@ -550,14 +550,19 @@ var auth_id = $('#auth_id').val()
             });  
             getNotification()
         }
-        function postCallbackNoSwal(route,data,callback){
+       function postCallbackNoSwal(route, data, callback) {
             $.ajax({
                 url: route,
-                type: "post",
+                type: "POST",
+                data: data,
                 dataType: 'json',
-                data:data,
-                async: true,
-                success:callback,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (typeof callback === "function") {
+                        callback(response);
+                    }
+                },
                 error: function(response) {
                     $('.message_error').html('')
                     swal.close();
@@ -566,19 +571,18 @@ var auth_id = $('#auth_id').val()
                         toastr['error'](response.responseJSON.meta.message);
                         return false
                     }
-                    if(response.status === 422)
-                    {
-                        $.each(response.responseJSON.errors, (key, val) => 
-                            {
-                                $('span.'+key+'_error').text(val)
-                            });
-                    }else{
+                    if(response.status === 422){
+                        $.each(response.responseJSON.errors, (key, val) => {
+                            $('span.'+key+'_error').text(val)
+                        });
+                    } else {
                         toastr['error']('Failed to get data, please contact ICT Developer');
                     }
                 }
-            });  
-            getNotification()
+            });
+            getNotification();
         }
+
         function getCallbackNoSwal(route,data,callback){
             $.ajax({
             url: route,
