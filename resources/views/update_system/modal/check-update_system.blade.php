@@ -37,7 +37,7 @@
                             <p>Task</p>
                         </div>
                         <div class="col-10 mb-2">
-                            <textarea name="finish_task" class="form-control" id="finish_task" rows="2" disabled></textarea>
+                            <textarea name="finish_task_text" class="form-control" id="finish_task_text" rows="2" disabled></textarea>
                         </div>
                     </div>
                     <div class="row mx-2">

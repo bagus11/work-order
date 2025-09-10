@@ -532,6 +532,7 @@
             $('#finish_aspect').val(aspect)
             $('#finish_module').val(module)
             $('#finish_data_type').val(type)
+            $('#finish_task_text').val(remark)
             $('#finish_remark').val('')
             $('.detail_code').text('Detail Code : '+ detail)
         })
