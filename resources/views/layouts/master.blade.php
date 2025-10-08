@@ -31,6 +31,7 @@
             $currentPath = Request::path();
         @endphp
         <input type="hidden" id="currentPath" value="{{$currentPath}}">
+        <input type="hidden" id="user_role" value="{{ auth()->user()->getRoleNames()->first() }}">
         <input type="hidden" class="form-control" id="auth_id" value="{{auth()->user()->id}}">
         <div class="content-wrapper py-4">
             <input type="hidden" id="authId" value="{{auth()->user()->id}}">
@@ -122,6 +123,13 @@
 </html>
 
 <style>
+  body
+  {
+    font-family: 'Poppins', sans-serif !important;
+  }
+  table{
+    font-family: 'Poppins', sans-serif !important;
+  }
   .message_error {
     color: red;
   }
@@ -444,6 +452,8 @@ tr.shown td.subdetails-click {
     border-color: #0d6efd;
     transform: translateY(-2px);
 }
+
+
 
 /* test */
 </style>

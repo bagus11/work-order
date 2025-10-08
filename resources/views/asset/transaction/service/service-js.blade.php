@@ -252,6 +252,7 @@ setInterval(function () {
             $('#update_service_condition_id_error').val(row.asset_relation.condition);
             $('#select_service_condition').val(row.asset_relation.condition);
             $('#select_service_condition').select2().trigger('change');
+            $('#btn_export_pdf_service').prop('hidden', true)
             switch (row.status) {
                 case 0:
                     $('#detail_status').text(': New');
@@ -264,6 +265,7 @@ setInterval(function () {
                     break;
                 case 3:
                     $('#detail_status').text(': Done');
+                     $('#btn_export_pdf_service').prop('hidden', false)
                     break;
                 default:
                     $('#detail_status').text(': Unknown Status');
@@ -271,25 +273,26 @@ setInterval(function () {
             $('#detail_notes').text(': ' + row.description);
             if(row.attachment == null) {
                 $('#detail_attachment').html(': No Attachment');
-            } else {
-                const attachmentUrl = window.location.origin + '/' + row.attachment;
-                $('#detail_attachment').html(': <a href="' + attachmentUrl + '" target="_blank"><i class="fa-solid fa-file"></i> Click Here </a>');
-            }
-            
-            // Log Transaction
-                // Clear isi sebelumnya
-                $('#detail_history_log').html('');
-                function formatDuration(minutes) {
-                    const jam = Math.floor(minutes / 60);
-                    const menit = minutes % 60;
-                    return `${jam} jam ${menit} menit`;
-                }
-                if (row.history_relation && row.history_relation.length > 0) {
-                    let html = '<ul class="list-group p-0">';
+                    } else {
+                        const attachmentUrl = window.location.origin + '/' + row.attachment;
+                        $('#detail_attachment').html(': <a href="' + attachmentUrl + '" target="_blank"><i class="fa-solid fa-file"></i> Click Here </a>');
+                    }
+                    
+                    // Log Transaction
+                        // Clear isi sebelumnya
+                        $('#detail_history_log').html('');
+                        function formatDuration(minutes) {
+                            const jam = Math.floor(minutes / 60);
+                            const menit = minutes % 60;
+                            return `${jam} jam ${menit} menit`;
+                        }
+                    if (row.history_relation && row.history_relation.length > 0) {
+                        let html = '<ul class="timeline">';
                         var x = 0;
+
                         row.history_relation.forEach(function (log) {
-                            ++x
-                           
+                            ++x;
+
                             const date = new Date(log.created_at);
                             const formattedDate = date.toLocaleDateString('en-EN', {
                                 day: '2-digit',
@@ -299,50 +302,68 @@ setInterval(function () {
                                 minute: '2-digit',
                                 second: '2-digit',
                             });
+
                             const statusText = x == 2 ? '<span class="badge bg-success">Start</span>' : getStatusText(log.status);
                             const userName = log.user_relation?.name || 'Unknown';
                             const description = log.description || '-';
 
-                            let attachmentHTML = '';
+                        let attachmentHTML = '';
                             if (log.attachment) {
                                 const attachmentUrl = window.location.origin + '/' + log.attachment;
                                 if (isImageFile(log.attachment)) {
+                                    // langsung tampilkan gambar
                                     attachmentHTML = `
-                                        <br>
-                                        <div style="margin-top: 8px;">
-                                            <a href="${attachmentUrl}" target="_blank">
-                                                <img src="${attachmentUrl}" alt="Attachment" style="max-width: 250px; border: 2px solid #ccc; border-radius: 5px; padding: 3px;">
-                                            </a>
+                                        <div class="mt-2">
+                                            <img src="${attachmentUrl}" 
+                                                alt="Attachment" 
+                                                class="img-fluid rounded shadow-sm border" 
+                                                style="max-width:100%;">
                                         </div>
                                     `;
                                 } else {
-                                    attachmentHTML = `<br>Attachment: <a href="${attachmentUrl}" target="_blank"><i class="fa-solid fa-file"></i> Lihat File</a>`;
+                                    attachmentHTML = `
+                                        <div class="mt-2">
+                                            <i class="fa-solid fa-file text-secondary me-1"></i> 
+                                            <span class="text-muted">File tersedia: </span>
+                                            <span class="fw-bold">${log.attachment.split('/').pop()}</span>
+                                        </div>
+                                    `;
                                 }
                             }
+                            const timelineIcon = getTimelineIcon(log.status);
 
-                            html += `
-                              <li class="list-group-item border-0 py-2 px-3" style="font-size: 10px;">
-                                    <div class="row gx-2">
-                                        <div class="col-7 d-flex flex-column justify-content-center">
-                                            <p class="mb-1"><b>${formattedDate}</b></p>
-                                            <p class="mb-1">By: <span class="text-primary">${userName}</span></p>
-                                            <p class="mb-1">Status: ${statusText}</p>
-                                            <p class="mb-1">Duration: ${log.duration == 0 ? '-' :formatDuration(log.duration)}</p>
-                                            <p class="mb-0">Description: <span class="text-muted">${description}</span></p>
-                                        </div>
-                                        <div class="col-5 d-flex align-items-center justify-content-end">
-                                            ${attachmentHTML}
+                           html += `
+                                <li class="timeline-item">
+                                    <span class="timeline-icon ${timelineIcon.cls}">${timelineIcon.icon}</span>
+                                    <div class="card shadow-sm border-0">
+                                        <div class="card-body p-3">
+                                            <div class="row g-3">
+                                                <!-- Info Kiri -->
+                                                <div class="col-md-8 col-12">
+                                                    <strong class="mb-1" style="font-size:14px"><i class="fa-regular fa-clock me-1"></i> ${formattedDate}</strong>
+                                                    <p style="font-size:14px" class="mb-1"><b>By:</b> <span class="text-primary">${userName}</span></p>
+                                                    <p style="font-size:14px" class="mb-1"><b>Status:</b> ${statusText}</p>
+                                                    <p style="font-size:14px" class="mb-1"><b>Duration:</b> ${log.duration == 0 ? '-' : formatDuration(log.duration)}</p>
+                                                    <p style="font-size:14px" class="mb-0"><b>Description:</b> <span class="text-muted">${description}</span></p>
+                                                </div>
+                                                <!-- Attachment Kanan -->
+                                                <div class="col-md-4 col-12 d-flex align-items-center justify-content-center">
+                                                    ${attachmentHTML}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </li>
-
                             `;
+
                         });
-                    html += '</ul>';
-                    $('#detail_history_log').html(html);
-                } else {
-                    $('#detail_history_log').html('<p class="text-muted">: No history log available.</p>');
-                }
+
+                        html += '</ul>';
+                        $('#detail_history_log').html(html);
+        } else {
+            $('#detail_history_log').html('<p class="text-muted">: No history log available.</p>');
+        }
+                    // Log Transaction
 
               function getStatusText(status) {
                     switch (status) {
@@ -408,7 +429,7 @@ setInterval(function () {
             var data = {
                 'service_code': $('#service_code').val(),
             }
-            postCallback('startService', data, false, function(response){
+            postCallback('startService', data, function(response){
                 swal.close();
                 $('#detailServiceModal').modal('hide');
                 toastr['success'](response.meta.message)
@@ -448,4 +469,26 @@ setInterval(function () {
         })
     // Update Service
 })
+function getTimelineIcon(status) {
+    switch(status) {
+        case 1: // Start / Success
+            return { icon: '<i class="fa-solid fa-play"></i>', cls: 'success' };
+        case 2: // Pending
+            return { icon: '<i class="fa-solid fa-hourglass-half"></i>', cls: 'pending' };
+        case 3: // Approved
+            return { icon: '<i class="fa-solid fa-check"></i>', cls: 'approved' };
+        case 4: // Rejected
+            return { icon: '<i class="fa-solid fa-xmark"></i>', cls: 'rejected' };
+        default:
+            return { icon: '<i class="fa-regular fa-circle"></i>', cls: 'pending' };
+    }
+}
+
+// Export PDF
+    $('#btn_export_pdf_service').on('click', function(){
+        var serviceCode = $('#service_code').val();
+        var servicereplace = serviceCode.replace(/\//g, '_');
+        var url = `/exportPdfService/${servicereplace}`;
+        window.open(url, '_blank');
+    })
 </script>

@@ -171,7 +171,9 @@
             var data = {
                 'asset_code' : row.asset_code
             }
+            $('#parent_asset_container').prop('hidden', true)
             if(row.type == 1){
+                $('#parent_asset_container').prop('hidden', false)
                 getCallbackNoSwal('mappingAssetChild', data, function(response){
                     swal.close()
                     $('#asset_child_table').DataTable().clear();
@@ -202,6 +204,38 @@
                 $('#label_ram').html(': ' + row.spec_relation.ram + ' GB')
                 $('#label_storage').html(': ' + row.spec_relation.storage + ' GB')
                 $('.specification_container').prop('hidden', false)
+
+                if(row.software_relation.length > 0){
+                    // Software Relation
+                        $('#software_table').DataTable().clear();
+                        $('#software_table').DataTable().destroy();
+
+                        var dataSoftware = '';
+                        if (row.software_relation && row.software_relation.length > 0) {
+                            for (i = 0; i < row.software_relation.length; i++) {
+                                dataSoftware += `
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td>${row.software_relation[i].name}</td>
+                                        <td>${row.software_relation[i].details || '-'}</td>
+                                    </tr>
+                                `;
+                            }
+                        } else {
+                            dataSoftware = `
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No software installed</td>
+                                </tr>
+                            `;
+                        }
+
+                        $('#software_table > tbody:first').html(dataSoftware);
+                        $('#software_table').DataTable({
+                            scrollX: true,
+                            scrollY: 220
+                        }).columns.adjust();
+
+                }
             }else{
                 $('.specification_container').prop('hidden', true)
             }
@@ -219,7 +253,6 @@
             $('#asset_history_table').DataTable().clear();
             $('#asset_history_table').DataTable().destroy();
             history_relation = row.history_relation
-            console.log(history_relation)
             var dataAssetHistory =''
             for(i = 0 ; i < history_relation.length; i ++ ){
                 const d = new Date(history_relation[i].created_at)
@@ -227,8 +260,8 @@
                 const time = d.toTimeString().split(' ')[0];
                 dataAssetHistory += `
                     <tr>
-                        <td>${date} + ${time}</td>
-                        <td>${history_relation[i].creator_relation.name}</td>
+                        <td>${date}  ${time}</td>
+                        <td>${history_relation[i].creator_relation?.name || '-'}</td>
                         <td>${history_relation[i].category}</td>
                         <td>${history_relation[i].brand}</td>
                         <td>${history_relation[i].type == 1 ? 'parent' : 'child'}</td>
@@ -354,4 +387,180 @@
 
         })
     })
+
+    // Add Asset Child
+    $(document).ready(function() {
+    $("#btn_add_asset_child").on("click", function() {
+        // cek kalau container sudah ada select2, jangan duplikat
+        if ($("#asset_child_container").children().length === 0) {
+            let html = `
+                 <div class="row">
+                        <div class="col-4">
+                            <select id="asset_child_select" class="form-control select2" style="width:100%;"></select>
+                        </div>
+                        <div class="col-2">
+                                <button class="btn btn-sm btn-success" id="btn_save_asset_child">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" id="btn_cancel_asset_child">
+                                     <i class="fa-solid fa-circle-xmark"></i>
+                                </button>
+                        </div>
+                    </div>
+            `;
+            $("#asset_child_container").append(html);
+
+            // aktifkan select2
+            $(document).ready(function () {
+                $('#asset_child_select').select2({
+                    placeholder: "Choose Asset",
+                    // dropdownParent: $('#detailMasterAssetModal'),
+                    width: '100%',
+                    ajax: {
+                        url: "/getInactiveAssetChild", 
+                        dataType: "json",
+                        delay: 250,
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data.data, function (item) {
+                                    return {
+                                        id: item.asset_code,
+                                        text: item.asset_code + " - " + item.category + " - " + item.brand
+                                    };
+                                })
+                            };
+                        },
+                        cache: true
+                    }
+                });
+            });
+
+        }
+    });
+   
+    // save asset child
+    $(document).on("click", "#btn_save_asset_child", function() {
+        let selectedAsset = $("#asset_child_select").val();
+        if(!selectedAsset) {
+            toastr.error("Please select an asset first!");
+            return;
+        }
+        $.ajax({
+            url: "updateAssetChild",
+            type: "POST",
+            data: {
+                asset_code: selectedAsset,
+                parent_code: $("#label_asset_code").text()
+            },
+            success: function(response) {
+                toastr.success("Asset Child added!");
+                $("#asset_child_container").empty(); 
+              
+                    $('#asset_child_table').DataTable().clear();
+                    $('#asset_child_table').DataTable().destroy();
+    
+                    var data =''
+                    for(i = 0 ; i < response.data.length; i ++ ){
+                        data += `
+                            <tr>
+                                <td>${response.data[i].asset_code}</td>
+                                <td>${response.data[i].category}</td>
+                                <td>${response.data[i].brand}</td>
+                            </tr>
+                        `
+                    }
+                    $('#asset_child_table > tbody:first').html(data);
+                    $('#asset_child_table').DataTable({
+                        scrollX  : true,
+                        scrollY  :220
+                    }).columns.adjust()
+            }
+        });
+    });
+
+    // cancel
+    $(document).on("click", "#btn_cancel_asset_child", function() {
+        $("#asset_child_container").empty();
+    });
+});
+    // Add Asset Child
+
+    // Add Software
+        $(document).ready(function () {
+            let softwareIndex = 0;
+
+            // klik tombol add software
+            $('#btn_add_software').on('click', function () {
+                let formHtml = `
+                    <div class="row mb-2 software-input-row">
+                        <div class="col-md-5">
+                            <input type="text" class="form-control form-control-sm software_name" placeholder="Software Name">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control form-control-sm software_details" placeholder="Details">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-success btn_save_software">
+                               <i class="fa-solid fa-circle-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger btn_remove_input">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                $('#software_container').append(formHtml);
+                $('#btn_add_software').prop('hidden', true);
+            });
+
+            // tombol remove input sebelum disave
+            $(document).on('click', '.btn_remove_input', function () {
+                $(this).closest('.software-input-row').remove();
+                 $('#btn_add_software').prop('hidden', false);
+            });
+  
+            // tombol save ke tabel
+            $(document).on('click', '.btn_save_software', function () {
+                let row = $(this).closest('.software-input-row');
+                let name = row.find('.software_name').val();
+                let details = row.find('.software_details').val();
+                var data = {
+                    'name' : name,
+                    'details' : details,
+                    'asset_code' : $('#label_asset_code').text().trim().substring(2).trim()
+                }
+                postCallback('addSoftwareTemp', data, function(response){
+                    swal.close()
+                    toastr['success'](response.meta.message)
+                    $('#software_table').DataTable().clear();
+                    $('#software_table').DataTable().destroy();
+                    var row =''
+                    console.log(response)
+                    for(i = 0; i < response.data.length; i ++){
+                        row += `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${response.data[i].name}</td>
+                                <td>${response.data[i].details || '-'}</td>
+                            </tr>
+                        `
+                    }
+                    $('#software_table > tbody:first').html(row);
+                    $('#software_table').DataTable({
+                        scrollX: true,
+                        scrollY: 220
+                    }).columns.adjust();
+                });
+
+            });
+        });
+
+    // Add Software
+
+    // Export PDF
+    $('#btn_export_pdf').on('click', function(){
+        var asset_code = $('#label_asset_code').text().trim().substring(2).trim()
+        window.open(`exportAssetPDF?asset_code=${asset_code}`, '_blank');
+    })
+    // Export PDF
 </script>

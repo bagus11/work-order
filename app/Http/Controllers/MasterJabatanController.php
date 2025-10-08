@@ -124,4 +124,10 @@ class MasterJabatanController extends Controller
             'data'=>$data
         ]);
     }
+    function get_division() {
+        $data = DB::table('master_division')->get();
+        return response()->json([
+            'data'=>$data,
+        ]);
+    }
 }

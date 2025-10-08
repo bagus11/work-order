@@ -214,6 +214,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('detail_departement', [MasterDepartementController::class, 'detail_departement'])->name('detail_departement');
     Route::get('get_departement_name', [MasterDepartementController::class, 'get_departement_name'])->name('get_departement_name');
     Route::get('get_departement_name_ict', [MasterDepartementController::class, 'get_departement_name_ict'])->name('get_departement_name_ict');
+    Route::get('get_department_by_division', [MasterDepartementController::class, 'get_department_by_division'])->name('get_department_by_division');
     Route::post('update_departement', [MasterDepartementController::class, 'update_departement'])->name('update_departement');
 
     //Master jabatan
@@ -224,6 +225,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('save_jabatan', [MasterJabatanController::class, 'save_jabatan'])->name('save_jabatan');
     Route::post('update_status_jabatan', [MasterJabatanController::class, 'update_status_jabatan'])->name('update_status_jabatan');
     Route::post('update_jabatan', [MasterJabatanController::class, 'update_jabatan'])->name('update_jabatan');
+    Route::get('get_division', [MasterJabatanController::class, 'get_division'])->name('get_division');
 
     // WO List
     Route::get('get_work_order_list', [WorkOrderController::class, 'get_work_order_list'])->name('get_work_order_list');
@@ -435,9 +437,15 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('getAssetCategory', [MasterAssetController::class, 'getAssetCategory'])->name('getAssetCategory'); 
             Route::get('getAssetBrand', [MasterAssetController::class, 'getAssetBrand'])->name('getAssetBrand'); 
             Route::get('getActiveParent', [MasterAssetController::class, 'getActiveParent'])->name('getActiveParent'); 
+            Route::get('getInactiveAssetChild', [MasterAssetController::class, 'getInactiveAssetChild'])->name('getInactiveAssetChild'); 
             Route::get('getUser', [MasterAssetController::class, 'getUser'])->name('getUser'); 
             Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset'); 
             Route::post('addMasterAsset', [MasterAssetController::class, 'addMasterAsset'])->name('addMasterAsset'); 
+            Route::post('updateAssetChild', [MasterAssetController::class, 'updateAssetChild'])->name('updateAssetChild'); 
+            Route::post('addSoftwareTemp', [MasterAssetController::class, 'addSoftwareTemp'])->name('addSoftwareTemp'); 
+            Route::get('exportAssetPDF', [MasterAssetController::class, 'exportAssetPDF'])->name('exportAssetPDF'); 
+            Route::get('getLocationFilter', [MasterAssetController::class, 'getLocationFilter'])->name('getLocationFilter'); 
+            Route::get('exportMasterAsset', [MasterAssetController::class, 'exportMasterAsset'])->name('exportMasterAsset'); 
         // Master Asset
 
         // Distribution Asset
@@ -450,7 +458,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::post('sendingDistribution', [DistributionAssetController::class, 'sendingDistribution'])->name('sendingDistribution'); 
             Route::get('detailDistributionTicket', [DistributionAssetController::class, 'detailDistributionTicket'])->name('detailDistributionTicket'); 
             Route::post('/incoming-progress', [DistributionAssetController::class, 'incomingProgress']); 
-            
+            Route::get('print-distribution-pdf/{id}', [DistributionAssetController::class, 'printDistribution']);
             // Approval Notification
                 Route::get('getApprovalAssetNotification', [DistributionAssetController::class, 'getApprovalAssetNotification'])->name('getApprovalAssetNotification'); 
                 Route::post('approvalAssetProgress', [DistributionAssetController::class, 'approvalAssetProgress'])->name('approvalAssetProgress'); 
@@ -464,6 +472,7 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService'); 
                 Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService'); 
                 Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService'); 
+                Route::get('exportPdfService/{id}',[ServiceAssetController::class, 'exportPdfService']);
             // Service Asset
             
         // Distribution Asset
@@ -548,6 +557,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('finishTask', [UpdateSystemController::class, 'finishTask'])->name('finishTask');
         Route::post('finalizeERP', [UpdateSystemController::class, 'finalizeERP'])->name('finalizeERP');
         Route::get('report_system_ticket/{id}',[UpdateSystemController::class, 'printERP']);
+        
         // UpdateSystemm
         
     // Approval Matrix

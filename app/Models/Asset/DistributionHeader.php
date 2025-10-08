@@ -27,6 +27,9 @@ class DistributionHeader extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+    function currentRelation() {
+        return $this->hasOne(User::class, 'id', 'pic_id');
+    }
     function receiverRelation()
     {
         return $this->hasOne(User::class, 'id', 'receiver_id');

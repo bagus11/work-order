@@ -75,11 +75,8 @@
                 </fieldset>
                 <fieldset>
                     <legend>Stock Opname Operation</legend>
-                    <div class="row">
-                        <div class="col-12">
-                            
+                        <div id="so_detail_content">
                         </div>
-                    </div>
                 </fieldset>
             </div>
             <div class="modal-footer justify-content-end">

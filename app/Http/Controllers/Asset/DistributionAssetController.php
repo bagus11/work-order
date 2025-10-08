@@ -13,11 +13,13 @@ use App\Models\Asset\DistributionHeader;
 use App\Models\Asset\DistributionLog;
 use App\Models\MasterAsset;
 use App\Models\MasterAssetLog;
+use App\Models\SoftwareModel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use NumConvert;
+use \Mpdf\Mpdf as PDF;
 
 class DistributionAssetController extends Controller
 {
@@ -39,11 +41,11 @@ class DistributionAssetController extends Controller
                     $editBtn = '<button class="btn btn-sm btn-info edit" data-id="' . $row->id . '">
                     <i class="fas fa-eye"></i>
                     </button>';
-                    $printBtn = '<button class="btn btn-sm btn-success print" data-id="' . $row->id . '">
+                    $printBtn = $row->status == 4 ? '<button class="btn btn-sm btn-success print" title="print BAST" data-id="' . $row->id . '">
                     <i class="fas fa-file"></i>
-                    </button>';
+                    </button>' : '';
                     $return =
-                    ' '
+                    $printBtn. ' '
                     .$editBtn ;
                     return $return;
                 })
@@ -195,6 +197,7 @@ class DistributionAssetController extends Controller
                 'condition'         => $condition->condition,
                 'status'            => 0,
                 'attachment'        => '',
+                'remark'            => '',
                 'created_at'        => date('Y-m-d H:i:s'),
                 'finish_date'       => null,
             ];
@@ -263,9 +266,11 @@ class DistributionAssetController extends Controller
             'userRelation',
             'receiverRelation',
             'locationRelation',
+            'currentRelation',
             'desLocationRelation',
             'detailRelation',
             'detailRelation.assetRelation',
+            'detailRelation.assetRelation.softwareRelation',
             'detailRelation.assetRelation.categoryRelation',
             'detailRelation.assetRelation.locationRelation',
             'detailRelation.assetRelation.ownerRelation',
@@ -321,16 +326,22 @@ class DistributionAssetController extends Controller
         $nextApproval = 0;
         $status = $header->status;
         $post_detail = $detail[0]->status;
-        if($currentApproval->step < $approval->step){
-            $approval = ApprovalDetail::where('approval_code', $approval->approval_code)->where('step', $currentApproval->step + 1)->first();
-            $nextApproval = $approval->user_id;
-            $status = $header->status == 0 ? 1 : $header->status + 1;
-           
-        }else if($currentApproval->step == $approval->step){
-           
-            $nextApproval = 0;  
-            $status = $header ->status + 1;
-            $post_detail = $detail[0]->status +1;
+        if($request->status == 2){
+            $nextApproval = 0;
+            $status = 5;
+            $post_detail = 5;
+        }else{
+            if($currentApproval->step < $approval->step){
+                $approval = ApprovalDetail::where('approval_code', $approval->approval_code)->where('step', $currentApproval->step + 1)->first();
+                $nextApproval = $approval->user_id;
+                $status = $header->status == 0 ? 1 : $header->status + 1;
+               
+            }else if($currentApproval->step == $approval->step){
+               
+                $nextApproval = 0;  
+                $status = $header ->status + 1;
+                $post_detail = $detail[0]->status +1;
+            }
         }
         
         $post_log =[
@@ -342,7 +353,7 @@ class DistributionAssetController extends Controller
             'pic_id'            => $header->pic_id,
             'receiver_id'       => $header->receiver_id,
             'approval_id'       => $nextApproval,
-            'status'            => $status,
+            'status'            => 1,
             'notes'             => $request->approval_notes,
             'attachment'        => '',
         ];
@@ -372,7 +383,7 @@ class DistributionAssetController extends Controller
 
     }
     function sendingDistribution(Request $request) {
-        try {
+        // try {
             $header = DistributionHeader::where('request_code', $request->ict_request_code)->first();
             $detail = DistributionDetail::where('request_code', $request->ict_request_code)->get();
             $fileName ='';
@@ -392,7 +403,7 @@ class DistributionAssetController extends Controller
                 'pic_id'            => $header->pic_id,
                 'receiver_id'       => $header->receiver_id,
                 'approval_id'       => $header->approval_id,
-                'status'            => $header->status + 1,
+                'status'            => $header->status,
                 'notes'             => $request->ict_notes_progress,
                 'attachment'        => $fileName,
             ];
@@ -402,9 +413,30 @@ class DistributionAssetController extends Controller
         
             
             DB::transaction(function() use($post,$request, $post_log,$fileName, $detail) {
+
                 DistributionLog::create($post_log);
                 DistributionHeader::where('request_code', $request->ict_request_code)->update($post);
                 DistributionDetail::where('request_code', $request->ict_request_code)->update(['status' => $detail[0]->status + 1]);
+                $assets = json_decode($request->assets); // kalau dari JSON string
+
+                foreach($assets as $asset){
+                    SoftwareModel::where('asset_code', $asset->asset_code)->delete(); 
+                    foreach($asset->softwares as $software){
+                        $post = [
+                            'name'      => $software->name,
+                            'details'    => $software->detail,
+                            'asset_code' => $asset->asset_code,
+                        ];
+                        if($software->name == null || $software->detail == ''){
+                            continue;
+                        }
+                        SoftwareModel::create($post);
+                    }
+                    MasterAsset::where('asset_code', $asset->asset_code)->update([
+                        'condition' => $asset->condition,
+                    ]);
+                }
+
                 foreach($detail as $value){
                     $asset = MasterAsset::where('asset_code', $value->asset_code)->first();
                     $postLog = [
@@ -437,13 +469,13 @@ class DistributionAssetController extends Controller
                     $post,                              
                     'Access successfully locked'
                 );            
-        }catch (\Throwable $th) {
-              return ResponseFormatter::error(
-                  $th,
-                  'Approval failed to update',
-                  500
-              );
-        }
+        // }catch (\Throwable $th) {
+        //       return ResponseFormatter::error(
+        //           $th,
+        //           'Approval failed to update',
+        //           500
+        //       );
+        // }
     }
 
     function incomingProgress(Request $request){
@@ -465,6 +497,7 @@ class DistributionAssetController extends Controller
                 $asset = DistributionDetail::where('asset_code', $assetCode)->where('request_code', $request->ict_request_code)->first();
                 $postAttachment = [
                     'condition' => $data['condition'],
+                    'remark' => $data['remark'],
                     'attachment' => $path,
                     'status' => $asset->status + 1,
                     'finish_date' => date('Y-m-d H:i:s'),
@@ -474,13 +507,13 @@ class DistributionAssetController extends Controller
                     $postMaster = [
                         'location_id' => $header->des_location_id,
                         'nik' =>$nik->nik,
-                        'condition' => $asset->condition,
+                         'condition' => $data['condition'],
                     ];
                 }else if($header->request_type == 2){   
                     $postMaster = [
                         'location_id' => $header->des_location_id,
                         'nik' =>$nik->nik,
-                        'condition' => $asset->condition,
+                         'condition' => $data['condition'],
                         'is_active' => 1,
                     ];
                 }else{
@@ -488,7 +521,7 @@ class DistributionAssetController extends Controller
                         'location_id' => 1,
                         'nik' => 0,
                         'is_active' => 0,
-                        'condition' => $asset->condition,
+                         'condition' => $data['condition'],
                     ];   
                 }
                 // dd($postMaster);
@@ -540,5 +573,69 @@ class DistributionAssetController extends Controller
         //         500
         //     );
         // }
+    }
+    function printDistribution($id){
+        $data = DistributionHeader::with([
+            'userRelation',
+            'currentRelation',
+            'receiverRelation',
+            'historyRelation',
+            'historyRelation.userRelation',
+            'locationRelation',
+            'desLocationRelation',
+            'detailRelation',
+            'detailRelation.assetRelation',
+            'detailRelation.assetRelation.categoryRelation',
+            'detailRelation.assetRelation.locationRelation',
+            'detailRelation.assetRelation.ownerRelation',
+            'detailRelation.assetRelation.brandRelation',
+        ])->where('id', $id)->first();
+        $html = view('report.report-asset_distribution', compact('data'))->render();
+        $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
+        $header             = '';
+        $header .= '
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:none; border-collapse:collapse;">
+                                    <tr>
+                                        <td style="padding-left:10px; border:none;">
+                                            <span style="font-size: 16px; font-weight: bold;">PT PRALON</span>
+                                            <br>
+                                            <span style="font-size:9px;">Synergy Building #08-08 Tangerang 15143 - Indonesia +62 21 304 38808</span>
+                                        </td>
+                                        <td style="width:33%; border:none;"></td>
+                                        <td style="width: 50px; text-align:right; border:none;">'.$imageLogo.'</td>
+                                    </tr>
+                                </table>
+
+                                <hr>';
+         
+        $footer             = '<hr>
+                                <table width="100%" style="font-size: 10px;">
+                                    <tr>
+                                        <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                                        <td width="10%" style="text-align: right;"> {PAGENO}</td>
+                                    </tr>
+                                </table>';
+
+            
+            $mpdf           = new PDF();
+            $mpdf->SetHTMLHeader($header);
+            $mpdf->SetHTMLFooter($footer);
+            $mpdf->AddPage(
+                'P', // L - landscape, P - portrait 
+                '',
+                '',
+                '',
+                '',
+                5, // margin_left
+                5, // margin right
+                25, // margin top
+                20, // margin bottom
+                5, // margin header
+                5
+            ); // margin footer
+            $mpdf->WriteHTML($html);
+            // Output a PDF file directly to the browser
+            ob_clean();
+            $mpdf->Output('Distribution Report'.$data->request_code.'('.date('Y-m-d').').pdf', 'I');
     }
 }

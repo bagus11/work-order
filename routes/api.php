@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Asset\MasterAssetController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\WorkOrderController;
+use App\Models\StockOpnameHeader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,5 +30,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('woInProgress', [WorkOrderController::class, 'woInProgress']);
     Route::get('/woDetailById/{id}', [WorkOrderController::class, 'showById']);
     Route::post('/updateWO', [WorkOrderController::class, 'updateWO']);
+    Route::get('/getActiveStockOpname', [StockOpnameController::class, 'getActiveStockOpname']);
+    
+    // StockOpname  
+        Route::get('/getStockOpnameTicket', [StockOpnameController::class, 'getStockOpnameTicket']);
+        Route::get('/stock-opname/detail', [StockOpnameController::class, 'stockOPnameDetail']);
 
+
+    // StockOpname
 });

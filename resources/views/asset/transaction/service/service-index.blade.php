@@ -12,6 +12,44 @@
 .list-group-item:nth-child(even) {
     background-color: #e9ecef;  /* warna agak gelap */
 }
+.timeline {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25px;
+    width: 2px;
+    height: 100%;
+    background: #dee2e6;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 60px;
+}
+.timeline-icon {
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    box-shadow: 0 0 0 2px #fff;
+}
+.timeline-icon.success { background-color: #198754; }  /* hijau */
+.timeline-icon.pending { background-color: #ffc107; color:#000; } /* kuning */
+.timeline-icon.approved { background-color: #0d6efd; } /* biru */
+.timeline-icon.rejected { background-color: #dc3545; } /* merah */
 
 
 </style>

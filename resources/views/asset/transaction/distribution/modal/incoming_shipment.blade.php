@@ -1,5 +1,5 @@
 <div class="modal fade" id="incomingModal">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-core">
                 <span>Confirmation Asset Progress</span>
@@ -23,6 +23,7 @@
                                             <th>Type</th>
                                             <th>Condition</th>
                                             <th>Status</th>
+                                            <th>Remark</th>
                                             <th>Attachment</th>
                                         </tr>
                                     </thead>
@@ -33,10 +34,10 @@
                             </div>
                         </div>
                         <div class="row mx-2">
-                            <div class="col-2 mt-2">
+                            <div class="col-1 mt-2">
                                 <p>Notes</p>
                             </div>
-                            <div class="col-10">
+                            <div class="col-11">
                                 <textarea name="ict_incoming_notes" class="form-control" id="ict_incoming_notes" cols="30" rows="10"></textarea>
                             </div>
                         </div>

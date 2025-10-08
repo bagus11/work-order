@@ -61,6 +61,9 @@
             ]
         });
     })
+    $('#btn_refresh_distribution').on('click', function(){
+        $('#distribution_table').DataTable().ajax.reload();
+    })
     let selectedAssets = [];
     $('#btn_add_distribution').on('click', function () {
         $('#form_serialize')[0].reset();
@@ -202,8 +205,6 @@
             });
         }
     });
-   
-
     $('#select_location').on('change', function(){
         var data = {
            'id' : $(this).val(), 
@@ -264,11 +265,17 @@
                 swal.close()
                
                 $('#ict_request_code').val(response.detail.request_code)
-                if(response.detail.status === 2){
-                    $('#ict_progress_btn').prop('hidden', false);
-                }else{
-                    $('#ict_progress_btn').prop('hidden', true);
-                }
+                    if(user_role == 'Developer' || user_role == "Support"){
+                        if(response.detail.status === 2){
+                            $('#ict_progress_btn').prop('hidden', false);
+                        }else{
+                            $('#ict_progress_btn').prop('hidden', true);
+                        }
+                    }else{
+                        $('ict_progress_btn').prop('hidden', true);
+
+                    }
+               
 
                 if(response.detail.status === 3){
                     $('#ict_incoming_btn').prop('hidden', false);
@@ -291,7 +298,7 @@
                 $('#ict_request_code').text(': ' + response.detail.request_code)
                 $('#ict_current_location').text(': ' + response.detail.location_relation.name)
                 $('#ict_destination_location').text(': ' + response.detail.des_location_relation.name)
-                $('#ict_current_user').text(': ' + response.detail.user_relation.name)
+                $('#ict_current_user').text(': ' + response.detail.current_relation.name)
                $('#ict_receiver_user').text(': ' + (response.detail.receiver_relation?.name || '-'));
 
                 $('#ict_notes').text(': ' + response.detail.notes)
@@ -406,37 +413,68 @@
                             imageHtml = `<img src="${imageUrl}" alt="Asset Image" class="img-fluid rounded" style="max-height: 150px;">`;
                         }
 
+                     // Software List
+                        let softwareHtml = '-';
+                        if (asset.asset_relation?.software_relation && asset.asset_relation.software_relation.length > 0) {
+                            softwareHtml = `
+                                <table class="table table-sm table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th style="width: 40%">Name</th>
+                                            <th style="width: 60%">Detail</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${asset.asset_relation.software_relation.map(soft => `
+                                            <tr>
+                                                <td>${soft.name || '-'}</td>
+                                                <td>${soft.details || '-'}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            `;
+                        }
+
+
                         // Template isi detail asset
                         let detailHtml = `
                             <div class="row">
-                                <div class="col-3"><p>Asset Code</p></div>
-                                <div class="col-3"><p>: ${asset.asset_code || '-'}</p></div>
-                                <div class="col-3"><p>Category</p></div>
-                                <div class="col-3"><p>: ${asset.asset_relation?.category_relation?.name || '-'}</p></div>
+                                <div class="col-2"><p>Asset Code</p></div>
+                                <div class="col-4"><p>: ${asset.asset_code || '-'}</p></div>
+                                <div class="col-2"><p>Category</p></div>
+                                <div class="col-4"><p>: ${asset.asset_relation?.category_relation?.name || '-'}</p></div>
 
-                                <div class="col-3"><p>Brand</p></div>
-                                <div class="col-3"><p>: ${asset.asset_relation?.brand_relation?.name || '-'}</p></div>
-                                <div class="col-3"><p>Type</p></div>
-                                <div class="col-3"><p>: ${asset.type ? 'Parent' : 'Child'}</p></div>
+                                <div class="col-2"><p>Brand</p></div>
+                                <div class="col-4"><p>: ${asset.asset_relation?.brand_relation?.name || '-'}</p></div>
+                                <div class="col-2"><p>Type</p></div>
+                                <div class="col-4"><p>: ${asset.type ? 'Parent' : 'Child'}</p></div>
 
-                                <div class="col-3"><p>Parent Code</p></div>
-                                <div class="col-3"><p>: ${asset.asset_relation?.parent_code || '-'}</p></div>
-                                <div class="col-3"><p>Condition</p></div>
-                                <div class="col-3"><p>: ${condition}</p></div>
+                                <div class="col-2"><p>Parent Code</p></div>
+                                <div class="col-4"><p>: ${asset.asset_relation?.parent_code || '-'}</p></div>
+                                <div class="col-2"><p>Condition</p></div>
+                                <div class="col-4"><p>: ${condition}</p></div>
 
-                                <div class="col-3"><p>Owner</p></div>
-                                <div class="col-3"><p>: ${asset.asset_relation?.owner_relation?.name || '-'}</p></div>
-                                <div class="col-3"><p>Location</p></div>
-                                <div class="col-3"><p>: ${asset.asset_relation?.location_relation?.name || '-'}</p></div>
+                                <div class="col-2"><p>Owner</p></div>
+                                <div class="col-4"><p>: ${asset.asset_relation?.owner_relation?.name || '-'}</p></div>
+                                <div class="col-2"><p>Location</p></div>
+                                <div class="col-4"><p>: ${asset.asset_relation?.location_relation?.name || 'Sending Proggress'}</p></div>
 
-                                <div class="col-3"><p>Join Date</p></div>
-                                <div class="col-3"><p>: ${asset.asset_relation?.join_date || '-'}</p></div>
+                                <div class="col-2"><p>Join Date</p></div>
+                                <div class="col-4"><p>: ${asset.asset_relation?.join_date || '-'}</p></div>
                             </div>
-                            <div class="row mt-3">
-                                <div class="col-3"><p>Image</p></div>
-                                <div class="col-9"><p>${imageHtml}</p></div>
+                            <div class="row mt-2">
+                                <div class="col-2"><p>Image</p></div>
+                                <div class="col-10"><p>${imageHtml}</p></div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-2"><p>Software</p></div>
+                                <div class="col-10">
+                                    ${softwareHtml}
+                                </div>
                             </div>
                         `;
+
 
                         $('#ict_asset_info').html(detailHtml);
                     });
@@ -467,6 +505,7 @@
                             }
                             var check = ''
                             var attachment =''
+                            var remarkIncoming =''
                             if(asset.status == 2){
                                 check = `   <input type="checkbox" id="check" name="check" class="ict_asset_checkbox" style="border-radius: 5px !important;" value="${asset.asset_code}"   data-asset="${asset.asset_code}">`;
                                 attachment =`
@@ -479,6 +518,9 @@
                                             <option value="2">Partially Good</option>
                                             <option value="4">Damaged</option>
                                         </select>    
+                                `
+                                remarkIncoming =`
+                                    <textarea name="remark" class="form-control remark-input" id="remark" cols="30" rows="2" placeholder="Enter remark..."></textarea>
                                 `
                               
                             }else if(asset.status == 3){
@@ -501,6 +543,7 @@
                                     default:
                                         conditionBadge = '<span class="badge bg-secondary">-</span>';
                                 }
+                                remarkIncoming = asset.remark || '-'
                             }
                             let row = `
                                 <tr>
@@ -513,6 +556,7 @@
                                     <td>${asset.type ? 'Parent' : 'Child' || '-'}</td>
                                     <td style="text-align:center;"> ${conditionBadge}</td>
                                     <td style="text-align:center;">${statusLabel}</td>
+                                    <td style="text-align:center;">${remarkIncoming}</td>
                                     <td>
                                         ${attachment}
                                     </td>
@@ -529,9 +573,8 @@
                  
                      
                     $('#ict_log_list').empty();
-
                     if (response.detail.history_relation && response.detail.history_relation.length > 0) {
-                        let logList = '<div class="row">';
+                        let logList = `<div class="timeline">`;
 
                         response.detail.history_relation.forEach(function(log) {
                             const location = log.location_relation?.name || '-';
@@ -543,64 +586,325 @@
                             const notes = log.notes || '-';
                             const createdAt = log.created_at ? moment(log.created_at).format("DD MMMM YYYY, HH:mm:ss") : '-';
 
-                            const attachment = log.attachment 
+                            const attachment = log.attachment
                                 ? `<a target="_blank" href="{{URL::asset('storage/Asset/Distribution/attachmentLog/${log.attachment}')}}" class="text-primary">
-                                        <i class="fa-solid fa-file" style="color: red;font-size: 16px;"></i> ${log.attachment}
+                                        <i class="fa-solid fa-file" style="color: red;font-size: 14px;"></i> ${log.attachment}
                                 </a>`
                                 : '-';
 
                             let statusBadge = '';
+                            let statusIcon = '';
+                            let statusColor = '';
                             switch (log.status) {
-                                case 0: statusBadge = '<span class="badge bg-secondary">DRAFT</span>'; break;
-                                case 1: statusBadge = '<span class="badge bg-info text-white">APPROVAL</span>'; break;
-                                case 2: statusBadge = '<span class="badge bg-warning text-dark">IN PROGRESS</span>'; break;
-                                case 3: statusBadge = '<span class="badge bg-primary text-white">CHECKING</span>'; break;
-                                case 4: statusBadge = '<span class="badge bg-success text-white">DONE</span>'; break;
-                                case 5: statusBadge = '<span class="badge bg-danger text-white">REJECT</span>'; break;
-                                default: statusBadge = '<span class="badge bg-secondary">UNKNOWN</span>';
+                                case 0: 
+                                    statusBadge = '<span class="badge bg-secondary">DRAFT</span>'; 
+                                    statusIcon = '<i class="fas fa-file-alt text-white"></i>'; 
+                                    statusColor = 'secondary';
+                                    break;
+                                case 1: 
+                                    statusBadge = '<span class="badge bg-info text-white">APPROVAL</span>'; 
+                                    statusIcon = '<i class="fas fa-check-circle text-white"></i>'; 
+                                    statusColor = 'info';
+                                    break;
+                                case 2: 
+                                    statusBadge = '<span class="badge bg-warning text-dark">IN PROGRESS</span>'; 
+                                    statusIcon = '<i class="fas fa-spinner fa-spin text-white"></i>'; 
+                                    statusColor = 'warning';
+                                    break;
+                                case 3: 
+                                    statusBadge = '<span class="badge bg-primary text-white">CHECKING</span>'; 
+                                    statusIcon = '<i class="fas fa-search text-white"></i>'; 
+                                    statusColor = 'primary';
+                                    break;
+                                case 4: 
+                                    statusBadge = '<span class="badge bg-success text-white">DONE</span>'; 
+                                    statusIcon = '<i class="fas fa-check-double text-white"></i>'; 
+                                    statusColor = 'success';
+                                    break;
+                                case 5: 
+                                    statusBadge = '<span class="badge bg-danger text-white">REJECT</span>'; 
+                                    statusIcon = '<i class="fas fa-times-circle text-white"></i>'; 
+                                    statusColor = 'danger';
+                                    break;
+                                default: 
+                                    statusBadge = '<span class="badge bg-secondary">UNKNOWN</span>';
+                                    statusIcon = '<i class="fas fa-question-circle text-white"></i>'; 
+                                    statusColor = 'secondary';
                             }
 
-                            const userPhoto = log.user_relation?.photo 
-                                ? `{{ asset('storage/User/Photo/${log.user_relation.photo}') }}`
-                                : `{{ asset('profile.png') }}`;
-
                             logList += `
-                                <div class="col-12 col-md-6 col-lg-6 mb-3">
-                                    <div class="d-flex align-items-start p-3 border rounded shadow-sm h-100" style="background-color: #f5f1f1;">
-                                        <img src="${userPhoto}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
-                                        <div class="ml-2 w-100">
-                                            <div class="fw-bold text-primary mb-1">${user}</div>
-                                            <table class="table table-sm table mb-0 text-dark">
-                                                <tbody>
-                                                    <tr><th style="width: 120px;">Location</th><td>: ${location}</td></tr>
-                                                    <tr><th>Des Location</th><td>: ${desLocation}</td></tr>
-                                                    <tr><th>PIC</th><td>: ${pic}</td></tr>
-                                                    <tr><th>Receiver</th><td>: ${receiver}</td></tr>
-                                                    <tr><th>Approval</th><td>: ${approval}</td></tr>
-                                                    <tr><th>Status</th><td>: ${statusBadge}</td></tr>
-                                                    <tr><th>Attachment</th><td>: ${attachment}</td></tr>
-                                                    <tr><th>Remark</th><td>: ${notes}</td></tr>
-                                                </tbody>
-                                            </table>
-                                            <div class="text-muted small mt-2" style="font-size: 9px;">
-                                                <i class="fas fa-clock"></i> ${createdAt}
-                                            </div>
-                                        </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-${statusColor}" style="margin-left: 5px !important">
+                                        ${statusIcon}
                                     </div>
+                                 <div class="timeline-content card shadow-sm p-3">
+                                    <div class="fw-bold text-primary mb-1">${user} ${statusBadge}</div>
+                                    <table class="table table-sm mb-0 text-dark">
+                                        <tbody>
+                                            <tr>
+                                                <th style="width:120px;">Location</th><td>: ${location}</td>
+                                                <th style="width:120px;">Des Location</th><td>: ${desLocation}</td>
+                                            </tr>                            <tr>
+                                                <th>PIC</th><td>: ${pic}</td>
+                                                <th>Receiver</th><td>: ${receiver}</td>
+                                            </tr>
+                                            ${approval !== '-' ? `
+                                            <tr>
+                                                <th>Approval</th><td colspan="3">: ${approval}</td>
+                                            </tr>` : ``}
+                                            <tr>
+                                                <th>Attachment</th><td colspan="3">: ${attachment}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Remark</th><td colspan="3">: ${notes}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="text-muted small mt-2" style="font-size:10px;">
+                                        <i class="fas fa-clock"></i> ${createdAt}
+                                    </div>
+                                </div>
+
                                 </div>
                             `;
                         });
 
-                        logList += '</div>';
+                        logList += `</div>`;
                         $('#ict_log_list').html(logList);
+
+                        // inject CSS timeline
+                        const style = `
+                            <style id="timeline-style">
+                            .timeline {
+                                position: relative;
+                                margin: 20px 0;
+                                padding: 0 0 0 30px;
+                                border-left: 2px solid #dee2e6;
+                            }
+                            .timeline-item {
+                                position: relative;
+                                margin-bottom: 20px;
+                            }
+                            .timeline-marker {
+                                position: absolute;
+                                left: -23px;
+                                top: 5px;
+                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 18px;
+                                color: #fff;
+                            }
+                            .timeline-content {
+                                margin-left: 25px;
+                                background: #fff;
+                                border-radius: 8px;
+                            }
+                                /* Style umum untuk select */
+                            select.form-control {
+                                appearance: none; /* hilangin default arrow */
+                                -webkit-appearance: none;
+                                -moz-appearance: none;
+                                
+                                background-color: #fff;
+                                border: 1px solid #ccc;
+                                border-radius: 10px;
+                                padding: 10px 35px 10px 15px;
+                                font-size: 14px;
+                                font-weight: 500;
+                                color: #333;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+                                position: relative;
+                            }
+
+                            /* Hover & focus efek */
+                            select.form-control:hover {
+                                border-color: #007bff;
+                                box-shadow: 0 0 8px rgba(0,123,255,0.3);
+                            }
+
+                            select.form-control:focus {
+                                outline: none;
+                                border-color: #0056b3;
+                                box-shadow: 0 0 10px rgba(0,86,179,0.4);
+                            }
+
+                            /* Tambahin custom arrow */
+                            select.form-control::after {
+                                content: '▼';
+                                font-size: 12px;
+                                color: #555;
+                                position: absolute;
+                                right: 15px;
+                                pointer-events: none;
+                            }
+
+                            </style>
+                        `;
+                        if (!$('head').find('#timeline-style').length) {
+                            $('head').append(style);
+                        }
+
                     } else {
                         $('#ict_log_list').html('<div class="text-center text-muted">Tidak ada riwayat distribusi</div>');
                     }
-
-
-
-
                     // log Transaction
+
+                    // Software Information
+                   let details = response.detail.detail_relation;
+                    $("#software_container").empty(); // clear dulu biar nggak numpuk
+                    
+                    details.forEach(detail => {
+                        if (detail.asset_relation) {
+                            let assetCode = detail.asset_relation.asset_code ?? "Unknown Asset";
+                            let conditionVal = detail.condition ?? null;
+
+                            // Mapping condition → teks
+                            let getConditionOptions = (selected) => {
+                                let options = [
+                                    { val: 1, text: "Good" },
+                                    { val: 2, text: "Partially Good" },
+                                    { val: 3, text: "Damaged" }
+                                ];
+                                return options.map(opt => 
+                                    `<option value="${opt.val}" ${selected == opt.val ? "selected" : ""}>${opt.text}</option>`
+                                ).join("");
+                            };
+                            let groupHtml = `
+                                <fieldset class="mb-3 p-3 border">
+                                    <legend>${assetCode}</legend>
+                                    <div class="row">
+                                        <div class="col-1 mt-2">
+                                            <p>Condition</p>
+                                        </div>
+                                        <div class="col-4">
+                                               <select name="condition[${assetCode}]" class="select2">
+                                                    ${getConditionOptions(conditionVal)}
+                                                </select>
+                                         </div>
+                                         
+                                    </div>
+                                   
+                                    <div class="software-list"></div>
+                                   
+                                    <button type="button" class="btn btn-sm btn-success mt-2 addSoftwareBtn">
+                                        <i class="fa fa-plus"></i> 
+                                    </button>
+                                </fieldset>
+                            `;
+
+                            let $group = $(groupHtml);
+                            let $list = $group.find(".software-list");
+
+                          if (detail.asset_relation.software_relation && detail.asset_relation.software_relation.length > 0) {
+                                detail.asset_relation.software_relation.forEach(soft => {
+                                    $list.append(`
+                                        <div class="software-item row g-2 align-items-center mb-2">
+                                            <div class="col-md-1 mt-3">
+                                                <p>Name</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                              
+                                                <input type="text" class="form-control"
+                                                    name="software_name[${assetCode}][]"
+                                                    value="${soft.name ?? ''}"
+                                                    placeholder="Software Name">
+                                            </div>
+                                             <div class="col-md-1 mt-3">
+                                                <p>Detail</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                
+                                                <input type="text" class="form-control"
+                                                    name="software_detail[${assetCode}][]"
+                                                    value="${soft.details ?? ''}"
+                                                    placeholder="Software Detail">
+                                            </div>
+                                            <div class="col-auto d-flex align-items-end mt-1">
+                                                <button type="button" class="btn btn-sm btn-danger deleteSoftwareBtn">
+                                                    ×
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `);
+                                });
+                            } else {
+                                $list.append(`
+                                    <div class="software-item row g-2 align-items-center mb-2">
+                                        <div class="col-md-1 mt-3">
+                                                <p>Name</p>
+                                            </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control"
+                                                name="software_name[${assetCode}][]"
+                                                placeholder="Software Name">
+                                        </div>
+                                        <div class="col-md-1 mt-3">
+                                                <p>Detail</p>
+                                            </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control"
+                                                name="software_detail[${assetCode}][]"
+                                                placeholder="Software Detail">
+                                        </div>
+                                        <div class="col-auto d-flex align-items-end mt-1">
+                                            <button type="button" class="btn btn-sm btn-danger deleteSoftwareBtn">
+                                                ×
+                                            </button>
+                                        </div>
+                                    </div>
+                                `);
+                            }
+
+
+                            $("#software_container").append($group);
+                            $('.select2').select2();
+                        }
+                    });
+
+                    // Event tombol Add Software (per asset group)
+                    $(document).off("click", ".addSoftwareBtn").on("click", ".addSoftwareBtn", function() {
+                        let $list = $(this).siblings(".software-list");
+                        let assetCode = $(this).closest("div.mb-3").find("h6").text();
+
+                        $list.append(`
+                             <div class="software-item row g-2 align-items-center mb-2">
+                                        <div class="col-md-1 mt-3">
+                                                <p>Name</p>
+                                            </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control"
+                                                name="software_name[${assetCode}][]"
+                                                placeholder="Software Name">
+                                        </div>
+                                        <div class="col-md-1 mt-3">
+                                                <p>Detail</p>
+                                            </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control"
+                                                name="software_detail[${assetCode}][]"
+                                                placeholder="Software Detail">
+                                        </div>
+                                        <div class="col-auto d-flex align-items-end mt-1">
+                                            <button type="button" class="btn btn-sm btn-danger deleteSoftwareBtn">
+                                                ×
+                                            </button>
+                                        </div>
+                                    </div>
+                        `);
+                    });
+
+                    // Event tombol Delete Software
+                    $(document).off("click", ".deleteSoftwareBtn").on("click", ".deleteSoftwareBtn", function() {
+                        $(this).closest(".software-item").remove();
+                    });
+
+                    // Software Information
             })
 
           
@@ -608,90 +912,131 @@
     // info
 
     // Prorgress Button
-    $('#ict_progress_btn').on('click', function () {
-        $('#detailDistributionModal').modal('hide');
-        $('#progressModal').modal('show');
-        $('#progress_form')[0].reset();
-        $('.message_error').text('');
-     
-        $('#progressModal').on('hidden.bs.modal', function () {
-            $('#detailDistributionModal').modal('show');
+        $('#ict_progress_btn').on('click', function () {
+            $('#detailDistributionModal').modal('hide');
+            $('#progressModal').modal('show');
+            $('#progress_form')[0].reset();
+            $('.message_error').text('');
+            
+            $('#progressModal').on('hidden.bs.modal', function () {
+                $('#detailDistributionModal').modal('show');
+            });
         });
-    });
-    
-    $('#ict_incoming_btn').on('click', function () {
-        $('#detailDistributionModal').modal('hide');
-        $('#progress_form')[0].reset();
-        $('.message_error').text('');
-            $('#incomingModal').modal('show');
-        $('#incomingModal').on('hidden.bs.modal', function () {
-            $('#detailDistributionModal').modal('show');
+        
+        $('#ict_incoming_btn').on('click', function () {
+            $('#detailDistributionModal').modal('hide');
+            $('#progress_form')[0].reset();
+            $('.message_error').text('');
+                $('#incomingModal').modal('show');
+            $('#incomingModal').on('hidden.bs.modal', function () {
+                $('#detailDistributionModal').modal('show');
+            });
         });
-    });
 
-    $('#btn_progress_asset').on('click', function(e){
-        e.preventDefault();
-        const formData = new FormData($('#progress_form')[0]);
-        formData.append('ict_request_code', $('#ict_request_code').val());
-        formData.append('ict_notes_progress', $('#ict_notes_progress').val());
-        var attachment = $('#ict_progress_attachment')[0].files[0];
-        formData.append('ict_progress_attachment', attachment);
-        postAttachment('sendingDistribution', formData, false, function(response){
-            swal.close();
-            $('#progressModal').modal('hide');
-            toastr['success'](response.meta.message);
-            $('#distribution_table').DataTable().ajax.reload();
-        });
-    })
+       $('#btn_progress_asset').on('click', function(e){
+            e.preventDefault();
 
-    
+            const formData = new FormData($('#progress_form')[0]);
+            formData.append('ict_request_code', $('#ict_request_code').val());
+            formData.append('ict_notes_progress', $('#ict_notes_progress').val());
+
+            var attachment = $('#ict_progress_attachment')[0].files[0];
+            formData.append('ict_progress_attachment', attachment);
+
+            // 🔹 Ambil data Software Information
+            let assets = [];
+            $("#software_container fieldset").each(function(){
+                let assetCode = $(this).find("legend").text().trim();
+                let condition = $(this).find("select[name^='condition']").val();
+
+                let softwares = [];
+                $(this).find(".software-item").each(function(){
+                    if(name !== '' || detail !== ''){
+                        toastr.warning('Please fill all software fields or remove empty rows for asset '+assetCode);
+                        return false
+                    }else{
+                        softwares.push({
+                            name: $(this).find("input[name^='software_name']").val(),
+                            detail: $(this).find("input[name^='software_detail']").val()
+                        });
+                    }
+                });
+
+                assets.push({
+                    asset_code: assetCode,
+                    condition: condition,
+                    softwares: softwares
+                });
+            });
+            // Tambahin ke FormData (jadi JSON biar gampang parsing di backend)
+            formData.append('assets', JSON.stringify(assets));
+
+            // 🔹 Kirim
+            postAttachment('sendingDistribution', formData, false, function(response){
+                swal.close();
+                $('#progressModal').modal('hide');
+                toastr['success'](response.meta.message);
+                $('#distribution_table').DataTable().ajax.reload();
+            });
+        });
 
     // Prorgress Button
 
     // Incoming Button
-    $('#incoming_btn').on('click', function(e) {
+       $('#incoming_btn').on('click', function(e) {
         e.preventDefault();
 
         let dataToSend = new FormData();
         let checkedCount = 0; 
+        let hasConditionError = false;
+
         $('#ict_asset_incoming_table tbody tr').each(function(index, row) {
             let $row = $(row);
             let checkbox = $row.find('.ict_asset_checkbox');
+
             if (checkbox.is(':checked')) {
                 let assetCode = checkbox.val();
                 let conditionSelect = $row.find('.condition-select');
                 let conditionVal = parseInt(conditionSelect.val());
+                let remarkVal = $row.find('.remark-input').val()?.trim() || ''; // ambil remark
+
                 if (conditionVal === 0 || isNaN(conditionVal)) {
                     toastr.info(assetCode + ' please set condition');
                     hasConditionError = true;
-                    return false;
-                }else if (conditionVal !== 0 ||conditionVal !== '0') {
-
+                    return false; // stop loop kalau ada error
+                } else {
                     checkedCount++;
+
+                    // ambil file attachment
                     let fileInput = $row.find('.attachment-file')[0];
                     let file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
+
+                    // append ke FormData
                     dataToSend.append(`assets[${assetCode}][condition]`, conditionVal);
+                    dataToSend.append(`assets[${assetCode}][remark]`, remarkVal); // ⬅️ ditambahin remark
                     if (file) {
                         dataToSend.append(`assets[${assetCode}][attachment]`, file);
                     }
-                    console.log(`✔️ Asset: ${assetCode}, Condition: ${conditionVal}, File: ${file ? file.name : 'No file'}`);
-                } else {
-                    console.warn(`⚠️ Asset ${assetCode} diabaikan: condition kosong atau nol`);
+
+                    console.log(`✔️ Asset: ${assetCode}, Condition: ${conditionVal}, Remark: ${remarkVal}, File: ${file ? file.name : 'No file'}`);
                 }
             }
         });
+
         dataToSend.append('ict_request_code', $('#ict_request_code').val());
         dataToSend.append('ict_incoming_notes', $('#ict_incoming_notes').val());
-        console.log(checkedCount)
         var request_type = $('#select_request_type').val();
-        alert(request_type)
-        if(request_type == 3){
+        if (request_type == 3) {
             console.log('test')
-        }else{
+        } else {
+            if (hasConditionError) {
+                return false; // stop kalau ada asset yg belum isi condition
+            }
+
             if (checkedCount === 0) {
                 toastr.warning('Please select at least one asset!');
                 return false;
-            }else{
+            } else {
                 $.ajax({
                     url: '/incoming-progress', // Ganti ke route kamu
                     type: 'POST',
@@ -717,7 +1062,6 @@
                 });
             }
         }
-
     });
 
     // Incoming Button
@@ -753,6 +1097,13 @@
 
         renderDistributionArray();
     });
+    $('#distribution_table').on('click', '.print', function(){
+        var id = $(this).data('id')
+        var data = {
+            'id' : id,
+        }
+            window.open('/print-distribution-pdf/'+id, '_blank');
+    })
     // Operation 
     function renderDistributionArray() {
         let html = '';

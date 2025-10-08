@@ -158,15 +158,15 @@
 
 {{-- Signature Section --}}
 @php
-    $approvals = $data->historyRelation->where('status', 0)->sortBy('step');
+    $approvals = $data->historyRelation->where('status', 0)->sortByDesc('step');
 @endphp
 
 <div class="ttd-box">
     <table class="ttd-table">
         <tr>
             <th>EXECUTOR</th>
-            @foreach($approvals->reverse()->values() as $i => $approval)
-                <th>APPROVAL <br> Layer {{ $i+1 }}</th>
+            @foreach($approvals as $approval)
+                <th>APPROVAL <br> Layer {{ $approval->step }}</th>
             @endforeach
             <th>REQUESTER</th>
         </tr>

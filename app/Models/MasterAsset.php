@@ -33,5 +33,11 @@ class MasterAsset extends Model
     function ownerRelation() {
         return $this->hasOne(User::class, 'id', 'owner_id');
     }
+    function softwareRelation() {
+        return $this->hasMany(SoftwareModel::class, 'asset_code', 'asset_code');
+    }
+    function childRelation() {
+        return $this->hasMany(MasterAsset::class, 'parent_code', 'asset_code');
+    }
 
 }

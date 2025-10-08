@@ -456,7 +456,7 @@ class HomeController extends Controller
             else{
                 $data = DB::table('work_orders')
                 ->select('work_orders.*','master_categories.name as categories_name', DB::raw('DATE(work_orders.created_at) as date'))
-                ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
+                // ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
                 ->where('work_orders.status_wo',$request->status)
                 ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from_date, $request->end_date])
                 ->where(function($query) use($userDepartement){

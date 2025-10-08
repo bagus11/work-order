@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\StockOpname\StockOpnameList;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,5 +23,8 @@ class StockOpnameHeader extends Model
      }
      function historyRelation(){
         return $this->hasMany(StockOpnameLog::class, 'ticket_code', 'ticket_code');
+     }
+     function listRelation(){
+      return $this->hasMany(StockOpnameList::class, 'ticket_code', 'ticket_code');
      }
 }

@@ -9,6 +9,10 @@ class MasterDepartement extends Model
 {
     use HasFactory;
     protected $table = 'master_departements';
-
     protected $guarded = [];
+
+    public function divisionRelation()
+    {
+        return $this->belongsTo(MasterDivision::class,'division_id', 'id');
+    }
 }

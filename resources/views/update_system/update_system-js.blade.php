@@ -1,7 +1,9 @@
 <script>
 // Initiating
     let requestArray = [];
-
+    $(document).on('click', '.dropdown-menu', function (e) {
+        e.stopPropagation();
+    });
     getCallback('getTicketSystem', null, function(response){
         swal.close()
         mappingTable(response.data, 'update_system_table')
@@ -1007,7 +1009,8 @@
         $('#update_system_table').on('click','.report', function(){
             var ticket_code = $(this).data('ticket')
             let result = ticket_code.replaceAll("/", "_");
-            let baseUrl = window.location.origin + '/work-order';
+            // let baseUrl = window.location.origin + '/work-order';
+            let baseUrl = window.location.origin;
             window.open(baseUrl + '/report_system_ticket/' + result, "_blank");
 
         })

@@ -118,5 +118,12 @@ class MasterDepartementController extends Controller
             );
         }
     }
+    function get_department_by_division(Request $request) {
+        $data = MasterDepartement::where('flg_aktif',1)->where('division_id','like','%'.$request->division_id.'%')->get();
+        return response()->json([
+            'data'=>$data,
+        ]);
+        
+    }
 
 }

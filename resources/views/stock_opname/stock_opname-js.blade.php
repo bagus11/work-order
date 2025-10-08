@@ -91,6 +91,88 @@
             }
             $("#so_end_date_label").text(formattedEndDate);
         }
+          $("#so_detail_content").empty(); // reset isi lama
+
+         if (row.list_relation && row.list_relation.length > 0) {
+            let html = `
+                <div class="table-responsive">
+                    <table id="so_detail_table" class="table table-sm table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Asset Code</th>
+                                <th>Category</th>
+                                <th>Brand</th>
+                                <th>Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            row.list_relation.forEach(function (item, index) {
+                // mapping condition
+                let conditionLabel = '<span class="badge bg-secondary">Not Checked</span>';
+                if (item.status == 1) {
+                    switch(item.condition) {
+                        case 1:
+                            conditionLabel = '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Good</span>';
+                            break;
+                        case 2:
+                            conditionLabel = '<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle"></i> Partially Good</span>';
+                            break;
+                        case 3:
+                            conditionLabel = '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Damaged</span>';
+                            break;
+                        default:
+                            conditionLabel = '<span class="badge bg-dark">Unknown</span>';
+                    }
+                }
+
+                let assetCode = item.asset_code ?? '-';
+                let categoryName = item.asset_relation && item.asset_relation.category_relation 
+                    ? item.asset_relation.category_relation.name 
+                    : '-';
+                let brandName = item.brand_relation ? item.brand_relation.name : '-';
+                console.log(item);
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${assetCode}</strong></td>
+                        <td>${categoryName}</td>
+                        <td>${item.asset_relation.brand_relation?.name || '-'}</td>
+                        <td>${conditionLabel}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            $("#so_detail_content").html(html);
+
+            // 🔥 Aktifin DataTable untuk search + paginate + sort
+            $('#so_detail_table').DataTable({
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Search Asset:",
+                    lengthMenu: "Show _MENU_ entries",
+                    zeroRecords: "No matching assets found",
+                    info: "Showing _START_ to _END_ of _TOTAL_ assets",
+                    infoEmpty: "No assets available",
+                    infoFiltered: "(filtered from _MAX_ total assets)"
+                }
+            });
+
+        } else {
+            $("#so_detail_content").html('<p class="text-muted">No asset list available.</p>');
+        }
+
+
+    
       })
 
       $('#btn_refresh_stock_opname').on('click', function() {

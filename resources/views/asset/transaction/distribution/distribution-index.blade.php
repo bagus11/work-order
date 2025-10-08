@@ -11,6 +11,10 @@
                     <button class="btn btn-success btn-sm" id="btn_add_distribution" style="float: right" data-toggle="modal" data-target="#addDistributionModal">
                         <i class="fas fa-plus"></i>
                     </button>
+                    <button class="btn btn-info btn-sm" id="btn_refresh_distribution" style="float: right; margin-right:5px">
+                        <i class="fas fa-sync-alt"></i>
+
+                    </button>
                 </div>
             </div>
             <div class="card-body p-0">

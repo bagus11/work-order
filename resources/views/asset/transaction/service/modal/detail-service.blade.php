@@ -98,6 +98,13 @@
                                                     </button>
                                                    </div>
                                                 </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <button style="float: right" class="btn btn-danger btn-sm mt-2" id="btn_export_pdf_service">
+                                                            <i class="fas fa-file"></i> Export to PDF
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </fieldset>
                                             <fieldset>
                                                 <legend>Log Transaction</legend>

@@ -1,6 +1,7 @@
 <script>
 //   Repository Pattern
 var auth_id = $('#auth_id').val()
+var user_role = $('#user_role').val();
         $(document).ready(function() {
             $('#notifikasi').on('click', function(){
                 getNotification()

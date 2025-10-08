@@ -14,7 +14,7 @@
                         <a class="nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab" aria-controls="general" aria-selected="true">General Information</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="asset-tab" data-toggle="tab" href="#asset" role="tab" aria-controls="asset" aria-selected="false">Asset Information</a>
+                        <a class="nav-link" id="asset-tab" data-toggle="tab" href="#asset" role="tab" aria-controls="asset" aria-selected="false">Log Transaction</a>
                     </li>
                 </ul>
 
@@ -48,29 +48,16 @@
                             <div class="row mt-2 mx-1">
                                 <div class="col-12">
                                     <button class="btn btn-warning btn-sm" style="float: right;" id="ict_progress_btn">
-                                        <i class="fa-solid fa-paper-plane"></i>
+                                        <i class="fa-solid fa-paper-plane"></i> Progress Asset
                                     </button>
                                     <button class="btn btn-info btn-sm" style="float: right;" id="ict_incoming_btn">
-                                        <i class="fa-solid fa-dolly"></i>
+                                        <i class="fa-solid fa-dolly"></i> Incoming Shipment
                                     </button>
                                 </div>
                             </div>
                         </fieldset>
-
-                        <!-- Fieldset Log Transaction -->
-                        <fieldset class="border p-3">
-                            <legend class="w-auto px-2">Log Transaction</legend>
-                            <div class="form-group">
-                                <div id="ict_log_list"></div>
-                            </div>
-                        </fieldset>
-                        
-                        
-                    </div>
-
-                    <!-- Asset Information Tab -->
-                    <div class="tab-pane fade" id="asset" role="tabpanel" aria-labelledby="asset-tab">
-                        <!-- Fieldset Asset Information -->
+       
+                           <!-- Fieldset Asset Information -->
                         <fieldset class="mb-4">
                             <legend>Asset Information</legend>
                             <div class="row">
@@ -97,6 +84,19 @@
                         <fieldset class="border p-3" id="ict_asset_fieldset">
                             <legend class="w-auto px-2">Detail Asset</legend>
                             <div id="ict_asset_info"></div>
+                        </fieldset>
+
+
+                    </div>
+
+                    <!-- Asset Information Tab -->
+                    <div class="tab-pane fade" id="asset" role="tabpanel" aria-labelledby="asset-tab">
+                            <!-- Fieldset Log Transaction -->
+                        <fieldset class="border p-3">
+                            <legend class="w-auto px-2">Log Transaction</legend>
+                            <div class="form-group">
+                                <div id="ict_log_list"></div>
+                            </div>
                         </fieldset>
                         
                     </div>
