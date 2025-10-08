@@ -634,6 +634,34 @@ if (empty($request->condition)) {
     
  
 }
+private function generateChart($config, $width = 400, $height = 300)
+{
+    $url = "https://quickchart.io/chart?c=" . urlencode(json_encode($config));
+
+    // Kalau URL terlalu panjang, fallback ke POST + base64
+    if (strlen($url) > 2000) {
+        $ch = curl_init('https://quickchart.io/chart');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['chart' => $config]));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Tambahin
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Tambahin
+        $imageData = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($imageData === false || empty($imageData)) {
+            return "<div style='color:red;'>Chart gagal di-generate: {$err}</div>";
+        }
+
+        $base64 = base64_encode($imageData);
+        return "<img src='data:image/png;base64,{$base64}' width='{$width}' height='{$height}' />";
+    }
+
+    return "<img src='{$url}' width='{$width}' height='{$height}' />";
+}
+
 private function generateBarChart($labels, $data, $title, $colors = null)
 {
     if (!$colors) {
@@ -649,17 +677,19 @@ private function generateBarChart($labels, $data, $title, $colors = null)
                 'label' => $title,
                 'data' => $data,
                 'backgroundColor' => $colors,
-            ]]
+            ]],
         ],
         'options' => [
             'plugins' => [
                 'legend' => ['display' => false],
-                'title' => ['display' => true, 'text' => $title],
+                'title'  => ['display' => true, 'text' => $title],
             ],
         ],
     ];
 
-    $url = "https://quickchart.io/chart?c=" . urlencode(json_encode($config));
+    // HATI2 jangan double urlencode
+    $url = "https://quickchart.io/chart?c=" . rawurlencode(json_encode($config));
+dd($url);
 
     return "<img src='{$url}' width='400' height='300'>";
 }
@@ -669,7 +699,8 @@ private function generatePieChart($labels, $data, $title, $colors = null)
     if (!$colors) {
         $labelsArray = is_array($labels) ? $labels : (array) $labels;
         $colors = array_map(fn() => '#' . substr(md5(rand()), 0, 6), $labelsArray);
-    } 
+    }
+
     $config = [
         'type' => 'pie',
         'data' => [
@@ -678,16 +709,17 @@ private function generatePieChart($labels, $data, $title, $colors = null)
                 'label' => $title,
                 'data' => $data,
                 'backgroundColor' => $colors,
-            ]]
+            ]],
         ],
         'options' => [
             'plugins' => [
                 'legend' => ['position' => 'bottom'],
-                'title' => ['display' => true, 'text' => $title],
+                'title'  => ['display' => true, 'text' => $title],
             ],
         ],
     ];
-    $url = "https://quickchart.io/chart?c=" . urlencode(json_encode($config));
+
+    $url = "https://quickchart.io/chart?c=" . rawurlencode(json_encode($config));
 
     return "<img src='{$url}' style='max-width: 450px; max-height: 450px;' />";
 }
