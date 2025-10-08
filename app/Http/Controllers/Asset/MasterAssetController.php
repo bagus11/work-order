@@ -689,7 +689,7 @@ private function generateBarChart($labels, $data, $title, $colors = null)
 
     // HATI2 jangan double urlencode
     $url = "https://quickchart.io/chart?c=" . rawurlencode(json_encode($config));
-dd($url);
+// dd($url);
 
     return "<img src='{$url}' width='400' height='300'>";
 }
