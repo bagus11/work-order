@@ -8,13 +8,17 @@ use App\Http\Requests\StockOpname\ApprovalSORequest;
 use App\Models\Asset\ApprovalDetail;
 use App\Models\Asset\ApprovalHeader;
 use App\Models\MasterAsset;
+use App\Models\MasterDepartement;
 use App\Models\MasterKantor;
+use App\Models\Setting\MasterRoom;
 use App\Models\StockOpname\StockOpnameList;
 use App\Models\StockOpnameHeader;
 use App\Models\StockOpnameLog;
+use App\Models\User;
 use App\Models\WONotification;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use NumConvert;
 class StockOpnameController extends Controller
@@ -206,6 +210,7 @@ function approveSO(Request $request, ApprovalSORequest $approvalSORequest) {
                     'approval_id' => 0,
                     'step' => 0,
                     'start_date' => $request->approval_so_start_date,
+                    'end_date'      => $request->approval_so_end_date,
                     'status' => $status,
                 ];
                  $post_notification =[
@@ -218,6 +223,25 @@ function approveSO(Request $request, ApprovalSORequest $approvalSORequest) {
                         'userId'=>$stockOpname->user_id,
                         'created_at'=>date('Y-m-d H:i:s')
                     ];
+            $array_assset = [];
+            $asset = MasterAsset::where('location_id', $stockOpname->location_id)
+                ->get();
+            foreach($asset as $row){
+                $post_asset = [
+                    'ticket_code'           => $stockOpname->ticket_code,
+                    'location_id'           => $stockOpname->location_id,
+                    'asset_code'            => $row->asset_code,
+                    'condition_before'      => $row->condition,
+                    'condition_after'       => 0,
+                    'notes'                 => '',
+                    'status'                => 0,
+                    'attachment'            => '',
+                    'updated_by'            => 99,
+                ];
+                array_push($array_assset, $post_asset);
+            }
+            // dd($array_assset);
+            StockOpnameList::insert($array_assset);
         }
     //    dd($post);
         $postLog = [
@@ -228,23 +252,7 @@ function approveSO(Request $request, ApprovalSORequest $approvalSORequest) {
             'description' => $request->approval_so_description,
             'user_id' => auth()->user()->id,
         ];
-        $array_assset = [];
-        $asset = MasterAsset::where('location_id', $stockOpname->location_id)
-            ->get();
-        foreach($asset as $row){
-            $post_asset = [
-                'ticket_code'   => $stockOpname->ticket_code,
-                'location_id'   => $stockOpname->location_id,
-                'asset_code'    => $row->asset_code,
-                'notes'         => '',
-                'status'        => 0,
-                'attachment'    => '',
-                'updated_by'    => 99,
-            ];
-            array_push($array_assset, $post_asset);
-        }
-        // dd($array_assset);
-        StockOpnameList::insert($array_assset);
+        
         StockOpnameLog::create($postLog);
         $stockOpname->update($post);
         WONotification::where('request_code', $request->approval_so_ticket_code)
@@ -266,6 +274,9 @@ public function stockOPnameDetail(Request $request)
         'userRelation',
         'listRelation',
         'listRelation.assetRelation',
+        'listRelation.assetRelation.userRelation',
+        'listRelation.assetRelation.roomRelation',
+        'listRelation.assetRelation.userRelation.departmentRelation',
         'listRelation.userRelation',
         'locationRelation'
     ])->where('ticket_code', $request->ticket_code)->first();
@@ -283,7 +294,46 @@ public function stockOPnameDetail(Request $request)
     ]);
 }
 
+function stockOpnameFilter() {
+    $nik = User::where('flg_aktif', 1)->get();
+    $department = MasterDepartement::with([
+        'divisionRelation'
+    ])->get();
+    $room = MasterRoom::with([
+        'locationRelation'
+    ])->get();
+    $data =[
+        'nik' => $nik,
+        'department' => $department,
+        'room' => $room,
+    ];
+     return response()->json([
+        'success' => true,
+        'data' => $data,
+      
+    ]);  
+}
 
-
+function stockOPnameUpdateItem(Request $request) {
+     // try{
+            $header = StockOpnameList::where('ticket_code', $request->input('ticket_code'))->first();
+            $asset = MasterAsset::where('asset_code', $request->input('asset_code'))->first();
+            $postSO = [
+                'notes'                     => $request->input('remark'),
+                'condition_after'           => $request->input('condition'),
+            ];
+             return ResponseFormatter::success(   
+               $header,                              
+               'Stock Opname successfully added'
+           );            
+        // }catch (\Throwable $th) {
+        //       return ResponseFormatter::error(
+        //           $th,
+        //           'Approval failed to update',
+        //           500
+        //       );
+        // }
+   
+}
     
 }

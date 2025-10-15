@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Asset\BrandAsset;
 use App\Models\Asset\CategoryAsset;
+use App\Models\Setting\MasterRoom;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,6 +39,9 @@ class MasterAsset extends Model
     }
     function childRelation() {
         return $this->hasMany(MasterAsset::class, 'parent_code', 'asset_code');
+    }
+    function roomRelation() {
+        return $this->hasOne(MasterRoom::class,'id', 'room_id');
     }
 
 }

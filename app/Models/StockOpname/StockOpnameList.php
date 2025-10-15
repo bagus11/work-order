@@ -18,6 +18,8 @@ class StockOpnameList extends Model
         'attachment',
         'notes',
         'status',
+        'condition_before',
+        'condition_after',
     ];
     function assetRelation(){
         return $this->belongsTo(MasterAsset::class,'asset_code','asset_code');

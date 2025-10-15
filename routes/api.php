@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // StockOpname  
         Route::get('/getStockOpnameTicket', [StockOpnameController::class, 'getStockOpnameTicket']);
         Route::get('/stock-opname/detail', [StockOpnameController::class, 'stockOPnameDetail']);
+        Route::get('/stockOpnameFilter', [StockOpnameController::class, 'stockOpnameFilter']);
+        Route::post('/stock-opname/update-item', [StockOpnameController::class, 'stockOPnameUpdateItem']);
 
 
     // StockOpname

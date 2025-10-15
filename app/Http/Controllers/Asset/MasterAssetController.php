@@ -611,56 +611,62 @@ if (empty($request->condition)) {
                                     </table>';
 
                 
-                $mpdf           = new PDF();
+                $mpdf = new \Mpdf\Mpdf([
+                    'tempDir' => storage_path('app/mpdf/temp'), // biar gak error permission
+                    'allow_output_buffering' => true
+                ]);
+
+                // Biar bisa debug kalau ada masalah gambar
+                $mpdf->showImageErrors = true;
+                $mpdf->curlAllowUnsafeSslRequests = true; 
+
                 $mpdf->SetHTMLHeader($header);
                 $mpdf->SetHTMLFooter($footer);
+
                 $mpdf->AddPage(
                     'P', // L - landscape, P - portrait 
                     '',
                     '',
                     '',
                     '',
-                    5, // margin_left
-                    5, // margin right
+                    5,  // margin_left
+                    5,  // margin right
                     25, // margin top
                     20, // margin bottom
-                    5, // margin header
-                    5
-                ); // margin footer
+                    5,  // margin header
+                    5   // margin footer
+                );
+
                 $mpdf->WriteHTML($html);
-                // Output a PDF file directly to the browser
-                ob_clean();
-                $mpdf->Output('Summary Asset Report - '.'('.date('Y-m-d').').pdf', 'I');
+
+                // Buang buffer biar PDF gak rusak
+                if (ob_get_length()) {
+                    ob_clean();
+                }
+
+                $mpdf->Output('Summary Asset Report - ('.date('Y-m-d').').pdf', 'I');
+
     
  
 }
 private function generateChart($config, $width = 400, $height = 300)
 {
-    $url = "https://quickchart.io/chart?c=" . urlencode(json_encode($config));
+    $ch = curl_init('https://quickchart.io/chart');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['chart' => $config]));
+    $imageData = curl_exec($ch);
+    curl_close($ch);
 
-    // Kalau URL terlalu panjang, fallback ke POST + base64
-    if (strlen($url) > 2000) {
-        $ch = curl_init('https://quickchart.io/chart');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['chart' => $config]));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Tambahin
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Tambahin
-        $imageData = curl_exec($ch);
-        $err = curl_error($ch);
-        curl_close($ch);
-
-        if ($imageData === false || empty($imageData)) {
-            return "<div style='color:red;'>Chart gagal di-generate: {$err}</div>";
-        }
-
+    if ($imageData) {
         $base64 = base64_encode($imageData);
         return "<img src='data:image/png;base64,{$base64}' width='{$width}' height='{$height}' />";
     }
 
-    return "<img src='{$url}' width='{$width}' height='{$height}' />";
+    return "<p>Chart gagal dimuat</p>";
 }
+
 
 private function generateBarChart($labels, $data, $title, $colors = null)
 {

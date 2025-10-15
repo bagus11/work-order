@@ -6,6 +6,7 @@ use App\Http\Controllers\Asset\DistributionAssetController;
 use App\Http\Controllers\Asset\MasterAssetController;
 use App\Http\Controllers\Asset\ServiceAssetController;
 use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\FileSharingController;
 use App\Http\Controllers\HoldRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncidentController;
@@ -567,7 +568,14 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('addApprovalMatrix', [ApprovalMaatrixController::class, 'addApprovalMatrix'])->name('addApprovalMatrix');
         Route::post('updateApproverMatrixDetail', [ApprovalMaatrixController::class, 'updateApproverMatrixDetail'])->name('updateApproverMatrixDetail');
         Route::post('updateApprovalMatrix', [ApprovalMaatrixController::class, 'updateApprovalMatrix'])->name('updateApprovalMatrix');
-        
     // Approval Matrix
+
+    // File Sharing
+         Route::get('file_sharing', [FileSharingController::class, 'index'])->name('file_sharing');
+         Route::get('getFileSharing', [FileSharingController::class, 'getFileSharing'])->name('getFileSharing');
+         Route::post('addFileSharing', [FileSharingController::class, 'addFileSharing'])->name('addFileSharing');
+         Route::get('getFileHistory', [FileSharingController::class, 'getFileHistory'])->name('getFileHistory');
+         Route::post('fileSharingUpdate', [FileSharingController::class, 'fileSharingUpdate'])->name('fileSharingUpdate');
+    // File Sharing
 });
 
