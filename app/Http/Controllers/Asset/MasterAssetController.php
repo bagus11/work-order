@@ -228,24 +228,58 @@ class MasterAssetController extends Controller
     }
 
     public function summaryAsset(){
-        $category = MasterAsset::select(
-                        'category',
-                        DB::raw('COUNT(*) as total'),
-                    )->groupBy('category')
-                    ->get();
-        $condition = MasterAsset::select(
-                        'condition',
-                        DB::raw('COUNT(*) as total'),
-                    )->groupBy('condition',)
-                    ->get();
-       $available = MasterAsset::selectRaw("
-                        COUNT(CASE WHEN nik = 0 THEN 1 END) as count_user_id_zero,
-                        COUNT(CASE WHEN nik IS NOT NULL AND nik != 0 THEN 1 END) as count_user_assigned
-                    ")->first();
+        $category= [];
+        $condition =[];
+        $available = [];
+        if (auth()->user()->hasPermissionTo('get-all-work_order_list') ) {
+            $category = MasterAsset::select(
+                            'category',
+                            DB::raw('COUNT(*) as total'),
+                        )->groupBy('category')
+                        ->get();
+            $condition = MasterAsset::select(
+                            'condition',
+                            DB::raw('COUNT(*) as total'),
+                        )->groupBy('condition',)
+                        ->get();
+           $available = MasterAsset::selectRaw("
+                            COUNT(CASE WHEN nik = 0 THEN 1 END) as count_user_id_zero,
+                            COUNT(CASE WHEN nik IS NOT NULL AND nik != 0 THEN 1 END) as count_user_assigned
+                        ")->first();
+           
+        }else if(auth()->user()->hasPermissionTo('get-only_user-work_order_list')) {
+           
+        }else{
+            $category = MasterAsset::select(
+                            'category',
+                            DB::raw('COUNT(*) as total'),
+                        )
+                        ->where('location_id', auth()->user()->kode_kantor)
+                        ->groupBy('category')
+                        ->get();
+            $condition = MasterAsset::select(
+                            'condition',
+                            DB::raw('COUNT(*) as total'),
+                        )
+                        ->where('location_id', auth()->user()->kode_kantor)
+                        ->groupBy('condition')
+                        ->get();
+           $available = MasterAsset::selectRaw("
+                            COUNT(CASE WHEN nik = 0 THEN 1 END) as count_user_id_zero,
+                            COUNT(CASE WHEN nik IS NOT NULL AND nik != 0 THEN 1 END) as count_user_assigned
+                        ")
+                        ->where('location_id', auth()->user()->kode_kantor)
+                        ->first();
+        }
+         $totalSelf = MasterAsset::selectRaw("
+                            COUNT(*) AS total
+                        ")->where('nik', auth()->user()->nik)->first();
+        
         return response()->json([
-            'category' => $category,
-            'condition' => $condition,
-            'available' => $available,
+            'category'      => $category,
+            'condition'     => $condition,
+            'available'     => $available,
+            'totalSelf'     => $totalSelf
         ]);
     }
 

@@ -27,12 +27,13 @@ class AuthController extends Controller
                 'message' => 'NIK atau password salah'
             ], 401);
         }
-
+        $rolesName = $user->roles->pluck('name')->toArray();
         $token = $user->createToken('mobile_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login berhasil',
             'token' => $token,
+            'roles' => $rolesName,
             'data' =>$user
 
         ]);
