@@ -314,26 +314,49 @@ function stockOpnameFilter() {
     ]);  
 }
 
-function stockOPnameUpdateItem(Request $request) {
-     // try{
-            $header = StockOpnameList::where('ticket_code', $request->input('ticket_code'))->first();
-            $asset = MasterAsset::where('asset_code', $request->input('asset_code'))->first();
-            $postSO = [
-                'notes'                     => $request->input('remark'),
-                'condition_after'           => $request->input('condition'),
-            ];
-             return ResponseFormatter::success(   
-               $header,                              
-               'Stock Opname successfully added'
-           );            
-        // }catch (\Throwable $th) {
-        //       return ResponseFormatter::error(
-        //           $th,
-        //           'Approval failed to update',
-        //           500
-        //       );
-        // }
-   
+public function stockOPnameUpdateItem(Request $request)
+{
+    try {
+        $request->validate([
+            'ticket_code' => 'required|string|exists:stock_opname_lists,ticket_code',
+            'asset_code'  => 'required|string|exists:master_asset,asset_code',
+            'remark'      => 'nullable|string',
+            'condition'   => 'required',
+        ]);
+
+        $header = StockOpnameList::where('ticket_code', $request->ticket_code)
+            ->where('status', 0)
+            ->first();
+
+        if (!$header) {
+            return ResponseFormatter::error(null, 'Ticket not found or already processed', 404);
+        }
+
+        $asset = MasterAsset::where('asset_code', $request->asset_code)->first();
+
+        if (!$asset) {
+            return ResponseFormatter::error(null, 'Asset not found', 404);
+        }
+
+        $postSO = [
+            'notes'            => $request->remark,
+            'updated_by'       => auth()->id(),
+            'condition_before' => $asset->condition,
+            'condition_after'  => $request->condition,
+            'updated_at'       => now(),
+            'status'           => 1 
+        ];
+
+        StockOpnameList::where([
+            'ticket_code' => $request->ticket_code,
+            'asset_code'  => $request->asset_code,
+        ])->update($postSO);
+
+        return ResponseFormatter::success($header, 'Stock Opname List successfully updated');
+    } catch (\Throwable $th) {
+        return ResponseFormatter::error($th->getMessage(), 'Failed to update Stock Opname', 500);
+    }
 }
+
     
 }

@@ -34,7 +34,7 @@ class HomeController extends Controller
             $status_on_progress     = WorkOrder::select(DB::raw('COUNT(id) as status_on_progress'))
                                         ->whereIn('status_wo', [1,4])->where('status_approval',0)
                                         ->where('request_for',$userDepartement->initial)
-                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        // ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
                                         ->first();
             $status_pending         = WorkOrder::select(DB::raw('COUNT(id) as status_pending'))
                                         ->where('status_wo', 2)
@@ -95,7 +95,7 @@ class HomeController extends Controller
                                         })->first();
             $status_on_progress     = WorkOrder::select(DB::raw('COUNT(id) as status_on_progress'))
                                         ->whereIn('status_wo', [1,4])->where('status_approval',0)
-                                        ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
+                                        // ->whereBetween(DB::raw('DATE(created_at)'), [$from_date, $end_date])
                                         ->where(function($query){
                                             $query->where('user_id', auth()->user()->id)->orWhere('user_id_support', auth()->user()->id); 
                                         })->first();

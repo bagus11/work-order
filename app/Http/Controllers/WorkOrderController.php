@@ -1392,6 +1392,7 @@ class WorkOrderController extends Controller
                 'departementName',
                 'categoryName',
                 'picName',
+                'picSupportName',
                 'picName.locationRelation',
                 'problemTypeName',
             ])
@@ -1403,6 +1404,7 @@ class WorkOrderController extends Controller
                 'departementName',
                 'categoryName',
                 'picName',
+                'picSupportName',
                 'picName.locationRelation',
                 'problemTypeName',
             ])
@@ -1414,6 +1416,7 @@ class WorkOrderController extends Controller
                 'departementName',
                 'categoryName',
                 'picName',
+                'picSupportName',
                 'picName.locationRelation',
                 'problemTypeName',
             ])
@@ -1491,7 +1494,6 @@ class WorkOrderController extends Controller
                             'total' => $finalDuration,
                             'validation'=> $validation
                         ];
-                        
                 }
             }
             
