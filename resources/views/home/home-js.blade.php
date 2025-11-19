@@ -510,6 +510,9 @@
                         'scrollY':150,
                        "bInfo" : false
                     }).columns.adjust()
+                $('#' + id + ' tbody').on('click', 'tr', function () {
+                    window.location.href = '/work_order_list';
+                });
     }
     function mappingLevel2(response){
         $('#level2Table').DataTable().clear();
