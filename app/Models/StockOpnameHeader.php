@@ -27,4 +27,15 @@ class StockOpnameHeader extends Model
      function listRelation(){
       return $this->hasMany(StockOpnameList::class, 'ticket_code', 'ticket_code');
      }
+   public function countByCondition()
+   {
+      return $this->listRelation()
+         ->where('condition_after', '!=', 0)
+         ->select('condition_after')
+         ->selectRaw('COUNT(*) as total')
+         ->groupBy('condition_after')
+         ->pluck('total', 'condition_after')
+         ->toArray();
+   }
+
 }

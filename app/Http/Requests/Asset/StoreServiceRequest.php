@@ -4,7 +4,7 @@ namespace App\Http\Requests\Asset;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreServiveRequest extends FormRequest
+class StoreServiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

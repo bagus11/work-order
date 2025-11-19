@@ -20,6 +20,7 @@ class User extends Authenticatable
         'jabatan',
         'departement',
         'kode_kantor',
+        'fcm_token',
     ];
     protected $hidden = [
         'password',

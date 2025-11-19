@@ -1,4 +1,7 @@
 <script>
+    getCallbackNoSwal('getServiceTicket', null, function(response){
+        console.log(response)
+    })
      $(document).ready(function () {
    
         let table = $('#service_table').DataTable({
@@ -243,6 +246,7 @@ setInterval(function () {
             $('#update_service_code').text(': ' + row.service_code);
             $('#update_service_asset_code').text(': ' + row.asset_code);
             $('#service_code').val(row.service_code);
+            $('#asset_code_detail').val(row.asset_code);
             $('#detail_created_by').text(': ' + row.user_relation.name);
             $('#detail_request_code').text(': ' + row.request_code);
             $('#detail_asset_code').text(': ' + row.asset_code);
@@ -489,6 +493,12 @@ function getTimelineIcon(status) {
         var serviceCode = $('#service_code').val();
         var servicereplace = serviceCode.replace(/\//g, '_');
         var url = `/exportPdfService/${servicereplace}`;
+        window.open(url, '_blank');
+    })
+    $('#btn_print_service_history').on('click', function(){
+        var asset_code_detail = $('#asset_code_detail').val();
+        var servicereplace = asset_code_detail.replace(/\//g, '_');
+        var url = `/exportPdfServiceHistory/${servicereplace}`;
         window.open(url, '_blank');
     })
 </script>

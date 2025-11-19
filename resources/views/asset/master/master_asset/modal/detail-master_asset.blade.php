@@ -89,6 +89,12 @@
                       <div class="col-md-3 text-muted">Status</div>
                       <div class="col-md-3" id="label_is_active"></div>
                     </div>
+                    
+                    <div class="row mb-2">
+                      <div class="col-md-3 text-muted">QR Code</div>
+                      <div class="col-md-3" id="label_qr"></div>
+                    </div>
+
                   </div>
 
                   <!-- Detail Asset -->

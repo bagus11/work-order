@@ -632,6 +632,7 @@ class WorkOrderController extends Controller
                             'message'=>auth()->user()->name.' has pending  wo transaction with request code : '.$post_log['request_code'],
                             'subject'=>'WO Progress',
                             'status'=>0,
+                            'type'=>1,
                             'link'=>'work_order_list',
                             'userId'=>$headUser->id,
                             'created_at'=>date('Y-m-d H:i:s')
@@ -665,7 +666,6 @@ class WorkOrderController extends Controller
            return response()->json([
                 'status'=>$status,
                 'message'=>$message,
-    
             ]);
     }
     public function manual_approve(Request $request)

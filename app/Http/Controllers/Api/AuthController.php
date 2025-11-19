@@ -38,6 +38,10 @@ class AuthController extends Controller
 
         ]);
     }
+    public function saveFcmToken(Request $request){
+        User::where('id', auth()->user()->id)->update(['fcm_token' => $request->fcm_token]);
+        return response()->json(['message' => 'FCM token saved']);
+    }
      public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
