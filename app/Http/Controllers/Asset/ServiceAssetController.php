@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Asset;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Asset\StoreServiveRequest;
+use App\Http\Requests\Asset\StoreServiceRequest;
 use App\Http\Requests\Asset\UpdateServiceRequest;
 use App\Models\Asset\ServiceLog;
 use App\Models\Asset\ServiceModel;
@@ -68,6 +68,49 @@ class ServiceAssetController extends Controller
     
         return response()->json(['data' => $query->get()]);
     }
+    function getServiceTicket(){
+         $query = ServiceModel::with([
+            'locationRelation',
+            'departmentRelation',
+            'userRelation',
+            'assetRelation',
+            'assetRelation.userRelation',
+            'historyRelation',
+            'historyRelation.userRelation',
+            'ticketRelation',
+            'ticketRelation.picName',
+            'ticketRelation.categoryName',
+            'ticketRelation.problemTypeName',
+        ]);
+        if (!auth()->user()->hasPermissionTo('get-all-service_asset')) {
+            $query->where('user_id', auth()->user()->id);
+        }
+        $query->orderBy('status', 'asc')->get();
+        // dd($query);
+        return response()->json([
+            'data' => $query->get(),
+        ]);
+    }
+
+    function detailServiceTicket(Request $request){
+         $query = ServiceModel::with([
+            'locationRelation',
+            'departmentRelation',
+            'userRelation',
+            'assetRelation',
+            'assetRelation.userRelation',
+            'historyRelation',
+            'historyRelation.userRelation',
+            'ticketRelation',
+            'ticketRelation.picName',
+            'ticketRelation.categoryName',
+            'ticketRelation.problemTypeName',
+        ])->where('service_code', $request->service_code)->first();
+        // dd($query);
+        return response()->json([
+            'data' => $query,
+        ]);
+    }
     
     function getRequestCode() {
         $query = WorkOrder::where('status_wo',1);
@@ -93,7 +136,7 @@ class ServiceAssetController extends Controller
         ]);
         
     }
-    function addService(Request $request, StoreServiveRequest $serviceRequest)
+    function addService(Request $request, StoreServiceRequest $serviceRequest)
     {
        //   try {
         $serviceRequest->validated();
@@ -102,7 +145,7 @@ class ServiceAssetController extends Controller
         $month =idate('m', $date_month);
         $year = idate('y', $date_month);
         $month_convert =  NumConvert::roman($month);
-        if($increment_code ==null){
+        if(!$increment_code){
             $ticket_code = '1/'.'SVC'.'/'.$month_convert.'/'.$year;
         }else{
             $month_before = explode('/',$increment_code->service_code,-1);
@@ -434,7 +477,7 @@ class ServiceAssetController extends Controller
                             'attachment_pic'=> $fileName != ''? 'storage/attachmentPIC/'.$fileName  : null,
                         ];
                     }
-                    if($request->update_servicde_progress_id !== 1 && $workOrder->status_wo !== 4){
+                    if($request->update_service_progress_id !== 1 && $workOrder->status_wo !== 4){
                         WorkOrderLog::create($post_log_request);
                         WorkOrder::where('request_code', $header->request_code)->update($post_request);
                     }
@@ -518,6 +561,78 @@ class ServiceAssetController extends Controller
                 // Output a PDF file directly to the browser
                 ob_clean();
                 $mpdf->Output('Asset Service Report'.$query->service_code.'('.date('Y-m-d').').pdf', 'I');
+    }
+    function exportPdfServiceHistory($id){
+        $asset_code = str_replace('_', '/', $id);
+       
+        $query = ServiceModel::with([
+                'assetRelation',
+                'assetRelation.locationRelation',
+                'assetRelation.userRelation',
+                'assetRelation.userRelation.departmentRelation',
+                'assetRelation.childRelation',
+                'ticketRelation',
+                'ticketRelation.picName',
+                'ticketRelation.categoryName',
+                'ticketRelation.problemTypeName',
+            ])->where('asset_code', $asset_code)->get();
+        $asset= MasterAsset::with([
+                'locationRelation',
+                'userRelation',
+                'softwareRelation',
+                'userRelation.departmentRelation',
+                'childRelation',
+        ])->where('asset_code', $asset_code)->first();
+            
+            $html = view('report.report-asset_service_history', compact([
+                'query',
+                'asset',
+            ]))->render();
+            $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
+            $header             = '';
+            $header .= '
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:none; border-collapse:collapse;">
+                                        <tr>
+                                            <td style="padding-left:10px; border:none;">
+                                                <span style="font-size: 16px; font-weight: bold;">PT PRALON</span>
+                                                <br>
+                                                <span style="font-size:9px;">Synergy Building #08-08 Tangerang 15143 - Indonesia +62 21 304 38808</span>
+                                            </td>
+                                            <td style="width:33%; border:none;"></td>
+                                            <td style="width: 50px; text-align:right; border:none;">'.$imageLogo.'</td>
+                                        </tr>
+                                    </table>
+
+                                    <hr>';
+            
+            $footer             = '<hr>
+                                    <table width="100%" style="font-size: 10px;">
+                                        <tr>
+                                            <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                                            <td width="10%" style="text-align: right;"> {PAGENO}</td>
+                                        </tr>
+                                    </table>';
+
+                
+                $mpdf           = new PDF();
+                $mpdf->SetHTMLHeader($header);
+                $mpdf->SetHTMLFooter($footer);
+                $mpdf->AddPage(
+                    'P', // L - landscape, P - portrait 
+                    '',
+                    '',
+                    '',
+                    '',
+                    5, // margin_left
+                    5, // margin right
+                    25, // margin top
+                    20, // margin bottom
+                    5, // margin header
+                    5
+                ); // margin footer
+                $mpdf->WriteHTML($html);
+                ob_clean();
+                $mpdf->Output('Asset Service History'.$asset_code.'('.date('Y-m-d').').pdf', 'I');
     }
 
 }

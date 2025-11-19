@@ -8,6 +8,7 @@ use App\Http\Requests\StockOpname\ApprovalSORequest;
 use App\Models\Asset\ApprovalDetail;
 use App\Models\Asset\ApprovalHeader;
 use App\Models\MasterAsset;
+use App\Models\MasterAssetLog;
 use App\Models\MasterDepartement;
 use App\Models\MasterKantor;
 use App\Models\Setting\MasterRoom;
@@ -16,9 +17,12 @@ use App\Models\StockOpnameHeader;
 use App\Models\StockOpnameLog;
 use App\Models\User;
 use App\Models\WONotification;
+use App\Services\FcmService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use NumConvert;
 class StockOpnameController extends Controller
@@ -67,12 +71,18 @@ class StockOpnameController extends Controller
 
     }
 
-    function getStockOpnameTicket() {
-        $data = StockOpnameHeader::all();
+    public function getStockOpnameTicket()
+    {
+        $data = StockOpnameHeader::with('listRelation')->whereIn('status', [2,3])->get();
+        $data->each(function ($header) {
+            $header->count_by_condition = $header->countByCondition();
+        });
+
         return response()->json([
             'data' => $data,
         ]);
     }
+
 
     function addStockOpname(Request $request, AddStockOpnameRequest $addStockOpnameRequest) {
         // try{
@@ -120,12 +130,24 @@ class StockOpnameController extends Controller
             ];
                $postLog = [
                     'ticket_code' => $ticket_code,
-                    // 'start_date' =>  date('Y-m-d'),
                     'status' => 0,
                     'location_id' => auth()->user()->kode_kantor,
                     'description' =>$request->description,
                     'user_id' => auth()->user()->id,
                 ];
+            $user = User::where('id', $approval->user_id)->first();
+            // dd($user->fcm_token);
+          (new FcmService)->send(
+                $user->fcm_token,
+                'Stock Opname Approval',
+                auth()->user()->name . ' has created a stock opname ticket, please approve it.',
+                [
+                    'ticket_code' => $ticket_code,
+                    'api_url' => url('/api/stock-opname/detail?ticket_code=' . $ticket_code),
+                ]
+            );
+
+
             WONotification::create($post_notification);
             StockOpnameHeader::create($post);
             StockOpnameLog::create($postLog);
@@ -258,7 +280,15 @@ function approveSO(Request $request, ApprovalSORequest $approvalSORequest) {
         WONotification::where('request_code', $request->approval_so_ticket_code)
             ->where('userId', auth()->user()->id)
             ->update(['status' => 1]);
+        $user = User::where('id', $stockOpname->user_id)->first();
+            (new FcmService)->send(
+            $user->fcm_token,
+            'Stock Opname Approval',
+            auth()->user()->name . ' has assign your stock opname ticket. please check it',
+           
+        );
         WONotification::create($post_notification);
+
         return ResponseFormatter::success($stockOpname, 'Stock Opname successfully updated');
     // } catch (\Throwable $th) {
     //     return ResponseFormatter::error($th, 'Approval failed to update', 500);
@@ -270,6 +300,7 @@ public function stockOPnameDetail(Request $request)
         'ticket_code' => 'required|string'
     ]);
 
+    // Ambil header + relasi penting (tanpa countByCondition di eager load)
     $detail = StockOpnameHeader::with([
         'userRelation',
         'listRelation',
@@ -280,7 +311,7 @@ public function stockOPnameDetail(Request $request)
         'listRelation.userRelation',
         'locationRelation'
     ])->where('ticket_code', $request->ticket_code)->first();
-
+    $approval = ApprovalDetail::where('approval_code', $detail->approval_code)->first();
     if (!$detail) {
         return response()->json([
             'success' => false,
@@ -288,11 +319,31 @@ public function stockOPnameDetail(Request $request)
         ], 404);
     }
 
+    // Tambahkan count_by_condition secara manual
+    $detail->count_by_condition = $detail->countByCondition();
+
     return response()->json([
         'success' => true,
         'data' => $detail,
+        'approval' => $approval,
     ]);
 }
+    public function stockOpnameAssign(Request $request)
+    {
+        $request->validate([
+            'ticket_code' => 'required|string'
+        ]);
+
+        // Ambil header + relasi penting (tanpa countByCondition di eager load)
+        $detail = StockOpnameHeader::with([
+            'userRelation',
+        ])->where('ticket_code', $request->ticket_code)->first();
+        return response()->json([
+            'success' => true,
+            'data' => $detail,
+        ]);
+    }
+
 
 function stockOpnameFilter() {
     $nik = User::where('flg_aktif', 1)->get();
@@ -314,49 +365,183 @@ function stockOpnameFilter() {
     ]);  
 }
 
-public function stockOPnameUpdateItem(Request $request)
-{
-    try {
-        $request->validate([
-            'ticket_code' => 'required|string|exists:stock_opname_lists,ticket_code',
-            'asset_code'  => 'required|string|exists:master_asset,asset_code',
-            'remark'      => 'nullable|string',
-            'condition'   => 'required',
-        ]);
+    public function stockOPnameUpdateItem(Request $request)
+    {
+        DB::beginTransaction(); // mulai transaksi
 
-        $header = StockOpnameList::where('ticket_code', $request->ticket_code)
-            ->where('status', 0)
-            ->first();
+        // try {
+            $request->validate([
+                'ticket_code' => 'required|string|exists:stock_opname_lists,ticket_code',
+                'asset_code'  => 'required|string|exists:master_asset,asset_code',
+                'remark'      => 'nullable|string',
+                'condition'   => 'required',
+                'attachment'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            ]);
 
-        if (!$header) {
-            return ResponseFormatter::error(null, 'Ticket not found or already processed', 404);
+            $header = StockOpnameList::where('ticket_code', $request->ticket_code)
+                ->where('status', 0)
+                ->first();
+
+            if (!$header) {
+                return ResponseFormatter::error(null, 'Ticket not found or already processed', 404);
+            }
+
+            $asset = MasterAsset::where('asset_code', $request->asset_code)->first();
+
+            if (!$asset) {
+                return ResponseFormatter::error(null, 'Asset not found', 404);
+            }
+
+            $attachmentPath = null;
+            $postSO = [
+                'notes'            => $request->remark,
+                'updated_by'       => auth()->id(),
+                'condition_before' => $asset->condition,
+                'condition_after'  => $request->condition,
+                'updated_at'       => now(),
+                'status'           => 1,
+            ];
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $filename = now()->format('YmdHis') . '.' . $file->getClientOriginalExtension();
+                $tempPath = $file->storeAs('stock_opname/', $filename);
+            }
+
+            // Tambahkan path attachment kalau ada
+            if (isset($tempPath)) {
+                $finalPath = 'public/stock_opname/' . $filename; // simpan di storage/app/public/stock_opname
+                Storage::move($tempPath, $finalPath);
+                $attachmentPath = str_replace('public/', 'storage/', $finalPath);
+                $postSO['attachment'] = $attachmentPath;
+            }
+
+        
+            StockOpnameList::where([
+                'ticket_code' => $request->ticket_code,
+                'asset_code'  => $request->asset_code,
+            ])->update($postSO);
+            
+            $totalItems = StockOpnameList::where('ticket_code', $request->ticket_code)->count();
+            $completedItems = StockOpnameList::where('ticket_code', $request->ticket_code)
+                ->where('status', 1)
+                ->count();
+
+            $progress = $totalItems > 0 ? round(($completedItems / $totalItems) * 100, 2) : 0;
+            $head = StockOpnameHeader::where('ticket_code', $request->ticket_code)->first();
+            DB::table('stock_opname_headers')
+                ->where('ticket_code', $request->ticket_code)
+                ->update([
+                    'progress' => $progress,
+                    'updated_at' => now(),
+                    'status'    => $progress == 100 ? 3 : $head->status
+                ]);
+            if($progress == 100) {
+                $approval = ApprovalDetail::where('approval_code', $head->approval_code)->where('step', 1)->value('user_id');
+                   $userPost =[
+                        'message'=>auth()->user()->name.' has finish checking items, please finish the ticket',
+                        'subject'=>'Stock Opname Checking',
+                        'status'=>0,
+                        'type'=> 1,
+                        'request_code'=>$head->ticket_code,
+                        'link'=>'stock_opname',
+                        'userId'=>$approval,
+                        'created_at'=>date('Y-m-d H:i:s')
+                    ];
+                    WONotification::create($userPost);
+                       $post_log = [
+                            'ticket_code'   => $header->ticket_code,
+                            'start_date'    => $header->start_date,
+                            'end_date'      => $request->result == 'match' ? date('Y-m-d'): $header->end_date,
+                            'status'        => 3,
+                            'user_id'       => auth()->user()->id,
+                            'location_id'   => $header->location_id,
+                            'description'   => auth()->user()->name. ' has finish checking items'
+                        ];
+                    StockOpnameLog::create($post_log);
+            }
+
+            DB::commit(); // sukses → commit semua perubahan
+            $parameter = StockOpnameHeader::with([
+                    'userRelation',
+                    'listRelation',
+                    'listRelation.assetRelation',
+                    'listRelation.assetRelation.userRelation',
+                    'listRelation.assetRelation.roomRelation',
+                    'listRelation.assetRelation.userRelation.departmentRelation',
+                    'listRelation.userRelation',
+                    'locationRelation'
+                ])->where('ticket_code', $header->ticket_code)->first();
+            return ResponseFormatter::success($parameter, 'Stock Opname List successfully updated');
+        // } catch (\Throwable $th) {
+        //     DB::rollBack(); // kalau error → batalkan semua perubahan
+
+        //     // Hapus file sementara kalau ada
+        //     if (isset($tempPath) && Storage::exists($tempPath)) {
+        //         Storage::delete($tempPath);
+        //     }
+
+        //     return ResponseFormatter::error($th->getMessage(), 'Failed to update Stock Opname', 500);
+        // }
+    }    
+
+    public function stockOpnameChecking(Request $request){
+          DB::beginTransaction(); // mulai transaksi
+
+        try {
+            $request->validate([
+                'ticket_code' => 'required|string|exists:stock_opname_lists,ticket_code',
+                'result'      => 'nullable|string',
+                'remark'   => 'required'
+            ]);
+
+            $header = StockOpnameHeader::where('ticket_code', $request->ticket_code)->first();
+            $status = $request->result == 'match' ? $header->status + 1 : $header->status + 2;
+
+            $post = [
+                'status'        => $status,
+                'end_date'      => $request->result == 'match' ? date('Y-m-d'): $header->end_date
+            ];
+            $post_log = [
+                'ticket_code'   => $header->ticket_code,
+                'start_date'    => $header->start_date,
+                'end_date'      => $request->result == 'match' ? date('Y-m-d'): $header->end_date,
+                'status'        => $status,
+                'user_id'       => auth()->user()->id,
+                'location_id'   => $header->location_id,
+                'description'   => $request->remark
+            ];
+            if($request->result == 'match'){
+                $assets = StockOpnameList::where('ticket_code', $header->ticket_code)->get();
+                foreach($assets as $row){
+                    MasterAsset::where('asset_code', $row->asset_code)->update([
+                        'condition' => $row->condition_after,
+                        'image'     => $row->attachment
+                    ]);
+                    $asset = MasterAsset::where('asset_code', $row->asset_code)->first();
+                    MasterAssetLog::create([
+                           'asset_code'         => $row->asset_code,
+                           'category'           => $asset->category,
+                           'brand'              => $asset->brand,
+                           'type'               => $asset->type,
+                           'parent_code'        => $asset->parent_code,
+                           'remark'             => auth()->user()->id. ' has update condition by stock opname.',
+                           'user_id'            => auth()->user()->id,
+                           'is_active'          =>$asset->is_active,
+                           'condition'          =>$row->condition_after,
+                           'nik'                =>$asset->nik,
+                           'join_date'          =>$asset->join_date,
+                           'location_id'        =>$asset->location_id,
+                    ]);
+                } 
+            }
+            StockOpnameHeader::where('ticket_code', $request->ticket_code)->update($post);
+            StockOpnameLog::create($post_log);
+            DB::commit();
+
+            return ResponseFormatter::success($request, 'Stock Opname List successfully updated');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseFormatter::error($th->getMessage(), 'Failed to update Stock Opname', 500);
         }
-
-        $asset = MasterAsset::where('asset_code', $request->asset_code)->first();
-
-        if (!$asset) {
-            return ResponseFormatter::error(null, 'Asset not found', 404);
-        }
-
-        $postSO = [
-            'notes'            => $request->remark,
-            'updated_by'       => auth()->id(),
-            'condition_before' => $asset->condition,
-            'condition_after'  => $request->condition,
-            'updated_at'       => now(),
-            'status'           => 1 
-        ];
-
-        StockOpnameList::where([
-            'ticket_code' => $request->ticket_code,
-            'asset_code'  => $request->asset_code,
-        ])->update($postSO);
-
-        return ResponseFormatter::success($header, 'Stock Opname List successfully updated');
-    } catch (\Throwable $th) {
-        return ResponseFormatter::error($th->getMessage(), 'Failed to update Stock Opname', 500);
     }
-}
-
-    
 }

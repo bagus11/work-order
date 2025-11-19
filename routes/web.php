@@ -467,6 +467,7 @@ Route::group(['middleware' => ['auth']], function() {
 
             // Service Asset
                 Route::get('service_asset', [ServiceAssetController::class, 'index'])->name('service_asset'); 
+                Route::get('getServiceTicket', [ServiceAssetController::class, 'getServiceTicket'])->name('getServiceTicket'); 
                 Route::get('getService', [ServiceAssetController::class, 'getService'])->name('getService'); 
                 Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode'); 
                 Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode'); 
@@ -474,6 +475,7 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService'); 
                 Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService'); 
                 Route::get('exportPdfService/{id}',[ServiceAssetController::class, 'exportPdfService']);
+                Route::get('exportPdfServiceHistory/{id}',[ServiceAssetController::class, 'exportPdfServiceHistory']);
             // Service Asset
             
         // Distribution Asset
@@ -576,6 +578,12 @@ Route::group(['middleware' => ['auth']], function() {
          Route::post('addFileSharing', [FileSharingController::class, 'addFileSharing'])->name('addFileSharing');
          Route::get('getFileHistory', [FileSharingController::class, 'getFileHistory'])->name('getFileHistory');
          Route::post('fileSharingUpdate', [FileSharingController::class, 'fileSharingUpdate'])->name('fileSharingUpdate');
-    // File Sharing
+         // File Sharing
+         
+    // Testing Cyber lentera     
+    // Testing Cyber lentera
 });
+Route::get('cyber', function () {
+     return view('cyber_lentera');
+ });
 

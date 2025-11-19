@@ -60,6 +60,28 @@ class MasterAssetController extends Controller
         'data'=>$data,
     ]);
   }
+    public function show($id)
+    {
+        $asset = MasterAsset::with([
+            'userRelation',
+            'userRelation.Departement',
+            'userRelation.locationRelation',
+            'specRelation',
+            'childRelation',
+            'softwareRelation',
+        ])->findOrFail($id);
+
+        // Kalau belum punya QR di DB, generate otomatis
+        if (!$asset->qr_code) {
+            $this->generateQr($asset);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $asset,
+        ]);
+    }
+
   function getMasterAssetUser(Request $request) {
     $data = MasterAsset::with([
         'userRelation',

@@ -22,6 +22,7 @@
                                 <div class="row my-2">
                                     <div class="col-12">
                                         <input type="hidden" id="service_code" name="service_code">
+                                        <input type="hidden" id="asset_code_detail" name="asset_code_detail">
                                            <fieldset>
                                                 <legend>General Information About Ticket</legend>
                                                 <div class="row">
@@ -100,8 +101,11 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col">
-                                                        <button style="float: right" class="btn btn-danger btn-sm mt-2" id="btn_export_pdf_service">
+                                                        <button style="float: right;font-size:10px !important" class="btn btn-danger btn-sm mt-2" id="btn_export_pdf_service">
                                                             <i class="fas fa-file"></i> Export to PDF
+                                                        </button>
+                                                        <button class="btn btn-danger btn-sm mt-2" style="float: right;font-size:10px !important; margin-right: 5px;" id="btn_print_service_history">
+                                                            <i class="fas fa-print"></i> Print Service Asset
                                                         </button>
                                                     </div>
                                                 </div>

@@ -103,7 +103,8 @@
                                 <th>Asset Code</th>
                                 <th>Category</th>
                                 <th>Brand</th>
-                                <th>Condition</th>
+                                <th>Condition Before</th>
+                                <th>Condition After</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,8 +113,10 @@
             row.list_relation.forEach(function (item, index) {
                 // mapping condition
                 let conditionLabel = '<span class="badge bg-secondary">Not Checked</span>';
+                let conditionLabelBefore = '<span class="badge bg-secondary">Not Checked</span>';
                 if (item.status == 1) {
-                    switch(item.condition) {
+                    console.log(item.asset_relation.condition == 1)
+                    switch(item.condition_after) {
                         case 1:
                             conditionLabel = '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Good</span>';
                             break;
@@ -125,6 +128,19 @@
                             break;
                         default:
                             conditionLabel = '<span class="badge bg-dark">Unknown</span>';
+                    }
+                    switch(item.condition_before) {
+                        case 1:
+                            conditionLabelBefore = '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Good</span>';
+                            break;
+                        case 2:
+                            conditionLabelBefore = '<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle"></i> Partially Good</span>';
+                            break;
+                        case 3:
+                            conditionLabelBefore = '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Damaged</span>';
+                            break;
+                        default:
+                            conditionLabelBefore = '<span class="badge bg-dark">Unknown</span>';
                     }
                 }
 
@@ -138,8 +154,9 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td><strong>${assetCode}</strong></td>
-                        <td>${categoryName}</td>
-                        <td>${item.asset_relation.brand_relation?.name || '-'}</td>
+                        <td>${item.asset_relation.category}</td>
+                        <td>${item.asset_relation.brand || '-'}</td>
+                        <td>${conditionLabelBefore}</td>
                         <td>${conditionLabel}</td>
                     </tr>
                 `;

@@ -204,6 +204,32 @@
                 $('#label_ram').html(': ' + row.spec_relation.ram + ' GB')
                 $('#label_storage').html(': ' + row.spec_relation.storage + ' GB')
                 $('.specification_container').prop('hidden', false)
+                console.log(row.qr_code);
+
+                const $labelQr = $('#label_qr');
+
+                // Bersihin isi lama
+                $labelQr.empty();
+
+                // Cek dulu apakah datanya valid
+                if (row.qr_code) {
+                 $('#label_qr').html(`
+                    <img src="{{ URL::asset('') }}${row.qr_code}"
+                        alt="QR Code"
+                        class="img-fluid rounded shadow-sm border p-1 bg-white"
+                        style="max-width: 200px; display: block; margin: auto;">
+                `);
+
+
+                } else {
+                    // Kalo ga ada / invalid QR
+                    $labelQr.html(`
+                        <div class="text-muted text-center small fst-italic py-2">
+                            QR Code not available
+                        </div>
+                    `);
+                }
+
 
                 if(row.software_relation.length > 0){
                     // Software Relation
