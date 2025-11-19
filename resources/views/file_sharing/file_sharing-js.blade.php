@@ -12,7 +12,6 @@
             'department': $('#department_filter').val(),
             'user_filter': $('#user_filter').val(),
         }
-        console.log(data_first)
         getCallback('getFileSharing', data_first, function(response){
         swal.close()
         mappingTable(response.data, 'file_sharing_table')
