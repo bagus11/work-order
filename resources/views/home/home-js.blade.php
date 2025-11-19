@@ -511,7 +511,7 @@
                        "bInfo" : false
                     }).columns.adjust()
                 $('#' + id + ' tbody').on('click', 'tr', function () {
-                    window.location.href = '/work_order_list';
+                    window.location.href = '/work-order/work_order_list';
                 });
     }
     function mappingLevel2(response){
