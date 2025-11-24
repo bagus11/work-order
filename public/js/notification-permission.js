@@ -67,6 +67,7 @@ function initializeFirebaseMessaging() {
 }
 
 function saveFcmToken(token) {
+    console.log('Saving FCM token to server:', token);
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
