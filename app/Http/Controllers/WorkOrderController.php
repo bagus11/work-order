@@ -27,6 +27,7 @@ use \Mpdf\Mpdf as PDF;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use App\Services\FcmService;
 
 class WorkOrderController extends Controller
 {
@@ -282,6 +283,7 @@ class WorkOrderController extends Controller
                 'status'=>422
             ]);
         }else{
+                $fcmService = new FcmService();
 
                 $increment_code= WorkOrder::orderBy('id','desc')->first();
                 $date_month =strtotime(date('Y-m-d'));
@@ -384,7 +386,7 @@ class WorkOrderController extends Controller
               
 
                 // dd($post);
-                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$ticket_code,$categoriesName,$problemType,$add_info,$subject) {
+                DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$ticket_code,$categoriesName,$problemType,$add_info,$subject, $fcmService, $userDept) {
                     WorkOrder::create($post);
                     WorkOrderLog::create($post_log);
                     WONotification::insert($userArray);
@@ -412,7 +414,22 @@ class WorkOrderController extends Controller
                             'text' => $text
                         ]);
                     // Send To Telegram Chanel
-                    
+
+                    // Push Notification Send using FcmService
+                    foreach ($userDept as $user) {
+                        if ($user->fcm_token) {
+                            try {
+                                $fcmService->send(
+                                    $user->fcm_token,
+                                    'New Work Order Created',
+                                    auth()->user()->name . ' has created a new work order: ' . $ticket_code,
+                                    ['request_code' => $ticket_code]
+                                );
+                            } catch (\Exception $e) {
+                                Log::error('Failed to send FCM notification: ' . $e->getMessage());
+                            }
+                        }
+                    }
                 });
                 $validasi = WorkOrderLog::where('request_code', $ticket_code)->where('status_wo',0)->count();
                 if($validasi==1){

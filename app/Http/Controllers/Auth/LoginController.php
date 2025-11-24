@@ -37,6 +37,15 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    protected function authenticated($request, $user)
+    {
+        if ($request->has('fcm_token')) {
+            $user->fcm_token = $request->input('fcm_token');
+            $user->save();
+        }
+    }
+
     public function username()
     {
         return 'nik';

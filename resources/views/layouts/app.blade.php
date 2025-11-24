@@ -31,6 +31,7 @@
             @yield('content')
         </main>
     </div>
+<script src="{{ asset('js/notification-permission.js') }}"></script>
 </body>
 </html>
 <script>
