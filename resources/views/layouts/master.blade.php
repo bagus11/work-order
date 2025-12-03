@@ -77,7 +77,7 @@
 
           // Firebbase Push Notification
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                navigator.serviceWorker.register('/work-order/public/firebase-messaging-sw.js')
                     .then(reg => {
                         console.log('SW registered:', reg);
                     })

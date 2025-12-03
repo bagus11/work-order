@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // 1. Register Service Worker
-    const registration = await navigator.serviceWorker.register('work-order/public/firebase-messaging-sw.js');
+    const registration = await navigator.serviceWorker.register('/work-order/public/firebase-messaging-sw.js');
     console.log('Service Worker registered:', registration);
 
     // 2. Initialize Firebase Messaging
