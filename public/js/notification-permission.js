@@ -1,73 +1,70 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Show a prompt or UI element for the user to allow notifications
-    showNotificationPermissionPrompt();
+document.addEventListener('DOMContentLoaded', async function () {
+
+    if (!firebase.messaging.isSupported()) {
+        console.log("Firebase messaging is NOT supported on this browser");
+        return;
+    }
+
+    // 1. Register Service Worker
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    console.log('Service Worker registered:', registration);
+
+    // 2. Initialize Firebase Messaging
+    const messaging = firebase.messaging();
+
+    showNotificationPermissionPrompt(messaging);
 });
 
-function showNotificationPermissionPrompt() {
+
+function showNotificationPermissionPrompt(messaging) {
+
     if (Notification.permission === 'default' || Notification.permission === 'denied') {
-        // Delay prompt by small timeout to allow UI to load
-        setTimeout(() => {
-            if (confirm('Allow this site to send you notifications?')) {
-                requestNotificationPermission();
-            } else {
-                console.log('User declined notification permission prompt');
-            }
-        }, 1000);
+        requestNotificationPermission(messaging);
     } else if (Notification.permission === 'granted') {
-        initializeFirebaseMessaging();
+        initializeFirebaseMessaging(messaging);
     }
 }
 
-function requestNotificationPermission() {
+
+function requestNotificationPermission(messaging) {
     Notification.requestPermission().then(function(permission) {
         if (permission === 'granted') {
-            initializeFirebaseMessaging();
+            initializeFirebaseMessaging(messaging);
         } else {
-            console.log('Notification permission was denied');
+            console.log('Notification permission denied');
         }
     });
 }
 
-function initializeFirebaseMessaging() {
-    if (!firebase.messaging.isSupported()) {
-        console.log('Firebase messaging not supported');
-        return;
-    }
 
-    const messaging = firebase.messaging();
-    messaging
-        .getToken({ vapidKey: '<YOUR_VAPID_KEY_HERE>' })
-        .then((currentToken) => {
-            if (currentToken) {
-                console.log("FCM Token:", currentToken);
-                saveFcmToken(currentToken);
-            } else {
-                console.log('No registration token available. Request permission to generate one.');
-            }
-        })
-        .catch((err) => {
-            console.log('An error occurred while retrieving token. ', err);
-        });
+function initializeFirebaseMessaging(messaging) {
 
-    messaging.onTokenRefresh(() => {
-        messaging
-            .getToken({ vapidKey: '<YOUR_VAPID_KEY_HERE>' })
-            .then((refreshedToken) => {
-                console.log('FCM Token refreshed:', refreshedToken);
-                saveFcmToken(refreshedToken);
-            })
-            .catch((err) => {
-                console.log('Unable to retrieve refreshed token ', err);
-            });
+    messaging.getToken({
+        vapidKey: "ISI VAPID KEY DI SINI",
+        serviceWorkerRegistration: navigator.serviceWorker.ready
+    })
+    .then((currentToken) => {
+        if (currentToken) {
+            console.log("FCM Token:", currentToken);
+            saveFcmToken(currentToken);
+        }
+    })
+    .catch((err) => {
+        console.log('Error retrieving token:', err);
     });
 
     messaging.onMessage((payload) => {
-        console.log('Message received. ', payload);
+        console.log('Message Received:', payload);
+
+        new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: payload.notification.icon || '/logo.png'
+        });
     });
 }
 
+
 function saveFcmToken(token) {
-    console.log('Saving FCM token to server:', token);
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -75,11 +72,11 @@ function saveFcmToken(token) {
         url: '/save-fcm-token',
         type: 'POST',
         data: { token: token },
-        success: function(response) {
-            console.log('FCM token saved successfully');
+        success: function() {
+            console.log('Token saved');
         },
         error: function(err) {
-            console.log('Error saving FCM token', err);
+            console.log('Save token error:', err);
         }
     });
 }

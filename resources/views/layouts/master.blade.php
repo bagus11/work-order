@@ -68,11 +68,24 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs4.min.js"></script>
         <!--Tempusdominus JS CDN-->
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
         <!--Tempusdominus CSS CDN-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
         <script> 
-       
+
+          // Firebbase Push Notification
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                    .then(reg => {
+                        console.log('SW registered:', reg);
+                    })
+                    .catch(err => console.log('SW registration failed:', err));
+            }
+
+          // Firebbase Push Notification
+
           $(document).on('click', '.dropdown-menu .nav-link', function (e) {
               e.stopPropagation();
           });

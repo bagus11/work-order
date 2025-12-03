@@ -21,8 +21,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript" defer></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+   
 </head>
 <body>
     <div id="app">
@@ -31,7 +30,12 @@
             @yield('content')
         </main>
     </div>
-<script src="{{ asset('js/notification-permission.js') }}"></script>
+ <script src="{{asset('js/app.js')}}"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+{{-- <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+<script src="{{ asset('js/notification-permission.js') }}"></script> --}}
 </body>
 </html>
 <script>
