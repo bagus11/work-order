@@ -27,7 +27,7 @@ use \Mpdf\Mpdf as PDF;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use App\Services\FcmService;
+use App\Services\FCMService;
 
 class WorkOrderController extends Controller
 {
@@ -283,7 +283,7 @@ class WorkOrderController extends Controller
                 'status'=>422
             ]);
         }else{
-                $fcmService = new FcmService();
+                $fcmService = new FCMService();
 
                 $increment_code= WorkOrder::orderBy('id','desc')->first();
                 $date_month =strtotime(date('Y-m-d'));
