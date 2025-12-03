@@ -34,7 +34,8 @@ class DistributionAssetController extends Controller
            'locationRelation',
            'desLocationRelation',
            'detailRelation'
-        ])->get();
+        ])->orderBy('status', 'asc')
+        ->get();
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addColumn('action', function ($row) {

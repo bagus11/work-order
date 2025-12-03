@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -40,10 +41,17 @@ class LoginController extends Controller
 
     protected function authenticated($request, $user)
     {
-        if ($request->has('fcm_token')) {
-            $user->fcm_token = $request->input('fcm_token');
-            $user->save();
+       // Jika mobile / web mengirim fcm_token → simpan
+        if ($request->filled('fcm_token')) {
+            $user->fcm_token = $request->fcm_token;
+        } 
+        
+        // Jika user tidak punya fcm_token → generate
+        if (is_null($user->fcm_token) || $user->fcm_token === '') {
+            $user->fcm_token = Str::uuid()->toString(); // lebih aman daripada random string
         }
+
+        $user->save();
     }
 
     public function username()

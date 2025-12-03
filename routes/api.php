@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Asset Distribution
         Route::get('/distribution', [DistributionAssetController::class, 'getDistributionTicket']);
         Route::get('/distribution/{id}', [DistributionAssetController::class, 'detailDistributionTicket']);
-    
+        
     // Asset Distribution
         
     // Master Asset
