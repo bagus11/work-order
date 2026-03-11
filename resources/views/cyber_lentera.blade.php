@@ -202,7 +202,7 @@ html {
 }
 
 .branding h1 span {
-  color: #f59e33;
+color: #f59e33;
   transition: color 0.3s ease;
 }
 
@@ -455,70 +455,83 @@ html {
   }
 
   .circle-image-wrapper {
-    width: min(250px, 60vw);
-    height: min(250px, 60vw);
+    position: relative;
+    width: min(400px, 80vw);
+    height: min(400px, 80vw);
+    margin: 0 auto;
   }
 
   .glow-ring {
-    width: min(250px, 60vw);
-    height: min(250px, 60vw);
+    position: absolute;
+    width: 112.5%;
+    height: 112.5%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(242, 156, 46, 0.8) 40%,
+      transparent 88%
+    );
+    filter: blur(24px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    animation: pulse 2s infinite ease-in-out;
   }
-
   .center-image {
+    position: flex;
+    width: min(300px, 60vw);
+    height: min(300px, 60vw);
+    margin-top: 20px;
     width: calc(100% - 50px);
     height: calc(100% - 50px);
   }
 
-  .branding {
-    margin-top: 20px;
-  }
+    .branding {
+      margin-top: 20px;
+    }
 
-  .branding h1 {
-    font-size: 28px;
-  }
+    .branding h1 {
+      font-size: 28px;
+    }
 
-  .logo {
-    font-size: 20px;
-    justify-content: center;
-  }
+    .logo {
+      font-size: 20px;
+      justify-content: center;
+    }
 
-  .login-form {
-    width: 90%;
-    max-width: 360px;
-    margin: 0 auto;
-  }
+    .login-form {
+      width: 90%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
 
-  .title {
-    font-size: 18px;
-    gap: 4px;
-  }
+    .title {
+      font-size: 18px;
+      gap: 4px;
+    }
 
-  .lock-icon {
-    width: 60px;
-    height: 60px;
-  }
+    .lock-icon {
+      width: 60px;
+      height: 60px;
+    }
 
-  .subtitle {
-    font-size: 12px;
-  }
+    .subtitle {
+      font-size: 12px;
+    }
 
-  .input-field, .sign-in-btn {
-    height: 40px;
-    font-size: 16px;
-  }
+    .input-field, .sign-in-btn {
+      height: 40px;
+      font-size: 16px;
+    }
 
-  .input-label {
-    font-size: 11px;
-  }
+    .input-label {
+      font-size: 11px;
+    }
 }
 
 @media (max-width: 480px) {
   .circle-image-wrapper {
-    width: min(200px, 50vw);
-    height: min(200px, 50vw);
-  }
-
-  .glow-ring {
     width: min(200px, 50vw);
     height: min(200px, 50vw);
   }

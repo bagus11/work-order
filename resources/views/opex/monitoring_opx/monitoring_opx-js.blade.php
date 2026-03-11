@@ -102,7 +102,7 @@ $('#btn_filter').off().on('click', function () {
         keyup: function() {
         formatCurrency($(this));
         },
-        blur: function() { 
+        blur: function() {
         formatCurrency($(this), "blur");
         }
     });
@@ -160,6 +160,7 @@ $('#btn_filter').off().on('click', function () {
             'pr' : $('#pr').val(),
             'id' : $('#po_id').val(),
         }
+        console.log(data)
         $('#btn_add_po').prop('disabled', true);
         postCallbackNoSwal('addPOOPX', data,function(response){
             toastr['success'](response.meta.message)
@@ -169,7 +170,7 @@ $('#btn_filter').off().on('click', function () {
             var data_test = {
                 'id':$('#po_id').val()
             }
-            getCallbackNoSwal('getPOOPX',data, function(response){
+            getCallbackNoSwal('getPOOPX',data_test, function(response){
                 swal.close()
                 mappingPOTable(response.data)
             })
@@ -204,7 +205,7 @@ $('#btn_filter').off().on('click', function () {
             swal.close()
             mappingISTable(response.data)
         })
-        
+
     })
     $(document).on('change','.is_change', function(){
         var id = $(this).data('id')
@@ -270,11 +271,11 @@ function mapping(response) {
 
     for (i = 0; i < response.length; i++) {
         var extend = response[i].category == 1 ? 'details-control' : '';
-        var buttonPO = response[i].category == 1 ? '' : 
+        var buttonPO = response[i].category == 1 ? '' :
             `<button type="button" class="btn editPO btn-sm btn-warning" data-toggle="modal" data-target="#POModal" title="Edit PO" data-name="${response[i].name}" data-id="${response[i].id}" data-type="${response[i].type}">
                 <i class="fas fa-edit"></i>
             </button>`;
-        var buttonInfo = response[i].category != 0 ? 
+        var buttonInfo = response[i].category != 0 ?
             `<button type="button" class="btn info btn-sm btn-info" data-id="${response[i].id}" title="Detail OPX">
                 <i class="fas fa-info-circle"></i>
             </button>` : '';
@@ -400,7 +401,7 @@ function getDetailOPX(id) {
     });
 }
 $('#infoOPXModal').on('shown.bs.modal', function () {
-     
+
     $('#opx_log_table').DataTable().columns.adjust();
 });
 
@@ -507,7 +508,7 @@ function mappingPOTable(response){
                             <i class="fas fa-edit"></i>
                         </button>
                     </td>
-                    
+
                 </tr>
             `;
         }
@@ -536,7 +537,7 @@ function mappingISTable(response){
                 <tr>
                     <td style="width : 40% !important"><input style="font-size:10px !important" class="form-control is_change" data-is="${response[i].is}" data-id="${response[i].id}" value="${response[i].is}" ></td>
                     <td>${response[i].user_relation.name}</td>
-                    
+
                 </tr>
             `;
         }
@@ -632,7 +633,7 @@ $('#btn_export_excel').off().on('click', function () {
     }
 
     // Ambil base URL dari Laravel (dinamis, aman di lokal/server)
-    let base = "{{ url('/') }}"; 
+    let base = "{{ url('/') }}";
     let url = `${base}/export-excel?location=${location}&year=${year}&month=${month}`;
     console.log('Exporting to:', url);
     window.location.href = url;

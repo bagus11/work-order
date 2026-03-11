@@ -67,7 +67,7 @@ class IncidentController extends Controller
                     $ticket_code = '1/INC/'.$departement_for->initial.'/'.$month_convert.'/'.$year;
                 }else{
                     $ticket_code = $month_before[0] + 1 .'/'.'INC/'.$departement_for->initial.'/'.$month_convert.'/'.$year;
-                }   
+                }
             }
             $fileName ='';
             if($request->file('attachment_start')){
@@ -107,7 +107,7 @@ class IncidentController extends Controller
             return ResponseFormatter::success(
                 $post,
                 'Incident successfully added'
-            );            
+            );
         // } catch (\Throwable $th) {
         //     return ResponseFormatter::error(
         //         $th,
@@ -178,25 +178,25 @@ class IncidentController extends Controller
                     //         if($startDatePIC == $shiftstartDate)
                     //         {
                     //             if($startTimePIC >=$shiftendTime){
-                    //                 $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);         
+                    //                 $totalTime += $shiftTimePIC->diffInMinutes($shiftendtime);
                     //             }else{
                     //                 $totalTime += $shiftTimePIC->diffInMinutes($endTimeSystem);
                     //                 // dd($startTimePIC . ' == '.$shiftendTime.'  ==> '.$totalTime);
                     //             }
-                            
+
                     //         }else{
                     //             if($shiftendDate == $dateNow){
-                                   
+
                     //                 if(strtotime($timeSystem) >= $shiftendTime && $shiftendDate == $dateNow){
                     //                     dd('test 1');
                     //                     $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
                     //                 }else{
                     //                     $totalTime += $endTimeSystem->diffInMinutes($shiftstarttime);
                     //                     dd($endTimeSystem.'-'.$shiftstarttime.'='.$totalTime);
-                                    
+
                     //                 }
                     //             }else{
-                                  
+
                     //                 $totalTime += $shiftstarttime->diffInMinutes($shiftendtime);
                     //             }
                     //         }
@@ -227,7 +227,7 @@ class IncidentController extends Controller
             return ResponseFormatter::success(
                 $post,
                 'Incident successfully updated'
-            );            
+            );
         // } catch (\Throwable $th) {
         //     return ResponseFormatter::error(
         //         $th,

@@ -92,7 +92,7 @@ class MonitoringOPXController extends Controller
             // dd(vsprintf(str_replace('?', '%s', $log->toSql()), collect($log->getBindings())->map(fn($b) => is_numeric($b) ? $b : "'$b'")->toArray()));
 
             $log = $log->get();
-            
+
             return response()->json([
                 'detail' => $detail,
                 'log'    => $log
@@ -134,7 +134,7 @@ function childOPXDetail(Request $request) {
             ->whereBetween('start_date', [$startOfMonth, $endOfMonth]);
             $log->where('product', $detail->product);
             $log = $log->get();
-            
+
             return response()->json([
                 'detail' => $detail,
                 'log'    => $log
@@ -161,7 +161,7 @@ function childOPXDetail(Request $request) {
             ->groupBy('monitoring_opx.category', 'master_product_opx.name', 'monitoring_opx.location')->get();
 
         // Lihat raw SQL dengan bindings
-        
+
         return response()->json([
             'data'=>$query
         ]);
@@ -209,14 +209,14 @@ function childOPXDetail(Request $request) {
                 'dph'           => 0,
                 'po'           => '',
                 'is'           => '',
-               
+
             ];
             // dd($post);
             MonitoringOPX::create($post);
-            return ResponseFormatter::success(   
-                $post,                              
+            return ResponseFormatter::success(
+                $post,
                 'OPX successfully added'
-            );            
+            );
         } catch (\Throwable $th) {
             return ResponseFormatter::error(
                 $th,
@@ -225,28 +225,32 @@ function childOPXDetail(Request $request) {
             );
         }
     }
-    function addPOOPX(Request $request, AddPOOPXRequest $storeProductOPXRequest) {
+    function addPOOPX(AddPOOPXRequest $request)
+    {
         try {
-            $storeProductOPXRequest->validated();
+
             $post =[
-               'po'  =>$request->po,
-               'pr'  =>$request->pr,
-               'opx_id'  =>$request->id,
-               'user_id'  =>auth()->user()->id,
-               
+            'po'  =>$request->po,
+            'pr'  =>$request->pr,
+            'opx_id'  =>$request->id,
+            'user_id'  =>auth()->user()->id,
             ];
-            // dd($post);
+
             OPXPO::create($post);
-            return ResponseFormatter::success(   
-                $post,                              
+
+            return ResponseFormatter::success(
+                $post,
                 'PO and PR successfully added'
-            );            
+            );
+
         } catch (\Throwable $th) {
+
             return ResponseFormatter::error(
                 $th,
                 'PO and PR failed to add',
                 500
             );
+
         }
     }
     function updateISOPX(Request $request) {
@@ -312,7 +316,7 @@ function childOPXDetail(Request $request) {
             'opx_id'=>$request->opx_id,
             'po_id'=>$request->po_id,
             'user_id'=>auth()->user()->id
-        
+
         ]);
         if($insert){
             $status = 200;
@@ -344,7 +348,7 @@ function childOPXDetail(Request $request) {
 
     // Data amount source
     $amountSourceData = $this->getAmountSourceData($location, $year, $endMonth);
-    
+
     return Excel::download(
         new OPXExport($pivotData, $amountSourceData, $months, $locations),
         'opx_report.xlsx'

@@ -33,7 +33,7 @@ var user_role = $('#user_role').val();
                 $.each(response.data,function(i,data,param){
                     $('#'+id).append('<option value="'+data.initial+'">' + data.name +'</option>');
                 });
-                
+
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -60,7 +60,7 @@ var user_role = $('#user_role').val();
                 $.each(response.data,function(i,data,param){
                     $('#'+id).append('<option value="'+data.id+'">' + data.name +'</option>');
                 });
-                
+
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -88,7 +88,7 @@ var user_role = $('#user_role').val();
                 $.each(response.data,function(i,data,param){
                     $('#'+id).append('<option value="'+data.id+'">' + data.name +'</option>');
                 });
-                
+
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -125,7 +125,7 @@ var user_role = $('#user_role').val();
                     }
                     if(response.status === 422)
                     {
-                        $.each(response.responseJSON.errors, (key, val) => 
+                        $.each(response.responseJSON.errors, (key, val) =>
                             {
                                 $('span.'+key+'_error').text(val)
                             });
@@ -154,7 +154,7 @@ var user_role = $('#user_role').val();
                 $.each(response.data,function(i,data,param){
                     $('#'+id).append('<option value="'+data.id+'">' + data.name +'</option>');
                 });
-                
+
             },
             error: function(xhr, status, error) {
                 swal.close();
@@ -162,7 +162,7 @@ var user_role = $('#user_role').val();
                 }
             });
         }
-        function getNotification(){   
+        function getNotification(){
             $('#notificationBody').empty()
             $.ajax({
             headers: {
@@ -179,7 +179,7 @@ var user_role = $('#user_role').val();
                 $('#notifikasi').show()
                     if(response.countStatus.new == 0){
                         $('#notificationCount').hide()
-                    
+
                     }else{
                         $('#notificationCount').show()
                     }
@@ -187,7 +187,7 @@ var user_role = $('#user_role').val();
                     var data_approval =''
                     $('#notificationCount').html(response.countStatus.new)
                     if(response.countNotification.count == 0){
-                        $('#notifTabCount').hide()  
+                        $('#notifTabCount').hide()
                     }else{
                         $('#notifTabCount').show()
                         $('#notifTabCount').html(response.countNotification.count)
@@ -198,7 +198,7 @@ var user_role = $('#user_role').val();
                         $('#approvalTabCount').show()
                         $('#approvalTabCount').html(response.countApproval.count)
                     }
-                   
+
                     for(i = 0; i < response.data.length; i++ )
                     {
                         var status = '';
@@ -211,11 +211,11 @@ var user_role = $('#user_role').val();
                             data += `
                             <a href="${response.data[i].link}" class="dropdown-item"  style="background:${status}">
                                 <div class="media">
-                                    
+
                                     <div class="media-body">
                                         <strong style="font-size:12px;color:#85CDFD" class="dropdown-item-title">
                                         ${response.data[i].subject} </strong>
-                                    
+
                                         <p  style="font-size:11px">${response.data[i].message}</p>
                                         <p class="text-muted" style="font-size:9px"><i class="far fa-clock mr-1"></i>${response.data[i].date}, ${response.data[i].time}</p>
                                     </div>
@@ -227,11 +227,11 @@ var user_role = $('#user_role').val();
                             if(response.data[i].status == 0){
                                 data_approval += `<div data-request="${response.data[i].request_code}" class="dropdown-item approvalList" data-link="${response.data[i].link}"  style="background:${status}">
                                     <div class="media">
-                                        
+
                                         <div class="media-body">
                                             <strong style="font-size:12px;color:#85CDFD" class="dropdown-item-title">
                                             ${response.data[i].subject} </strong>
-                                        
+
                                             <p  style="font-size:11px">${response.data[i].message}</p>
                                             <p class="text-muted" style="font-size:9px"><i class="far fa-clock mr-1"></i>${response.data[i].date}, ${response.data[i].time}</p>
                                         </div>
@@ -253,7 +253,7 @@ var user_role = $('#user_role').val();
             });
         }
         function updateNotif(){
-           
+
             $.ajax({
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -269,7 +269,7 @@ var user_role = $('#user_role').val();
                 error: function(response) {
                     toastr['error']('Failed to get notification, please contact ICT Developer');
                 }
-            }); 
+            });
         }
         function master_chart(title,labels,type,id,data_a,color){
             const data = {
@@ -288,10 +288,10 @@ var user_role = $('#user_role').val();
                                 sum +=ctx.dataset.data[i]
                             }
                             let percentage = (value * 100 / sum).toFixed(2) + "%";
-                            
+
                             return percentage;
                             }
-                         
+
                         },
                 data:data_a
                 }]
@@ -305,7 +305,7 @@ var user_role = $('#user_role').val();
                     },
                     // tooltips: {
                     //     callbacks: {
-                    //         label: function(tooltipItem, data) 
+                    //         label: function(tooltipItem, data)
                     //                     {
                     //                     return tooltipItem.yLabel.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
                     //                     }
@@ -325,39 +325,39 @@ var user_role = $('#user_role').val();
                         ]
                     }
             }
-            
-            
+
+
             });
         }
         function pieChart(title,label,data,color,type,id){
-        
+
             const x = {
             labels:label,
             datasets:[{
                     data: data,
                     backgroundColor:color,
                     borderColor: "#fff"
-                }], 
+                }],
             };
             const config = {
                 type: type,
-            
+
             }
             const option={
                 responsive: true,
                     legend: {
                         display: true,
                         position:'bottom',
-                       
+
                         labels:{
                             usePointStyle:true,
-                          
+
                         }
                     },
                     tooltips: {
                         enabled: true
                     },
-                
+
                     plugins: {
                         legend:{
                             labels: {
@@ -378,16 +378,16 @@ var user_role = $('#user_role').val();
                         },
                         color: '#fff',
                     }
-                    
+
                     },
-                
+
             }
             var chart = new Chart(id, {
                 type: type,
                 data: x,
                 options:option
-            
-            
+
+
             });
         }
         function timeConvert(n) {
@@ -397,7 +397,7 @@ var user_role = $('#user_role').val();
             var minutes = (hours - rhours) * 60;
             var rminutes = Math.round(minutes);
             var label = rhours == 0 ?  rminutes +' menit' : rhours + ' jam ' + rminutes + ' menit'
-            return label 
+            return label
         }
         function uploadFile(url,data, route){
             $.ajax({
@@ -430,7 +430,7 @@ var user_role = $('#user_role').val();
                     }
                     if(response.status === 422)
                     {
-                        $.each(response.responseJSON.errors, (key, val) => 
+                        $.each(response.responseJSON.errors, (key, val) =>
                             {
                                 $('span.'+key+'_error').text(val)
                             });
@@ -462,7 +462,7 @@ var user_role = $('#user_role').val();
                         toastr['success'](response.message);
                         window.location = route;
                     }
-                    
+
                 },
                 error: function(xhr, status, error) {
                     swal.close();
@@ -485,7 +485,7 @@ var user_role = $('#user_role').val();
                 toastr['error']('Failed to get data, please contact ICT Developer');
                 console.log(error)
                 }
-            }); 
+            });
         }
         function postAttachment(route, data, withFile, callback) {
             $.ajax({
@@ -540,7 +540,7 @@ var user_role = $('#user_role').val();
                     }
                     if(response.status === 422)
                     {
-                        $.each(response.responseJSON.errors, (key, val) => 
+                        $.each(response.responseJSON.errors, (key, val) =>
                             {
                                 $('span.'+key+'_error').text(val)
                             });
@@ -548,7 +548,7 @@ var user_role = $('#user_role').val();
                         toastr['error']('Failed to get data, please contact ICT Developer');
                     }
                 }
-            });  
+            });
             getNotification()
         }
        function postCallbackNoSwal(route, data, callback) {
@@ -557,8 +557,7 @@ var user_role = $('#user_role').val();
                 type: "POST",
                 data: data,
                 dataType: 'json',
-                processData: false,
-                contentType: false,
+
                 success: function(response) {
                     if (typeof callback === "function") {
                         callback(response);
@@ -595,7 +594,7 @@ var user_role = $('#user_role').val();
                 swal.close();
                 toastr['error']('Failed to get data, please contact ICT Developer');
                 }
-            }); 
+            });
         }
         function getActiveItems(url,data,id,name){
         $.ajax({
@@ -619,7 +618,7 @@ var user_role = $('#user_role').val();
                     swal.close();
                     toastr['error']('Failed to get data, please contact Developer');
                 }
-            });   
+            });
     }
     function formatDate(date) {
         var d = new Date(date),
@@ -627,9 +626,9 @@ var user_role = $('#user_role').val();
             day = '' + d.getDate(),
             year = d.getFullYear();
 
-        if (month.length < 2) 
+        if (month.length < 2)
             month = '0' + month;
-        if (day.length < 2) 
+        if (day.length < 2)
             day = '0' + day;
 
         return [year, month, day].join('-');
@@ -657,19 +656,19 @@ var user_role = $('#user_role').val();
     function formatCurrency(input, blur) {
         // appends $ to value, validates decimal side
         // and puts cursor back in right position.
-        
+
         // get input value
         var input_val = input.val();
-        
+
         // don't validate empty input
         if (input_val === "") { return; }
-        
+
         // original length
         var original_len = input_val.length;
 
-        // initial caret position 
+        // initial caret position
         var caret_pos = input.prop("selectionStart");
-            
+
         // check for decimal
         if (input_val.indexOf(".") >= 0) {
 
@@ -687,12 +686,12 @@ var user_role = $('#user_role').val();
 
             // validate right side
             right_side = formatNumber(right_side);
-            
+
             // On blur make sure 2 numbers after decimal
             if (blur === "blur") {
             right_side += "00";
             }
-            
+
             // Limit decimal to only 2 digits
             right_side = right_side.substring(0, 2);
 
@@ -705,13 +704,13 @@ var user_role = $('#user_role').val();
             // remove all non-digits
             input_val = formatNumber(input_val);
             input_val =  input_val;
-            
+
             // final formatting
             if (blur === "blur") {
             input_val += ".00";
             }
         }
-        
+
         // send updated string to input
         input.val(input_val);
 
@@ -732,7 +731,7 @@ var user_role = $('#user_role').val();
  // End Repository Pattern
  let approvalData = [];
  $('#asset_notification').on("click", function(){
-    
+
       approvalData =[];
       getCallbackNoSwal('getApprovalAssetNotification', null, function(response){
             const data = response.data;
@@ -746,9 +745,9 @@ var user_role = $('#user_role').val();
                     $('#approvalAssetModal').modal('show');
                     const ticket = data[0];
                     modalBody.append(generateTicketDetailHtml(ticket));
-                   
+
                 } else if (data.length > 1) {
-                    
+
                     $('#approvalAssetModal').modal('show');
                     // Banyak tiket, tampilkan daftar
                     let listHtml = `<ul class="list-group mx-2 my-2">`;
@@ -790,20 +789,20 @@ var user_role = $('#user_role').val();
                     listHtml += `</ul><div id="ticketDetailContainer" class="mt-3"></div>`;
                     modalBody.append(listHtml);
                 }
-    
-              
+
+
                 $(document).on('click', '.view-ticket', function(e) {
                     e.preventDefault();
                     const index = $(this).data('index');
                     const ticket = response.data[index]; // pastikan ini sesuai scope lo
-        
+
                     $('#ticketDetailContainer').html(generateTicketDetailHtml(ticket));
                 });
         })
-      
+
     })
 
-// Approval Asset Notification  
+// Approval Asset Notification
         function generateTicketDetailHtml(ticket) {
             let assetDetailsHtml = '';
             // Loop through the asset details and create a table
@@ -824,7 +823,7 @@ var user_role = $('#user_role').val();
                             </thead>
                             <tbody>
                 `;
-                
+
                 ticket.detail_relation.forEach((asset, index) => {
                     var condition = ''
                     switch(asset.condition) {
@@ -867,7 +866,7 @@ var user_role = $('#user_role').val();
                             <label style="font-size: 11px;">Type</label><br>
                         </div>
                         <div class="col-md-4 mb-1">
-                            <span style="font-size: 10px;"> : 
+                            <span style="font-size: 10px;"> :
                                 ${ticket.request_type == 1 ? 'Distribution' : ticket.request_type == 2 ? 'Hand Over' : 'Return'}
                             </span>
                         </div>
@@ -906,7 +905,7 @@ var user_role = $('#user_role').val();
                                :  ${ticket.attachment}
                             </a>
                         </div>` : ''}
-                    
+
                     </div>
                 </fieldset>
                     <div class="row">
@@ -935,35 +934,35 @@ var user_role = $('#user_role').val();
                         </div>
                     </div>
             </fieldset>
-        
+
             `;
         }
         $(document).on('click', '.asset-row', function () {
             const asset = $(this).data('asset');
-            
-            const conditionLabel = asset.condition == 1 ? 
-                '<span class="badge bg-success">Good</span>' : 
-                asset.condition == 2 ? 
-                '<span class="badge bg-warning text-dark">Bad</span>' : 
+
+            const conditionLabel = asset.condition == 1 ?
+                '<span class="badge bg-success">Good</span>' :
+                asset.condition == 2 ?
+                '<span class="badge bg-warning text-dark">Bad</span>' :
                 '<span class="badge bg-danger">Lost</span>';
             const html = `
             <fieldset class="border p-3 rounded shadow-sm">
                 <legend class="w-auto px-2" style="font-size: 11px; font-weight: bold;">Detail Asset</legend>
                 <div class="row" style="font-size: 11px;">
                     <div class="col-md-2 mb-1">
-                        <strong>Asset Code</strong> 
+                        <strong>Asset Code</strong>
                     </div>
                     <div class="col-md-4">
                         <span>: ${asset.asset_code} </span>
                     </div>
                     <div class="col-md-2 mb-1">
-                        <strong>Category</strong> 
+                        <strong>Category</strong>
                     </div>
                     <div class="col-md-4">
                         <span>: ${asset.asset_relation?.category_relation?.name || '-'} </span>
                     </div>
                     <div class="col-md-2 mb-1">
-                        <strong>Brand</strong> 
+                        <strong>Brand</strong>
                     </div>
                     <div class="col-md-4">
                         <span> : ${asset.asset_relation?.brand_relation?.name || '-'}</span>
@@ -971,7 +970,7 @@ var user_role = $('#user_role').val();
                     <div class="col-md-2 mb-1">
                         <strong>Type</strong>
                     </div>
-                        
+
                     <div class="col-md-4">
                          : ${asset.type == 1 ? 'Parent' : 'Child'}
                     </div>
@@ -1011,7 +1010,7 @@ var user_role = $('#user_role').val();
                     <div class="col-md-4 mb-1">
                         <span>: ${asset.asset_relation?.qr_code ? `<img src="/storage/Asset/${asset.asset_relation.qr_code}" alt="Asset Image" width="50">` : '-'}</span>
                     </div>
-                  
+
                 </div>
             </fieldset>
             `;
@@ -1046,10 +1045,10 @@ var user_role = $('#user_role').val();
             });
         });
     // Approval Asset Notification
-    
+
     $(document).on('click', '.approvalList', function() {
         var link = $(this).data('link');
-        var request = $(this).data('request');       
+        var request = $(this).data('request');
         if(link == "#stockOpnameApproval"){
             $(link).modal('show');
             getCallback('getApprovalStockOpname', {'ticket_code': request}, function(response){
@@ -1159,7 +1158,7 @@ var user_role = $('#user_role').val();
                                 $('.message_error').html('')
                                 if(response.status==422)
                                 {
-                                    $.each(response.message, (key, val) => 
+                                    $.each(response.message, (key, val) =>
                                     {
                                     $('span.'+key+'_error').text(val[0])
                                     });
@@ -1180,7 +1179,7 @@ var user_role = $('#user_role').val();
                         });
                     }
         }else if(link == 'update_system'){
-             $('#approvalERPModal').modal({backdrop: 'static', keyboard: false})  
+             $('#approvalERPModal').modal({backdrop: 'static', keyboard: false})
             $('#approvalERPModal').modal('show')
              $('#erp_pic, #erp_approval, #erp_select_approval').val('')
             $('#erp_select_approval').select2().trigger('change')
@@ -1193,15 +1192,15 @@ var user_role = $('#user_role').val();
             }
             // --- HEADER
             let remarkRaw = response.data.remark ?? null;
-            let remark = remarkRaw 
-                ? remarkRaw.replace(/<[^>]*>/g, '').trim() || '-' 
+            let remark = remarkRaw
+                ? remarkRaw.replace(/<[^>]*>/g, '').trim() || '-'
                 : '-';
             $("#erp_ticket_code").html(': ' + (response.data.ticket_code ?? '-'));
             $("#erp_subject").html(': ' + (response.data.subject ?? '-'));
             $("#erp_created_at").html(': ' + (formatDateTime(response.data.created_at) ?? '-'));
             $("#erp_created_by").html(': ' + (response.data.user_relation?.name ?? '-'));
             $("#erp_additional_info").html(': ' + remark);
-           
+
             // --- DETAIL
             let details = response.data.detail_relation ?? [];
             let html = '';
@@ -1213,11 +1212,11 @@ var user_role = $('#user_role').val();
                 html += `
                        <li class="list-group-item border-0 p-0 mb-2">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-shadow transition">
-                                
+
                                 <!-- Body -->
                                 <div class="card-body px-2 py-2 bg-light">
                                 <div class="row align-items-center">
-                                    
+
                                     <!-- Keterangan -->
                                     <div class="col-md-6">
                                     <div class="mb-1">
@@ -1239,15 +1238,15 @@ var user_role = $('#user_role').val();
                                     </div>
 
                                     <!-- Gambar -->
-                                    ${item.attachment 
+                                    ${item.attachment
                                     ? `
                                     <div class="col-md-6 text-center">
-                                        <img src="${item.attachment}" 
-                                            class="img-fluid rounded-3 shadow-sm border preview-image" 
+                                        <img src="${item.attachment}"
+                                            class="img-fluid rounded-3 shadow-sm border preview-image"
                                             alt="${item.subject || 'Attachment Preview'}"
                                             style="max-height:220px; width:100%; object-fit:contain; cursor:pointer"/>
                                     </div>
-                                    ` 
+                                    `
                                     : ''
                                     }
 
@@ -1271,7 +1270,7 @@ var user_role = $('#user_role').val();
         }
             $("#erp_detail_relation").html(html);
             getActiveItems('getUser', null, 'erp_select_pic', 'PIC')
-              
+
         });
         onChange('erp_select_pic','erp_pic')
         onChange('erp_select_approval','erp_approval')
@@ -1340,7 +1339,7 @@ $('#btn_erp_finish').on('click', function(){
             })
         }
         getNotification()
-        
+
     })
 
 })
