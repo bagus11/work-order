@@ -1,15 +1,7 @@
-version: '3.9'
-
-networks:
-  laravel:
-    driver: bridge
-
 services:
-
-  php:
+  work-order-php:
     build: .
     container_name: work-order-php
-    restart: unless-stopped
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
@@ -19,13 +11,15 @@ services:
   work-order-nginx:
     image: nginx:alpine
     container_name: work-order-nginx
-    restart: unless-stopped
     ports:
-      - "8085:80"
+      - "8085:80"   # boleh sementara debug, nanti bisa dihapus
     volumes:
       - ./:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/default.conf:/etc/nginx/sites-available/pralon.conf
     depends_on:
-      - php
+      - work-order-php
     networks:
       - laravel
+
+networks:
+  laravel:
