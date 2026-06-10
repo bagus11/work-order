@@ -41,7 +41,7 @@ class WorkOrderController extends Controller
                                         ->where('status_approval',2)
                                         ->where('updated_at', '<=', Carbon::now()->subDays(4)->toDateTimeString())
                                         ->get();
-       
+
         if(count($validationChecking) > 0 ){
             foreach($validationChecking as $item){
                 $sumofDuration = WorkOrderLog::select(DB::raw('SUM(duration) as sumOfDuration'))->where('request_code', $item->request_code)->first();
@@ -51,10 +51,10 @@ class WorkOrderController extends Controller
                     'rating'            =>5,
                     'duration'          =>$sumofDuration->sumOfDuration
                 ];
-            
+
                 DB::transaction(function() use($postValidateion,$item) {
                      WorkOrder::where('request_code', $item->request_code)->update($postValidateion);
-                  
+
                         $postCommentChecking =[
                             'request_code'=>$item->request_code,
                             'request_type'=>$item->request_type,
@@ -63,7 +63,7 @@ class WorkOrderController extends Controller
                             'subject'=>$item->subject,
                             'add_info'=>$item->add_info,
                             'user_id'=>$item->user_id,
-                            'assignment'=>$item->assignment, 
+                            'assignment'=>$item->assignment,
                             'status_wo'=>$item->status_wo,
                             'category'=>$item->category,
                             'follow_up'=>0,
@@ -75,14 +75,14 @@ class WorkOrderController extends Controller
                             'comment'=>'Done by system'
                         ];
                         WorkOrderLog::create($postCommentChecking);
-    
+
                             $postNotif = [
                                 'userId'    =>$item->user_id,
                                 'status'    =>0,
                                 'message'   =>'your work order ticket with request code : '.$item->request_code.' has been closed by system',
                                 'link'      =>'work_order_list',
                                 'subject'   =>'WO Progress'
-    
+
                             ];
                             $postNotifUser = [
                                 'userId'    =>$item->user_id_support,
@@ -90,12 +90,12 @@ class WorkOrderController extends Controller
                                 'message'   =>'your work order ticket with request code : '.$item->request_code.' has been closed by system',
                                 'link'      =>'work_order_list',
                                 'subject'   =>'WO Progress'
-    
+
                             ];
                             WONotification::create($postNotif);
                             WONotification::create($postNotifUser);
                 });
-                
+
             }
         }
         $statusFilter   = $request->statusFilter;
@@ -127,9 +127,9 @@ class WorkOrderController extends Controller
                 'master_departements.name as departement_name',
                 'master_kantor.name as kantor_name',
                 'master_priorities.name as priorityName',
-                 DB::raw("(SELECT COUNT(*) FROM chat_rfm 
-                  WHERE chat_rfm.request_code = work_orders.request_code 
-                  AND chat_rfm.status = 0 
+                 DB::raw("(SELECT COUNT(*) FROM chat_rfm
+                  WHERE chat_rfm.request_code = work_orders.request_code
+                  AND chat_rfm.status = 0
                   AND chat_rfm.user_id != " . auth()->user()->id . ") as unread_chats")
             )
             ->leftJoin('users','users.id','=','work_orders.user_id')
@@ -161,9 +161,9 @@ class WorkOrderController extends Controller
                 'master_departements.name as departement_name',
                 'master_kantor.name as kantor_name',
                 'master_priorities.name as priorityName',
-                 DB::raw("(SELECT COUNT(*) FROM chat_rfm 
-                  WHERE chat_rfm.request_code = work_orders.request_code 
-                  AND chat_rfm.status = 0 
+                 DB::raw("(SELECT COUNT(*) FROM chat_rfm
+                  WHERE chat_rfm.request_code = work_orders.request_code
+                  AND chat_rfm.status = 0
                   AND chat_rfm.user_id != " . auth()->user()->id . ") as unread_chats")
             )
             ->join('users','users.id','=','work_orders.user_id')
@@ -179,8 +179,8 @@ class WorkOrderController extends Controller
             ->where('work_orders.hold_progress','like','%'.$holdProgress.'%')
             ->where('work_orders.transfer_pic','like','%'.$transferPIC.'%')
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
-            ->where('user_id', auth()->user()->id) 
-            
+            ->where('user_id', auth()->user()->id)
+
             ->orderBy('status_wo', 'asc')
             ->orderBy('work_orders.status_approval','desc')
             ->orderBy('work_orders.priority','desc')
@@ -188,7 +188,7 @@ class WorkOrderController extends Controller
             ->get();
         }
         else{
-           
+
             $data = DB::table('work_orders')
             ->select(
                 'work_orders.*',
@@ -197,9 +197,9 @@ class WorkOrderController extends Controller
                 'master_departements.name as departement_name',
                 'master_kantor.name as kantor_name',
                 'master_priorities.name as priorityName',
-                 DB::raw("(SELECT COUNT(*) FROM chat_rfm 
-                  WHERE chat_rfm.request_code = work_orders.request_code 
-                  AND chat_rfm.status = 0 
+                 DB::raw("(SELECT COUNT(*) FROM chat_rfm
+                  WHERE chat_rfm.request_code = work_orders.request_code
+                  AND chat_rfm.status = 0
                   AND chat_rfm.user_id != " . auth()->user()->id . ") as unread_chats")
             )
             ->join('users','users.id','=','work_orders.user_id')
@@ -216,7 +216,7 @@ class WorkOrderController extends Controller
             ->where('work_orders.request_for',$initial)
             ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->from, $request->to])
             ->where(function($query){
-                $query->where('user_id_support', auth()->user()->id)->orWhere('status_wo', 0); 
+                $query->where('user_id_support', auth()->user()->id)->orWhere('status_wo', 0);
             })
             ->orderBy('status_wo', 'asc')
             ->orderBy('work_orders.status_approval','desc')
@@ -229,7 +229,7 @@ class WorkOrderController extends Controller
         ]);
     }
     public function get_categories_name(Request $request){
-      
+
         $data = MasterCategory::with('departement')->where('departement_id','like','%'.$request->departement_id.'%')->where('flg_aktif',1)->get();
         return response()->json([
             'data'=>$data
@@ -259,7 +259,7 @@ class WorkOrderController extends Controller
         $request_type = $request->request_type;
         $categories = $request->categories;
         $problem_type = $request->problem_type;
-        $subject = $request->subject; 
+        $subject = $request->subject;
         $add_info = $request->add_info;
         $departement_for = $request->departement_for;
         $validator = Validator::make($request->all(),[
@@ -279,11 +279,12 @@ class WorkOrderController extends Controller
         ]);
         if($validator->fails()){
             return response()->json([
-                'message'=>$validator->errors(), 
+                'message'=>$validator->errors(),
                 'status'=>422
             ]);
         }else{
-                $fcmService = new FCMService();
+                // $fcmService = new FCMService();
+                $fcmService = '';
 
                 $increment_code= WorkOrder::orderBy('id','desc')->first();
                 $date_month =strtotime(date('Y-m-d'));
@@ -298,7 +299,7 @@ class WorkOrderController extends Controller
                         $ticket_code = '1/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
                     }else{
                         $ticket_code = $month_before[0] + 1 .'/'.$request_type.'/'.$departement_for.'/'.$month_convert.'/'.$year;
-                    }   
+                    }
                 }
                 $fileName ='';
                 if($request->file('attachment')){
@@ -308,8 +309,8 @@ class WorkOrderController extends Controller
                     $originalName = $request->file('attachment')->getClientOriginalExtension();
                     $fileName =$custom_file_name.'.'.$originalName;
                 }
-             
-                
+
+
                 $post =[
                     'request_code'=>$ticket_code,
                     'request_type'=>$request_type,
@@ -339,7 +340,7 @@ class WorkOrderController extends Controller
                     'subject'=>strtoupper($subject),
                     'add_info'=>$add_info,
                     'user_id'=>auth()->user()->id,
-                    'assignment'=>0, 
+                    'assignment'=>0,
                     'status_wo'=>0,
                     'category'=>$categories,
                     'follow_up'=>0,
@@ -354,7 +355,7 @@ class WorkOrderController extends Controller
                 $problemType = ProblemType::find($problem_type);
                 $categoriesName = MasterCategory::find($categories);
                 $userName = User::find($request->username);
-                
+
                 $postEmail = [
                     'request_code'=>$ticket_code,
                     'request_type'=>$request_type,
@@ -362,10 +363,10 @@ class WorkOrderController extends Controller
                     'comment'=>$post_log['comment'],
                     'categories'=>$categoriesName->name,
                     'PIC'=> auth()->user()->name,
-    
-                ];            
 
-                // User Request For 
+                ];
+
+                // User Request For
                 $departementId = MasterDepartement::where('initial',$departement_for)->first();
                 $headDeptLocation = MasterJabatan::where('departement_id',$departementId->id)->first();
                 $userDept = User::where('departement',$departementId->id)->get();
@@ -383,7 +384,7 @@ class WorkOrderController extends Controller
                     ];
                     array_push($userArray, $userPost);
                 }
-              
+
 
                 // dd($post);
                 DB::transaction(function() use($post,$post_log,$postEmail,$userArray, $request, $fileName,$ticket_code,$categoriesName,$problemType,$add_info,$subject, $fcmService, $userDept) {
@@ -406,7 +407,7 @@ class WorkOrderController extends Controller
                         . "PIC          : ".auth()->user()->name."\n"
                         . "Location     : ".$locationName->name."\n\n\n\n"
                         . " ICT DEV";
-    
+
                     // Set Telegram Message
                         Telegram::sendMessage([
                             'chat_id' => env('TELEGRAM_CHANNEL_ID', '-1001800157734'),
@@ -416,20 +417,20 @@ class WorkOrderController extends Controller
                     // Send To Telegram Chanel
 
                     // Push Notification Send using FcmService
-                    foreach ($userDept as $user) {
-                        if ($user->fcm_token) {
-                            try {
-                                $fcmService->send(
-                                    $user->fcm_token,
-                                    'New Work Order Created',
-                                    auth()->user()->name . ' has created a new work order: ' . $ticket_code,
-                                    ['request_code' => $ticket_code]
-                                );
-                            } catch (\Exception $e) {
-                                Log::error('Failed to send FCM notification: ' . $e->getMessage());
-                            }
-                        }
-                    }
+                        // foreach ($userDept as $user) {
+                        //     if ($user->fcm_token) {
+                        //         try {
+                        //             $fcmService->send(
+                        //                 $user->fcm_token,
+                        //                 'New Work Order Created',
+                        //                 auth()->user()->name . ' has created a new work order: ' . $ticket_code,
+                        //                 ['request_code' => $ticket_code]
+                        //             );
+                        //         } catch (\Exception $e) {
+                        //             Log::error('Failed to send FCM notification: ' . $e->getMessage());
+                        //         }
+                        //     }
+                        // }
                 });
                 $validasi = WorkOrderLog::where('request_code', $ticket_code)->where('status_wo',0)->count();
                 if($validasi==1){
@@ -438,8 +439,8 @@ class WorkOrderController extends Controller
                 }
             // }
 
-           
-          
+
+
         }
         return response()->json([
             'status'=>$status,
@@ -450,7 +451,7 @@ class WorkOrderController extends Controller
     public function sendMail($title,$to,$message,$subject)
     {
         $emails =$to;
-    
+
         $mailData = [
             'title' =>$title,
             'subject'=>$subject,
@@ -476,22 +477,22 @@ class WorkOrderController extends Controller
     }
     public function approve_assignment_pic(Request $request)
     {
-       
+
            $status_wo = $request->status_wo;
            $status = 500;
            $message="Data failed to save";
            $validator = Validator::make($request->all(),[
                 'status_wo'=>'required',
                 'note_pic'=>'required',
-            
+
             ],[
                 'status_wo.required'=>'Progress tidak boleh kosong',
                 'note_pic.required'=>'Note tidak boleh kosong',
-              
+
             ]);
             if($validator->fails()){
                 return response()->json([
-                    'message'=>$validator->errors(), 
+                    'message'=>$validator->errors(),
                     'status'=>422
                 ]);
             }else{
@@ -565,18 +566,18 @@ class WorkOrderController extends Controller
                     }
                 }
                 // dd($durations);
-                    // checking if status wo before is pending, cant change level 
+                    // checking if status wo before is pending, cant change level
                    if($log_wo->level == 2){
                             $post         =[
                                                'status_wo'=>$status_wo,
                                                'status_approval'=>2,
                                                'attachment_pic'=> $fileName != ''? 'storage/attachmentPIC/'.$fileName  : null,
-   
+
                                            ];
                             $post_log           = [
                                             'request_code'=>$log_wo->request_code,
                                             'request_type'=>$log_wo->request_type,
-                                            'departement_id'=>$log_wo->departement_id,  
+                                            'departement_id'=>$log_wo->departement_id,
                                             'problem_type'=>$log_wo->problem_type,
                                             'add_info'=>$log_wo->add_info,
                                             'user_id'=>$log_wo->user_id,
@@ -609,11 +610,11 @@ class WorkOrderController extends Controller
 
                                 ];
                             }
-                                // Post 
+                                // Post
                                     $post_log           = [
                                         'request_code'=>$log_wo->request_code,
                                         'request_type'=>$log_wo->request_type,
-                                        'departement_id'=>$log_wo->departement_id,  
+                                        'departement_id'=>$log_wo->departement_id,
                                         'problem_type'=>$log_wo->problem_type,
                                         'add_info'=>$log_wo->add_info,
                                         'user_id'=>$log_wo->user_id,
@@ -630,9 +631,9 @@ class WorkOrderController extends Controller
                                         'duration'=>$finalDuration
                                     ];
 
-                                // Post 
-                   } 
-                      // User Request For 
+                                // Post
+                   }
+                      // User Request For
                     $message            = $status_wo == 4 ?'finish ':'pending';
                     $userPost           =[
                                             'message'=>auth()->user()->name.' has '.$message.' your wo transaction with request code : '.$log_wo->request_code,
@@ -654,7 +655,7 @@ class WorkOrderController extends Controller
                             'userId'=>$headUser->id,
                             'created_at'=>date('Y-m-d H:i:s')
                         ];
-                       
+
                     }
                     // dd($post_log);
                      DB::transaction(function() use($post,$request, $post_log,$userPost,$fileName,$status_wo,$postHead) {
@@ -669,13 +670,13 @@ class WorkOrderController extends Controller
                                     WONotification::create($postHead);
                                 }
                     });
-                    $successValidation= WorkOrder::find($request->id); 
+                    $successValidation= WorkOrder::find($request->id);
                     if($successValidation->status_wo == $status_wo){
                         $status = 200;
                         $message = "Data successfully inserted";
                 }
-                  
-              
+
+
                }else{
                 $message ="Anda bukan PIC pada transaksi ini";
                }
@@ -692,18 +693,18 @@ class WorkOrderController extends Controller
         $approve = $request->approve;
         $validator = Validator::make($request->all(),[
              'note'=>'required',
-         
+
          ],[
              'note.required'=>'Note tidak boleh kosong',
-           
+
          ]);
          if($validator->fails()){
              return response()->json([
-                 'message'=>$validator->errors(), 
+                 'message'=>$validator->errors(),
                  'status'=>422
              ]);
          }else{
-            // Validasi jika data sudaj di assign 
+            // Validasi jika data sudaj di assign
             $log_wo = WorkOrder::find($request->id);
             $username = User::find($log_wo->user_id_support);
             if($log_wo->status_wo == 0 ){
@@ -730,7 +731,7 @@ class WorkOrderController extends Controller
                     'creator'=>auth()->user()->id,
                     'duration'=>0
                ];
-                // User Request For 
+                // User Request For
                     $userMessage = $approve == 1 ?auth()->user()->name.' has assign work order transaction with request code :'.$log_wo->request_code: auth()->user()->name.' has reject work order transaction with request code '.$log_wo->request_code;
                     $userPost =[
                         'message'=>$userMessage,
@@ -767,7 +768,7 @@ class WorkOrderController extends Controller
                     WorkOrderLog::create($post_log);
                     WONotification::create($userPost);
                     WONotification::create($PICHead);
-     
+
                });
                $validasi = WorkOrderLog::where('request_code',$log_wo->request_code)->count();
                if($validasi == 2){
@@ -776,14 +777,14 @@ class WorkOrderController extends Controller
                }
             }else{
                 $status = 500;
-                $message="Data telah diassign oleh $username->name, silahkan refresh kembali"; 
+                $message="Data telah diassign oleh $username->name, silahkan refresh kembali";
             }
-           
+
          }
         return response()->json([
              'status'=>$status,
              'message'=>$message,
- 
+
          ]);
     }
     public function rating_pic(Request $request)
@@ -794,20 +795,20 @@ class WorkOrderController extends Controller
         $rating = $request->rating;
         $validator = Validator::make($request->all(),[
              'note_pic_rating'=>'required',
-         
+
          ],[
              'note_pic_rating.required'=>'Note tidak boleh kosong',
-           
+
          ]);
          if($validator->fails()){
              return response()->json([
-                 'message'=>$validator->errors(), 
+                 'message'=>$validator->errors(),
                  'status'=>422
              ]);
          }else{
             $param = $approve == 1?4:3;
             $log_wo = WorkOrder::with('picName','picSupportName')->find($request->id);
-            
+
             $sumofDuration = WorkOrderLog::select(DB::raw('SUM(duration) as sumOfDuration'))->where('request_code', $log_wo->request_code)->first();
 
               $post=[
@@ -816,7 +817,7 @@ class WorkOrderController extends Controller
                     'rating'=>$approve == 1 ? $rating: 0,
                     'duration'=> $approve == 1 ? $sumofDuration->sumOfDuration : 0
               ];
-            
+
               $post_log = [
                    'request_code'=>$log_wo->request_code,
                    'request_type'=>$log_wo->request_type,
@@ -858,12 +859,12 @@ class WorkOrderController extends Controller
                 'request_by'=>$userName->name,
                 'headDepartement'=>$headDepartement->name
 
-            ]; 
+            ];
             if($approve == 2){
                 // Validasi, jika revisi udah 3 kali, WO udah jadi Reject. Jika udah mengirim ke dua, maka akan akan mengirim email ke Head Derpartement
                 $validasi = WorkOrderLog::where('request_code',$log_wo->request_code)->where('status_wo',3)->count();
                 $userName = User::find($log_wo->user_id);
-             
+
                   if($validasi == 1){
                            $title = "Support Ticket";
                            $subject = 'Revision 2 - '.$post_log['request_code'];
@@ -873,14 +874,14 @@ class WorkOrderController extends Controller
                                'postEmail'=>$postEmail,
                            ];
                            $message = view('email.revisiWO',$data);
-                         
+
                            $this->sendMail($title,$to,$message,$subject);
-                        
+
                         DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
                             WorkOrder::find($request->id)->update($post);
                             WorkOrderLog::create($post_log);
-                            WONotification::create($userPost); 
-             
+                            WONotification::create($userPost);
+
                        });
                   }else if($validasi == 2){
                         $post=[
@@ -915,13 +916,13 @@ class WorkOrderController extends Controller
                             'postEmail'=>$postEmail,
                         ];
                         $message = view('email.revisiWO',$data);
-                     
+
                         $this->sendMail($title,$to,$message,$subject);
                         DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
                             WorkOrder::find($request->id)->update($post);
                             WorkOrderLog::create($post_log);
-                            WONotification::create($userPost); 
-            
+                            WONotification::create($userPost);
+
                     });
                   }else{
                     DB::transaction(function() use($post,$request, $post_log,$approve,$userPost) {
@@ -929,8 +930,8 @@ class WorkOrderController extends Controller
                         if($approve != 1 ){
                             WorkOrderLog::create($post_log);
                         }
-                        WONotification::create($userPost); 
-         
+                        WONotification::create($userPost);
+
                    });
                   }
 
@@ -938,23 +939,23 @@ class WorkOrderController extends Controller
                 DB::transaction(function() use($post,$request, $post_log,$approve,$userPost,$log_wo) {
                     WorkOrder::find($request->id)->update($post);
                     WorkOrderLog::create($post_log);
-                    WONotification::create($userPost); 
+                    WONotification::create($userPost);
                     });
-             
+
                }
             }
-            
-         
+
+
               $validasi = WorkOrder::where('request_code',$log_wo->request_code)->first();
               if($validasi->status_wo == $param){
                    $status = 200;
                    $message = "Data successfully inserted";
               }
-         
+
         return response()->json([
              'status'=>$status,
              'message'=>$message,
- 
+
          ]);
     }
     public function getStepper(Request $request)
@@ -963,11 +964,11 @@ class WorkOrderController extends Controller
         $responded = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',1)->orderBy('id','asc')->limit(1)->get();
         $fixed = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',4)
         ->where(function($query){
-            $query->where('status_approval',0)->orWhere('status_approval', 2); 
+            $query->where('status_approval',0)->orWhere('status_approval', 2);
         })->orderBy('created_at','desc')->limit(1)->get();
         $closed = WorkOrderLog::with(['userPIC'])->where('request_code',$request->request_code)->where('status_wo',4)->where('status_approval',1)->orderBy('created_at','desc')->limit(1)->get();
         $statusWo = WorkOrder::where('request_code',$request->request_code)->first();
-        return response()->json([   
+        return response()->json([
             'createdBy'=>$createdBy,
             'responded'=>$responded,
             'fixed'=>$fixed,
@@ -983,7 +984,7 @@ class WorkOrderController extends Controller
                 if($officeFilter == '*'){
                     $officeString = null;
                 }else{
-                    $officeString = $officeFilter; 
+                    $officeString = $officeFilter;
                 }
                 $statusString ='';
                 if($statusFilter !='*'){
@@ -1167,7 +1168,7 @@ class WorkOrderController extends Controller
                                                 ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$from, $to])
                                                  ->where('master_kantor.id','like','%'.$officeString.'%')
                                                 ->first();
-            
+
                     $avgDuration  =  WorkOrder::select(DB::raw('SUM(work_orders.duration) as totalDuration'),'request_code','master_kantor.name as officeName','work_orders.level')
                                             ->leftJoin('users','users.id','=','work_orders.user_id')
                                             ->leftJoin('master_categories','master_categories.id','=','work_orders.category')
@@ -1181,13 +1182,13 @@ class WorkOrderController extends Controller
                                             ->groupBy('work_orders.level')
                                             ->groupBy('users.kode_kantor')
                                             ->orderBy('work_orders.created_at', 'asc')
-                                            ->get();                      
-                   
+                                            ->get();
+
                 }
                 // dd($reportWO);
-                
 
-            // $countingWODone = 
+
+            // $countingWODone =
                             $data=[
                                 'reportWO'=>$reportWO,
                                 'woCounting'=>$woCounting,
@@ -1216,10 +1217,10 @@ class WorkOrderController extends Controller
                                                                 <td style="width: 50px; text-align:right;">'.$imageLogo.'
                                                             </td>
                                                         </tr>
-                                                        
+
                                                     </table>
                                                     <hr>';
-                            
+
                             $footer             = '<hr>
                                                     <table width="100%" style="font-size: 10px;">
                                                         <tr>
@@ -1227,13 +1228,13 @@ class WorkOrderController extends Controller
                                                             <td width="10%" style="text-align: right;"> {PAGENO}</td>
                                                         </tr>
                                                     </table>';
-                
-                              
+
+
                                 $mpdf           = new PDF();
                                 $mpdf->SetHTMLHeader($header);
                                 $mpdf->SetHTMLFooter($footer);
                                 $mpdf->AddPage(
-                                    'L', // L - landscape, P - portrait 
+                                    'L', // L - landscape, P - portrait
                                     '',
                                     '',
                                     '',
@@ -1256,7 +1257,7 @@ class WorkOrderController extends Controller
             }
     }
     public function holdProgressRequest(Request $request, UpdateHHoldProgressRequest $updateHHoldProgressRequest)
-    {   
+    {
         try {
             $updateHHoldProgressRequest->validated();
             $rfm = WorkOrder::find($request->id);
@@ -1269,7 +1270,7 @@ class WorkOrderController extends Controller
             $totalDuration      =   $timeBefore->diffInMinutes($timeNow);
             $masterJabatan      =   MasterJabatan::where('departement_id',auth()->user()->departement)->orderBy('id','asc')->first();
             $userJabatan        =   User::where('jabatan', $masterJabatan->id)->first();
-          
+
             $post=[
                 'hold_progress'=>1,
             ];
@@ -1312,7 +1313,7 @@ class WorkOrderController extends Controller
             return ResponseFormatter::success(
                 $post,
                 'Hold Request successfully added'
-            );            
+            );
         } catch (\Throwable $th) {
             return ResponseFormatter::error(
                 $th,
@@ -1323,14 +1324,14 @@ class WorkOrderController extends Controller
     }
     function reportDetailWO($request_code){
        $requestCode = str_replace("&*.","/",$request_code);
-       try 
+       try
        {
             $getTicket          = WorkOrder::with(['picSupportName','picName','departementName','categoryName','problemTypeName','detailWORelation','picSupportName.locationRelation.regencyRelation','detailWORelation.creatorRelation'])->where('request_code',$requestCode)->first();
             $mengetahui         = '';
             $data               =[
                 'getTicket'=>$getTicket
             ];
-            
+
             $cetak              = view('work-order.WOReport',$data);
             $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
             $header             = '';
@@ -1345,10 +1346,10 @@ class WorkOrderController extends Controller
                                                 <td style="width: 50px; text-align:right;">'.$imageLogo.'
                                             </td>
                                         </tr>
-                                        
+
                                     </table>
                                     <hr>';
-            
+
             $footer             = '<hr>
                                     <table width="100%" style="font-size: 10px;">
                                         <tr>
@@ -1356,13 +1357,13 @@ class WorkOrderController extends Controller
                                             <td width="10%" style="text-align: right;"> {PAGENO}</td>
                                         </tr>
                                     </table>';
-            
-                        
+
+
             $mpdf           = new PDF();
             $mpdf->SetHTMLHeader($header);
             $mpdf->SetHTMLFooter($footer);
             $mpdf->AddPage(
-                'P', // L - landscape, P - portrait 
+                'P', // L - landscape, P - portrait
                 '',
                 '',
                 '',
@@ -1396,7 +1397,7 @@ class WorkOrderController extends Controller
             $message ="Successfully sending message :)";
             $status =200;
         }
-        return response()->json([   
+        return response()->json([
             'message'=>$message,
             'status'=>$status,
         ]);
@@ -1448,7 +1449,7 @@ class WorkOrderController extends Controller
     }
     public function showById($id)
     {
-     
+
         $data = WorkOrder::with([
             'departementName',
             'categoryName',
@@ -1470,7 +1471,7 @@ class WorkOrderController extends Controller
             $lastLog = WorkOrderLog::where('request_code', $request->input('request_code'))
                             ->orderBy('created_at', 'desc')
                             ->first();
-            $finalDuration = 0; 
+            $finalDuration = 0;
             $dateNow = Carbon::now()->format('Y-m-d');
             $dateBeforePost = Carbon::parse($lastLog->created_at)->format('Y-m-d');
             $client = new \GuzzleHttp\Client();
@@ -1486,16 +1487,16 @@ class WorkOrderController extends Controller
                     $validation = '';
                     if($end->isToday()){
                         if( $lastLog->created_at->format('Y-m-d') == date('Y-m-d')){
-                                $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now());
                                 $validation = '1';
                             }else{
-                                $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+                                $minutes = $start->diffInMinutes(\Carbon\Carbon::now());
                                 $validation = '1 1';
 
                             }
                         }else{
                             if($start < $startToday){
-                                $minutes = $startToday->diffInMinutes($end); 
+                                $minutes = $startToday->diffInMinutes($end);
                                 $validation = '2 1';
                             }else{
                                 $validation = '2';
@@ -1513,9 +1514,9 @@ class WorkOrderController extends Controller
                         ];
                 }
             }
-            
-                    
-            
+
+
+
         } catch (\Throwable $th) {
             return ResponseFormatter::error(
                 $th,
