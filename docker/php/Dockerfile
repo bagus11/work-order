@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.3-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,35 +10,52 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    zip \
-    gd \
-    opcache
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo \
+        pdo_mysql \
+        zip \
+        gd \
+        opcache \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install composer
+# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files dulu (biar cache layer optimal)
+# Copy composer files terlebih dahulu untuk memanfaatkan cache Docker
 COPY composer.json composer.lock ./
 
-# Install dependencies dulu
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+# Install PHP dependencies
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --no-scripts \
+    --prefer-dist
 
-# Baru copy source code
+# Copy seluruh source code
 COPY . .
 
-# Fix permission Laravel
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+# Set permission Laravel
+RUN mkdir -p storage/logs bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
 
-# Cache Laravel (opsional tapi recommended kalau production build)
+# Laravel optimization (opsional)
 RUN php artisan config:clear || true \
-    && php artisan cache:clear || true
+    && php artisan cache:clear || true \
+    && php artisan route:clear || true \
+    && php artisan view:clear || true
 
 EXPOSE 9000
 
