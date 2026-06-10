@@ -1,5 +1,4 @@
 services:
-
   work-order:
     build: .
     container_name: work-order
@@ -7,14 +6,16 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
-  work-order-nginx:
+
+work-order-nginx:
     image: nginx:alpine
     container_name: work-order-nginx
-    restart: unless-stopped
     ports:
       - "8085:80"
     volumes:
       - ./:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - work-order
+      - php
+    networks:
+      - laravel
