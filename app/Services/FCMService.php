@@ -12,9 +12,10 @@ class FcmService
         $credentialsFile = config('firebase.credentials.file');
 
         if (!file_exists($credentialsFile)) {
-            $error = 'Firebase credentials file not found at: ' . $credentialsFile;
-            Log::error('FCM Send Failed: ' . $error);
-            return $error;
+            // $error = 'Firebase credentials file not found at: ' . $credentialsFile;
+            // Log::error('FCM Send Failed: ' . $error);
+            // return $error;
+            return;
         }
 
         try {
