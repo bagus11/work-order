@@ -123,7 +123,7 @@ class MasterAssetController extends Controller
 
   function updateStatusMasterAsset(Request $request) {
       //  try {
-     
+
         $post =[
           'is_active'   => $request->is_active == 1 ? 0 : 1
         ];
@@ -142,10 +142,10 @@ class MasterAssetController extends Controller
         ];
         MasterAsset::where('asset_code',$request->asset_code)->update($post);
         MasterAssetLog::create($postLog);
-          return ResponseFormatter::success(   
-              $post,                              
+          return ResponseFormatter::success(
+              $post,
               'Asset successfully updated'
-          );            
+          );
     // } catch (\Throwable $th) {
     //     return ResponseFormatter::error(
     //         $th,
@@ -214,7 +214,7 @@ class MasterAssetController extends Controller
           'nik'           => $nik->nik,
           'is_active'     => 1,
           'location_id'   => $request->location_id,
-          'join_date'     => $request->join_date, 
+          'join_date'     => $request->join_date,
         ];
         $post_log =[
           'asset_code'    => $ticket_code,
@@ -224,7 +224,7 @@ class MasterAssetController extends Controller
           'nik'           => $nik->nik,
           'is_active'     => 1,
           'location_id'   => $request->location_id,
-          'join_date'     => $request->join_date, 
+          'join_date'     => $request->join_date,
           'remark'        => auth()->user()->name . 'has add Asset',
         ];
 
@@ -232,13 +232,13 @@ class MasterAssetController extends Controller
           MasterAsset::create($post);
           MasterAssetLog::create($post_log);
 
-            return ResponseFormatter::success(   
-              $post,                              
+            return ResponseFormatter::success(
+              $post,
               'Asset successfully added'
-            );            
+            );
         });
-      
-     
+
+
     // } catch (\Throwable $th) {
     //     return ResponseFormatter::error(
     //         $th,
@@ -246,7 +246,7 @@ class MasterAssetController extends Controller
     //         500
     //     );
     // }
-      
+
     }
 
     public function summaryAsset(){
@@ -268,9 +268,9 @@ class MasterAssetController extends Controller
                             COUNT(CASE WHEN nik = 0 THEN 1 END) as count_user_id_zero,
                             COUNT(CASE WHEN nik IS NOT NULL AND nik != 0 THEN 1 END) as count_user_assigned
                         ")->first();
-           
+
         }else if(auth()->user()->hasPermissionTo('get-only_user-work_order_list')) {
-           
+
         }else{
             $category = MasterAsset::select(
                             'category',
@@ -296,7 +296,7 @@ class MasterAssetController extends Controller
          $totalSelf = MasterAsset::selectRaw("
                             COUNT(*) AS total
                         ")->where('nik', auth()->user()->nik)->first();
-        
+
         return response()->json([
             'category'      => $category,
             'condition'     => $condition,
@@ -362,7 +362,7 @@ class MasterAssetController extends Controller
               'historyRelation.userRelation',
               'historyRelation.userRelation.Departement',
               'historyRelation.userRelation.locationRelation',
-          ])->where('parent_code', $parent_code)->get(); 
+          ])->where('parent_code', $parent_code)->get();
           return ResponseFormatter::success($data, 'Asset child updated successfully');
       // } catch (\Throwable $th) {
       //     return ResponseFormatter::error($th, 'Failed to update asset child', 500);
@@ -376,17 +376,17 @@ class MasterAssetController extends Controller
         'details'    => $request->details,
         'created_at'    => date('Y-m-d H:i:s'),
       ];
-     
+
       DB::transaction(function() use($post) {
         SoftwareModel::create($post);
-             
+
       });
        $data = SoftwareModel::where('asset_code', $request->asset_code)
               ->get();
-       return ResponseFormatter::success(   
-            $data,                              
+       return ResponseFormatter::success(
+            $data,
             'Software successfully added'
-          );        
+          );
     } catch (\Throwable $th) {
         return ResponseFormatter::error(
             $th,
@@ -409,7 +409,7 @@ class MasterAssetController extends Controller
         'specRelation',
         'softwareRelation',
     ])->where('asset_code', $asset_code)->first();
-      
+
     $html = view('report.report-master_asset', compact('data'))->render();
             $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
             $header             = '';
@@ -427,7 +427,7 @@ class MasterAssetController extends Controller
                                     </table>
 
                                     <hr>';
-            
+
             $footer             = '<hr>
                                     <table width="100%" style="font-size: 10px;">
                                         <tr>
@@ -436,12 +436,12 @@ class MasterAssetController extends Controller
                                         </tr>
                                     </table>';
 
-                
+
                 $mpdf           = new PDF();
                 $mpdf->SetHTMLHeader($header);
                 $mpdf->SetHTMLFooter($footer);
                 $mpdf->AddPage(
-                    'P', // L - landscape, P - portrait 
+                    'P', // L - landscape, P - portrait
                     '',
                     '',
                     '',
@@ -455,7 +455,9 @@ class MasterAssetController extends Controller
                 ); // margin footer
                 $mpdf->WriteHTML($html);
                 // Output a PDF file directly to the browser
-                ob_clean();
+               while (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
                 $mpdf->Output('Master Asset Report'.$data->service_code.'('.date('Y-m-d').').pdf', 'I');
   }
 
@@ -530,11 +532,11 @@ public function exportMasterAsset(Request $request)
 
         return $div->name ?? 'No Division';
     })->map->count();
-    $summaryDept = $assets->groupBy(function ($asset) { 
-        $user = $asset->userRelation; 
-        $dept = optional($user->Departement); 
-        $div = optional($dept->divisionRelation); 
-        $divName = $div->name ?? 'No Division'; $deptName = $dept->name ?? 'No Department'; 
+    $summaryDept = $assets->groupBy(function ($asset) {
+        $user = $asset->userRelation;
+        $dept = optional($user->Departement);
+        $div = optional($dept->divisionRelation);
+        $divName = $div->name ?? 'No Division'; $deptName = $dept->name ?? 'No Department';
         return $divName . ' - ' . $deptName; })
         ->map->count();
 
@@ -635,7 +637,7 @@ if (empty($request->condition)) {
             'title' => 'Summary Condition',
             'data'  => $summaryCondition
         ],
-      
+
     ]),
 ])->render();
     $address = MasterKantor::where('id', auth()->user()->kode_kantor)->value('address');
@@ -657,7 +659,7 @@ if (empty($request->condition)) {
                                     </table>
 
                                     <hr>';
-            
+
             $footer             = '<hr>
                                     <table width="100%" style="font-size: 10px; border:none !important;">
                                         <tr>
@@ -666,7 +668,7 @@ if (empty($request->condition)) {
                                         </tr>
                                     </table>';
 
-                
+
                 $mpdf = new \Mpdf\Mpdf([
                     'tempDir' => storage_path('app/mpdf/temp'), // biar gak error permission
                     'allow_output_buffering' => true
@@ -674,13 +676,13 @@ if (empty($request->condition)) {
 
                 // Biar bisa debug kalau ada masalah gambar
                 $mpdf->showImageErrors = true;
-                $mpdf->curlAllowUnsafeSslRequests = true; 
+                $mpdf->curlAllowUnsafeSslRequests = true;
 
                 $mpdf->SetHTMLHeader($header);
                 $mpdf->SetHTMLFooter($footer);
 
                 $mpdf->AddPage(
-                    'P', // L - landscape, P - portrait 
+                    'P', // L - landscape, P - portrait
                     '',
                     '',
                     '',
@@ -696,14 +698,14 @@ if (empty($request->condition)) {
                 $mpdf->WriteHTML($html);
 
                 // Buang buffer biar PDF gak rusak
-                if (ob_get_length()) {
-                    ob_clean();
+              while (ob_get_level() > 0) {
+                    ob_end_clean();
                 }
 
                 $mpdf->Output('Summary Asset Report - ('.date('Y-m-d').').pdf', 'I');
 
-    
- 
+
+
 }
 private function generateChart($config, $width = 400, $height = 300)
 {

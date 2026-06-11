@@ -45,7 +45,7 @@ class ReportKPIController extends Controller
                                     ->get();
         $percentage     = WorkOrder::select(DB::raw('COUNT(work_orders.category) as count'),'work_orders.problem_type','master_categories.name as problemName')
                                     ->join('master_categories','master_categories.id','=','work_orders.category')
-                                    ->where('user_id_support', $request->id) 
+                                    ->where('user_id_support', $request->id)
                                     ->where('work_orders.status_wo','!=',5)
                                     ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$request->dateFilter.'-01', $date])
                                     ->groupBy('work_orders.category')
@@ -74,7 +74,7 @@ class ReportKPIController extends Controller
             $date = Carbon::createFromFormat('Y-m-d', $dateFilter.'-01')
             ->endOfMonth();
             $exp                =explode('-',$dateFilter);
-            $year               =$exp[0]; 
+            $year               =$exp[0];
             $user               = User::with('Departement','Jabatan')->find($id);
             $dataWO             = WorkOrder::select(DB::raw('COUNT(work_orders.id) as totalWO'),'master_kantor.name as officeName')
                                         ->join('users','work_orders.user_id','users.id')
@@ -86,7 +86,7 @@ class ReportKPIController extends Controller
                                         ->get();
             $percentage         = WorkOrder::select(DB::raw('COUNT(work_orders.category) as count'),'work_orders.problem_type','master_categories.name as problemName')
                                         ->join('master_categories','master_categories.id','=','work_orders.category')
-                                        ->where('user_id_support', $id) 
+                                        ->where('user_id_support', $id)
                                         ->where('work_orders.status_wo','!=',5)
                                         ->whereBetween(DB::raw('DATE(work_orders.created_at)'), [$dateFilter.'-01', $date])
                                         ->groupBy('work_orders.category')
@@ -123,9 +123,9 @@ class ReportKPIController extends Controller
                                     'kpiUserbyOffice1'=>$kpiUserbyOffice1,
                                     'kpiUserbyOfficeDone1'=>$kpiUserbyOfficeDone1,
                                     'detailTicket'=>$detailTicket,
-                                
+
                                 ];
-            
+
             $cetak              = view('reportKPI.report-kpi',$data);
             $imageLogo          = '<img src="'.public_path('icon.png').'" width="70px" style="float: right;"/>';
             $header             = '';
@@ -137,12 +137,12 @@ class ReportKPIController extends Controller
                 <td style="width:33%"></td>
                     <td style="width: 50px; text-align:right;">'.$imageLogo.'</td>
                 </tr>
-                
+
             </table><hr>';
-            
+
             $footer             = '<table width="100%" style="font-size: 10px;">
             <tr>
-            
+
                 <td width="64%" align="center"></td>
                 <td width="33%" style="text-align: right;">Halaman : {PAGENO}</td>
             </tr>
@@ -153,7 +153,7 @@ class ReportKPIController extends Controller
                 $mpdf->SetHTMLHeader($header);
                 $mpdf->SetHTMLFooter($footer);
                 $mpdf->AddPage(
-                    'P', // L - landscape, P - portrait 
+                    'P', // L - landscape, P - portrait
                     '',
                     '',
                     '',
@@ -167,9 +167,11 @@ class ReportKPIController extends Controller
                 ); // margin footer
                 $mpdf->WriteHTML($cetak);
                 // Output a PDF file directly to the browser
-                ob_clean();
+                while (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
                 $mpdf->Output($user->name.'('.date('Y-m-d').').pdf', 'I');
-               
+
         } catch (\Mpdf\MpdfException $e) {
             // Process the exception, log, print etc.
             echo $e->getMessage();

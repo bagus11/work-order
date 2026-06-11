@@ -40,23 +40,23 @@ class ServiceAssetController extends Controller
             'ticketRelation.categoryName',
             'ticketRelation.problemTypeName',
         ]);
-    
+
         if (!auth()->user()->hasPermissionTo('get-all-service_asset')) {
             $query->where('user_id', auth()->id());
         }
-    
+
         if ($request->ajax()) {
             return DataTables::of($query->get())
                 // ->addColumn('duration', function ($row) {
                 //     if ($row->status == 1 && $row->start_time) {
                 //         return null; // biar dihitung real-time di frontend
                 //     }
-    
+
                 //     if ($row->start_time && $row->end_time) {
                 //         $diff = Carbon::parse($row->start_time)->diff(Carbon::parse($row->end_time));
                 //         return sprintf('%02d:%02d:%02d', $diff->h, $diff->i, $diff->s);
                 //     }
-    
+
                 //     return '-';
                 // })
                 ->addColumn('start_time', function ($row) {
@@ -65,7 +65,7 @@ class ServiceAssetController extends Controller
                 ->rawColumns(['action']) // Kalau pakai kolom action tombol, tambahkan di sini
                 ->make(true);
         }
-    
+
         return response()->json(['data' => $query->get()]);
     }
     function getServiceTicket(){
@@ -111,7 +111,7 @@ class ServiceAssetController extends Controller
             'data' => $query,
         ]);
     }
-    
+
     function getRequestCode() {
         $query = WorkOrder::where('status_wo',1);
         if (!auth()->user()->hasPermissionTo('get-all-service_asset')) {
@@ -129,12 +129,12 @@ class ServiceAssetController extends Controller
             'problemTypeName',
             'picSupportName',
         ])->where('request_code', $request->request_code)->first();
-        $data = MasterAsset::where('nik', $query->picName->nik)->get(); 
+        $data = MasterAsset::where('nik', $query->picName->nik)->get();
         return response()->json([
             'detail' => $query,
             'data'   => $data,
         ]);
-        
+
     }
     function addService(Request $request, StoreServiceRequest $serviceRequest)
     {
@@ -153,7 +153,7 @@ class ServiceAssetController extends Controller
                 $ticket_code = '1/'.'SVC'.'/'.$month_convert.'/'.$year;
             }else{
                 $ticket_code = $month_before[0] + 1 .'/'.'SVC'.'/'.$month_convert.'/'.$year;
-            }   
+            }
         }
         $fileName ='';
         if($request->file('attachment')){
@@ -162,7 +162,7 @@ class ServiceAssetController extends Controller
             $custom_file_name = 'SVC'.'-'.$ticketName2;
             $originalName = $request->file('attachment')->getClientOriginalExtension();
             $fileName =$custom_file_name.'.'.$originalName;
-        } 
+        }
         $post = [
             'service_code'      => $ticket_code,
             'location_id'       => $request->location_id,
@@ -190,20 +190,20 @@ class ServiceAssetController extends Controller
             'department_id'     => $request->department_id,
             'attachment'        => 'storage/Asset/Service/AttachmentLog/'.$fileName,
         ];
-    
+
        DB::transaction(function() use($post,$request,$fileName, $post_log) {
             ServiceModel::create($post);
             ServiceLog::create($post_log);
             if($request->file('attachment')){
                 $request->file('attachment')->storeAs('Asset/Service/attachment',$fileName);
                 $request->file('attachment')->storeAs('Asset/Service/AttachmentLog',$fileName);
-            }            
+            }
         });
-       
-        return ResponseFormatter::success(   
-            $post,                              
+
+        return ResponseFormatter::success(
+            $post,
             'Asset successfully updated'
-        );            
+        );
     //   } catch (\Throwable $th) {
     //       return ResponseFormatter::error(
     //           $th,
@@ -237,10 +237,10 @@ class ServiceAssetController extends Controller
               ServiceModel::where('service_code', $request->service_code)->update($post);
               ServiceLog::create($post_log);
           });
-        return ResponseFormatter::success(   
-            $post,                              
+        return ResponseFormatter::success(
+            $post,
             'Service successfully started'
-        );            
+        );
     }
 
     function updateService(Request $request, UpdateServiceRequest $update_service_request) {
@@ -259,9 +259,9 @@ class ServiceAssetController extends Controller
                     $api = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . auth()->user()->nik . '&startdate=' . $dateBeforePost . '&enddate=' . $dateNow);
                     $response = $api->getBody()->getContents();
                     $data = json_decode($response, true);
-    
+
                     $durations = [];
-                    $finalDuration = 0; 
+                    $finalDuration = 0;
                     foreach ($data as $row) {
                         if ($row['daytype'] == 'WD') {
                             $start = \Carbon\Carbon::parse($row['shiftstarttime']);
@@ -270,16 +270,16 @@ class ServiceAssetController extends Controller
                             $validation = '';
                             if($end->isToday()){
                                 if( $workOrder->created_at->format('Y-m-d') == date('Y-m-d')){
-                                        $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now());
                                         $validation = '1';
                                     }else{
-                                        $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $minutes = $start->diffInMinutes(\Carbon\Carbon::now());
                                         $validation = '1 1';
 
                                     }
                                 }else{
                                     if($start < $startToday){
-                                        $minutes = $startToday->diffInMinutes($end); 
+                                        $minutes = $startToday->diffInMinutes($end);
                                         $validation = '2 1';
                                     }else{
                                         $validation = '2';
@@ -295,18 +295,18 @@ class ServiceAssetController extends Controller
                                     'total' => $finalDuration,
                                     'validation'=> $validation
                                 ];
-                                
+
                         }
                     }
                     $service = ServiceLog::where('service_code', $request->service_code)->orderBy('id', 'desc')->first();
                         $api_1 = $client->get('https://hris.pralon.co.id/application/API/getAttendance?emp_no=' . auth()->user()->nik . '&startdate=' . $service->created_at->format('Y-m-d') . '&enddate=' . $dateNow);
                         $response_1 = $api_1->getBody()->getContents();
                         $data_1 = json_decode($response_1, true);
-        
+
                         $durations_1 = [];
-                        $finalDuration_1 = 0; 
+                        $finalDuration_1 = 0;
                         foreach ($data_1 as $row) {
-                        
+
                             if ($row['daytype'] == 'WD') {
                                 $start = \Carbon\Carbon::parse($row['shiftstarttime']);
                                 $end = \Carbon\Carbon::parse($row['shiftendtime']);
@@ -314,17 +314,17 @@ class ServiceAssetController extends Controller
                                 $validation = '';
                                 if($end->isToday()){
                                     if( $service->created_at->format('Y-m-d') == date('Y-m-d')){
-                                        $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $minutes = $startToday->diffInMinutes(\Carbon\Carbon::now());
                                         $validation = '1';
                                     }else{
-                                        $minutes = $start->diffInMinutes(\Carbon\Carbon::now()); 
+                                        $minutes = $start->diffInMinutes(\Carbon\Carbon::now());
                                         // dd($start->format('H:i'), now()->format('H:i'), $minutes);
                                         $validation = '1 1';
 
                                     }
                                 }else{
                                     if($start < $startToday){
-                                        $minutes = $startToday->diffInMinutes($end); 
+                                        $minutes = $startToday->diffInMinutes($end);
                                         $validation = '2 1';
                                     }else{
                                         $validation = '2';
@@ -342,15 +342,15 @@ class ServiceAssetController extends Controller
                                         'start_time 2'=>  $startToday->format('H:i:s'),
                                         'validation' => $validation,
                                     ];
-                                    
+
                             }
                         }
-                    
+
                 }
             // Counting Duration
 
-          
-            
+
+
               $fileName ='';
             if($request->file('update_service_attachment')){
                 $ticketName = explode("/", $request->service_code);
@@ -358,7 +358,7 @@ class ServiceAssetController extends Controller
                 $custom_file_name = 'SVC'.'-'.$ticketName2.date('YmdHis');
                 $originalName = $request->file('update_service_attachment')->getClientOriginalExtension();
                 $fileName =$custom_file_name.'.'.$originalName;
-            }    
+            }
             $asset = MasterAsset::where('asset_code', $header->asset_code)->first();
             $post_asset =[];
             if($request->update_service_condition_id == 3){
@@ -381,7 +381,7 @@ class ServiceAssetController extends Controller
                     'created_at'        => date('Y-m-d H:i:s'),
                      'is_active'         => 0,
                      'condition'         => $request->update_service_condition_id,
-                ];      
+                ];
             }else{
                 $post_asset =[
                     'condition'       => $request->update_service_condition_id
@@ -399,7 +399,7 @@ class ServiceAssetController extends Controller
                     'created_at'        => date('Y-m-d H:i:s'),
                     'is_active'         => $asset->is_active,
                      'condition'         => $request->update_service_condition_id,
-                ];      
+                ];
             }
             $post_log = [
                 'service_code'      => $header->service_code,
@@ -414,11 +414,11 @@ class ServiceAssetController extends Controller
                 'department_id'     => $header->department_id,
                 'attachment'        => $fileName != '' ? 'storage/Asset/Service/AttachmentLog/'.$fileName : '',
             ];
-         
+
              $post_log_request = [
                 'request_code'      =>$workOrder->request_code,
                 'request_type'      =>$workOrder->request_type,
-                'departement_id'    =>$workOrder->departement_id,  
+                'departement_id'    =>$workOrder->departement_id,
                 'problem_type'      =>$workOrder->problem_type,
                 'add_info'          =>$workOrder->add_info,
                 'user_id'           =>$workOrder->user_id,
@@ -485,11 +485,11 @@ class ServiceAssetController extends Controller
                         $request->file('update_service_attachment')->storeAs('Asset/Service/AttachmentLog',$fileName);
                     }
                 });
-                return ResponseFormatter::success(   
-                    $finalDuration,                              
+                return ResponseFormatter::success(
+                    $finalDuration,
                     'Service asset successfully updated'
                 );
-            
+
         // }catch (\Throwable $th) {
         //     return ResponseFormatter::error(
         //         $th,
@@ -531,7 +531,7 @@ class ServiceAssetController extends Controller
                                     </table>
 
                                     <hr>';
-            
+
             $footer             = '<hr>
                                     <table width="100%" style="font-size: 10px;">
                                         <tr>
@@ -540,12 +540,12 @@ class ServiceAssetController extends Controller
                                         </tr>
                                     </table>';
 
-                
+
                 $mpdf           = new PDF();
                 $mpdf->SetHTMLHeader($header);
                 $mpdf->SetHTMLFooter($footer);
                 $mpdf->AddPage(
-                    'P', // L - landscape, P - portrait 
+                    'P', // L - landscape, P - portrait
                     '',
                     '',
                     '',
@@ -559,12 +559,14 @@ class ServiceAssetController extends Controller
                 ); // margin footer
                 $mpdf->WriteHTML($html);
                 // Output a PDF file directly to the browser
-                ob_clean();
+                while (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
                 $mpdf->Output('Asset Service Report'.$query->service_code.'('.date('Y-m-d').').pdf', 'I');
     }
     function exportPdfServiceHistory($id){
         $asset_code = str_replace('_', '/', $id);
-       
+
         $query = ServiceModel::with([
                 'assetRelation',
                 'assetRelation.locationRelation',
@@ -583,7 +585,7 @@ class ServiceAssetController extends Controller
                 'userRelation.departmentRelation',
                 'childRelation',
         ])->where('asset_code', $asset_code)->first();
-            
+
             $html = view('report.report-asset_service_history', compact([
                 'query',
                 'asset',
@@ -604,7 +606,7 @@ class ServiceAssetController extends Controller
                                     </table>
 
                                     <hr>';
-            
+
             $footer             = '<hr>
                                     <table width="100%" style="font-size: 10px;">
                                         <tr>
@@ -613,12 +615,12 @@ class ServiceAssetController extends Controller
                                         </tr>
                                     </table>';
 
-                
+
                 $mpdf           = new PDF();
                 $mpdf->SetHTMLHeader($header);
                 $mpdf->SetHTMLFooter($footer);
                 $mpdf->AddPage(
-                    'P', // L - landscape, P - portrait 
+                    'P', // L - landscape, P - portrait
                     '',
                     '',
                     '',
@@ -631,7 +633,9 @@ class ServiceAssetController extends Controller
                     5
                 ); // margin footer
                 $mpdf->WriteHTML($html);
-                ob_clean();
+               while (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
                 $mpdf->Output('Asset Service History'.$asset_code.'('.date('Y-m-d').').pdf', 'I');
     }
 

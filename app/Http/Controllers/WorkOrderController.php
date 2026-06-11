@@ -1248,7 +1248,9 @@ class WorkOrderController extends Controller
                                 ); // margin footer
                                 $mpdf->WriteHTML($cetak);
                                 // Output a PDF file directly to the browser
-                                ob_clean();
+                               while (ob_get_level() > 0) {
+                                    ob_end_clean();
+                                }
                                 $mpdf->Output('Report Wo'.'('.date('Y-m-d').').pdf', 'I');
 
             } catch (\Mpdf\MpdfException $e) {
@@ -1377,7 +1379,9 @@ class WorkOrderController extends Controller
             ); // margin footer
             $mpdf->WriteHTML($cetak);
             // Output a PDF file directly to the browser
-            ob_clean();
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
             $mpdf->Output('Report Wo'.'('.date('Y-m-d').').pdf', 'I');
         } catch (\Mpdf\MpdfException $e) {
             // Process the exception, log, print etc.

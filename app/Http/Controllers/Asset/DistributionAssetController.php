@@ -163,11 +163,11 @@ class DistributionAssetController extends Controller
                 $ticket_code = '1/'.$typeString.'/'.$month_convert.'/'.$year;
             }else{
                 $ticket_code = $month_before[0] + 1 .'/'.$typeString.'/'.$month_convert.'/'.$year;
-            }   
+            }
         }
         $approval = ApprovalHeader::where('location_id', $request->location_id)->where('department', $request->asset_type)->where('link', $request->currentPath)->first();
         $approvalDetail = ApprovalDetail::where('step', 1 )->where('approval_code', $approval->approval_code)->first();
-       
+
         $fileName ='';
         if($request->file('attachment')){
             $ticketName = explode("/", $ticket_code);
@@ -175,7 +175,7 @@ class DistributionAssetController extends Controller
             $custom_file_name = $typeString.'-'.$ticketName2;
             $originalName = $request->file('attachment')->getClientOriginalExtension();
             $fileName =$custom_file_name.'.'.$originalName;
-        } 
+        }
         $selectedAssets = [];
         if($request->request_type == 3){
             $selectedAssets = MasterAsset::where('nik', auth()->user()->nik)->get();
@@ -186,9 +186,9 @@ class DistributionAssetController extends Controller
         $owner =0;
 
         foreach ($selectedAssets as $index => $asset) {
-            $condition = MasterAsset::where('asset_code', $asset['asset_code'])->first();   
+            $condition = MasterAsset::where('asset_code', $asset['asset_code'])->first();
             $detailCode = 'DET-' . str_replace('/', '', $ticket_code) . '-' . ($index + 1); // bikin unik
-        
+
             $post_array[] = [
                 'detail_code'       => $detailCode,
                 'request_code'      => $ticket_code,
@@ -203,10 +203,10 @@ class DistributionAssetController extends Controller
                 'finish_date'       => null,
             ];
             $owner =$condition->owner_id;
-           
+
         }
         $owner_location = User::find($owner);
-       
+
         $post = [
             'request_code'      => $ticket_code,
             'location_id'       => $request->location_id,
@@ -244,13 +244,13 @@ class DistributionAssetController extends Controller
             if($request->file('attachment')){
                 $request->file('attachment')->storeAs('Asset/Distribution/attachment',$fileName);
                 $request->file('attachment')->storeAs('Asset/Distribution/AttachmentLog',$fileName);
-            }            
+            }
         });
-       
-        return ResponseFormatter::success(   
-            $post,                              
+
+        return ResponseFormatter::success(
+            $post,
             'Asset successfully updated'
-        );            
+        );
     //   } catch (\Throwable $th) {
     //       return ResponseFormatter::error(
     //           $th,
@@ -290,7 +290,7 @@ class DistributionAssetController extends Controller
             'detail'=>$detail,
         ]);
     }
-    
+
 
     function getApprovalAssetNotification(){
         $data = DistributionHeader::with([
@@ -310,7 +310,7 @@ class DistributionAssetController extends Controller
             $q->where('status', 0)->orWhere('status', 1);
         })
         ->get();
-        
+
         return response()->json([
             'data'=>$data,
         ]);
@@ -336,15 +336,15 @@ class DistributionAssetController extends Controller
                 $approval = ApprovalDetail::where('approval_code', $approval->approval_code)->where('step', $currentApproval->step + 1)->first();
                 $nextApproval = $approval->user_id;
                 $status = $header->status == 0 ? 1 : $header->status + 1;
-               
+
             }else if($currentApproval->step == $approval->step){
-               
-                $nextApproval = 0;  
+
+                $nextApproval = 0;
                 $status = $header ->status + 1;
                 $post_detail = $detail[0]->status +1;
             }
         }
-        
+
         $post_log =[
             'request_code'      => $request->request_code,
             'location_id'       => $header->location_id,
@@ -362,7 +362,7 @@ class DistributionAssetController extends Controller
             'status'            => $status,
             'approval_id'       => $nextApproval,
         ];
-      
+
         DB::transaction(function() use($post,$request, $post_log,$post_detail, $currentApproval, $approval ) {
             DistributionLog::create($post_log);
             DistributionHeader::where('request_code', $request->request_code)->update($post);
@@ -370,10 +370,10 @@ class DistributionAssetController extends Controller
                 DistributionDetail::where('request_code', $request->request_code)->update(['status' => $post_detail]);
             }
         });
-        return ResponseFormatter::success(   
-            $post,                              
+        return ResponseFormatter::success(
+            $post,
             'Approval successfully updated'
-        );            
+        );
               } catch (\Throwable $th) {
           return ResponseFormatter::error(
               $th,
@@ -394,7 +394,7 @@ class DistributionAssetController extends Controller
                 $custom_file_name = date('YmdHis').'-'.$ticketName2;
                 $originalName = $request->file('ict_progress_attachment')->getClientOriginalExtension();
                 $fileName =$custom_file_name.'.'.$originalName;
-            } 
+            }
             $post_log =[
                 'request_code'      => $request->ict_request_code,
                 'location_id'       => $header->location_id,
@@ -411,8 +411,8 @@ class DistributionAssetController extends Controller
             $post = [
                 'status'            => $header->status + 1,
             ];
-        
-            
+
+
             DB::transaction(function() use($post,$request, $post_log,$fileName, $detail) {
 
                 DistributionLog::create($post_log);
@@ -421,7 +421,7 @@ class DistributionAssetController extends Controller
                 $assets = json_decode($request->assets); // kalau dari JSON string
 
                 foreach($assets as $asset){
-                    SoftwareModel::where('asset_code', $asset->asset_code)->delete(); 
+                    SoftwareModel::where('asset_code', $asset->asset_code)->delete();
                     foreach($asset->softwares as $software){
                         $post = [
                             'name'      => $software->name,
@@ -458,18 +458,18 @@ class DistributionAssetController extends Controller
                         'updated_at' => date('Y-m-d H:i:s'),
                     ];
                     MasterAsset::where('asset_code', $asset->asset_code)->update([
-                        'location_id' => 0 
+                        'location_id' => 0
                     ]);
                     MasterAssetLog::create($postLog);
                 }
                 if($request->file('ict_progress_attachment')){
                     $request->file('ict_progress_attachment')->storeAs('Asset/Distribution/attachmentLog',$fileName);
-                }            
+                }
             });
-                return ResponseFormatter::success(   
-                    $post,                              
+                return ResponseFormatter::success(
+                    $post,
                     'Access successfully locked'
-                );            
+                );
         // }catch (\Throwable $th) {
         //       return ResponseFormatter::error(
         //           $th,
@@ -493,7 +493,7 @@ class DistributionAssetController extends Controller
                     $custom_file_name = 'inc-' . $assetCode . $request->request_code . date('YmdHis');
                     $fileName =$custom_file_name.'.'.$originalName;
                     $path = 'Asset/Distribution/attachmentDetail/' . $fileName;
-                  
+
                     }
                 $asset = DistributionDetail::where('asset_code', $assetCode)->where('request_code', $request->ict_request_code)->first();
                 $postAttachment = [
@@ -510,7 +510,7 @@ class DistributionAssetController extends Controller
                         'nik' =>$nik->nik,
                          'condition' => $data['condition'],
                     ];
-                }else if($header->request_type == 2){   
+                }else if($header->request_type == 2){
                     $postMaster = [
                         'location_id' => $header->des_location_id,
                         'nik' =>$nik->nik,
@@ -523,7 +523,7 @@ class DistributionAssetController extends Controller
                         'nik' => 0,
                         'is_active' => 0,
                          'condition' => $data['condition'],
-                    ];   
+                    ];
                 }
                 // dd($postMaster);
                 if (isset($data['attachment'])) {
@@ -562,7 +562,7 @@ class DistributionAssetController extends Controller
                 'Assets processed successfully.',
                 200
             );
-    
+
         // } catch (\Exception $e) {
         //     // Jika ada error, rollback transaksi
         //     DB::rollBack();
@@ -608,7 +608,7 @@ class DistributionAssetController extends Controller
                                 </table>
 
                                 <hr>';
-         
+
         $footer             = '<hr>
                                 <table width="100%" style="font-size: 10px;">
                                     <tr>
@@ -617,12 +617,12 @@ class DistributionAssetController extends Controller
                                     </tr>
                                 </table>';
 
-            
+
             $mpdf           = new PDF();
             $mpdf->SetHTMLHeader($header);
             $mpdf->SetHTMLFooter($footer);
             $mpdf->AddPage(
-                'P', // L - landscape, P - portrait 
+                'P', // L - landscape, P - portrait
                 '',
                 '',
                 '',
@@ -636,7 +636,9 @@ class DistributionAssetController extends Controller
             ); // margin footer
             $mpdf->WriteHTML($html);
             // Output a PDF file directly to the browser
-            ob_clean();
+           while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
             $mpdf->Output('Distribution Report'.$data->request_code.'('.date('Y-m-d').').pdf', 'I');
     }
 }

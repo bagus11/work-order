@@ -89,7 +89,7 @@ class UpdateSystemController extends Controller
     {
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $path = $file->store('public/summernote'); 
+            $path = $file->store('public/summernote');
             $url = asset(str_replace('public/', 'storage/public/', $path)); // mapping public -> storage
 
             return response()->json(['url' => $url], 200); // 🔑 key jadi 'url'
@@ -209,7 +209,7 @@ class UpdateSystemController extends Controller
                         }
                     }
 
-                   
+
                 }
 
                 $finalText = $headerText . $details;
@@ -244,7 +244,7 @@ class UpdateSystemController extends Controller
                         'created_at'   => now()
                     ];
                     WONotification::create($post);
-                
+
                 }
             }
 
@@ -281,7 +281,7 @@ class UpdateSystemController extends Controller
         if($request->erp_approval == 2){
             $status = 5;
             $statusMessage = 'reject';
-            $statusHeader = 5; 
+            $statusHeader = 5;
         }else{
             $status = 0 ;
             $statusHeader = count($nextApproval) > 0 ? 0 : 1;
@@ -314,14 +314,14 @@ class UpdateSystemController extends Controller
         } else {
             $result = 0;
         }
-     
+
         $post =[
-            'step'          =>  $result, 
+            'step'          =>  $result,
             'status'        => $statusHeader,
-            'pic'           => $currentApproval->step == 1 ? $request->erp_pic : $header->pic, 
+            'pic'           => $currentApproval->step == 1 ? $request->erp_pic : $header->pic,
             'updated_at'    => now(),
         ];
-     
+
         $post_log =[
             'ticket_code'   => $request->erp_ticket_code,
             'user_id'       => auth()->user()->id,
@@ -389,7 +389,7 @@ class UpdateSystemController extends Controller
                             $postDetail,
                             'System successfully updated'
                         );
-                   
+
                 }
                     return ResponseFormatter::success(
                             $postDetail,
@@ -420,7 +420,7 @@ class UpdateSystemController extends Controller
             }
 
             // Perhitungan Duration Detail System
-                  // Duration 
+                  // Duration
                     $detailLogTicket = DetailSystemLog::where('ticket_code', $header->ticket_code)->orderBy('id','desc')->first();
                         $client = new \GuzzleHttp\Client();
                         $api = $client->get(
@@ -433,7 +433,7 @@ class UpdateSystemController extends Controller
                         $dataDetail = json_decode($responseDetail, true);
                         $durationDetails = [];
                         $finalDurationDetails = 0;
-                        
+
                         foreach ($dataDetail as $att) {
                         if ($att['daytype'] == 'WD') {
                             $startDetail = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
@@ -476,7 +476,7 @@ class UpdateSystemController extends Controller
                             ];
                         }
                     }
-                // Duration 
+                // Duration
             // Perhitungan Duration Detail System
 
             $post = [
@@ -506,7 +506,7 @@ class UpdateSystemController extends Controller
             ->whereIn('status', [0, 3])
             ->count();
             if ($checkPending == 0) {
-                // Duration 
+                // Duration
                     $logTicket = UpdateSystemLog::where('ticket_code', $header->ticket_code)->orderBy('id','desc')->first();
                         $client = new \GuzzleHttp\Client();
                         $api = $client->get(
@@ -519,7 +519,7 @@ class UpdateSystemController extends Controller
                         $data = json_decode($response, true);
                         $durations = [];
                         $finalDuration = 0;
-                        
+
                         foreach ($data as $att) {
                         if ($att['daytype'] == 'WD') {
                             $start = Carbon::parse($att['shiftstarttime']);  // jam shift mulai
@@ -562,7 +562,7 @@ class UpdateSystemController extends Controller
                             ];
                         }
                     }
-                // Duration 
+                // Duration
                     $ticket->update([
                         'status' => 2,
                     ]);
@@ -590,8 +590,8 @@ class UpdateSystemController extends Controller
                         'created_at'   => now()
                 ];
                 WONotification::create($post_notif);
-            }  
-            
+            }
+
             DB::commit();
 
             return ResponseFormatter::success(
@@ -621,11 +621,11 @@ class UpdateSystemController extends Controller
             $status  = $request->erp_result == '1' ? 4 : 3;
             $header = UpdateSystem::where('ticket_code', $request->erp_ticket_code)->first();
             $detail  = DetailSystem::where('ticket_code', $request->erp_ticket_code)->first();
-            $duration  = $status == 4 
-                ? UpdateSystemLog::where('ticket_code', $request->erp_ticket_code)->sum('duration') 
+            $duration  = $status == 4
+                ? UpdateSystemLog::where('ticket_code', $request->erp_ticket_code)->sum('duration')
                 : 0;
-            $message = $status == 4 
-                ? ' has finalized the ticket as DONE' 
+            $message = $status == 4
+                ? ' has finalized the ticket as DONE'
                 : ' has finalized the ticket as REVISE ';
 
             // data buat update UpdateSystem
@@ -651,10 +651,10 @@ class UpdateSystemController extends Controller
             ];
             UpdateSystemLog::create($postLogSystem);
             foreach (DetailSystem::where('ticket_code', $header->ticket_code)->get() as $item) {
-                $durationDetails  = $status == 4 
+                $durationDetails  = $status == 4
                     ? DetailSystemLog::where('ticket_code', $item->ticket_code)
                         ->where('detail_code', $item->detail_code)
-                        ->sum('duration') 
+                        ->sum('duration')
                     : 0;
                 // log ke DetailSystemLog
                 $postLogDetail = [
@@ -744,10 +744,10 @@ class UpdateSystemController extends Controller
                                             <td style="width: 50px; text-align:right;">'.$imageLogo.'
                                         </td>
                                     </tr>
-                                    
+
                                 </table>
                                 <hr>';
-         
+
         $footer             = '<hr>
                                 <table width="100%" style="font-size: 10px;">
                                     <tr>
@@ -756,12 +756,12 @@ class UpdateSystemController extends Controller
                                     </tr>
                                 </table>';
 
-            
+
             $mpdf           = new PDF();
             $mpdf->SetHTMLHeader($header);
             $mpdf->SetHTMLFooter($footer);
             $mpdf->AddPage(
-                'P', // L - landscape, P - portrait 
+                'P', // L - landscape, P - portrait
                 '',
                 '',
                 '',
@@ -775,9 +775,11 @@ class UpdateSystemController extends Controller
             ); // margin footer
             $mpdf->WriteHTML($html);
             // Output a PDF file directly to the browser
-            ob_clean();
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
             $mpdf->Output('Report Wo'.'('.date('Y-m-d').').pdf', 'I');
-    
+
         // // Output langsung ke browser
         // return response($mpdf->Output("ERP-Report-{$ticket_code}.pdf", 'I'))
         //     ->header('Content-Type', 'application/pdf');
