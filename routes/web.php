@@ -130,7 +130,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('master_product_opex', [MasterProductOPXController::class, 'index'])->name('master_product_opex');
     });
     Route::group(['middleware' => ['permission:view-master_asset']], function () {
-        Route::get('master_asset', [MasterAssetController::class, 'index'])->name('master_product_opex');
+        Route::get('master_asset', [MasterAssetController::class, 'index'])->name('master_asset');
     });
     Route::group(['middleware' => ['permission:view-master_room']], function () {
         Route::get('master_room', [MasterRoomController::class, 'index'])->name('master_room');
@@ -179,7 +179,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('update_user', [SettingController::class, 'update_user'])->name('update_user');
     Route::post('change_password', [SettingController::class, 'change_password'])->name('change_password');
 
-    // Master Kantor 
+    // Master Kantor
     Route::get('get_kantor', [MasterKantorController::class, 'get_kantor'])->name('get_kantor');
     Route::get('get_province', [MasterKantorController::class, 'get_province'])->name('get_province');
     Route::get('get_regency', [MasterKantorController::class, 'get_regency'])->name('get_regency');
@@ -230,8 +230,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     // WO List
     Route::get('get_work_order_list', [WorkOrderController::class, 'get_work_order_list'])->name('get_work_order_list');
-    Route::get('getDisscuss', [WorkOrderController::class, 'getDisscuss'])->name('getDisscuss'); 
-    Route::post('sendDisscuss', [WorkOrderController::class, 'sendDisscuss'])->name('sendDisscuss'); 
+    Route::get('getDisscuss', [WorkOrderController::class, 'getDisscuss'])->name('getDisscuss');
+    Route::post('sendDisscuss', [WorkOrderController::class, 'sendDisscuss'])->name('sendDisscuss');
     Route::get('get_categories_name', [WorkOrderController::class, 'get_categories_name'])->name('get_categories_name');
     Route::post('save_wo', [WorkOrderController::class, 'save_wo'])->name('save_wo');
     Route::get('get_wo_log', [WorkOrderController::class, 'get_wo_log'])->name('get_wo_log');
@@ -256,7 +256,7 @@ Route::group(['middleware' => ['auth']], function() {
     // ICT Ticket
 
     Route::post('manual_wo', [ManualWOController::class, 'manual_wo'])->name('manual_wo');
-    // Home 
+    // Home
     Route::get('get_wo_summary', [HomeController::class, 'get_wo_summary'])->name('get_wo_summary');
     Route::get('logRating', [HomeController::class, 'logRating'])->name('logRating');
     Route::get('getNotification', [HomeController::class, 'getNotification'])->name('getNotification');
@@ -278,8 +278,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('getKPIUserDetail', [ReportKPIController::class, 'getKPIUserDetail'])->name('getKPIUserDetail');
     Route::get('printKPIUser', [ReportKPIController::class, 'printKPIUser'])->name('printKPIUser');
     Route::get('printKPIUser/{dateFilter}/{id}',[ReportKPIController::class, 'printKPIUser']);
-  
-    
+
+
     // MasterTeam
     Route::get('getMasterTeam', [MasterTeamController::class, 'getMasterTeam'])->name('getMasterTeam');
     Route::get('getOpexTeam', [MasterTeamController::class, 'getOpexTeam'])->name('getOpexTeam');
@@ -289,8 +289,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('updateMasterTeam', [MasterTeamController::class, 'updateMasterTeam'])->name('updateMasterTeam');
     Route::post('addDetailTeam', [MasterTeamController::class, 'addDetailTeam'])->name('addDetailTeam');
     Route::post('updateDetailTeam', [MasterTeamController::class, 'updateDetailTeam'])->name('updateDetailTeam');
-    
-    // 
+
+    //
     Route::get('getrfpTransaction', [RFPController::class, 'getrfpTransaction'])->name('getrfpTransaction');
     Route::post('saveRFPTransaction', [RFPController::class, 'saveRFPTransaction'])->name('saveRFPTransaction');
     Route::get('getrfpTransactionDetail', [RFPController::class, 'getrfpTransactionDetail'])->name('getrfpTransactionDetail');
@@ -314,7 +314,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('updateHoldRequest', [HoldRequestController::class, 'updateHoldRequest'])->name('updateHoldRequest');
     Route::post('updateResumeRequest', [HoldRequestController::class, 'updateResumeRequest'])->name('updateResumeRequest');
     Route::post('saveTransferPIC', [HoldRequestController::class, 'saveTransferPIC'])->name('saveTransferPIC');
-    
+
     // Hold Request Page
 
     // Incident Log
@@ -333,31 +333,31 @@ Route::group(['middleware' => ['auth']], function() {
     // Inventory
         // Master
             // Master Type
-            Route::get('master_type_inv', [MasterTypeInvController::class, 'index'])->name('master_type_inv'); 
-            Route::get('getTypeInv', [MasterTypeInvController::class, 'getTypeInv'])->name('getTypeInv'); 
-            Route::post('saveTypeInv', [MasterTypeInvController::class, 'saveTypeInv'])->name('saveTypeInv'); 
-            Route::get('detailTypeInv', [MasterTypeInvController::class, 'detailTypeInv'])->name('detailTypeInv'); 
-            Route::post('updateTypeInv', [MasterTypeInvController::class, 'updateTypeInv'])->name('updateTypeInv'); 
+            Route::get('master_type_inv', [MasterTypeInvController::class, 'index'])->name('master_type_inv');
+            Route::get('getTypeInv', [MasterTypeInvController::class, 'getTypeInv'])->name('getTypeInv');
+            Route::post('saveTypeInv', [MasterTypeInvController::class, 'saveTypeInv'])->name('saveTypeInv');
+            Route::get('detailTypeInv', [MasterTypeInvController::class, 'detailTypeInv'])->name('detailTypeInv');
+            Route::post('updateTypeInv', [MasterTypeInvController::class, 'updateTypeInv'])->name('updateTypeInv');
             // Master Type
 
             // Category
-            
-                Route::get(' master_category_inv', [MasterCategoryInvController::class, 'index'])->name(' master_category_inv'); 
-                Route::get('getCategoryInv', [MasterCategoryInvController::class, 'getCategoryInv'])->name('getCategoryInv'); 
-                Route::post('saveCategoryInv', [MasterCategoryInvController::class, 'saveCategoryInv'])->name('saveCategoryInv'); 
-                Route::get('detailCategoryInv', [MasterCategoryInvController::class, 'detailCategoryInv'])->name('detailCategoryInv'); 
-                Route::post('updateCategoryInv', [MasterCategoryInvController::class, 'updateCategoryInv'])->name('updateCategoryInv'); 
-                Route::get('deleteCategoryInv', [MasterCategoryInvController::class, 'deleteCategoryInv'])->name('deleteCategoryInv'); 
-                Route::post('uploadCategory', [MasterCategoryInvController::class, 'uploadCategory'])->name('uploadCategory'); 
+
+                Route::get(' master_category_inv', [MasterCategoryInvController::class, 'index'])->name(' master_category_inv');
+                Route::get('getCategoryInv', [MasterCategoryInvController::class, 'getCategoryInv'])->name('getCategoryInv');
+                Route::post('saveCategoryInv', [MasterCategoryInvController::class, 'saveCategoryInv'])->name('saveCategoryInv');
+                Route::get('detailCategoryInv', [MasterCategoryInvController::class, 'detailCategoryInv'])->name('detailCategoryInv');
+                Route::post('updateCategoryInv', [MasterCategoryInvController::class, 'updateCategoryInv'])->name('updateCategoryInv');
+                Route::get('deleteCategoryInv', [MasterCategoryInvController::class, 'deleteCategoryInv'])->name('deleteCategoryInv');
+                Route::post('uploadCategory', [MasterCategoryInvController::class, 'uploadCategory'])->name('uploadCategory');
             // Category
 
             // Master Brand
-                Route::get('master_brand', [MasterBrandController::class, 'index'])->name('master_brand'); 
-                Route::get('getBrand', [MasterBrandController::class, 'getBrand'])->name('getBrand'); 
-                Route::post('addBrand', [MasterBrandController::class, 'addBrand'])->name('addBrand'); 
-                Route::get('detailBrand', [MasterBrandController::class, 'detailBrand'])->name('detailBrand'); 
-                Route::post('updateBrand', [MasterBrandController::class, 'updateBrand'])->name('updateBrand'); 
-                Route::get('deleteBrand', [MasterBrandController::class, 'deleteBrand'])->name('deleteBrand'); 
+                Route::get('master_brand', [MasterBrandController::class, 'index'])->name('master_brand');
+                Route::get('getBrand', [MasterBrandController::class, 'getBrand'])->name('getBrand');
+                Route::post('addBrand', [MasterBrandController::class, 'addBrand'])->name('addBrand');
+                Route::get('detailBrand', [MasterBrandController::class, 'detailBrand'])->name('detailBrand');
+                Route::post('updateBrand', [MasterBrandController::class, 'updateBrand'])->name('updateBrand');
+                Route::get('deleteBrand', [MasterBrandController::class, 'deleteBrand'])->name('deleteBrand');
             // Master Brand
         // Master
     // Inventory
@@ -366,7 +366,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 
     // RFP Kanban Mode
-        
+
         Route::get('project/{id}',[RFPDetailProjectController::class, 'project']);
         Route::get('getSubDetailKanban',[RFPDetailProjectController::class, 'getSubDetailKanban'])->name('getSubDetailKanban');
         Route::get('getChat',[RFPDetailProjectController::class, 'getChat'])->name('getChat');
@@ -378,125 +378,125 @@ Route::group(['middleware' => ['auth']], function() {
     // Opex
         // Setting
             // Master Opex Team
-                Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex'); 
-                Route::get('opex_timeline', [OpexTimelineController::class, 'index'])->name('opex_timeline'); 
-                Route::get('getOPex', [OpexTimelineController::class, 'getOPex'])->name('getOPex'); 
-                Route::post('addHeadOpex', [OpexTimelineController::class, 'addHeadOpex'])->name('addHeadOpex'); 
-                Route::get('detailHeadOpex', [OpexTimelineController::class, 'detailHeadOpex'])->name('detailHeadOpex'); 
-                Route::post('updateHeadOpex', [OpexTimelineController::class, 'updateHeadOpex'])->name('updateHeadOpex'); 
-             
+                Route::get('master_team_opex', [OpexTeamController::class, 'index'])->name('master_team_opex');
+                Route::get('opex_timeline', [OpexTimelineController::class, 'index'])->name('opex_timeline');
+                Route::get('getOPex', [OpexTimelineController::class, 'getOPex'])->name('getOPex');
+                Route::post('addHeadOpex', [OpexTimelineController::class, 'addHeadOpex'])->name('addHeadOpex');
+                Route::get('detailHeadOpex', [OpexTimelineController::class, 'detailHeadOpex'])->name('detailHeadOpex');
+                Route::post('updateHeadOpex', [OpexTimelineController::class, 'updateHeadOpex'])->name('updateHeadOpex');
+
             // Master Opex Team
 
-            // Opex Kanban 
+            // Opex Kanban
                 Route::get('opx/{id}',[OpexTimelineController::class, 'opx']);
             // Opex Kanban
 
         // Setting
 
         // Master
-            Route::get('getmasterCategoryOPX', [MasterCategoryOPXController::class, 'getmasterCategoryOPX'])->name('getmasterCategoryOPX'); 
-            Route::get('getDevCategoryOPX', [MasterCategoryOPXController::class, 'getDevCategoryOPX'])->name('getDevCategoryOPX'); 
-            Route::get('getActiveCategoryOPX', [MasterCategoryOPXController::class, 'getActiveCategoryOPX'])->name('getActiveCategoryOPX'); 
-            Route::get('getDevCategoryOPX', [MasterCategoryOPXController::class, 'getDevCategoryOPX'])->name('getDevCategoryOPX'); 
-            Route::post('addCategoryOPX', [MasterCategoryOPXController::class, 'addCategoryOPX'])->name('addCategoryOPX'); 
-            Route::post('updateCategoryOPX', [MasterCategoryOPXController::class, 'updateCategoryOPX'])->name('updateCategoryOPX'); 
-            Route::post('updateStatusCategoryOPX', [MasterCategoryOPXController::class, 'updateStatusCategoryOPX'])->name('updateStatusCategoryOPX'); 
-            
-            
-            Route::get('getProductOPX', [MasterProductOPXController::class, 'getProductOPX'])->name('getProductOPX'); 
-            Route::get('getProductFilter', [MasterProductOPXController::class, 'getProductFilter'])->name('getProductFilter'); 
-            Route::post('addProductOPX', [MasterProductOPXController::class, 'addProductOPX'])->name('addProductOPX'); 
-            Route::post('updateProductOPX', [MasterProductOPXController::class, 'updateProductOPX'])->name('updateProductOPX'); 
-            Route::post('updateStatusProductOPX', [MasterProductOPXController::class, 'updateStatusProductOPX'])->name('updateStatusProductOPX'); 
+            Route::get('getmasterCategoryOPX', [MasterCategoryOPXController::class, 'getmasterCategoryOPX'])->name('getmasterCategoryOPX');
+            Route::get('getDevCategoryOPX', [MasterCategoryOPXController::class, 'getDevCategoryOPX'])->name('getDevCategoryOPX');
+            Route::get('getActiveCategoryOPX', [MasterCategoryOPXController::class, 'getActiveCategoryOPX'])->name('getActiveCategoryOPX');
+            Route::get('getDevCategoryOPX', [MasterCategoryOPXController::class, 'getDevCategoryOPX'])->name('getDevCategoryOPX');
+            Route::post('addCategoryOPX', [MasterCategoryOPXController::class, 'addCategoryOPX'])->name('addCategoryOPX');
+            Route::post('updateCategoryOPX', [MasterCategoryOPXController::class, 'updateCategoryOPX'])->name('updateCategoryOPX');
+            Route::post('updateStatusCategoryOPX', [MasterCategoryOPXController::class, 'updateStatusCategoryOPX'])->name('updateStatusCategoryOPX');
+
+
+            Route::get('getProductOPX', [MasterProductOPXController::class, 'getProductOPX'])->name('getProductOPX');
+            Route::get('getProductFilter', [MasterProductOPXController::class, 'getProductFilter'])->name('getProductFilter');
+            Route::post('addProductOPX', [MasterProductOPXController::class, 'addProductOPX'])->name('addProductOPX');
+            Route::post('updateProductOPX', [MasterProductOPXController::class, 'updateProductOPX'])->name('updateProductOPX');
+            Route::post('updateStatusProductOPX', [MasterProductOPXController::class, 'updateStatusProductOPX'])->name('updateStatusProductOPX');
 
 
         // Master
         // Monitoring OPEX
-            Route::get('getOPX', [MonitoringOPXController::class, 'getOPX'])->name('getOPX'); 
-            Route::get('getDetervative', [MonitoringOPXController::class, 'getDetervative'])->name('getDetervative'); 
-            Route::get('detailOPX', [MonitoringOPXController::class, 'detailOPX'])->name('detailOPX'); 
-            Route::get('getPOOPX', [MonitoringOPXController::class, 'getPOOPX'])->name('getPOOPX'); 
-            Route::get('getISOPX', [MonitoringOPXController::class, 'getISOPX'])->name('getISOPX'); 
-            Route::get('childOPXDetail', [MonitoringOPXController::class, 'childOPXDetail'])->name('childOPXDetail'); 
-            Route::post('addOPX', [MonitoringOPXController::class, 'addOPX'])->name('addOPX'); 
-            Route::post('addPOOPX', [MonitoringOPXController::class, 'addPOOPX'])->name('addPOOPX'); 
-            Route::post('updateISOPX', [MonitoringOPXController::class, 'updateISOPX'])->name('updateISOPX'); 
-            Route::post('addISOPX', [MonitoringOPXController::class, 'addISOPX'])->name('addISOPX'); 
-            Route::post('updatePOOPX', [MonitoringOPXController::class, 'updatePOOPX'])->name('updatePOOPX'); 
+            Route::get('getOPX', [MonitoringOPXController::class, 'getOPX'])->name('getOPX');
+            Route::get('getDetervative', [MonitoringOPXController::class, 'getDetervative'])->name('getDetervative');
+            Route::get('detailOPX', [MonitoringOPXController::class, 'detailOPX'])->name('detailOPX');
+            Route::get('getPOOPX', [MonitoringOPXController::class, 'getPOOPX'])->name('getPOOPX');
+            Route::get('getISOPX', [MonitoringOPXController::class, 'getISOPX'])->name('getISOPX');
+            Route::get('childOPXDetail', [MonitoringOPXController::class, 'childOPXDetail'])->name('childOPXDetail');
+            Route::post('addOPX', [MonitoringOPXController::class, 'addOPX'])->name('addOPX');
+            Route::post('addPOOPX', [MonitoringOPXController::class, 'addPOOPX'])->name('addPOOPX');
+            Route::post('updateISOPX', [MonitoringOPXController::class, 'updateISOPX'])->name('updateISOPX');
+            Route::post('addISOPX', [MonitoringOPXController::class, 'addISOPX'])->name('addISOPX');
+            Route::post('updatePOOPX', [MonitoringOPXController::class, 'updatePOOPX'])->name('updatePOOPX');
             Route::get('/export-excel', [MonitoringOPXController::class, 'exportPivot'])->name('opx.export.excel');
         // Monitoring OPEX
-        
+
     // Opex
 
     // Asset
 
         // Master Asset
-            Route::get('getMasterAsset', [MasterAssetController::class, 'getMasterAsset'])->name('getMasterAsset'); 
-            Route::get('getMasterAssetUser', [MasterAssetController::class, 'getMasterAssetUser'])->name('getMasterAssetUser'); 
-            Route::get('mappingAssetUser', [MasterAssetController::class, 'mappingAssetUser'])->name('mappingAssetUser'); 
-            Route::get('mappingAssetChild', [MasterAssetController::class, 'mappingAssetChild'])->name('mappingAssetChild'); 
-            Route::get('getAssetCategory', [MasterAssetController::class, 'getAssetCategory'])->name('getAssetCategory'); 
-            Route::get('getAssetBrand', [MasterAssetController::class, 'getAssetBrand'])->name('getAssetBrand'); 
-            Route::get('getActiveParent', [MasterAssetController::class, 'getActiveParent'])->name('getActiveParent'); 
-            Route::get('getInactiveAssetChild', [MasterAssetController::class, 'getInactiveAssetChild'])->name('getInactiveAssetChild'); 
-            Route::get('getUser', [MasterAssetController::class, 'getUser'])->name('getUser'); 
-            Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset'); 
-            Route::post('addMasterAsset', [MasterAssetController::class, 'addMasterAsset'])->name('addMasterAsset'); 
-            Route::post('updateAssetChild', [MasterAssetController::class, 'updateAssetChild'])->name('updateAssetChild'); 
-            Route::post('addSoftwareTemp', [MasterAssetController::class, 'addSoftwareTemp'])->name('addSoftwareTemp'); 
-            Route::get('exportAssetPDF', [MasterAssetController::class, 'exportAssetPDF'])->name('exportAssetPDF'); 
-            Route::get('getLocationFilter', [MasterAssetController::class, 'getLocationFilter'])->name('getLocationFilter'); 
-            Route::get('exportMasterAsset', [MasterAssetController::class, 'exportMasterAsset'])->name('exportMasterAsset'); 
+            Route::get('getMasterAsset', [MasterAssetController::class, 'getMasterAsset'])->name('getMasterAsset');
+            Route::get('getMasterAssetUser', [MasterAssetController::class, 'getMasterAssetUser'])->name('getMasterAssetUser');
+            Route::get('mappingAssetUser', [MasterAssetController::class, 'mappingAssetUser'])->name('mappingAssetUser');
+            Route::get('mappingAssetChild', [MasterAssetController::class, 'mappingAssetChild'])->name('mappingAssetChild');
+            Route::get('getAssetCategory', [MasterAssetController::class, 'getAssetCategory'])->name('getAssetCategory');
+            Route::get('getAssetBrand', [MasterAssetController::class, 'getAssetBrand'])->name('getAssetBrand');
+            Route::get('getActiveParent', [MasterAssetController::class, 'getActiveParent'])->name('getActiveParent');
+            Route::get('getInactiveAssetChild', [MasterAssetController::class, 'getInactiveAssetChild'])->name('getInactiveAssetChild');
+            Route::get('getUser', [MasterAssetController::class, 'getUser'])->name('getUser');
+            Route::post('updateStatusMasterAsset', [MasterAssetController::class, 'updateStatusMasterAsset'])->name('updateStatusMasterAsset');
+            Route::post('addMasterAsset', [MasterAssetController::class, 'addMasterAsset'])->name('addMasterAsset');
+            Route::post('updateAssetChild', [MasterAssetController::class, 'updateAssetChild'])->name('updateAssetChild');
+            Route::post('addSoftwareTemp', [MasterAssetController::class, 'addSoftwareTemp'])->name('addSoftwareTemp');
+            Route::get('exportAssetPDF', [MasterAssetController::class, 'exportAssetPDF'])->name('exportAssetPDF');
+            Route::get('getLocationFilter', [MasterAssetController::class, 'getLocationFilter'])->name('getLocationFilter');
+            Route::get('exportMasterAsset', [MasterAssetController::class, 'exportMasterAsset'])->name('exportMasterAsset');
         // Master Asset
 
         // Distribution Asset
-            Route::get('distribution_asset', [DistributionAssetController::class, 'index'])->name('distribution_asset'); 
-            Route::get('getDistributionTicket', [DistributionAssetController::class, 'getDistributionTicket'])->name('getDistributionTicket'); 
-            Route::get('getAssetUser', [DistributionAssetController::class, 'getAssetUser'])->name('getAssetUser'); 
-            Route::get('getInactiveAsset', [DistributionAssetController::class, 'getInactiveAsset'])->name('getInactiveAsset'); 
-            Route::get('getUserLocation', [DistributionAssetController::class, 'getUserLocation'])->name('getUserLocation'); 
-            Route::post('addDistribution', [DistributionAssetController::class, 'addDistribution'])->name('addDistribution'); 
-            Route::post('sendingDistribution', [DistributionAssetController::class, 'sendingDistribution'])->name('sendingDistribution'); 
-            Route::get('detailDistributionTicket', [DistributionAssetController::class, 'detailDistributionTicket'])->name('detailDistributionTicket'); 
-            Route::post('/incoming-progress', [DistributionAssetController::class, 'incomingProgress']); 
+            Route::get('distribution_asset', [DistributionAssetController::class, 'index'])->name('distribution_asset');
+            Route::get('getDistributionTicket', [DistributionAssetController::class, 'getDistributionTicket'])->name('getDistributionTicket');
+            Route::get('getAssetUser', [DistributionAssetController::class, 'getAssetUser'])->name('getAssetUser');
+            Route::get('getInactiveAsset', [DistributionAssetController::class, 'getInactiveAsset'])->name('getInactiveAsset');
+            Route::get('getUserLocation', [DistributionAssetController::class, 'getUserLocation'])->name('getUserLocation');
+            Route::post('addDistribution', [DistributionAssetController::class, 'addDistribution'])->name('addDistribution');
+            Route::post('sendingDistribution', [DistributionAssetController::class, 'sendingDistribution'])->name('sendingDistribution');
+            Route::get('detailDistributionTicket', [DistributionAssetController::class, 'detailDistributionTicket'])->name('detailDistributionTicket');
+            Route::post('/incoming-progress', [DistributionAssetController::class, 'incomingProgress']);
             Route::get('print-distribution-pdf/{id}', [DistributionAssetController::class, 'printDistribution']);
             // Approval Notification
-                Route::get('getApprovalAssetNotification', [DistributionAssetController::class, 'getApprovalAssetNotification'])->name('getApprovalAssetNotification'); 
-                Route::post('approvalAssetProgress', [DistributionAssetController::class, 'approvalAssetProgress'])->name('approvalAssetProgress'); 
+                Route::get('getApprovalAssetNotification', [DistributionAssetController::class, 'getApprovalAssetNotification'])->name('getApprovalAssetNotification');
+                Route::post('approvalAssetProgress', [DistributionAssetController::class, 'approvalAssetProgress'])->name('approvalAssetProgress');
             // Approval Notification
 
             // Service Asset
-                Route::get('service_asset', [ServiceAssetController::class, 'index'])->name('service_asset'); 
-                Route::get('getServiceTicket', [ServiceAssetController::class, 'getServiceTicket'])->name('getServiceTicket'); 
-                Route::get('getService', [ServiceAssetController::class, 'getService'])->name('getService'); 
-                Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode'); 
-                Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode'); 
-                Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService'); 
-                Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService'); 
-                Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService'); 
+                Route::get('service_asset', [ServiceAssetController::class, 'index'])->name('service_asset');
+                Route::get('getServiceTicket', [ServiceAssetController::class, 'getServiceTicket'])->name('getServiceTicket');
+                Route::get('getService', [ServiceAssetController::class, 'getService'])->name('getService');
+                Route::get('getRequestCode', [ServiceAssetController::class, 'getRequestCode'])->name('getRequestCode');
+                Route::get('detailRequestCode', [ServiceAssetController::class, 'detailRequestCode'])->name('detailRequestCode');
+                Route::post('addService', [ServiceAssetController::class, 'addService'])->name('addService');
+                Route::post('startService', [ServiceAssetController::class, 'startService'])->name('startService');
+                Route::post('updateService', [ServiceAssetController::class, 'updateService'])->name('updateService');
                 Route::get('exportPdfService/{id}',[ServiceAssetController::class, 'exportPdfService']);
                 Route::get('exportPdfServiceHistory/{id}',[ServiceAssetController::class, 'exportPdfServiceHistory']);
             // Service Asset
-            
+
         // Distribution Asset
 
         // Approval
-            Route::get('approval', [ApprovalController::class, 'index'])->name('approval'); 
-            Route::get('getApproval', [ApprovalController::class, 'getApproval'])->name('getApproval'); 
-            Route::post('addApprovalHeader', [ApprovalController::class, 'addApprovalHeader'])->name('addApprovalHeader'); 
-            Route::get('getStepApproval', [ApprovalController::class, 'getStepApproval'])->name('getStepApproval'); 
-            Route::post('updateApprover', [ApprovalController::class, 'updateApprover'])->name('updateApprover'); 
-            Route::get('detailMasterApproval', [ApprovalController::class, 'detailMasterApproval'])->name('detailMasterApproval'); 
-            Route::post('editMasterApproval', [ApprovalController::class, 'editMasterApproval'])->name('editMasterApproval'); 
+            Route::get('approval', [ApprovalController::class, 'index'])->name('approval');
+            Route::get('getApproval', [ApprovalController::class, 'getApproval'])->name('getApproval');
+            Route::post('addApprovalHeader', [ApprovalController::class, 'addApprovalHeader'])->name('addApprovalHeader');
+            Route::get('getStepApproval', [ApprovalController::class, 'getStepApproval'])->name('getStepApproval');
+            Route::post('updateApprover', [ApprovalController::class, 'updateApprover'])->name('updateApprover');
+            Route::get('detailMasterApproval', [ApprovalController::class, 'detailMasterApproval'])->name('detailMasterApproval');
+            Route::post('editMasterApproval', [ApprovalController::class, 'editMasterApproval'])->name('editMasterApproval');
         // Approval
-        
+
     // Asset
-        
-    // V Card 
-        Route::get('v_card', [VCardController::class, 'index'])->name('v_card'); 
-        Route::get('getCard', [VCardController::class, 'getCard'])->name('getCard'); 
-        Route::get('generateCard/{id}/card', [VCardController::class, 'generateCard'])->name('generateCard'); 
-    // V Card 
+
+    // V Card
+        Route::get('v_card', [VCardController::class, 'index'])->name('v_card');
+        Route::get('getCard', [VCardController::class, 'getCard'])->name('getCard');
+        Route::get('generateCard/{id}/card', [VCardController::class, 'generateCard'])->name('generateCard');
+    // V Card
 
     // Testing Email
         Route::get('/test-auth-email', function () {
@@ -504,7 +504,7 @@ Route::group(['middleware' => ['auth']], function() {
                 $message->to('bagus.slamet@pralon.com') // ganti ke Zimbra
                         ->subject('Laravel Auth Test');
             });
-        
+
             return 'Email auth-style terkirim!';
         });
     // Testing Email
@@ -560,9 +560,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('finishTask', [UpdateSystemController::class, 'finishTask'])->name('finishTask');
         Route::post('finalizeERP', [UpdateSystemController::class, 'finalizeERP'])->name('finalizeERP');
         Route::get('report_system_ticket/{id}',[UpdateSystemController::class, 'printERP']);
-        
+
         // UpdateSystemm
-        
+
     // Approval Matrix
         Route::get('approval_matrix', [ApprovalMaatrixController::class, 'index'])->name('approval_matrix');
         Route::get('getApprovalMatrix', [ApprovalMaatrixController::class, 'getApprovalMatrix'])->name('getApprovalMatrix');
@@ -579,8 +579,8 @@ Route::group(['middleware' => ['auth']], function() {
          Route::get('getFileHistory', [FileSharingController::class, 'getFileHistory'])->name('getFileHistory');
          Route::post('fileSharingUpdate', [FileSharingController::class, 'fileSharingUpdate'])->name('fileSharingUpdate');
          // File Sharing
-         
-    // Testing Cyber lentera     
+
+    // Testing Cyber lentera
     // Testing Cyber lentera
 });
 Route::get('cyber', function () {
