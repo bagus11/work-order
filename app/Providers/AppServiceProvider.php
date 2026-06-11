@@ -23,11 +23,22 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    // public function boot()
+    // {
+    //     config(['app.locale' => 'id']);
+    //     Carbon::setLocale('id');
+    //     date_default_timezone_set('Asia/Jakarta');
+    //     URL::forceRootUrl(config('app.url'));
+    // }
+
+    public function boot(): void
     {
-        config(['app.locale' => 'id']);
-        Carbon::setLocale('id');
-        date_default_timezone_set('Asia/Jakarta');
-        URL::forceRootUrl(config('app.url'));
+         config(['app.locale' => 'id']);
+         App\Providers\Carbon::setLocale('id');
+         date_default_timezone_set('Asia/Jakarta');
+        if (config('app.env') === 'production') {
+            \URL::forceScheme('https');
+            \URL::forceRootUrl(config('app.url'));
+        }
     }
 }

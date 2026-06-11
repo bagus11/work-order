@@ -1,0 +1,10 @@
+services:
+
+  workorder_php:
+    image: work-order-php        # pakai image lokal yang sudah di-build
+    container_name: work-order-php
+
+  workorder_nginx:
+    container_name: work-order-nginx
+    environment:
+      - PHP_HOST=workorder_php   # nama service di shared_network
