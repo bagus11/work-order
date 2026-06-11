@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
+
 {
     /**
      * Register any application services.
@@ -31,14 +32,16 @@ class AppServiceProvider extends ServiceProvider
     //     URL::forceRootUrl(config('app.url'));
     // }
 
-    public function boot(): void
+     public function boot(): void
     {
-         config(['app.locale' => 'id']);
-         App\Providers\Carbon::setLocale('id');
-         date_default_timezone_set('Asia/Jakarta');
-        if (config('app.env') === 'production') {
-            \URL::forceScheme('https');
-            \URL::forceRootUrl(config('app.url'));
+        config(['app.locale' => 'id']);
+
+      \Carbon\Carbon::setLocale('id');
+        date_default_timezone_set('Asia/Jakarta');
+
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
         }
     }
 }
